@@ -1,0 +1,2 @@
+INDEX VERSION 1.131+/home/daria/eclipse-workspace/my-hw/.metadata/.plugins/org.eclipse.jdt.core
+2598361560.index

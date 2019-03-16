@@ -1,9 +1,0 @@
-2019-03-15 14:03:42,865 [Worker-0: Loading available Gradle versions] INFO  o.e.b.c.i.u.g.PublishedGradleVersions - Gradle version information cache is up-to-date. Trying to read.
-2019-03-15 14:07:47,288 [Worker-16: Importing Maven projects] INFO  o.e.m.c.i.l.LifecycleMappingFactory - Using org.eclipse.m2e.jdt.JarLifecycleMapping lifecycle mapping for MavenProject: hr.fer.zemris.java.jmbag0036480046:hw01-0036480046:1.0 @ /home/daria/eclipse-workspace/my-hw/hw01-0036480046/pom.xml.
-2019-03-15 14:07:49,626 [Worker-16: Importing Maven projects] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding source folder /hw01-0036480046/src/main/java
-2019-03-15 14:07:49,633 [Worker-16: Importing Maven projects] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding source folder /hw01-0036480046/src/test/java
-2019-03-15 14:07:52,074 [Worker-16: Importing Maven projects] INFO  o.e.m.c.i.p.ProjectConfigurationManager - Imported and configured 1 project(s) in 8 sec
-2019-03-15 14:07:54,382 [Worker-8: Building workspace] INFO  o.e.m.c.i.embedder.EclipseLogger - Using 'UTF-8' encoding to copy filtered resources.
-2019-03-15 14:07:54,386 [Worker-8: Building workspace] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 1 resource
-2019-03-15 14:07:54,429 [Worker-8: Building workspace] INFO  o.e.m.c.i.embedder.EclipseLogger - Using 'UTF-8' encoding to copy filtered resources.
-2019-03-15 14:07:54,429 [Worker-8: Building workspace] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory /home/daria/eclipse-workspace/my-hw/hw01-0036480046/src/test/resources

@@ -60,16 +60,110 @@ public class ArrayIndexedCollection extends Collection {
 		}
 	}
 	
+	/**
+	 * doubling array's size
+	 */
+	public void doubleSize() {
+		this.capacity *= 2;
+		this.elements = new Object[this.capacity];
+	}
+	
+	/**
+	 * Adds the given object into first empty place in the elements array
+	 */
 	public void add(Object value) {
 		if(value == null) {
 			throw new NullPointerException();
 		}
-		// checking if elements array is full
+		// doubling array's size if array is full
 		if(this.capacity == this.size) {
-			this.capacity *= 2;
-			this.elements = new Object[this.capacity];
+			doubleSize();
+		}
+		// adding elements into first empty place
+		for(int i = 0; i < this.size; i++) {
+			if(this.elements[i] == null) {
+				this.elements[i] = value;
+			}
 		}
 	}
 	
+	/**
+	 * Throws exception if index value is wrong, otherwise returns the object
+	 * stored in elements at position index.
+	 * @param index Position of acquired object
+	 * @return the object that is stored in elements at given index
+	 */
+	public Object get(int index) {
+		if(index < 0 || index > size-1) {
+			throw new IndexOutOfBoundsException();
+		}
+		return this.elements[index];
+	}
 	
+	/**
+	 * Removes all elements from the collection, doesn't change capacity
+	 * variable, initialize array elements to null and sets size variable to 0
+	 */
+	public void clear() {
+		for(int i = 0; i < this.size; i++) {
+			this.elements[i] = null;
+		}
+		this.size = 0;
+	}
+	
+	/**
+	 * Insert value at given position, and shifting elements at position and at
+	 * greater positions toward the end
+	 * @param value to insert at index position in elements array
+	 * @param position in array where value need to be inserted
+	 */
+	public void insert(Object value, int position) {
+		if(position < 0 || position > size) {
+			throw new IndexOutOfBoundsException();
+		}
+		// doubling array's size if array is full
+		if(this.capacity == this.size) {
+			doubleSize();
+		}
+		// element at size index should be empty, because array is filled at 
+		// indexes in range from 0 to size-1
+		if(position < this.size) {
+			// shifting elements from position to end
+			for(int i = this.size; i >= position; i--) {
+				this.elements[i + 1] = this.elements[i];
+			}
+		}
+		this.elements[position] = value;
+		this.size += 1;
+	}
+	
+	/**
+	 * Searches the given value in the collection
+	 * @param value to search in collection
+	 * @return the index of the first occurrence of the given value or 
+	 * -1 if the value is not found
+	 */
+	public int indexOf(Object value) {
+		for(int i = 0; i < this.size; i++) {
+			if(this.elements[i] == value) {
+				return i;
+			}
+		}
+		return -1;
+	}
+	
+	/**
+	 * Removes element at index position, and shifts other element toward start
+	 * position
+	 * @param index is position at which element has to be removed
+	 */
+	public void remove(int index) {
+		if(index < 0 || index > size-1) {
+			throw new IndexOutOfBoundsException();
+		}
+		for(int i = index; i < this.size; i++) {
+			this.elements[i] = this.elements[i+1];
+		}
+		this.size -= 1;
+	}
 }

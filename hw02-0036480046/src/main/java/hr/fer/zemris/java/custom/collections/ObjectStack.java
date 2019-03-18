@@ -1,7 +1,5 @@
 package hr.fer.zemris.java.custom.collections;
 
-import sun.tools.tree.ThisExpression;
-
 /**
  * Implementation of the stack-like collection
  * @author Daria Matkovic
@@ -19,7 +17,7 @@ public class ObjectStack {
 	 * Checks if stack is empty
 	 * @return true if stack is empty, otherwise false
 	 */
-	private boolean isEmpty() {
+	public boolean isEmpty() {
 		if(this.size() == 0) {
 			return true;
 		}
@@ -30,7 +28,7 @@ public class ObjectStack {
 	 * Counts elements on stack.
 	 * @return number of elements on stack
 	 */
-	private int size() {
+	public int size() {
 		return collection.size();
 	}
 	
@@ -38,7 +36,7 @@ public class ObjectStack {
 	 * Put on stack given non-null value
 	 * @param value to push on stack
 	 */
-	private void push(Object value) {
+	public void push(Object value) {
 		if(value == null) {
 			throw new NullPointerException("Null can't pushed on stack.");
 		}
@@ -50,7 +48,7 @@ public class ObjectStack {
 	 * Throws EmptyStackException if stack is empty
 	 * @return removed value
 	 */
-	private Object pop() {
+	public Object pop() {
 		if(this.isEmpty()) {
 			throw new EmptyStackException("Stack is empty.");
 		}
@@ -64,7 +62,7 @@ public class ObjectStack {
 	 * Throws EmptyStackException if stack is empty.
 	 * @return last element pushed on stack
 	 */
-	private Object peek() {
+	public Object peek() {
 		if(this.isEmpty()) {
 			throw new EmptyStackException("Stack is empty.");
 		}
@@ -75,7 +73,7 @@ public class ObjectStack {
 	/**
 	 * Removes all elements from stack.
 	 */
-	private void clear() {
+	public void clear() {
 		this.clear();
 	}
 }

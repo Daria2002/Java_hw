@@ -75,11 +75,13 @@ public class LinkedListIndexedCollection extends Collection {
 		if(index < 0 || index > size-1) {
 			throw new IndexOutOfBoundsException();
 		}
+		
 		ListNode node = new ListNode();
 		node = this.first;
 		for(int i = 1; i <= index; i++) {
 			node = node.next;
 		}
+		
 		return node.value;
 	}
 	
@@ -89,6 +91,7 @@ public class LinkedListIndexedCollection extends Collection {
 	public void clear() {
 		ListNode node = new ListNode();
 		node = this.first;
+		
 		for(int i = 0; i < this.size; i++) {
 			if(i > 0) {
 				node.previous = null;
@@ -107,12 +110,15 @@ public class LinkedListIndexedCollection extends Collection {
 	 * complexity: O(n)
 	 */
 	public void insert(Object value, int position) {
+		
 		if(position < 0 || position > size) {
 			throw new IndexOutOfBoundsException("Position is out of range");
 		}
+		
 		if(value == null) {
 			throw new NullPointerException();
 		}
+		
 		ListNode newNode = new ListNode();
 		newNode.value = value;
 		newNode.next = null;
@@ -140,15 +146,18 @@ public class LinkedListIndexedCollection extends Collection {
 			else {
 				ListNode helpNode = new ListNode();
 				helpNode = this.first;
+				
 				for(int i = 0; i < position; i++) {
 					helpNode = helpNode.next;
 				}
+				
 				newNode.next = helpNode;
 				newNode.previous = helpNode.previous;
 				helpNode.previous.next = newNode;
 				helpNode.previous = newNode;
 			}
 		}
+		
 		this.size += 1;
 	}
 	

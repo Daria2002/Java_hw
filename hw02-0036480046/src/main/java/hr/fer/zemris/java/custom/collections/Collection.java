@@ -3,7 +3,7 @@ package hr.fer.zemris.java.custom.collections;
 public class Collection {
 	
 	protected Collection() {
-		// TODO Auto-generated constructor stub
+		
 	}
 	
 	/**
@@ -59,7 +59,7 @@ public class Collection {
 	 * fills it with collection content
 	 * @return array filled with collection content
 	 */
-	public Object[] toArray() throws UnsupportedOperationException{
+	public Object[] toArray() {
 		// Current implementation throws UnsupportedOperationException
 		throw new UnsupportedOperationException();
 	}

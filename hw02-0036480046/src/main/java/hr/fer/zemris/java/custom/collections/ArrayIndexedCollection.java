@@ -2,7 +2,7 @@ package hr.fer.zemris.java.custom.collections;
 
 
 /**
- * 
+ * This program implements resizable array-backed collection of objects.
  * @author Daria Matkovic
  *
  */
@@ -12,14 +12,13 @@ public class ArrayIndexedCollection extends Collection {
 	// array of object references, null references are not allowed, duplicate
 	// elements are allowed
 	private Object[] elements;
-	private int capacity;
+	public int capacity;
 	
 	/**
 	 * Initialize capacity variable to 16 and preallocates elements to that size
 	 */
 	public ArrayIndexedCollection() {
-		this.capacity = 16;
-		this.elements = new Object[16];
+		this(16);
 	}
 
 	/**
@@ -27,10 +26,7 @@ public class ArrayIndexedCollection extends Collection {
 	 * @param collection is given collection to check if it is null
 	 */
 	public ArrayIndexedCollection(Collection collection) {
-		this();
-		if(collection == null) {
-			throw new NullPointerException();
-		}
+		this(collection, 16);
 	}
 	
 	/**
@@ -39,37 +35,50 @@ public class ArrayIndexedCollection extends Collection {
 	 */
 	public ArrayIndexedCollection(int initialCapacity) {
 		if(initialCapacity < 1) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Initial capacity is less than 1");
 		}
 		this.capacity = initialCapacity;
 		this.elements = new Object[this.capacity];
 	}
 	
+	//TODO: komentiraj exceptione
+	
 	/**
-	 * Initializes capacity and throws exception if collection is null
+	 * Initializes capacity, adds all elements from given collection to this 
+	 * collection or throws exception if collection is null
 	 * @param collection given collection which has to be checked if it is null
 	 * @param initialCapacity initial value for capacity
 	 */
 	public ArrayIndexedCollection(Collection collection, int initialCapacity) {
 		this(initialCapacity);
 		if(collection == null) {
-			throw new NullPointerException();
+			throw new NullPointerException("Collection object is null.");
 		}
 		if(initialCapacity < collection.size()) {
-			initialCapacity = collection.size();
+			this.capacity = collection.size();
+			this.elements = new Object[this.capacity];
 		}
+		this.addAll(collection);
 	}
 	
 	/**
-	 * doubling array's size
+	 * doubling element's capacity
 	 */
-	public void doubleSize() {
+	private void doubleCapacity() {
+		Object[] helpArray = new Object[this.size];
+		for(int i = 0; i < this.size; i++) {
+			helpArray[i] = this.elements[i];
+		}
 		this.capacity *= 2;
 		this.elements = new Object[this.capacity];
+		for(int i = 0; i < this.size; i++) {
+			this.elements[i] = helpArray[i];
+		}
 	}
 	
 	/**
 	 * Adds the given object into first empty place in the elements array
+	 * complexity: O(1) if array is not full, otherwise O(n)
 	 */
 	public void add(Object value) {
 		if(value == null) {
@@ -77,14 +86,11 @@ public class ArrayIndexedCollection extends Collection {
 		}
 		// doubling array's size if array is full
 		if(this.capacity == this.size) {
-			doubleSize();
+			doubleCapacity();
 		}
 		// adding elements into first empty place
-		for(int i = 0; i < this.size; i++) {
-			if(this.elements[i] == null) {
-				this.elements[i] = value;
-			}
-		}
+		this.elements[this.size] = value;
+		this.size += 1;
 	}
 	
 	/**
@@ -92,6 +98,7 @@ public class ArrayIndexedCollection extends Collection {
 	 * stored in elements at position index.
 	 * @param index Position of acquired object
 	 * @return the object that is stored in elements at given index
+	 * complexity: O(1)
 	 */
 	public Object get(int index) {
 		if(index < 0 || index > size-1) {
@@ -116,21 +123,25 @@ public class ArrayIndexedCollection extends Collection {
 	 * greater positions toward the end
 	 * @param value to insert at index position in elements array
 	 * @param position in array where value need to be inserted
+	 * complexity: O(n)
 	 */
 	public void insert(Object value, int position) {
 		if(position < 0 || position > size) {
 			throw new IndexOutOfBoundsException();
 		}
+		if(value == null) {
+			throw new NullPointerException("Can't store null value.");
+		}
 		// doubling array's size if array is full
 		if(this.capacity == this.size) {
-			doubleSize();
+			doubleCapacity();
 		}
 		// element at size index should be empty, because array is filled at 
 		// indexes in range from 0 to size-1
 		if(position < this.size) {
 			// shifting elements from position to end
-			for(int i = this.size; i >= position; i--) {
-				this.elements[i + 1] = this.elements[i];
+			for(int i = this.size; i > position; i--) {
+				this.elements[i] = this.elements[i-1];
 			}
 		}
 		this.elements[position] = value;
@@ -142,6 +153,7 @@ public class ArrayIndexedCollection extends Collection {
 	 * @param value to search in collection
 	 * @return the index of the first occurrence of the given value or 
 	 * -1 if the value is not found
+	 * complexity: O(n)
 	 */
 	public int indexOf(Object value) {
 		for(int i = 0; i < this.size; i++) {
@@ -165,5 +177,34 @@ public class ArrayIndexedCollection extends Collection {
 			this.elements[i] = this.elements[i+1];
 		}
 		this.size -= 1;
+	}
+	
+	@Override
+	public int size() {
+		return this.size;
+	}
+	
+	@Override
+	public boolean contains(Object value) {
+		if(indexOf(value) == -1) {
+			return false;
+		}
+		return true;
+	}
+	
+	@Override
+	public Object[] toArray() {
+		Object[] newArray = new Object[this.size];
+		for(int i = 0; i < this.size; i++) {
+			newArray[i] = this.elements[i];
+		}
+		return newArray;
+	}
+	
+	@Override
+	public void forEach(Processor processor) {
+		for(int i = 0; i < this.size; i++) {
+			processor.process(this.elements[i]);
+		}
 	}
 }

@@ -39,7 +39,6 @@ public class LinkedListIndexedCollection extends Collection {
 	 * copied into this newly constructed collection
 	 */
 	public LinkedListIndexedCollection(Collection collection) {
-		this.size = collection.size();
 		this.addAll(collection);
 	}
 	
@@ -114,17 +113,41 @@ public class LinkedListIndexedCollection extends Collection {
 		if(value == null) {
 			throw new NullPointerException();
 		}
-		ListNode node = new ListNode();
-		node = this.last;
-		for(int i = this.size-1; i >= position; i--) {
-			if(i == position) {
-				ListNode newNode = new ListNode();
-				newNode.previous = node.previous;
-				node.previous = newNode;
-				newNode.next = node;
-				newNode.value = value;
+		ListNode newNode = new ListNode();
+		newNode.value = value;
+		newNode.next = null;
+		newNode.previous = null;
+		// if list is empty
+		if(this.size == 0) {
+			this.first = newNode;
+			this.last = newNode;
+		}
+		// if list is not empty
+		else {
+			// if first element need to be added
+			if(position == 0) {
+				newNode.next = this.first;
+				this.first.previous = newNode;
+				this.first = newNode;
 			}
-			node = node.previous;
+			// shifting is not needed because element must be added at the end
+			else if(position == this.size) {
+				newNode.previous = this.last;
+				this.last.next = newNode;
+				this.last = newNode;
+			}
+			// if shifting is needed
+			else {
+				ListNode helpNode = new ListNode();
+				helpNode = this.first;
+				for(int i = 0; i < position; i++) {
+					helpNode = helpNode.next;
+				}
+				newNode.next = helpNode;
+				newNode.previous = helpNode.previous;
+				helpNode.previous.next = newNode;
+				helpNode.previous = newNode;
+			}
 		}
 		this.size += 1;
 	}
@@ -158,21 +181,30 @@ public class LinkedListIndexedCollection extends Collection {
 		}
 		ListNode node = new ListNode();
 		node = this.first;
-		for(int i = 0; i < this.size; i++) {
-			if(i == index) {
-				node.previous.next = node.next;
-				node.next.previous = node.previous;
+
+		if(index == 0) {
+			this.first = node.next;
+		}
+		
+		else {
+			for(int i = 0; i < index-1 && node != null; i++) {
+				node = node.next;
 			}
-			node = node.next;
+			ListNode helpNode = new ListNode();
+			helpNode = node.next.next;
+			node.next = helpNode;
 		}
 		this.size -= 1;
 	}
 	
 	@Override
 	public int size() {
-		int size = 1;
+		if(this.first == null) {
+			return 0;
+		}
 		ListNode node = new ListNode();
-		node.next = this.first;
+		node = this.first;
+		int size = 1;
 		while(node != this.last) {
 			size++;
 			node = node.next;

@@ -1,192 +1,144 @@
 package hr.fer.zemris.java.custom.collections;
 
-
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
-
-@SuppressWarnings("javadoc")
 public class LinkedListIndexedCollectionTest {
 
 	@Test
+	public void testConstructor1() {
+		LinkedListIndexedCollection collection = new LinkedListIndexedCollection();
+		
+		assertEquals(0, collection.size());
+	}
+	
+	@Test
+	public void testConstructor2() {
+		LinkedListIndexedCollection collectionToAdd =
+				new LinkedListIndexedCollection();
+		String kisa = "kisa";
+		String sunce = "sunce";
+		String snijeg = "snijeg";
+		String vjetar = "vjetar";
+		collectionToAdd.add(kisa);
+		collectionToAdd.add(sunce);
+		collectionToAdd.add(snijeg);
+		collectionToAdd.add(vjetar);
+		LinkedListIndexedCollection collectionToCheck =
+				new LinkedListIndexedCollection(collectionToAdd);
+		
+		assertEquals(kisa, collectionToCheck.get(0));
+		assertEquals(sunce, collectionToCheck.get(1));
+		assertEquals(snijeg, collectionToCheck.get(2));
+		assertEquals(vjetar, collectionToCheck.get(3));
+	}
+	
+	@Test
 	public void testAdd() {
-		LinkedListIndexedCollection col1 = new LinkedListIndexedCollection();
-		Integer obj1 = new Integer(5);
-		Integer obj2 = new Integer(3);
-		Integer obj3 = new Integer(10);
-
-		col1.add(obj1);
-		col1.add(obj2);
-		col1.add(obj3);
-
-		assertEquals(col1.get(0), obj1);
-		assertEquals(col1.get(1), obj2);
-		assertEquals(col1.get(2), obj3);
+		LinkedListIndexedCollection collection = new LinkedListIndexedCollection();
+		String kisa = "kisa";
+		String sunce = "sunce";
+		String snijeg = "snijeg";
+		String vjetar = "vjetar";
+		collection.add(kisa);
+		collection.add(sunce);
+		collection.add(snijeg);
+		collection.add(vjetar);
+		
+		assertEquals(kisa, collection.get(0));
+		assertEquals(sunce, collection.get(1));
+		assertEquals(snijeg, collection.get(2));
+		assertEquals(vjetar, collection.get(3));
 	}
 
+	@Test
+	public void testGet() {
+		LinkedListIndexedCollection collection = new LinkedListIndexedCollection();
+		String kisa = "kisa";
+		collection.add(kisa);
+		
+		assertEquals(kisa, collection.get(0));
+	}
+	
+	@Test
+	public void testExceptionGet() {
+		LinkedListIndexedCollection collection = new LinkedListIndexedCollection();
+		
+		assertThrows(IndexOutOfBoundsException.class, () -> {collection.get(-1);});
+	}
+	
+	@Test
+	public void testClear() {
+		LinkedListIndexedCollection collection = new LinkedListIndexedCollection();
+		String kisa = "kisa";
+		String sunce = "sunce";
+		String snijeg = "snijeg";
+		String vjetar = "vjetar";
+		collection.add(kisa);
+		collection.add(sunce);
+		collection.add(snijeg);
+		collection.add(vjetar);
+		collection.clear();
+		
+		assertEquals(collection.size(), 0);
+		assertThrows(IndexOutOfBoundsException.class, () -> {collection.get(2);});
+	}
+	
 	@Test
 	public void testInsert() {
-		LinkedListIndexedCollection col1 = new LinkedListIndexedCollection();
-		Integer obj1 = new Integer(5);
-		Integer obj2 = new Integer(3);
-		Integer obj3 = new Integer(10);
-		Integer obj4 = new Integer(11);
-
-		col1.insert(obj1, 0);
-		col1.insert(obj2, 1);
-		col1.insert(obj3, 1);
-		col1.insert(obj4, 0);
-
-		assertEquals(col1.get(0), obj4);
-		assertEquals(col1.get(1), obj1);
-		assertEquals(col1.get(2), obj3);
-		assertEquals(col1.get(3), obj2);
+		LinkedListIndexedCollection collection = new LinkedListIndexedCollection();
+		String kisa = "kisa";
+		String sunce = "sunce";
+		String snijeg = "snijeg";
+		String vjetar = "vjetar";
+		String oluja = "oluja";
+		collection.add(kisa);
+		collection.insert(sunce, 0);
+		collection.insert(snijeg, 1);
+		collection.add(vjetar);
+		collection.insert(oluja, 3);
+		
+		assertEquals(sunce, collection.get(0));
+		assertEquals(snijeg, collection.get(1));
+		assertEquals(kisa, collection.get(2));
+		assertEquals(oluja, collection.get(3));
+		assertEquals(vjetar, collection.get(4));
 	}
-
+	
+	@Test
+	public void testIndexOf() {
+		LinkedListIndexedCollection collection = new LinkedListIndexedCollection();
+		String kisa = "kisa";
+		String sunce = "sunce";
+		collection.add(kisa);
+		collection.insert(sunce, 0);
+		collection.add(kisa);
+		
+		assertEquals(1, collection.indexOf(kisa));
+	}
+	
 	@Test
 	public void testRemove() {
-		LinkedListIndexedCollection col1 = new LinkedListIndexedCollection();
-		Integer obj1 = new Integer(5);
-		Integer obj2 = new Integer(3);
-		Integer obj3 = new Integer(10);
-		Integer obj4 = new Integer(11);
-
-		col1.add(obj1);
-		col1.add(obj2);
-		col1.add(obj3);
-		col1.add(obj4);
-
-		col1.remove(2);
-		col1.remove(2);
-		col1.remove(0);
-
-		assertEquals(col1.get(0), obj2);
-
-		col1.remove(0);
-
-		assertEquals(col1.size(), 0);
-	}
-
-	public void removeNull() {
-		LinkedListIndexedCollection col1 = new LinkedListIndexedCollection();
+		LinkedListIndexedCollection collection = new LinkedListIndexedCollection();
+		String kisa = "kisa";
+		String sunce = "sunce";
+		String snijeg = "snijeg";
+		String vjetar = "vjetar";
+		String oluja = "oluja";
+		collection.add(kisa);
+		collection.insert(sunce, 0);
+		collection.insert(snijeg, 1);
+		collection.add(vjetar);
+		collection.insert(oluja, 3);
+		collection.remove(0);
+		collection.remove(3);
 		
-		assertThrows(NullPointerException.class, () -> 
-		{col1.remove(0);});
-	}
-
-	@Test
-	public void testAddAll() {
-		LinkedListIndexedCollection col1 = new LinkedListIndexedCollection();
-		Integer obj1 = new Integer(5);
-		Integer obj2 = new Integer(3);
-		Integer obj3 = new Integer(10);
-		Integer obj4 = new Integer(11);
-
-		col1.add(obj1);
-		col1.add(obj2);
-		col1.add(obj3);
-
-		LinkedListIndexedCollection col2 = new LinkedListIndexedCollection(col1);
-
-		col2.add(obj4);
-
-		assertEquals(col2.get(0), obj1);
-		assertEquals(col2.get(1), obj2);
-		assertEquals(col2.get(2), obj3);
-		assertEquals(col2.get(3), obj4);
-	}
-
-	@Test
-	public void containsTest() {
-		LinkedListIndexedCollection col1 = new LinkedListIndexedCollection();
-		Integer obj1 = new Integer(5);
-		assertEquals(col1.contains(obj1), false);
-	}
-
-	@Test
-	public void containsEmpty() {
-		LinkedListIndexedCollection col1 = new LinkedListIndexedCollection();
-		assertEquals(col1.contains(new Integer(5)), false);
-	}
-
-	@Test
-	public void containsElementInCollection() {
-		LinkedListIndexedCollection col1 = new LinkedListIndexedCollection();
-		Integer obj1 = new Integer(5);
-		Integer obj2 = new Integer(3);
-		Integer obj3 = new Integer(10);
-
-		col1.add(obj1);
-		col1.add(obj2);
-		col1.add(obj3);
-
-		assertEquals(col1.contains(obj3), true);
-	}
-
-	@Test
-	public void removeIndexOutOfBoundsUpper() {
-		LinkedListIndexedCollection col1 = new LinkedListIndexedCollection();
-		Integer obj1 = new Integer(5);
-
-		col1.add(obj1);
-		
-		assertThrows(IndexOutOfBoundsException.class, () -> 
-		{col1.remove(2);});
-	}
-
-	@Test
-	public void indexOfNull() {
-		LinkedListIndexedCollection col1 = new LinkedListIndexedCollection();
-		assertEquals(col1.indexOf(null), -1);
-	}
-
-	@Test
-	public void indexOfEmptyCollection() {
-		LinkedListIndexedCollection col1 = new LinkedListIndexedCollection();
-		Integer obj1 = new Integer(5);
-		assertEquals(col1.indexOf(obj1), -1);
-	}
-
-	@Test
-	public void indexOfElementInCollection() {
-		LinkedListIndexedCollection col1 = new LinkedListIndexedCollection();
-		Integer obj1 = new Integer(5);
-		Integer obj2 = new Integer(3);
-		Integer obj3 = new Integer(10);
-
-		col1.add(obj1);
-		col1.add(obj2);
-		col1.add(obj3);
-
-		assertEquals(col1.indexOf(obj1), 0);
-		assertEquals(col1.indexOf(obj2), 1);
-		assertEquals(col1.indexOf(obj3), 2);
-	}
-
-	@Test
-	public void indexofElementNotInCollection() {
-		LinkedListIndexedCollection col1 = new LinkedListIndexedCollection();
-		Integer obj1 = new Integer(5);
-		Integer obj2 = new Integer(3);
-		Integer obj3 = new Integer(10);
-		Integer obj4 = new Integer(11);
-
-		col1.add(obj1);
-		col1.add(obj2);
-		col1.add(obj3);
-
-		assertEquals(col1.indexOf(obj4), -1);
-	}
-
-	@Test
-	public void removeIndexOutOfBoundsLower() {
-		LinkedListIndexedCollection col1 = new LinkedListIndexedCollection();
-		Integer obj1 = new Integer(5);
-
-		col1.add(obj1);
-
-		assertThrows(IndexOutOfBoundsException.class, () -> 
-		{col1.remove(-1);});
+		// collection should look like: snijeg, kisa, oluja
+		assertEquals(-1, collection.indexOf(sunce));
+		assertEquals(-1, collection.indexOf(vjetar));
+		assertEquals(snijeg, collection.get(0));
+		assertEquals(kisa, collection.get(1));
+		assertEquals(oluja, collection.get(2));
 	}
 }

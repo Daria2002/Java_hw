@@ -10,6 +10,31 @@ class ComplexNumberTest {
 
 	private double tolerance = 0.00001;
 	
+
+	@Test
+	public void mulDivTest() {
+		ComplexNumber c1 = new ComplexNumber(1,1);
+		ComplexNumber c2 = new ComplexNumber(-2.71,-3.15);
+		
+		ComplexNumber c3 = c1.div(c2);
+		c3 = c3.mul(c2);
+		
+		assertEquals(c3.getImaginary(), 1, 0.001);
+		assertEquals(c3.getReal(), 1, 0.001);
+	}
+
+	@Test
+	public void complexRootTest() {
+		ComplexNumber c1 = ComplexNumber.fromMagnitudeAndAngle(2, 2);
+		ComplexNumber[] c2 = c1.root(2);
+		
+		assertEquals(c2[0].getMagnitude(), Math.sqrt(2), 0.001);
+		assertEquals(c2[0].getAngle(), 1, 0.001);
+		
+		assertEquals(c2[1].getMagnitude(), Math.sqrt(2), 0.001);
+		assertEquals(c2[1].getAngle(), 1+2*Math.PI/2, 0.001);
+	}
+	
 	@Test
 	void testConstructor() {
 		ComplexNumber complexNumber = new ComplexNumber(1.3, 2.7);
@@ -72,7 +97,8 @@ class ComplexNumberTest {
 		ComplexNumber c7 = ComplexNumber.parse("1-i");
 		ComplexNumber c8 = ComplexNumber.parse("1+i");
 		ComplexNumber c9 = ComplexNumber.parse("-i");
-		//ComplexNumber c10 = ComplexNumber.parse("-1");
+		ComplexNumber c10 = ComplexNumber.parse("-1");
+		ComplexNumber c11 = ComplexNumber.parse("0");
 		
 		assertEquals(c1.getReal(), 3.51, 0.001);
 		assertEquals(c2.getReal(), -3.511, 0.001);
@@ -87,8 +113,10 @@ class ComplexNumberTest {
 		assertEquals(c8.getImaginary(), 1, 0.001);
 		assertEquals(c9.getReal(), 0, 0.001);
 		assertEquals(c9.getImaginary(), -1, 0.001);
-		//assertEquals(c10.getReal(), -1, 0.001);
-		//assertEquals(c10.getImaginary(), 0, 0.001);
+		assertEquals(c10.getReal(), -1, 0.001);
+		assertEquals(c10.getImaginary(), 0, 0.001);
+		assertEquals(c11.getReal(), 0, 0.001);
+		assertEquals(c11.getImaginary(), 0, 0.001);
 	}
 	
 	@Test
@@ -126,17 +154,6 @@ class ComplexNumberTest {
 		assertEquals(c3.getReal(), 2, 0.001);
 	}
 	
-	@Test
-	public void mulDivTest() {
-		ComplexNumber c1 = new ComplexNumber(1,1);
-		ComplexNumber c2 = new ComplexNumber(-2.71,-3.15);
-		
-		ComplexNumber c3 = c1.div(c2);
-		c3 = c3.mul(c2);
-		
-		assertEquals(c3.getImaginary(), 1, 0.001);
-		assertEquals(c3.getReal(), 1, 0.001);
-	}
 	
 	@Test
 	public void divisionByZeroTest() {
@@ -161,17 +178,6 @@ class ComplexNumberTest {
 		assertThrows(IllegalArgumentException.class, () -> {ComplexNumber c2 = c1.power(-2);});
 	}
 	
-	@Test
-	public void complexRootTest() {
-		ComplexNumber c1 = ComplexNumber.fromMagnitudeAndAngle(2, 2);
-		ComplexNumber[] c2 = c1.root(2);
-		
-		assertEquals(c2[0].getMagnitude(), Math.sqrt(2), 0.001);
-		assertEquals(c2[0].getAngle(), 1, 0.001);
-		
-		assertEquals(c2[1].getMagnitude(), Math.sqrt(2), 0.001);
-		assertEquals(c2[1].getAngle(), 1+2*Math.PI/2, 0.001);
-	}
 	
 	@Test
 	public void complexRootExceptionTest() {

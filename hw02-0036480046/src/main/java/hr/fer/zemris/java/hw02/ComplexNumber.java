@@ -82,42 +82,51 @@ public class ComplexNumber {
 			// if + is between imaginary and real number
 			if('+' == (charArray[i]) && helpString.length() != 0) {
 				real = Double.parseDouble(helpString.toString());
+				if(helpNegative) {
+					real *= (-1);
+				}
+				helpNegative = false;
 				realAdded = true;
 				helpString = new StringBuilder();
 			}
 			// if minus is between imaginary and real number
-			else if('-' == (charArray[i]) && helpString.length() != 0) {
+			else if('-' == (charArray[i]) && helpString.length() > 0) {
 				real = Double.parseDouble(helpString.toString());
 				realAdded = true;
 				helpString = new StringBuilder();
 				imaginaryNegative = true;
 				if(helpNegative) {
+					real *= (-1);
 					realNegative = true;
 				}
-				helpNegative = false;
+				helpNegative = true;
 			}
 			// if + is before first number
-			else if("+".equals(charArray[i]) && helpString.length() == 0) {
+			else if('+' == (charArray[i]) && helpString.length() == 0) {
 				continue;
 			}
 			// if minus is before first number
-			else if("-".equals(charArray[i]) && helpString.length() == 0) {
+			else if('-' == (charArray[i]) && helpString.length() == 0) {
 				helpNegative = true;
+				continue;
 			}
 			// if "i" is after number
 			else if('i' == (charArray[i])) {
+				// if nothing stands before i
 				if(helpString.length() < 1) {
 					imaginary = Double.parseDouble("1");
-					continue;
 				}
-				if(imaginaryAdded) {
+				else if(imaginaryAdded) {
 					throw new IllegalArgumentException("Enter complex number in "
 							+ "format a+bi.");
 				}
-				imaginary = Double.parseDouble(helpString.toString());
+				else if(helpString.length() >= 1){
+					imaginary = Double.parseDouble(helpString.toString());
+				}
 				imaginaryAdded = true;
 				helpString = new StringBuilder();
 				if(helpNegative) {
+					imaginary *= (-1);
 					imaginaryNegative = true;
 				}
 				helpNegative = false;
@@ -135,15 +144,11 @@ public class ComplexNumber {
 			real = Double.parseDouble(helpString.toString());
 			realAdded = true;
 			helpString = new StringBuilder();
+			if(helpNegative) {
+				real *= (-1);
+			}
 		}
-		
-		if(imaginaryNegative) {
-			imaginary *= (-1);
-		}
-		if(realNegative) {
-			real *= (-1);
-		}
-		
+
 		ComplexNumber complexNumber = new ComplexNumber(real, imaginary);
 		
 		return complexNumber;
@@ -188,7 +193,7 @@ public class ComplexNumber {
 	 */
 	public ComplexNumber add(ComplexNumber c) {
 		if(c == null) {
-			throw new IllegalArgumentException("Can't operate with null.");
+			throw new NullPointerException("Can't operate with null.");
 		}
 		double real = this.real + c.real;
 		double imaginary = this.imaginary + c.imaginary;
@@ -204,7 +209,7 @@ public class ComplexNumber {
 	 */
 	public ComplexNumber sub(ComplexNumber c) {
 		if(c == null) {
-			throw new IllegalArgumentException("Can't operate with null.");
+			throw new NullPointerException("Can't operate with null.");
 		}
 		double real = this.real - c.real;
 		double imaginary = this.imaginary - c.imaginary;
@@ -220,7 +225,7 @@ public class ComplexNumber {
 	 */
 	public ComplexNumber mul(ComplexNumber c) {
 		if(c == null) {
-			throw new IllegalArgumentException("Can't operate with null.");
+			throw new NullPointerException("Can't operate with null.");
 		}
 		double real = this.real * c.real +
 				this.imaginary * c.imaginary;
@@ -238,7 +243,7 @@ public class ComplexNumber {
 	 */
 	public ComplexNumber div(ComplexNumber c) {
 		if(c == null) {
-			throw new IllegalArgumentException("Can't operate with null.");
+			throw new NullPointerException("Can't operate with null.");
 		}
 		if(c.imaginary == 0 && c.real == 0) {
 			throw new IllegalArgumentException("Division by 0.");

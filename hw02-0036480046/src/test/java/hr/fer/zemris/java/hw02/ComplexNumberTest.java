@@ -1,4 +1,4 @@
-package hr.fer.zemris.java.custom.collections;
+package hr.fer.zemris.java.hw02;
 
 import static org.junit.jupiter.api.Assertions.*;
 

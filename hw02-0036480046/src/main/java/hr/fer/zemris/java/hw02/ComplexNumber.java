@@ -74,17 +74,21 @@ public class ComplexNumber {
 		boolean helpNegative = false;
 		double real = 0;
 		double imaginary = 0;
+		
 		for(int i = 0; i < charArray.length; i++) {
 			if(realAdded && imaginaryAdded) {
 				throw new IllegalArgumentException("Enter complex number in"
 						+ " format a+bi.");
 			}
+			
 			// if + is between imaginary and real number
-			if('+' == (charArray[i]) && helpString.length() != 0) {
+			if('+' == (charArray[i]) && helpString.length() > 0) {
 				real = Double.parseDouble(helpString.toString());
+				
 				if(helpNegative) {
 					real *= (-1);
 				}
+				
 				helpNegative = false;
 				realAdded = true;
 				helpString = new StringBuilder();
@@ -95,10 +99,12 @@ public class ComplexNumber {
 				realAdded = true;
 				helpString = new StringBuilder();
 				imaginaryNegative = true;
+				
 				if(helpNegative) {
 					real *= (-1);
 					realNegative = true;
 				}
+				
 				helpNegative = true;
 			}
 			// if + is before first number
@@ -112,23 +118,25 @@ public class ComplexNumber {
 			}
 			// if "i" is after number
 			else if('i' == (charArray[i])) {
-				// if nothing stands before i
-				if(helpString.length() < 1) {
-					imaginary = Double.parseDouble("1");
-				}
-				else if(imaginaryAdded) {
+				if(imaginaryAdded) {
 					throw new IllegalArgumentException("Enter complex number in "
 							+ "format a+bi.");
+				}
+				// if nothing stands before i
+				else if(helpString.length() < 1) {
+					imaginary = Double.parseDouble("1");
 				}
 				else if(helpString.length() >= 1){
 					imaginary = Double.parseDouble(helpString.toString());
 				}
 				imaginaryAdded = true;
 				helpString = new StringBuilder();
+				
 				if(helpNegative) {
 					imaginary *= (-1);
 					imaginaryNegative = true;
 				}
+				
 				helpNegative = false;
 			}
 			else {
@@ -141,6 +149,7 @@ public class ComplexNumber {
 				throw new IllegalArgumentException("Enter complex number in "
 						+ "format a+bi.");
 			}
+			
 			real = Double.parseDouble(helpString.toString());
 			realAdded = true;
 			helpString = new StringBuilder();
@@ -183,7 +192,11 @@ public class ComplexNumber {
 	 * @return angle of complex number
 	 */
 	public double getAngle() {
-		return Math.atan2(this.imaginary,this.real);
+		double angle = Math.atan2(this.imaginary,this.real);
+		if(angle < 0) {
+			angle += 2*Math.PI;
+		}
+		return angle;
 	}
 	
 	/**
@@ -195,6 +208,7 @@ public class ComplexNumber {
 		if(c == null) {
 			throw new NullPointerException("Can't operate with null.");
 		}
+		
 		double real = this.real + c.real;
 		double imaginary = this.imaginary + c.imaginary;
 		ComplexNumber result = new ComplexNumber(real, imaginary);
@@ -211,6 +225,7 @@ public class ComplexNumber {
 		if(c == null) {
 			throw new NullPointerException("Can't operate with null.");
 		}
+		
 		double real = this.real - c.real;
 		double imaginary = this.imaginary - c.imaginary;
 		ComplexNumber result = new ComplexNumber(real, imaginary);
@@ -227,7 +242,8 @@ public class ComplexNumber {
 		if(c == null) {
 			throw new NullPointerException("Can't operate with null.");
 		}
-		double real = this.real * c.real +
+		
+		double real = this.real * c.real -
 				this.imaginary * c.imaginary;
 		double imaginary = this.imaginary * c.real +
 				this.real * c.imaginary;
@@ -245,16 +261,18 @@ public class ComplexNumber {
 		if(c == null) {
 			throw new NullPointerException("Can't operate with null.");
 		}
+		
 		if(c.imaginary == 0 && c.real == 0) {
 			throw new IllegalArgumentException("Division by 0.");
 		}
+		
 		double real = (this.real * c.real + 
 				this.imaginary * c.imaginary) /
-				(Math.pow(this.getMagnitude(), 2));
+				(Math.pow(c.getReal(), 2) + Math.pow(c.getImaginary(), 2));
 		
 		double imaginary = (-this.real * c.imaginary + 
 				this.imaginary * c.real) /
-				(Math.pow(this.getMagnitude(), 2));
+				(Math.pow(c.getReal(), 2) + Math.pow(c.getImaginary(), 2));
 		
 		ComplexNumber complexNumber = new ComplexNumber(real, imaginary);
 		
@@ -271,6 +289,7 @@ public class ComplexNumber {
 			throw new IllegalArgumentException("n must be larger or equal"
 					+ " to 0 for power operation");
 		}
+		
 		double real = Math.pow(this.getMagnitude(), n) * Math.cos(n * this.getAngle());
 		double imaginary = Math.pow(this.getMagnitude(), n) * Math.sin(n * this.getAngle());
 		ComplexNumber complexNumber = new ComplexNumber(real, imaginary);
@@ -291,13 +310,11 @@ public class ComplexNumber {
 		
 		ComplexNumber[] complexNumbers = new ComplexNumber[n];
 		
-		double real;
-		double imaginary;
 		double magnitudeRoot = Math.pow(this.getMagnitude(), 1./n);
 		
 		for(int i = 0; i < n; i++) { 
-			real =  magnitudeRoot * Math.cos((this.getAngle() + 2*i*Math.PI)/n);
-			imaginary = magnitudeRoot * Math.sin((this.getAngle() + 2*i*Math.PI)/n);
+			double real =  magnitudeRoot * Math.cos((this.getAngle() + 2*i*Math.PI)/n);
+			double imaginary = magnitudeRoot * Math.sin((this.getAngle() + 2*i*Math.PI)/n);
 			ComplexNumber complexNumber = new ComplexNumber(real, imaginary);
 			complexNumbers[i] = complexNumber;
 		}
@@ -309,8 +326,16 @@ public class ComplexNumber {
 	 * Create string out of complex number
 	 */
 	public String toString() {
-		String complexNumberString = Double.toString(this.real) + "+" +
-				Double.toString(this.imaginary) + "i";
+		String complexNumberString = new String();
+		if(this.imaginary >= 0) {
+			complexNumberString = Double.toString(this.real) + "+" +
+					Double.toString(this.imaginary) + "i";
+		}
+		else if(this.imaginary < 0) {
+			complexNumberString = Double.toString(this.real) +
+					Double.toString(this.imaginary) + "i";
+		}
+		
 		return complexNumberString;
 		
 	}

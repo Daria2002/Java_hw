@@ -6,22 +6,9 @@ import org.junit.jupiter.api.Test;
 
 import hr.fer.zemris.java.hw02.ComplexNumber;
 
-class ComplexNumberTest {
+public class ComplexNumberTest {
 
 	private double tolerance = 0.00001;
-	
-
-	@Test
-	public void mulDivTest() {
-		ComplexNumber c1 = new ComplexNumber(1,1);
-		ComplexNumber c2 = new ComplexNumber(-2.71,-3.15);
-		
-		ComplexNumber c3 = c1.div(c2);
-		c3 = c3.mul(c2);
-		
-		assertEquals(c3.getImaginary(), 1, 0.001);
-		assertEquals(c3.getReal(), 1, 0.001);
-	}
 
 	@Test
 	public void complexRootTest() {
@@ -63,168 +50,98 @@ class ComplexNumberTest {
 	}
 	
 	@Test
-	public void fromRealTest() {
-		ComplexNumber c1 = ComplexNumber.fromReal(1.2);
-		
-		assertEquals(c1.getImaginary(), 0, 0.001);
-		assertEquals(c1.getReal(), 1.2, 0.001);
+	void testParse() {
+		assertEquals("0.0+1.0i", ComplexNumber.parse("i").toString());
+		assertEquals("1.0+0.0i", ComplexNumber.parse("1").toString());
+		assertEquals("0.0-1.0i", ComplexNumber.parse("-i").toString());
+		assertEquals("-1.0+0.0i", ComplexNumber.parse("-1").toString());
+		assertEquals("2.758+0.0i", ComplexNumber.parse("2.758").toString());
+		assertEquals("14.78+54.3i", ComplexNumber.parse("14.78+54.3i").toString());
+		assertEquals("-7.2-1.3i", ComplexNumber.parse("-7.2-1.3i").toString());
+		assertEquals("-9.4+3.2i", ComplexNumber.parse("-9.4+3.2i").toString());
+		assertEquals("351.0+0.0i", ComplexNumber.parse("351").toString());
+		assertEquals("0.0+0.0i", ComplexNumber.parse("0").toString());
+		assertEquals("0.0+1.0i", ComplexNumber.parse("i+0").toString());
+		assertThrows(IllegalArgumentException.class, 
+				() -> {ComplexNumber.parse("i+i").toString();});
+		assertThrows(IllegalArgumentException.class, 
+				() -> {ComplexNumber.parse("hello").toString();});
 	}
 	
 	@Test
-	public void fromImaginaryTest() {
-		ComplexNumber c1 = ComplexNumber.fromImaginary(1.2);
-		
-		assertEquals(c1.getImaginary(), 1.2, 0.001);
-		assertEquals(c1.getReal(), 0, 0.001);
+	void testgetReal() {
+		ComplexNumber complexNumber = new ComplexNumber(-1.78, 1.98);
+		assertEquals(complexNumber.getReal(), -1.78);
 	}
 	
 	@Test
-	public void fromAmpAndAngleTest() {
-		ComplexNumber c1 = ComplexNumber.fromMagnitudeAndAngle(1, Math.PI);
-	
-		assertEquals(c1.getMagnitude(), 1, 0.001);
-		assertEquals(c1.getAngle(), Math.PI, 0.001);
+	void testgetImaginary() {
+		ComplexNumber complexNumber = new ComplexNumber(-1.78, 1.98);
+		assertEquals(complexNumber.getImaginary(), 1.98);
 	}
 	
 	@Test
-	public void parseValidString() {
-		ComplexNumber c1 = ComplexNumber.parse("3.51");
-		ComplexNumber c2 = ComplexNumber.parse("-3.511");
-		ComplexNumber c3 = ComplexNumber.parse("-2.51i");
-		ComplexNumber c4 = ComplexNumber.parse("i");
-		ComplexNumber c5 = ComplexNumber.parse("1");
-		ComplexNumber c6 = ComplexNumber.parse("-2.71-3.15i");
-		ComplexNumber c7 = ComplexNumber.parse("1-i");
-		ComplexNumber c8 = ComplexNumber.parse("1+i");
-		ComplexNumber c9 = ComplexNumber.parse("-i");
-		ComplexNumber c10 = ComplexNumber.parse("-1");
-		ComplexNumber c11 = ComplexNumber.parse("0");
-		
-		assertEquals(c1.getReal(), 3.51, 0.001);
-		assertEquals(c2.getReal(), -3.511, 0.001);
-		assertEquals(c3.getImaginary(), -2.51, 0.001);
-		assertEquals(c4.getImaginary(), 1, 0.001);
-		assertEquals(c5.getReal(), 1, 0.001);
-		assertEquals(c6.getReal(), -2.71, 0.001);
-		assertEquals(c6.getImaginary(), -3.15, 0.001);
-		assertEquals(c7.getReal(), 1, 0.001);
-		assertEquals(c7.getImaginary(), -1, 0.001);
-		assertEquals(c8.getReal(), 1, 0.001);
-		assertEquals(c8.getImaginary(), 1, 0.001);
-		assertEquals(c9.getReal(), 0, 0.001);
-		assertEquals(c9.getImaginary(), -1, 0.001);
-		assertEquals(c10.getReal(), -1, 0.001);
-		assertEquals(c10.getImaginary(), 0, 0.001);
-		assertEquals(c11.getReal(), 0, 0.001);
-		assertEquals(c11.getImaginary(), 0, 0.001);
+	void testGetMagnitude() {
+		ComplexNumber complexNumber = new ComplexNumber(-1, 0);
+		assertEquals(complexNumber.getMagnitude(), 1);
 	}
 	
 	@Test
-	public void parseStringTooMuchElements() {
-		assertThrows(IllegalArgumentException.class, () -> {ComplexNumber c1 = ComplexNumber.parse("3.51+5.12i-3");});		
+	void testGetAngle() {
+		ComplexNumber complexNumber = new ComplexNumber(-1, 1);
+		assertEquals(complexNumber.getAngle(), 3*Math.PI/4, tolerance);
 	}
 	
 	@Test
-	public void parseStringTwoReal() {
-		assertThrows(IllegalArgumentException.class, () -> {ComplexNumber c1 = ComplexNumber.parse("3.51-3");});		
+	void testAdd() {
+		ComplexNumber complexNumber1 = new ComplexNumber(-1, 8);
+		ComplexNumber complexNumber2 = new ComplexNumber(5, 8);
+		assertEquals(complexNumber1.add(complexNumber2).toString(), "4.0+16.0i");
 	}
 	
 	@Test
-	public void parseStringTwoImag() {
-		assertThrows(IllegalArgumentException.class, () -> {ComplexNumber c1 = ComplexNumber.parse("3.51i-3i");});	
+	void testSub() {
+		ComplexNumber complexNumber1 = new ComplexNumber(-1, 8);
+		ComplexNumber complexNumber2 = new ComplexNumber(5, 8);
+		assertEquals(complexNumber1.sub(complexNumber2).toString(), "-6.0+0.0i");
 	}
 	
 	@Test
-	public void addTest() {
-		ComplexNumber c1 = ComplexNumber.fromReal(3.51);
-		ComplexNumber c2 = ComplexNumber.fromReal(-3.51);
-		
-		ComplexNumber c3 = c1.add(c2);
-		assertEquals(c3.getImaginary(), 0, 0.001);
-		assertEquals(c3.getReal(), 0, 0.001);
+	void testMul() {
+		ComplexNumber complexNumber1 = new ComplexNumber(-1, 8);
+		ComplexNumber complexNumber2 = new ComplexNumber(5, 8);
+		assertEquals(complexNumber1.mul(complexNumber2).toString(), "-69.0+32.0i");
+	}
+
+	@Test
+	void testDiv() {
+		ComplexNumber complexNumber1 = new ComplexNumber(-1, 8);
+		ComplexNumber complexNumber2 = new ComplexNumber(5, 8);
+		assertEquals(complexNumber1.div(complexNumber2).getImaginary(), 0.53932, tolerance);
+		assertEquals(complexNumber1.div(complexNumber2).getReal(), 0.66292, tolerance);
 	}
 	
 	@Test
-	public void subTest() {
-		ComplexNumber c1 = new ComplexNumber(1,1);
-		ComplexNumber c2 = new ComplexNumber(1,-1);
-		
-		ComplexNumber c3 = c1.add(c2);
-		assertEquals(c3.getImaginary(), 0, 0.001);
-		assertEquals(c3.getReal(), 2, 0.001);
-	}
-	
-	
-	@Test
-	public void divisionByZeroTest() {
-		ComplexNumber c1 = new ComplexNumber(1,1);
-		
-		assertThrows(IllegalArgumentException.class, () -> {c1.div(ComplexNumber.fromImaginary(0));});	
-	}
-	
-	@Test 
-	public void complexPowerTest() {
-		ComplexNumber c1 = ComplexNumber.fromMagnitudeAndAngle(3, Math.PI);
-		ComplexNumber c2 = c1.power(2);
-		
-		assertEquals(c2.getMagnitude(), 9, 0.001);
-		assertEquals(c2.getAngle(), 0, 0.001);	
+	void testPower() {
+		ComplexNumber complexNumber1 = new ComplexNumber(-7, 8);
+		assertEquals(complexNumber1.power(3).getImaginary(), 664.0, tolerance);
+		assertEquals(complexNumber1.power(3).getReal(), 1000.99999, tolerance);
 	}
 	
 	@Test
-	public void rootExceptionTest() {
-		ComplexNumber c1 = ComplexNumber.fromMagnitudeAndAngle(3, Math.PI);
-		
-		assertThrows(IllegalArgumentException.class, () -> {ComplexNumber c2 = c1.power(-2);});
-	}
-	
-	
-	@Test
-	public void complexRootExceptionTest() {
-		ComplexNumber c1 = ComplexNumber.fromMagnitudeAndAngle(3, Math.PI);
-		
-		assertThrows(IllegalArgumentException.class, () -> {ComplexNumber[] c2 = c1.root(0);});
+	void testRoot() {
+		ComplexNumber complexNumber1 = new ComplexNumber(-7, 8);
+		assertEquals(complexNumber1.root(3)[0].getImaginary(), 1.51988, tolerance);
+		assertEquals(complexNumber1.root(3)[0].getReal(), 1.58887, tolerance);
+		assertEquals(complexNumber1.root(3)[1].getImaginary(), 0.61606, tolerance);
+		assertEquals(complexNumber1.root(3)[1].getReal(), -2.11069, tolerance);
+		assertEquals(complexNumber1.root(3)[2].getImaginary(), -2.13595, tolerance);
+		assertEquals(complexNumber1.root(3)[2].getReal(), 0.52182, tolerance);
 	}
 	
 	@Test
-	public void addNullException() {
-		ComplexNumber c1 = ComplexNumber.fromMagnitudeAndAngle(3, Math.PI);
-			
-		assertThrows(IllegalArgumentException.class, () -> {c1.add(null);});
+	void testToString() {
+		ComplexNumber complexNumber1 = new ComplexNumber(-7, 8);
+		assertEquals(complexNumber1.toString(), "-7.0+8.0i");
 	}
-	
-	@Test
-	public void subNullException() {
-		ComplexNumber c1 = ComplexNumber.fromMagnitudeAndAngle(3, Math.PI);
-		assertThrows(IllegalArgumentException.class, () -> {c1.sub(null);});
-		
-	}
-	
-	@Test
-	public void mulNullException() {
-		ComplexNumber c1 = ComplexNumber.fromMagnitudeAndAngle(3, Math.PI);
-		assertThrows(IllegalArgumentException.class, () -> {c1.mul(null);});
-		
-	}
-	
-	@Test
-	public void divNullException() {
-		ComplexNumber c1 = ComplexNumber.fromMagnitudeAndAngle(3, Math.PI);
-		assertThrows(IllegalArgumentException.class, () -> {c1.div(null);});
-;		
-	}
-	
-	@Test
-	public void toStringTest() {
-		ComplexNumber c1 = ComplexNumber.parse("i");
-		assertEquals(c1.toString(),"0.0+1.0i");
-	}
-	// TODO: poseban sučaj ako je i ili -i, 0, 1 itd. 
-	// replace razmak s praznim mjestom
-	@Test
-	public void toStringTestZero() {
-		ComplexNumber c1 = ComplexNumber.parse("0");
-		assertEquals(c1.toString(), "0.0+0.0i");
-	}
-	
 }

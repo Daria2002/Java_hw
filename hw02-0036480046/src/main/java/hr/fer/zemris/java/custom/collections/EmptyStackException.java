@@ -18,7 +18,7 @@ public class EmptyStackException extends RuntimeException {
 	
 	/**
 	 * Constructor that sets message.
-	 * @param message error message.
+	 * @param message message is error message.
 	 */
 	public EmptyStackException(String message) {
 		super(message);
@@ -26,7 +26,7 @@ public class EmptyStackException extends RuntimeException {
 	
 	/**
 	 * Constructor that sets throwable object
-	 * @param cause throwable object
+	 * @param cause cause is throwable object
 	 */
 	public EmptyStackException(Throwable cause) {
 		super(cause);
@@ -34,8 +34,8 @@ public class EmptyStackException extends RuntimeException {
 	
 	/**
 	 * Constructor that sets throwable object and error message.
-	 * @param message error message
-	 * @param cause throwable object
+	 * @param message message is error message
+	 * @param cause cause is throwable object
 	 */
 	public EmptyStackException(String message, Throwable cause) {
 		super(message, cause);

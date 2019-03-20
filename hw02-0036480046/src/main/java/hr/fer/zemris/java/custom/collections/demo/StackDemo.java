@@ -23,11 +23,10 @@ public class StackDemo {
 		String[] splitExpression = expression.split(" ");
 		ObjectStack objectStack = new ObjectStack();
 		
-		int number;
 		for(int i = 0; i < splitExpression.length; i++) {
 			
 			try {
-				number = Integer.parseInt(splitExpression[i]);
+				int number = Integer.parseInt(splitExpression[i]);
 				objectStack.push(number);
 				
 			} catch (NumberFormatException e) {
@@ -76,8 +75,7 @@ public class StackDemo {
 		
 		if(objectStack.size() != 1) {
 			System.out.println("Invalid expression.");
-		}
-		else {
+		} else {
 			System.out.println("Expression evaluates to " + objectStack.pop() + ".");
 		}
 	}

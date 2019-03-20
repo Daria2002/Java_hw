@@ -8,7 +8,6 @@ package hr.fer.zemris.java.hw02;
  *
  */
 public class ComplexNumber {
-	
 	// after initialization real and imaginary are unmodifiable
 	private final double real;
 	private final double imaginary;
@@ -30,8 +29,7 @@ public class ComplexNumber {
 	 * @return complex number created from real number
 	 */
 	public static ComplexNumber fromReal(double real) {
-		ComplexNumber complexNumber = new ComplexNumber(real, 0);
-		return complexNumber;
+		return new ComplexNumber(real, 0);
 	}
 	
 	/**
@@ -40,8 +38,7 @@ public class ComplexNumber {
 	 * @return complex number created from imaginary number
 	 */
 	public static ComplexNumber fromImaginary(double imaginary) {
-		ComplexNumber complexNumber = new ComplexNumber(0, imaginary);
-		return complexNumber;
+		return new ComplexNumber(0, imaginary);
 	}
 	
 	/**
@@ -54,9 +51,8 @@ public class ComplexNumber {
 			double angle) {
 		double real = magnitude * Math.cos(angle);
 		double imaginary = magnitude * Math.sin(angle);
-		ComplexNumber complexNumber = new ComplexNumber(real, imaginary);
-		
-		return complexNumber;
+
+		return new ComplexNumber(real, imaginary);
 	}
 	
 	/**
@@ -65,17 +61,16 @@ public class ComplexNumber {
 	 * @return complex number
 	 */
 	public static ComplexNumber parse(String s) {
-		char[] charArray = s.toCharArray();
 		StringBuilder helpString = new StringBuilder();
 		boolean realAdded = false;
 		boolean	imaginaryAdded = false;
-		boolean realNegative = false;
-		boolean imaginaryNegative = false;
 		boolean helpNegative = false;
 		double real = 0;
 		double imaginary = 0;
+		char[] charArray = s.toCharArray();
 		
 		for(int i = 0; i < charArray.length; i++) {
+			
 			if(realAdded && imaginaryAdded) {
 				throw new IllegalArgumentException("Enter complex number in"
 						+ " format a+bi.");
@@ -84,62 +79,55 @@ public class ComplexNumber {
 			// if + is between imaginary and real number
 			if('+' == (charArray[i]) && helpString.length() > 0) {
 				real = Double.parseDouble(helpString.toString());
-				
 				if(helpNegative) {
 					real *= (-1);
 				}
-				
 				helpNegative = false;
 				realAdded = true;
 				helpString = new StringBuilder();
-			}
-			// if minus is between imaginary and real number
-			else if('-' == (charArray[i]) && helpString.length() > 0) {
+				
+			} else if('-' == (charArray[i]) && helpString.length() > 0) {
+				// if minus is between imaginary and real number
 				real = Double.parseDouble(helpString.toString());
 				realAdded = true;
 				helpString = new StringBuilder();
-				imaginaryNegative = true;
-				
 				if(helpNegative) {
 					real *= (-1);
-					realNegative = true;
 				}
+				helpNegative = true;
 				
-				helpNegative = true;
-			}
-			// if + is before first number
-			else if('+' == (charArray[i]) && helpString.length() == 0) {
+			} else if('+' == (charArray[i]) && helpString.length() == 0) {
+				// if + is before first number
 				continue;
-			}
-			// if minus is before first number
-			else if('-' == (charArray[i]) && helpString.length() == 0) {
+				
+			} else if('-' == (charArray[i]) && helpString.length() == 0) {
+				// if minus is before first number
 				helpNegative = true;
 				continue;
-			}
-			// if "i" is after number
-			else if('i' == (charArray[i])) {
+				
+			} else if('i' == (charArray[i])) {
+				// if "i" is after number
 				if(imaginaryAdded) {
 					throw new IllegalArgumentException("Enter complex number in "
 							+ "format a+bi.");
-				}
-				// if nothing stands before i
-				else if(helpString.length() < 1) {
+					
+				} else if(helpString.length() < 1) {
+					// if nothing stands before i
 					imaginary = Double.parseDouble("1");
-				}
-				else if(helpString.length() >= 1){
+					
+				} else if(helpString.length() >= 1){
 					imaginary = Double.parseDouble(helpString.toString());
 				}
+				
 				imaginaryAdded = true;
 				helpString = new StringBuilder();
 				
 				if(helpNegative) {
 					imaginary *= (-1);
-					imaginaryNegative = true;
 				}
-				
 				helpNegative = false;
-			}
-			else {
+				
+			} else {
 				helpString.append(charArray[i]);
 			}
 		}
@@ -157,10 +145,8 @@ public class ComplexNumber {
 				real *= (-1);
 			}
 		}
-
-		ComplexNumber complexNumber = new ComplexNumber(real, imaginary);
 		
-		return complexNumber;
+		return new ComplexNumber(real, imaginary);
 	}
 	
 	/**
@@ -193,15 +179,13 @@ public class ComplexNumber {
 	 */
 	public double getAngle() {
 		double angle = Math.atan2(this.imaginary,this.real);
-		if(angle < 0) {
-			angle += 2*Math.PI;
-		}
-		return angle;
+		
+		return (angle < 0 ? angle + 2*Math.PI : angle);
 	}
 	
 	/**
 	 * Adds complex numbers.
-	 * @param c complex number to add
+	 * @param c c is complex number to add
 	 * @return result of adding two complex number
 	 */
 	public ComplexNumber add(ComplexNumber c) {
@@ -211,14 +195,13 @@ public class ComplexNumber {
 		
 		double real = this.real + c.real;
 		double imaginary = this.imaginary + c.imaginary;
-		ComplexNumber result = new ComplexNumber(real, imaginary);
 		
-		return result;
+		return new ComplexNumber(real, imaginary);
 	}
 	
 	/**
 	 * Sub complex numbers
-	 * @param c complex number to sub
+	 * @param c c is complex number to sub
 	 * @return result of sub operation
 	 */
 	public ComplexNumber sub(ComplexNumber c) {
@@ -228,14 +211,13 @@ public class ComplexNumber {
 		
 		double real = this.real - c.real;
 		double imaginary = this.imaginary - c.imaginary;
-		ComplexNumber result = new ComplexNumber(real, imaginary);
 		
-		return result;
+		return new ComplexNumber(real, imaginary);
 	}
 	
 	/**
 	 * Multiply two complex numbers
-	 * @param c complex number to multiply with
+	 * @param c c is complex number to multiply with
 	 * @return result of multiplying two complex numbers
 	 */
 	public ComplexNumber mul(ComplexNumber c) {
@@ -243,27 +225,20 @@ public class ComplexNumber {
 			throw new NullPointerException("Can't operate with null.");
 		}
 		
-		double real = this.real * c.real -
-				this.imaginary * c.imaginary;
-		double imaginary = this.imaginary * c.real +
-				this.real * c.imaginary;
-		ComplexNumber result = new ComplexNumber(real, imaginary);
+		double real = this.real * c.real - this.imaginary * c.imaginary;
+		double imaginary = this.imaginary * c.real + this.real * c.imaginary;
 		
-		return result;
+		return new ComplexNumber(real, imaginary);
 	}
 	
 	/**
 	 * Divide complex numbers
-	 * @param c complex number to divide with
+	 * @param c c is complex number to divide with
 	 * @return result of dividing complex numbers
 	 */
 	public ComplexNumber div(ComplexNumber c) {
 		if(c == null) {
 			throw new NullPointerException("Can't operate with null.");
-		}
-		
-		if(c.imaginary == 0 && c.real == 0) {
-			throw new IllegalArgumentException("Division by 0.");
 		}
 		
 		double real = (this.real * c.real + 
@@ -274,14 +249,12 @@ public class ComplexNumber {
 				this.imaginary * c.real) /
 				(Math.pow(c.getReal(), 2) + Math.pow(c.getImaginary(), 2));
 		
-		ComplexNumber complexNumber = new ComplexNumber(real, imaginary);
-		
-		return complexNumber;
+		return new ComplexNumber(real, imaginary);
 	}
 	
 	/**
 	 * Power of complex number
-	 * @param n degree of power
+	 * @param n n is degree of power
 	 * @return power of complex number
 	 */
 	public ComplexNumber power(int n) {
@@ -292,15 +265,14 @@ public class ComplexNumber {
 		
 		double real = Math.pow(this.getMagnitude(), n) * Math.cos(n * this.getAngle());
 		double imaginary = Math.pow(this.getMagnitude(), n) * Math.sin(n * this.getAngle());
-		ComplexNumber complexNumber = new ComplexNumber(real, imaginary);
 		
-		return complexNumber;
+		return new ComplexNumber(real, imaginary);
 	}
 	
 	/**
 	 * Root of n
-	 * @param n degree
-	 * @return complex number
+	 * @param n n is degree
+	 * @return complex number that is result of root operation.
 	 */
 	public ComplexNumber[] root(int n) {
 		if(n <= 0) {
@@ -326,18 +298,8 @@ public class ComplexNumber {
 	 * Create string out of complex number
 	 */
 	public String toString() {
-		String complexNumberString = new String();
-		if(this.imaginary >= 0) {
-			complexNumberString = Double.toString(this.real) + "+" +
-					Double.toString(this.imaginary) + "i";
-		}
-		else if(this.imaginary < 0) {
-			complexNumberString = Double.toString(this.real) +
-					Double.toString(this.imaginary) + "i";
-		}
-		
-		return complexNumberString;
-		
+		return Double.toString(this.real) + (this.imaginary >= 0 ? "+" : "") +
+				Double.toString(this.imaginary) + "i";
 	}
 	
 }

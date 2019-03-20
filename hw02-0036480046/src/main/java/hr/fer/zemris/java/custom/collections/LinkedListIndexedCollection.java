@@ -3,7 +3,7 @@ package hr.fer.zemris.java.custom.collections;
 
 /**
  * Implementation of linked list-backed collection of objects.
- * Duplicate elements are allowed, storage of null references is not allowed
+ * Duplicate elements are allowed, storage of null references is not allowed.
  * @author Daria Matković
  *
  */
@@ -35,8 +35,8 @@ public class LinkedListIndexedCollection extends Collection {
 	
 	/**
 	 * Copies given collection into new collection
-	 * @param collection is reference to other Collection whose elements are
-	 * copied into this newly constructed collection
+	 * @param collection collection is reference to other Collection whose 
+	 * elements are copied into this newly constructed collection
 	 */
 	public LinkedListIndexedCollection(Collection collection) {
 		this.addAll(collection);
@@ -46,8 +46,10 @@ public class LinkedListIndexedCollection extends Collection {
 	 * Adds given value at the end of collection
 	 */
 	public void add(Object value) {
+		// null reference is not allowed
 		if(value == null) {
-			throw new NullPointerException();
+			throw new NullPointerException("Null reference can't be added in"
+					+ " linked list indexed collection.");
 		}
 		
 		ListNode node = new ListNode();
@@ -57,8 +59,7 @@ public class LinkedListIndexedCollection extends Collection {
 		
 		if(this.size == 0) {
 			this.first = node;
-		}
-		else {
+		} else {
 			node.previous = this.last;
 			this.last.next = node;
 		}
@@ -67,13 +68,14 @@ public class LinkedListIndexedCollection extends Collection {
 	}
 	
 	/**
-	 * Get object at position index in linked list
-	 * @param index in linked list
-	 * @return object at position index
+	 * Get value of node at position index in linked list
+	 * @param index index is position in linked list
+	 * @return object object is element at position index in linked list
 	 */
 	public Object get(int index) {
 		if(index < 0 || index > size-1) {
-			throw new IndexOutOfBoundsException();
+			throw new IndexOutOfBoundsException("Index can be value in range"
+					+ " from 0 to size-1.");
 		}
 		
 		ListNode node = new ListNode();
@@ -104,19 +106,19 @@ public class LinkedListIndexedCollection extends Collection {
 	}
 	
 	/**
-	 * Insert value at position index
-	 * @param value to insert
-	 * @param position index in list
+	 * Insert value at position index.
+	 * @param value value to insert
+	 * @param position position is index in list
 	 * complexity: O(n)
 	 */
 	public void insert(Object value, int position) {
-		
 		if(position < 0 || position > size) {
-			throw new IndexOutOfBoundsException("Position is out of range");
+			throw new IndexOutOfBoundsException("Position is out of range.");
 		}
-		
+		// null value can't be inserted
 		if(value == null) {
-			throw new NullPointerException();
+			throw new NullPointerException("Null reference can't be inserted in"
+					+ " linked list indeced collection.");
 		}
 		
 		ListNode newNode = new ListNode();
@@ -127,23 +129,23 @@ public class LinkedListIndexedCollection extends Collection {
 		if(this.size == 0) {
 			this.first = newNode;
 			this.last = newNode;
-		}
-		// if list is not empty
-		else {
-			// if first element need to be added
+			
+		} else {
+			// if list is not empty
 			if(position == 0) {
+				// if first element need to be added
 				newNode.next = this.first;
 				this.first.previous = newNode;
 				this.first = newNode;
-			}
-			// shifting is not needed because element must be added at the end
-			else if(position == this.size) {
+				
+			} else if(position == this.size) {
+				// shifting is not needed because element must be added at the end
 				newNode.previous = this.last;
 				this.last.next = newNode;
 				this.last = newNode;
-			}
-			// if shifting is needed
-			else {
+				
+			} else {
+				// if shifting is needed
 				ListNode helpNode = new ListNode();
 				helpNode = this.first;
 				
@@ -163,8 +165,8 @@ public class LinkedListIndexedCollection extends Collection {
 	
 	/**
 	 * Search given value in the collection
-	 * @param value to search in collection
-	 * @return index of first appearance of value in the collection if value 
+	 * @param value value to search in collection
+	 * @return index index of first appearance of value in the collection if value 
 	 * appears in the collection, otherwise -1
 	 * complexity: O(n)
 	 */
@@ -181,8 +183,8 @@ public class LinkedListIndexedCollection extends Collection {
 	}
 	
 	/**
-	 * Removes element at given index
-	 * @param index of element to be removed
+	 * Removes element at given index.
+	 * @param index index of element to be removed
 	 */
 	public void remove(int index) {
 		if(index < 0 || index > size-1) {
@@ -193,9 +195,7 @@ public class LinkedListIndexedCollection extends Collection {
 
 		if(index == 0) {
 			this.first = node.next;
-		}
-		
-		else {
+		} else {
 			for(int i = 0; i < index-1 && node != null; i++) {
 				node = node.next;
 			}

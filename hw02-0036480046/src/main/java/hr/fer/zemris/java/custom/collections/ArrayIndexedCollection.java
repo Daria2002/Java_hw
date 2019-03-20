@@ -1,16 +1,13 @@
 package hr.fer.zemris.java.custom.collections;
 
-
 /**
- * This program implements resizable array-backed collection of objects.
+ * This program implements resizable array-backed collection of objects. It is
+ * allowed to store duplicate elements, but null references are not allowed.
  * @author Daria Matkovic
  *
  */
 public class ArrayIndexedCollection extends Collection {
-	// size is number of elements stored in array elements
 	private int size;
-	// array of object references, null references are not allowed, duplicate
-	// elements are allowed
 	private Object[] elements;
 	public int capacity;
 	
@@ -23,15 +20,15 @@ public class ArrayIndexedCollection extends Collection {
 
 	/**
 	 * Checks if collection is null and delegates previous constructor
-	 * @param collection is given collection to check if it is null
+	 * @param collection collection is given collection to check if it is null
 	 */
 	public ArrayIndexedCollection(Collection collection) {
 		this(collection, 16);
 	}
 	
 	/**
-	 * Changes array capacity and sets capacity variable
-	 * @param initialCapacity new array capacity
+	 * Changes array capacity and sets capacity variable.
+	 * @param initialCapacity initalCapacity is capacity of new array.
 	 */
 	public ArrayIndexedCollection(int initialCapacity) {
 		if(initialCapacity < 1) {
@@ -41,12 +38,11 @@ public class ArrayIndexedCollection extends Collection {
 		this.elements = new Object[this.capacity];
 	}
 	
-	//TODO: komentiraj exceptione
-	
 	/**
 	 * Initializes capacity, adds all elements from given collection to this 
 	 * collection or throws exception if collection is null
-	 * @param collection given collection which has to be checked if it is null
+	 * @param collection collection is given collection which has to be checked
+	 * if it is equal to null
 	 * @param initialCapacity initial value for capacity
 	 */
 	public ArrayIndexedCollection(Collection collection, int initialCapacity) {
@@ -62,7 +58,7 @@ public class ArrayIndexedCollection extends Collection {
 	}
 	
 	/**
-	 * doubling element's capacity
+	 * Doubling element's capacity
 	 */
 	private void doubleCapacity() {
 		Object[] helpArray = new Object[this.size];
@@ -96,7 +92,7 @@ public class ArrayIndexedCollection extends Collection {
 	/**
 	 * Throws exception if index value is wrong, otherwise returns the object
 	 * stored in elements at position index.
-	 * @param index Position of acquired object
+	 * @param index index is position of acquired object
 	 * @return the object that is stored in elements at given index
 	 * complexity: O(1)
 	 */
@@ -119,23 +115,26 @@ public class ArrayIndexedCollection extends Collection {
 	}
 	
 	/**
-	 * Insert value at given position, and shifting elements at position and at
+	 * Inserts value at given position, and shifts elements at position and at
 	 * greater positions toward the end
-	 * @param value to insert at index position in elements array
-	 * @param position in array where value need to be inserted
+	 * @param value value to insert at index position in elements array
+	 * @param position position in array where value need to be inserted
 	 * complexity: O(n)
 	 */
 	public void insert(Object value, int position) {
 		if(position < 0 || position > size) {
 			throw new IndexOutOfBoundsException();
 		}
+		
 		if(value == null) {
 			throw new NullPointerException("Can't store null value.");
 		}
+		
 		// doubling array's size if array is full
 		if(this.capacity == this.size) {
 			doubleCapacity();
 		}
+		
 		// element at size index should be empty, because array is filled at 
 		// indexes in range from 0 to size-1
 		if(position < this.size) {
@@ -144,13 +143,14 @@ public class ArrayIndexedCollection extends Collection {
 				this.elements[i] = this.elements[i-1];
 			}
 		}
+		
 		this.elements[position] = value;
 		this.size += 1;
 	}
 	
 	/**
 	 * Searches the given value in the collection
-	 * @param value to search in collection
+	 * @param value value to search in collection
 	 * @return the index of the first occurrence of the given value or 
 	 * -1 if the value is not found
 	 * complexity: O(n)
@@ -167,7 +167,7 @@ public class ArrayIndexedCollection extends Collection {
 	/**
 	 * Removes element at index position, and shifts other element toward start
 	 * position
-	 * @param index is position at which element has to be removed
+	 * @param index index is position at which element has to be removed
 	 */
 	public void remove(int index) {
 		if(index < 0 || index > size-1) {

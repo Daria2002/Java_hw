@@ -1,13 +1,21 @@
 package hr.fer.zemris.java.custom.collections;
 
+/**
+ * Class Collection represents collection of objects.
+ * @author Daria Matković
+ *
+ */
 public class Collection {
 	
+	/**
+	 * Constructor with empty body.
+	 */
 	protected Collection() {
 		
 	}
 	
 	/**
-	 * Checks if collection contains any object
+	 * Checks if collection contains any object.
 	 * @return false if collection contains no object, otherwise true
 	 */
 	public boolean isEmpty() {
@@ -18,25 +26,25 @@ public class Collection {
 	}
 	
 	/**
-	 * Count number of stored objects in collection
+	 * Count number of stored objects in collection.
 	 * @return number of currently stored objects in this collection,
-	 * current implementation returns 0
+	 * current implementation always returns 0.
 	 */
 	public int size() {
 		return 0;
 	}
 	
 	/**
-	 * Adds given object into this collection
-	 * @param value given object
+	 * Adds given object into this collection.
+	 * @param value value is given object
 	 */
 	public void add(Object value) {
 		// Do nothing
 	}
 	
 	/**
-	 * Checks if value is in collection
-	 * @param value given value to check if it is in collection
+	 * Checks if value is in collection.
+	 * @param value value is given value to check if it is in collection
 	 * @return true if collection contains given value, otherwise false
 	 */
 	public boolean contains(Object value) {
@@ -45,10 +53,10 @@ public class Collection {
 	}
 	
 	/**
-	 * Checks if collection contains given value and removes one occurrence of it
-	 * @param value given value to check if it is in collection
-	 * @return returns true if collection contains given value, otherwise false
-	 * current implementation always returns false
+	 * Checks if collection contains given value and removes one occurrence of it.
+	 * @param value value is given value to check if it is in collection.
+	 * @return returns true if collection contains given value, otherwise false.
+	 * Current implementation always returns false.
 	 */
 	public boolean remove(Object value) {
 		return false;
@@ -74,7 +82,7 @@ public class Collection {
 	
 	/**
 	 * Adds into the current collection all elements from the given collection.
-	 * @param other is collection which elements need to be added in current 
+	 * @param other other is collection which elements need to be added in current 
 	 * collection
 	 */
 	public void addAll(Collection other) {

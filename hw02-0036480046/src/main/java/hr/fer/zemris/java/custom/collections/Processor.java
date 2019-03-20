@@ -7,15 +7,14 @@ package hr.fer.zemris.java.custom.collections;
  *
  */
 public class Processor {
-
 	
 	/**
 	 * This method is used for performing operations on given objects.
 	 * Its implementation exists but does nothing.
-	 * @param value given object of type Object 
+	 * @param value value is given object of type Object 
 	 */
 	public void process(Object value) {
-		// empty body
+		// Empty body
 	}
 	
 }

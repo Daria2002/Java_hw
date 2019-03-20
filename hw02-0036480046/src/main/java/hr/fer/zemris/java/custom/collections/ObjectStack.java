@@ -1,7 +1,7 @@
 package hr.fer.zemris.java.custom.collections;
 
 /**
- * Implementation of the stack-like collection
+ * Implementation of the stack-like collection.
  * @author Daria Matkovic
  *
  */
@@ -9,13 +9,16 @@ public class ObjectStack {
 	
 	private ArrayIndexedCollection collection;
 	
+	/**
+	 * Constructor creates ArrayIndexedCollection object
+	 */
 	public ObjectStack() {
 		collection = new ArrayIndexedCollection();
 	}
 	
 	/**
-	 * Checks if stack is empty
-	 * @return true if stack is empty, otherwise false
+	 * Checks if stack is empty.
+	 * @return true if stack is empty, otherwise false.
 	 */
 	public boolean isEmpty() {
 		if(this.size() == 0) {
@@ -34,7 +37,7 @@ public class ObjectStack {
 	
 	/**
 	 * Put on stack given non-null value
-	 * @param value to push on stack
+	 * @param value value to push on stack
 	 */
 	public void push(Object value) {
 		if(value == null) {
@@ -66,8 +69,7 @@ public class ObjectStack {
 		if(this.isEmpty()) {
 			throw new EmptyStackException("Stack is empty.");
 		}
-		Object object = collection.get(this.size()-1);
-		return object;
+		return collection.get(this.size()-1);
 	}
 	
 	/**

@@ -6,21 +6,21 @@ import org.junit.jupiter.api.Test;
 
 public class LinkedListIndexedCollectionTest {
 
+	private String kisa = "kisa";
+	private String sunce = "sunce";
+	private String snijeg = "snijeg";
+	private String vjetar = "vjetar";
+	private String oluja = "oluja";
+	
 	@Test
 	public void testConstructor1() {
-		LinkedListIndexedCollection collection = new LinkedListIndexedCollection();
-		
-		assertEquals(0, collection.size());
+		assertEquals(0, new LinkedListIndexedCollection().size());
 	}
 	
 	@Test
 	public void testConstructor2() {
-		LinkedListIndexedCollection collectionToAdd =
+		LinkedListIndexedCollection collectionToAdd = 
 				new LinkedListIndexedCollection();
-		String kisa = "kisa";
-		String sunce = "sunce";
-		String snijeg = "snijeg";
-		String vjetar = "vjetar";
 		collectionToAdd.add(kisa);
 		collectionToAdd.add(sunce);
 		collectionToAdd.add(snijeg);
@@ -37,10 +37,6 @@ public class LinkedListIndexedCollectionTest {
 	@Test
 	public void testAdd() {
 		LinkedListIndexedCollection collection = new LinkedListIndexedCollection();
-		String kisa = "kisa";
-		String sunce = "sunce";
-		String snijeg = "snijeg";
-		String vjetar = "vjetar";
 		collection.add(kisa);
 		collection.add(sunce);
 		collection.add(snijeg);
@@ -55,7 +51,6 @@ public class LinkedListIndexedCollectionTest {
 	@Test
 	public void testGet() {
 		LinkedListIndexedCollection collection = new LinkedListIndexedCollection();
-		String kisa = "kisa";
 		collection.add(kisa);
 		
 		assertEquals(kisa, collection.get(0));
@@ -65,16 +60,12 @@ public class LinkedListIndexedCollectionTest {
 	public void testExceptionGet() {
 		LinkedListIndexedCollection collection = new LinkedListIndexedCollection();
 		
-		assertThrows(IndexOutOfBoundsException.class, () -> {collection.get(-1);});
+		assertThrows(IndexOutOfBoundsException.class, () -> collection.get(-1));
 	}
 	
 	@Test
 	public void testClear() {
 		LinkedListIndexedCollection collection = new LinkedListIndexedCollection();
-		String kisa = "kisa";
-		String sunce = "sunce";
-		String snijeg = "snijeg";
-		String vjetar = "vjetar";
 		collection.add(kisa);
 		collection.add(sunce);
 		collection.add(snijeg);
@@ -82,17 +73,12 @@ public class LinkedListIndexedCollectionTest {
 		collection.clear();
 		
 		assertEquals(collection.size(), 0);
-		assertThrows(IndexOutOfBoundsException.class, () -> {collection.get(2);});
+		assertThrows(IndexOutOfBoundsException.class, () -> collection.get(2));
 	}
 	
 	@Test
 	public void testInsert() {
 		LinkedListIndexedCollection collection = new LinkedListIndexedCollection();
-		String kisa = "kisa";
-		String sunce = "sunce";
-		String snijeg = "snijeg";
-		String vjetar = "vjetar";
-		String oluja = "oluja";
 		collection.add(kisa);
 		collection.insert(sunce, 0);
 		collection.insert(snijeg, 1);
@@ -109,8 +95,6 @@ public class LinkedListIndexedCollectionTest {
 	@Test
 	public void testIndexOf() {
 		LinkedListIndexedCollection collection = new LinkedListIndexedCollection();
-		String kisa = "kisa";
-		String sunce = "sunce";
 		collection.add(kisa);
 		collection.insert(sunce, 0);
 		collection.add(kisa);
@@ -121,11 +105,6 @@ public class LinkedListIndexedCollectionTest {
 	@Test
 	public void testRemove() {
 		LinkedListIndexedCollection collection = new LinkedListIndexedCollection();
-		String kisa = "kisa";
-		String sunce = "sunce";
-		String snijeg = "snijeg";
-		String vjetar = "vjetar";
-		String oluja = "oluja";
 		collection.add(kisa);
 		collection.insert(sunce, 0);
 		collection.insert(snijeg, 1);
@@ -134,7 +113,6 @@ public class LinkedListIndexedCollectionTest {
 		collection.remove(0);
 		collection.remove(3);
 		
-		// collection should look like: snijeg, kisa, oluja
 		assertEquals(-1, collection.indexOf(sunce));
 		assertEquals(-1, collection.indexOf(vjetar));
 		assertEquals(snijeg, collection.get(0));

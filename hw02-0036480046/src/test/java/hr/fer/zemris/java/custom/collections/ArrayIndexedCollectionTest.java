@@ -6,14 +6,19 @@ import org.junit.jupiter.api.Test;
 
 
 public class ArrayIndexedCollectionTest {
-
+	private int initialCapacity = 16;
+	private String atletika = "Atletika";
+	private String nogomet = "Nogomet";
+	private String rukomet = "Rukomet";
+	private int testCapacity = 5;
+	private int testIndex = 3;
+	
 	/**
 	 * Tests first constructor that initializes variable capacity to 16.
 	 */
 	@Test
 	void testConstructor1() {
-		ArrayIndexedCollection testObject = new ArrayIndexedCollection();
-		assertEquals(testObject.capacity, 16);
+		assertEquals(new ArrayIndexedCollection().capacity, initialCapacity);
 	}
 	
 	/**
@@ -21,9 +26,8 @@ public class ArrayIndexedCollectionTest {
 	 */
 	@Test
 	void testConstructor2() {
-		Collection collection = new Collection();
-		ArrayIndexedCollection testObject = new ArrayIndexedCollection(collection);
-		assertEquals(testObject.capacity, 16);
+		assertEquals(new ArrayIndexedCollection(new Collection()).capacity,
+				initialCapacity);
 	}
 	
 	/**
@@ -32,15 +36,16 @@ public class ArrayIndexedCollectionTest {
 	@Test
 	void testAddingConstructor2() {
 		ArrayIndexedCollection collectionToAdd = new ArrayIndexedCollection();
-		collectionToAdd.add("Rukomet");
-		collectionToAdd.add("Atletika");
-		collectionToAdd.add("Nogomet");
+		collectionToAdd.add(rukomet);
+		collectionToAdd.add(atletika);
+		collectionToAdd.add(nogomet);
 		ArrayIndexedCollection newCollection =
 				new ArrayIndexedCollection(collectionToAdd);
-		assertEquals("Rukomet", newCollection.get(0));
-		assertEquals("Atletika", newCollection.get(1));
-		assertEquals("Nogomet", newCollection.get(2));
-		assertEquals(16, newCollection.capacity);
+		
+		assertEquals(rukomet, newCollection.get(0));
+		assertEquals(atletika, newCollection.get(1));
+		assertEquals(nogomet, newCollection.get(2));
+		assertEquals(initialCapacity, newCollection.capacity);
 	}
 	
 	/**
@@ -48,18 +53,18 @@ public class ArrayIndexedCollectionTest {
 	 */
 	@Test
 	void testExceptionConstructor2() {
-		assertThrows(NullPointerException.class, () -> 
-		{new ArrayIndexedCollection(null);});
+		assertThrows(NullPointerException.class,
+				() -> new ArrayIndexedCollection(null));
 	}
 	
 	/**
-	 * Tests that 3rd constructor throws exception if initial capaciti is less 
+	 * Tests that 3rd constructor throws exception if initial capacity is less 
 	 * than 1.
 	 */
 	@Test
 	void testExceptionConstructor3() {
-		assertThrows(IllegalArgumentException.class, () -> 
-		{new ArrayIndexedCollection(0);});
+		assertThrows(IllegalArgumentException.class,
+				() -> new ArrayIndexedCollection(0));
 	}
 	
 	/**
@@ -67,8 +72,8 @@ public class ArrayIndexedCollectionTest {
 	 */
 	@Test
 	void testConstructor3() {
-		ArrayIndexedCollection testObject = new ArrayIndexedCollection(5);
-		assertEquals(testObject.capacity, 5);
+		assertEquals(new ArrayIndexedCollection(testCapacity).capacity,
+				testCapacity);
 	}
 	
 	/**
@@ -76,8 +81,8 @@ public class ArrayIndexedCollectionTest {
 	 */
 	@Test
 	void testExceptionConstructor4() {
-		assertThrows(NullPointerException.class, () -> 
-		{new ArrayIndexedCollection(null, 5);});	
+		assertThrows(NullPointerException.class,
+				() -> new ArrayIndexedCollection(null, testCapacity));	
 	}
 	
 	/**
@@ -86,13 +91,15 @@ public class ArrayIndexedCollectionTest {
 	 */
 	@Test
 	void testLessConstructor4() {
+		int capacity1 = 1;
 		ArrayIndexedCollection collectionToAdd = new ArrayIndexedCollection();
-		collectionToAdd.add("Mario");
-		collectionToAdd.add("Ana");
+		collectionToAdd.add(nogomet);
+		collectionToAdd.add(atletika);
 		ArrayIndexedCollection newCollection =
-				new ArrayIndexedCollection(collectionToAdd, 1);
-		assertEquals("Mario", newCollection.get(0));
-		assertEquals("Ana", newCollection.get(1));
+				new ArrayIndexedCollection(collectionToAdd, capacity1);
+		
+		assertEquals(nogomet, newCollection.get(0));
+		assertEquals(atletika, newCollection.get(1));
 		assertEquals(collectionToAdd.size(), newCollection.capacity);
 	}
 	
@@ -103,24 +110,26 @@ public class ArrayIndexedCollectionTest {
 	@Test
 	void testGreaterConstructor4() {
 		ArrayIndexedCollection collectionToAdd = new ArrayIndexedCollection();
-		collectionToAdd.add("Mario");
-		collectionToAdd.add("Ana");
+		collectionToAdd.add(nogomet);
+		collectionToAdd.add(atletika);
 		ArrayIndexedCollection newCollection =
-				new ArrayIndexedCollection(collectionToAdd, 5);
-		assertEquals("Mario", newCollection.get(0));
-		assertEquals("Ana", newCollection.get(1));
-		assertEquals(5, newCollection.capacity);
+				new ArrayIndexedCollection(collectionToAdd, testCapacity);
+		
+		assertEquals(nogomet, newCollection.get(0));
+		assertEquals(atletika, newCollection.get(1));
+		assertEquals(testCapacity, newCollection.capacity);
 	}
 	
 	@Test
 	void testAdd() {
 		ArrayIndexedCollection collection = new ArrayIndexedCollection();
-		collection.add(4);
-		collection.add(5);
-		collection.add(9);
-		assertEquals(4, collection.get(0));
-		assertEquals(5, collection.get(1));
-		assertEquals(9, collection.get(2));
+		collection.add(nogomet);
+		collection.add(atletika);
+		collection.add(rukomet);
+		
+		assertEquals(nogomet, collection.get(0));
+		assertEquals(atletika, collection.get(1));
+		assertEquals(rukomet, collection.get(2));
 	}
 	
 	@Test
@@ -134,13 +143,16 @@ public class ArrayIndexedCollectionTest {
 	 */
 	@Test
 	void testAddDoubleSize() {
-		ArrayIndexedCollection collection = new ArrayIndexedCollection(2);
-		collection.add(5);
-		collection.add(15);
+		int capacity2 = 2;
+		ArrayIndexedCollection collection = new ArrayIndexedCollection(capacity2);
+		collection.add(atletika);
+		collection.add(nogomet);
 		int capacityBefore = collection.capacity;
-		collection.add(6);
+		collection.add(rukomet);
 		int capacityAfter = collection.capacity;
-		assert(capacityAfter == 4 && capacityBefore == 2);
+		
+		assertEquals(capacity2, capacityBefore);
+		assertEquals(2*capacity2, capacityAfter);
 	}
 	
 	/**
@@ -148,9 +160,8 @@ public class ArrayIndexedCollectionTest {
 	 */
 	@Test
 	void testLowIndexGet() {
-		ArrayIndexedCollection testObject = new ArrayIndexedCollection(3);
-		assertThrows(IndexOutOfBoundsException.class, () -> 
-		{testObject.get(-1);});
+		assertThrows(IndexOutOfBoundsException.class,
+				() -> new ArrayIndexedCollection(3).get(-1));
 	}
 	
 	/**
@@ -159,96 +170,112 @@ public class ArrayIndexedCollectionTest {
 	@Test
 	void testHighIndexGet() {
 		ArrayIndexedCollection testObject = new ArrayIndexedCollection(3);
-		testObject.add(4);
-		testObject.add(8);
-		testObject.add(12);
-		assertThrows(IndexOutOfBoundsException.class, () -> 
-		{testObject.get(3);});
+		testObject.add(atletika);
+		testObject.add(nogomet);
+		testObject.add(rukomet);
+		
+		assertThrows(IndexOutOfBoundsException.class, 
+				() -> testObject.get(testIndex));
 	}
 	
 	@Test
 	void testClear() {
 		ArrayIndexedCollection testObject = new ArrayIndexedCollection(3);
-		testObject.add(4);
-		testObject.add(8);
-		testObject.add(12);
+		testObject.add(atletika);
+		testObject.add(nogomet);
+		testObject.add(rukomet);
+		testObject.add(atletika);
+		testObject.add(nogomet);
+		testObject.add(rukomet);
+		int sizeBeforeClear = testObject.size();
 		testObject.clear();
+		
+		assertEquals(6, sizeBeforeClear);
 		assertEquals(0, testObject.size());
-		assertThrows(IndexOutOfBoundsException.class, () -> 
-		{testObject.get(2);});
+		assertThrows(IndexOutOfBoundsException.class,
+				() -> testObject.get(testIndex));
 	}
 	
 	@Test
 	void testInsert() {
 		ArrayIndexedCollection testObject = new ArrayIndexedCollection(3);
-		testObject.add(4);
-		testObject.insert(10, 0);
-		testObject.add(8);
-		testObject.insert(10, 2);
-		testObject.insert(7, 2);
-		assertEquals(10, testObject.get(0));
-		assertEquals(4, testObject.get(1));
-		assertEquals(7, testObject.get(2));
-		assertEquals(10, testObject.get(3));
-		assertEquals(8, testObject.get(4));
+		testObject.add(nogomet);
+		testObject.insert(atletika, 0);
+		testObject.add(rukomet);
+		testObject.insert(rukomet, 2);
+		testObject.insert(nogomet, 2);
+		
+		assertEquals(atletika, testObject.get(0));
+		assertEquals(nogomet, testObject.get(1));
+		assertEquals(nogomet, testObject.get(2));
+		assertEquals(rukomet, testObject.get(3));
+		assertEquals(rukomet, testObject.get(4));
 	}
 	
 	@Test
 	void testIndexOf() {
 		ArrayIndexedCollection testObject = new ArrayIndexedCollection(3);
-		testObject.add(4);
-		testObject.insert(10, 0);
-		testObject.add(8);
-		testObject.insert(10, 2);
-		testObject.insert(7, 2);
-		assertEquals(0, testObject.indexOf(10));
+		testObject.add(nogomet);
+		testObject.insert(rukomet, 0);
+		testObject.add(atletika);
+		testObject.insert(atletika, 2);
+		testObject.insert(rukomet, 2);
+		
+		assertEquals(3, testObject.indexOf(atletika));
 	}
 	
 	@Test
 	void testIndexOfNonExisting() {
 		ArrayIndexedCollection testObject = new ArrayIndexedCollection(3);
-		testObject.add(4);
-		testObject.insert(10, 0);
-		testObject.add(8);
-		testObject.insert(10, 2);
-		testObject.insert(7, 2);
-		assertEquals(-1, testObject.indexOf(5));
+		testObject.add(atletika);
+		testObject.insert(nogomet, 0);
+		testObject.add(rukomet);
+		testObject.insert(nogomet, 2);
+		testObject.insert(atletika, 2);
+		String testString = "test";
+		
+		assertEquals(-1, testObject.indexOf(testString));
 	}
 	
 	@Test
 	void testRemove() {
 		ArrayIndexedCollection testObject = new ArrayIndexedCollection(3);
-		testObject.add(4);
-		testObject.add(8);
-		testObject.add(10);
-		testObject.add(7);
+		testObject.add(rukomet);
+		testObject.add(atletika);
+		testObject.add(rukomet);
+		testObject.add(rukomet);
 		testObject.remove(2);
-		assertEquals(4, testObject.get(0));
-		assertEquals(8, testObject.get(1));
-		assertEquals(7, testObject.get(2));
+		
+		assertEquals(rukomet, testObject.get(0));
+		assertEquals(atletika, testObject.get(1));
+		assertEquals(rukomet, testObject.get(2));
 		assertEquals(3, testObject.size());
 	}
 	
 	@Test
 	void testExceptionRemove() {
 		ArrayIndexedCollection testObject = new ArrayIndexedCollection(3);
-		testObject.add(4);
-		testObject.add(8);
-		testObject.add(10);
-		testObject.add(7);
-		assertThrows(IndexOutOfBoundsException.class, () -> 
-		{testObject.remove(-1);});
-		assertThrows(IndexOutOfBoundsException.class, () -> 
-		{testObject.remove(5);});
+		testObject.add(atletika);
+		testObject.add(rukomet);
+		testObject.add(nogomet);
+		testObject.add(atletika);
+		
+		int lowIndex = -1;
+		assertThrows(IndexOutOfBoundsException.class,
+				() -> testObject.remove(lowIndex));
+		int highIndex = 5;
+		assertThrows(IndexOutOfBoundsException.class,
+				() -> testObject.remove(highIndex));
 	}
 	
 	@Test
 	void testSize() {
-		ArrayIndexedCollection testObject = new ArrayIndexedCollection(3);
+		ArrayIndexedCollection testObject = new ArrayIndexedCollection(testCapacity);
 		int size1 = testObject.size();
-		testObject.add(4);
-		testObject.add(8);
+		testObject.add(nogomet);
+		testObject.add(atletika);
 		int size2 = testObject.size();
+		
 		assertEquals(0, size1);
 		assertEquals(2, size2);
 	}
@@ -256,21 +283,22 @@ public class ArrayIndexedCollectionTest {
 	@Test
 	void testContains() {
 		ArrayIndexedCollection testObject = new ArrayIndexedCollection(3);
-		testObject.add(4);
-		testObject.add(8);
-		assertEquals(true, testObject.contains(4));
-		assertEquals(true, testObject.contains(8));
-		assertEquals(false, testObject.contains(7));
+		testObject.add(atletika);
+		testObject.add(nogomet);
+		
+		assertEquals(true, testObject.contains(atletika));
+		assertEquals(true, testObject.contains(nogomet));
+		assertEquals(false, testObject.contains(rukomet));
 	}
 	
 	@Test
 	void testToArray() {
 		ArrayIndexedCollection testObject = new ArrayIndexedCollection(3);
-		testObject.add(4);
-		testObject.add(8);
+		testObject.add(atletika);
+		testObject.add(nogomet);
 		Object[] array = testObject.toArray();
-		assertEquals(4, array[0]);
-		assertEquals(8, array[1]);
+		assertEquals(atletika, array[0]);
+		assertEquals(nogomet, array[1]);
 	}
 	
 	@Test
@@ -286,11 +314,12 @@ public class ArrayIndexedCollectionTest {
 		};
 		
 		ArrayIndexedCollection testObject = new ArrayIndexedCollection(3);
-		testObject.add(4);
-		testObject.add(8);
+		testObject.add(atletika);
+		testObject.add(nogomet);
 		testObject.forEach(processor);
-		assertEquals(4, array[0]);
-		assertEquals(8, array[1]);
+		
+		assertEquals(atletika, array[0]);
+		assertEquals(nogomet, array[1]);
 	}
 	
 }

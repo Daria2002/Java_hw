@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
-
 public class ArrayIndexedCollectionTest {
 	private int initialCapacity = 16;
 	private String atletika = "Atletika";

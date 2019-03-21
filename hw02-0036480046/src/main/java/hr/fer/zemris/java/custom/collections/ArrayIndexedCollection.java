@@ -12,14 +12,14 @@ public class ArrayIndexedCollection extends Collection {
 	public int capacity;
 	
 	/**
-	 * Initialize capacity variable to 16 and preallocates elements to that size
+	 * Initialize capacity variable to 16 and preallocates elements to that size.
 	 */
 	public ArrayIndexedCollection() {
 		this(16);
 	}
 
 	/**
-	 * Checks if collection is null and delegates previous constructor
+	 * Checks if collection is null and delegates to previous constructor
 	 * @param collection collection is given collection to check if it is null
 	 */
 	public ArrayIndexedCollection(Collection collection) {
@@ -75,6 +75,7 @@ public class ArrayIndexedCollection extends Collection {
 	/**
 	 * Adds the given object into first empty place in the elements array
 	 * complexity: O(1) if array is not full, otherwise O(n)
+	 * @param value value added to collection.
 	 */
 	public void add(Object value) {
 		if(value == null) {
@@ -115,8 +116,8 @@ public class ArrayIndexedCollection extends Collection {
 	}
 	
 	/**
-	 * Inserts value at given position, and shifts elements at position and at
-	 * greater positions toward the end
+	 * Inserts value at given position, and shifts all elements from given position
+	 * by one space.
 	 * @param value value to insert at index position in elements array
 	 * @param position position in array where value need to be inserted
 	 * complexity: O(n)
@@ -149,7 +150,7 @@ public class ArrayIndexedCollection extends Collection {
 	}
 	
 	/**
-	 * Searches the given value in the collection
+	 * Searches for the given value in the collection
 	 * @param value value to search in collection
 	 * @return the index of the first occurrence of the given value or 
 	 * -1 if the value is not found
@@ -173,8 +174,12 @@ public class ArrayIndexedCollection extends Collection {
 		if(index < 0 || index > size-1) {
 			throw new IndexOutOfBoundsException();
 		}
-		for(int i = index; i < this.size; i++) {
-			this.elements[i] = this.elements[i+1];
+		if(index == size-1) {
+			this.elements[index] = null;
+		} else {
+			for(int i = index; i < this.size; i++) {
+				this.elements[i] = this.elements[i+1];
+			}
 		}
 		this.size -= 1;
 	}

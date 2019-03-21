@@ -27,8 +27,7 @@ public class Collection {
 	
 	/**
 	 * Count number of stored objects in collection.
-	 * @return number of currently stored objects in this collection,
-	 * current implementation always returns 0.
+	 * @return number of currently stored objects in this collection
 	 */
 	public int size() {
 		return 0;
@@ -56,7 +55,6 @@ public class Collection {
 	 * Checks if collection contains given value and removes one occurrence of it.
 	 * @param value value is given value to check if it is in collection.
 	 * @return returns true if collection contains given value, otherwise false.
-	 * Current implementation always returns false.
 	 */
 	public boolean remove(Object value) {
 		return false;
@@ -68,8 +66,7 @@ public class Collection {
 	 * @return array filled with collection content
 	 */
 	public Object[] toArray() {
-		// Current implementation throws UnsupportedOperationException
-		throw new UnsupportedOperationException();
+		throw new UnsupportedOperationException("Unsupported operation called.");
 	}
 	
 	/**

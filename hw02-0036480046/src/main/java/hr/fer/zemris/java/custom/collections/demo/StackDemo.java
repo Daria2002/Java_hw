@@ -3,7 +3,9 @@ package hr.fer.zemris.java.custom.collections.demo;
 import hr.fer.zemris.java.custom.collections.ObjectStack;
 
 /**
- * Gets expression from command line and splits it.
+ * Gets expression from command line and splits it. Given expression consists of
+ * integer numbers and operators. Operators can be only +, -, %, *, /. Everything 
+ * is separated by one or more spaces. Expression must be in postfix representation.
  * @author Daria Matković
  *
  */

@@ -26,7 +26,7 @@ public class LinkedListIndexedCollection extends Collection {
 	private ListNode last;
 	
 	/**
-	 * First constructor creates empty collection
+	 * Default constructor creates empty collection
 	 */
 	public LinkedListIndexedCollection() {
 		this.first = null;
@@ -44,6 +44,8 @@ public class LinkedListIndexedCollection extends Collection {
 	
 	/**
 	 * Adds given value at the end of collection
+	 * Complexity: O(1)
+	 * @param value value added to collection
 	 */
 	public void add(Object value) {
 		// null reference is not allowed
@@ -69,6 +71,7 @@ public class LinkedListIndexedCollection extends Collection {
 	
 	/**
 	 * Get value of node at position index in linked list
+	 * Complexity: n/2+1
 	 * @param index index is position in linked list
 	 * @return object object is element at position index in linked list
 	 */
@@ -79,9 +82,17 @@ public class LinkedListIndexedCollection extends Collection {
 		}
 		
 		ListNode node = new ListNode();
-		node = this.first;
-		for(int i = 1; i <= index; i++) {
-			node = node.next;
+		
+		if(index < size/2) {
+			node = this.first;
+			for(int i = 0; i < index; i++) {
+				node = node.next;
+			}
+		} else {
+			node = this.last;
+			for(int i = size-1; i > index; i--) {
+				node = node.previous;
+			}
 		}
 		
 		return node.value;
@@ -107,9 +118,9 @@ public class LinkedListIndexedCollection extends Collection {
 	
 	/**
 	 * Insert value at position index.
+	 * Complexity: O(n)
 	 * @param value value to insert
 	 * @param position position is index in list
-	 * complexity: O(n)
 	 */
 	public void insert(Object value, int position) {
 		if(position < 0 || position > size) {
@@ -165,10 +176,10 @@ public class LinkedListIndexedCollection extends Collection {
 	
 	/**
 	 * Search given value in the collection
+	 * Complexity: O(n)
 	 * @param value value to search in collection
 	 * @return index index of first appearance of value in the collection if value 
 	 * appears in the collection, otherwise -1
-	 * complexity: O(n)
 	 */
 	public int indexOf(Object value) {
 		ListNode node = new ListNode();
@@ -190,15 +201,27 @@ public class LinkedListIndexedCollection extends Collection {
 		if(index < 0 || index > size-1) {
 			throw new IndexOutOfBoundsException("Index out of range");
 		}
-		ListNode node = new ListNode();
-		node = this.first;
-
-		if(index == 0) {
-			this.first = node.next;
+		
+		if(size == 1) {
+			this.last = null;
+			this.first = null;
+		
+		}else if(index == 0) {
+			this.first = this.first.next;
+			this.first.previous = null;
+			
+		} else if(index == size-1) {
+			this.last = this.last.previous;
+			this.last.next = null;
+		
 		} else {
+			ListNode node = new ListNode();
+			node = this.first;
+			
 			for(int i = 0; i < index-1 && node != null; i++) {
 				node = node.next;
 			}
+			
 			ListNode helpNode = new ListNode();
 			helpNode = node.next.next;
 			node.next = helpNode;

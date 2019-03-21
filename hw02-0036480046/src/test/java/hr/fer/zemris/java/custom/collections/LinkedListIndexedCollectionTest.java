@@ -119,4 +119,44 @@ public class LinkedListIndexedCollectionTest {
 		assertEquals(kisa, collection.get(1));
 		assertEquals(oluja, collection.get(2));
 	}
+	
+	@Test
+	public void testRemoveFirst() {
+		LinkedListIndexedCollection collection = new LinkedListIndexedCollection();
+		collection.add(kisa);
+		collection.insert(sunce, 0);
+		collection.insert(snijeg, 1);
+		collection.add(vjetar);
+		collection.insert(oluja, 3);
+		collection.remove(0);
+		
+		assertEquals(snijeg, collection.get(0));
+		assertEquals(kisa, collection.get(1));
+		assertEquals(oluja, collection.get(2));
+		assertEquals(vjetar, collection.get(3));
+	}
+	
+	@Test
+	public void testRemoveLast() {
+		LinkedListIndexedCollection collection = new LinkedListIndexedCollection();
+		collection.add(kisa);
+		collection.add(sunce);
+		collection.add(snijeg);
+		collection.add(vjetar);
+		collection.remove(collection.size()-1);
+		
+		assertEquals(kisa, collection.get(0));
+		assertEquals(sunce, collection.get(1));
+		assertEquals(snijeg, collection.get(2));
+		assertThrows(IndexOutOfBoundsException.class, () -> collection.get(3));
+	}
+	
+	@Test
+	public void testRemoveOneElement() {
+		LinkedListIndexedCollection collection = new LinkedListIndexedCollection();
+		collection.add(kisa);
+		collection.remove(0);
+		
+		assertThrows(IndexOutOfBoundsException.class, () -> collection.get(0));
+	}
 }

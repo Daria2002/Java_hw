@@ -270,7 +270,7 @@ public class ComplexNumber {
 	}
 	
 	/**
-	 * Root of n
+	 * nth root of complex number
 	 * @param n n is degree
 	 * @return complex number that is result of root operation.
 	 */
@@ -295,7 +295,8 @@ public class ComplexNumber {
 	}
 	
 	/**
-	 * Create string out of complex number
+	 * Create string of complex number
+	 * @return string of complex number
 	 */
 	public String toString() {
 		return Double.toString(this.real) + (this.imaginary >= 0 ? "+" : "") +

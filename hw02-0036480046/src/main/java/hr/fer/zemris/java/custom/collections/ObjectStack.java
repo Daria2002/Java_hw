@@ -10,7 +10,7 @@ public class ObjectStack {
 	private ArrayIndexedCollection collection;
 	
 	/**
-	 * Constructor creates ArrayIndexedCollection object
+	 * Default constructor initializes stack.
 	 */
 	public ObjectStack() {
 		collection = new ArrayIndexedCollection();
@@ -36,7 +36,8 @@ public class ObjectStack {
 	}
 	
 	/**
-	 * Put on stack given non-null value
+	 * Put on stack given non-null value.
+	 * Complexity: O(1)
 	 * @param value value to push on stack
 	 */
 	public void push(Object value) {
@@ -48,7 +49,8 @@ public class ObjectStack {
 	
 	/**
 	 * Removes last value pushed on stack.
-	 * Throws EmptyStackException if stack is empty
+	 * Throws EmptyStackException if stack is empty.
+	 * Complexity: O(1)
 	 * @return removed value
 	 */
 	public Object pop() {

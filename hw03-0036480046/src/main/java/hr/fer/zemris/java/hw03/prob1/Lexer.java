@@ -100,7 +100,7 @@ public class Lexer {
 	 * charValue is symbol and 4 if charValue id null
 	 */
 	private int getCharType(char charValue) {
-
+		return 0;
 	}
 	
 	/**

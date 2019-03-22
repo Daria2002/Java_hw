@@ -20,7 +20,7 @@ public class ArrayIndexedCollectionTest {
 		assertEquals(new ArrayIndexedCollection().capacity, initialCapacity);
 	}
 	
-	/**
+	/** 
 	 * Tests second constructor that initializes variable capacity to 16.
 	 */
 	@Test
@@ -236,8 +236,11 @@ public class ArrayIndexedCollectionTest {
 		assertEquals(-1, testObject.indexOf(testString));
 	}
 	
+	/**
+	 * Test for remove method that removes index
+	 */
 	@Test
-	void testRemove() {
+	void testRemoveIndex() {
 		ArrayIndexedCollection testObject = new ArrayIndexedCollection(3);
 		testObject.add(rukomet);
 		testObject.add(atletika);
@@ -247,6 +250,24 @@ public class ArrayIndexedCollectionTest {
 		
 		assertEquals(rukomet, testObject.get(0));
 		assertEquals(atletika, testObject.get(1));
+		assertEquals(rukomet, testObject.get(2));
+		assertEquals(3, testObject.size());
+	}
+	
+	/**
+	 * Test for remove method that removes value
+	 */
+	@Test
+	void testRemoveValue() {
+		ArrayIndexedCollection testObject = new ArrayIndexedCollection(3);
+		testObject.add(rukomet);
+		testObject.add(atletika);
+		testObject.add(rukomet);
+		testObject.add(rukomet);
+		testObject.remove(rukomet);
+		
+		assertEquals(atletika, testObject.get(0));
+		assertEquals(rukomet, testObject.get(1));
 		assertEquals(rukomet, testObject.get(2));
 		assertEquals(3, testObject.size());
 	}
@@ -321,4 +342,14 @@ public class ArrayIndexedCollectionTest {
 		assertEquals(nogomet, array[1]);
 	}
 	
+	@Test
+	void testIsEmpty() {
+		ArrayIndexedCollection collection = new ArrayIndexedCollection();
+		boolean beforeAddingElement = collection.isEmpty();
+		collection.add(atletika);
+		boolean afterAddingElement = collection.isEmpty();
+		
+		assertEquals(true, beforeAddingElement);
+		assertEquals(false, afterAddingElement);
+	}
 }

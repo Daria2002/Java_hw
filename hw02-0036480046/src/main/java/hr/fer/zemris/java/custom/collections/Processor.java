@@ -8,7 +8,7 @@ package hr.fer.zemris.java.custom.collections;
  */
 public class Processor {
 	
-	/**
+	/** 
 	 * This method is used for performing operations on given objects.
 	 * Its implementation exists but does nothing.
 	 * @param value value is given object of type Object 

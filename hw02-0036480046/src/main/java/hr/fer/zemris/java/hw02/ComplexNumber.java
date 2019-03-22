@@ -6,10 +6,10 @@ package hr.fer.zemris.java.hw02;
  * is 0.00001
  * @author Daria Matkovic
  *
- */
+ */  
 public class ComplexNumber {
 	// after initialization real and imaginary are unmodifiable
-	private final double real;
+	private final double real; 
 	private final double imaginary;
 	
 	/**
@@ -22,7 +22,7 @@ public class ComplexNumber {
 		this.real = real;
 		this.imaginary = imaginary;
 	}
-	
+	 
 	/**
 	 * Makes complex number from real number
 	 * @param real given real number
@@ -56,11 +56,17 @@ public class ComplexNumber {
 	}
 	
 	/**
-	 * Parse given string
+	 * Parse given string. Given string is complex number. Real and imaginary
+	 * components of given complex number are real numbers. Letter 'i' must be
+	 * after imaginary component.
 	 * @param s given string to parse
 	 * @return complex number
 	 */
 	public static ComplexNumber parse(String s) {
+		if("".equals(s) || s == null) {
+			throw new IllegalArgumentException("Invalid expression.");
+		}
+		
 		StringBuilder helpString = new StringBuilder();
 		boolean realAdded = false;
 		boolean	imaginaryAdded = false;
@@ -79,15 +85,31 @@ public class ComplexNumber {
 			// if + is between imaginary and real number
 			if('+' == (charArray[i]) && helpString.length() > 0) {
 				real = Double.parseDouble(helpString.toString());
+				
+				if(i+1 <= charArray.length-1) {
+					if('+' == charArray[i+1] || '-' == charArray[i+1]) {
+						throw new IllegalArgumentException("Multiple signs are not"
+								+ " acceptable.");
+					}
+				}
+				
 				if(helpNegative) {
 					real *= (-1);
 				}
+				
 				helpNegative = false;
 				realAdded = true;
 				helpString = new StringBuilder();
 				
 			} else if('-' == (charArray[i]) && helpString.length() > 0) {
 				// if minus is between imaginary and real number
+				if(i+1 <= charArray.length-1) {
+					if('+' == charArray[i+1] || '-' == charArray[i+1]) {
+						throw new IllegalArgumentException("Multiple signs are not"
+								+ " acceptable.");
+					}
+				}
+				
 				real = Double.parseDouble(helpString.toString());
 				realAdded = true;
 				helpString = new StringBuilder();
@@ -98,14 +120,30 @@ public class ComplexNumber {
 				
 			} else if('+' == (charArray[i]) && helpString.length() == 0) {
 				// if + is before first number
+				if('+' == charArray[i+1] || '-' == charArray[i+1]) {
+					throw new IllegalArgumentException("Multiple signs are not"
+							+ " acceptable.");
+				}
 				continue;
 				
 			} else if('-' == (charArray[i]) && helpString.length() == 0) {
 				// if minus is before first number
+				if('+' == charArray[i+1] || '-' == charArray[i+1]) {
+					throw new IllegalArgumentException("Multiple signs are not"
+							+ " acceptable.");
+				}
 				helpNegative = true;
 				continue;
 				
 			} else if('i' == (charArray[i])) {
+
+				if(i+1 <= charArray.length-1) {
+					if(Character.isDigit(charArray[i+1])) {
+						throw new IllegalArgumentException("Letter 'i' comes "
+								+ "after imaginary number.");
+					}
+				}
+				
 				// if "i" is after number
 				if(imaginaryAdded) {
 					throw new IllegalArgumentException("Enter complex number in "

@@ -14,11 +14,10 @@ public class ComplexNumberTest {
 	void testConstructor() {
 		ComplexNumber complexNumber = new ComplexNumber(1.3, 2.7);
 		
-		assertEquals(1.3, complexNumber.getReal(), tolerance);
-		assertEquals(2.7, complexNumber.getImaginary(), tolerance);
-	}
+		assertEquals("1.3+2.7i", complexNumber.toString());
+	} 
 	
-	@Test
+	@Test 
 	void testFromReal() {
 		assertEquals(-10.79, ComplexNumber.fromReal(-10.79).getReal(), tolerance);
 		assertEquals(0, ComplexNumber.fromReal(-10.79).getImaginary(), tolerance);
@@ -52,9 +51,21 @@ public class ComplexNumberTest {
 		assertEquals("0.0+1.0i", ComplexNumber.parse("i+0").toString());
 		
 		assertThrows(IllegalArgumentException.class, 
-				() -> {ComplexNumber.parse("i+i").toString();});
+				() -> ComplexNumber.parse("i+i").toString());
 		assertThrows(IllegalArgumentException.class, 
-				() -> {ComplexNumber.parse("hello").toString();});
+				() -> ComplexNumber.parse("hello").toString());
+		assertThrows(IllegalArgumentException.class, 
+				() -> ComplexNumber.parse("+-354").toString());
+		assertThrows(IllegalArgumentException.class, 
+				() -> ComplexNumber.parse("3+-4i").toString());
+		assertThrows(IllegalArgumentException.class, 
+				() -> ComplexNumber.parse("3+4i+-").toString());
+		assertThrows(IllegalArgumentException.class, 
+				() -> ComplexNumber.parse("+i200").toString());
+		assertThrows(IllegalArgumentException.class,
+				() -> ComplexNumber.parse("-i2.7" ).toString());
+		assertThrows(IllegalArgumentException.class,
+				() -> ComplexNumber.parse("").toString());
 	}
 	
 	@Test

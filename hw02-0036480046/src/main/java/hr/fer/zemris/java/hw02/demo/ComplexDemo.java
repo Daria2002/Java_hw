@@ -20,4 +20,4 @@ public class ComplexDemo {
 				.div(c2).power(3).root(2)[1];
 		System.out.println(c3);
 	}
-}
+} 

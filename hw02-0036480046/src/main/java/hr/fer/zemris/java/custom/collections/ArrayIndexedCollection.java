@@ -87,7 +87,7 @@ public class ArrayIndexedCollection extends Collection {
 		}
 		// adding elements into first empty place
 		this.elements[this.size] = value;
-		this.size += 1;
+		this.size += 1; 
 	}
 	
 	/**
@@ -110,7 +110,7 @@ public class ArrayIndexedCollection extends Collection {
 	 */
 	public void clear() {
 		for(int i = 0; i < this.size; i++) {
-			this.elements[i] = null;
+			this.elements[i] = null; 
 		}
 		this.size = 0;
 	}
@@ -158,7 +158,7 @@ public class ArrayIndexedCollection extends Collection {
 	 */
 	public int indexOf(Object value) {
 		for(int i = 0; i < this.size; i++) {
-			if(this.elements[i] == value) {
+			if(this.elements[i].equals(value)) {
 				return i;
 			}
 		}
@@ -182,6 +182,16 @@ public class ArrayIndexedCollection extends Collection {
 			}
 		}
 		this.size -= 1;
+	}
+	
+	@Override
+	public boolean remove(Object value) {
+		if(this.contains(value)) {
+			int index = this.indexOf(value);
+			this.remove(index);
+			return true;
+		}
+		return false;
 	}
 	
 	@Override

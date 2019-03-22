@@ -42,7 +42,7 @@ public class LinkedListIndexedCollection extends Collection {
 		this.addAll(collection);
 	}
 	
-	/**
+	/** 
 	 * Adds given value at the end of collection
 	 * Complexity: O(1)
 	 * @param value value added to collection
@@ -230,18 +230,19 @@ public class LinkedListIndexedCollection extends Collection {
 	}
 	
 	@Override
+	public boolean remove(Object value) {
+		if(this.contains(value)) {
+			int index = indexOf(value);
+			remove(index);
+			return true;
+		}
+		
+		return false;
+	}
+	
+	@Override
 	public int size() {
-		if(this.first == null) {
-			return 0;
-		}
-		ListNode node = new ListNode();
-		node = this.first;
-		int size = 1;
-		while(node != this.last) {
-			size++;
-			node = node.next;
-		}
-		return size;
+		return this.size;
 	}
 	
 	@Override
@@ -258,7 +259,7 @@ public class LinkedListIndexedCollection extends Collection {
 		ListNode node = new ListNode();
 		node = this.first;
 		for(int i = 0; i < this.size; i++) {
-			array[i] = node;
+			array[i] = node.value;
 			node = node.next;
 		}
 		return array;

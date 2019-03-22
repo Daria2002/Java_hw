@@ -9,8 +9,8 @@ import hr.fer.zemris.java.custom.collections.ObjectStack;
  * @author Daria Matković
  *
  */
-public class StackDemo {
-	/**
+public class StackDemo { 
+	/** 
 	 * This method executes when program starts.
 	 * @param args expression to split.
 	 */
@@ -21,7 +21,7 @@ public class StackDemo {
 			return;
 		}
 		
-		String expression = args[0];
+		String expression = args[0].trim().replaceAll("\\s+"," ");
 		String[] splitExpression = expression.split(" ");
 		ObjectStack objectStack = new ObjectStack();
 		
@@ -36,7 +36,7 @@ public class StackDemo {
 				
 				if(objectStack.size() < 2) {
 					System.out.println("Invalid expression.");
-					System.exit(1);
+					System.exit(1); 
 				}
 				
 				// number2 is number that is 2nd putted on stack
@@ -45,31 +45,33 @@ public class StackDemo {
 				int number1 = (int)objectStack.pop();
 				
 				switch (splitExpression[i]) {
-				case "+":
-					result = number1 + number2;
-					break;
-				case "-":
-					result = number1 - number2;
-				case "*":
-					result = number1 * number2;
-					break;
-				case "/":
-					if(number2 == 0) {
-						System.out.println("Division by 0.");
+					case "+":
+						result = number1 + number2;
+						break;
+					case "-":
+						result = number1 - number2;
+						break;
+					case "*":
+						result = number1 * number2;
+						break;
+					case "/":
+						if(number2 == 0) {
+							System.out.println("Division by 0.");
+							System.exit(1);
+						}
+						result = number1 / number2;
+						break;
+					case "%":
+						if(number2 == 0) {
+							System.out.println("Division by 0.");
+							System.exit(1);
+						}
+						result = number1 % number2;
+						break;
+					default:
+						System.out.println("Given value is not operator or number.");
 						System.exit(1);
-					}
-					result = number1 / number2;
-					break;
-				case "%":
-					if(number2 == 0) {
-						System.out.println("Division by 0.");
-						System.exit(1);
-					}
-					result = number1 % number2;
-					break;
-				default:
-					System.out.println("Given value is not operator or number.");
-					System.exit(1);
+						
 				}
 				objectStack.push(result);
 			}

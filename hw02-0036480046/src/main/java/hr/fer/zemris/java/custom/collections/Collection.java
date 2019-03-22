@@ -10,19 +10,19 @@ public class Collection {
 	/**
 	 * Constructor with empty body.
 	 */
-	protected Collection() {
+	protected Collection() { 
 		
 	}
 	
 	/**
 	 * Checks if collection contains any object.
-	 * @return false if collection contains no object, otherwise true
+	 * @return true if collection contains no object, otherwise false
 	 */
 	public boolean isEmpty() {
 		if(this.size() > 0) {
-			return true;
+			return false;
 		}
-		return false;
+		return true;
 	}
 	
 	/**

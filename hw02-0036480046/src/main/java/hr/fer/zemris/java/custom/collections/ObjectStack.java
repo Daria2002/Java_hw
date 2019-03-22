@@ -21,10 +21,10 @@ public class ObjectStack {
 	 * @return true if stack is empty, otherwise false.
 	 */
 	public boolean isEmpty() {
-		if(this.size() == 0) {
-			return true;
+		if(this.size() > 0) {
+			return false;
 		}
-		return false;
+		return true;
 	}
 	
 	/**
@@ -45,7 +45,7 @@ public class ObjectStack {
 			throw new NullPointerException("Null can't pushed on stack.");
 		}
 		collection.add(value);
-	}
+	} 
 	
 	/**
 	 * Removes last value pushed on stack.
@@ -78,6 +78,8 @@ public class ObjectStack {
 	 * Removes all elements from stack.
 	 */
 	public void clear() {
-		this.clear();
+		for(int i = 0; i < this.size(); i++) {
+			this.pop();
+		}
 	}
 }

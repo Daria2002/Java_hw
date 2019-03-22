@@ -15,9 +15,9 @@ public class LinkedListIndexedCollectionTest {
 	@Test
 	public void testConstructor1() {
 		assertEquals(0, new LinkedListIndexedCollection().size());
-	}
+	} 
 	
-	@Test
+	@Test 
 	public void testConstructor2() {
 		LinkedListIndexedCollection collectionToAdd = 
 				new LinkedListIndexedCollection();
@@ -158,5 +158,31 @@ public class LinkedListIndexedCollectionTest {
 		collection.remove(0);
 		
 		assertThrows(IndexOutOfBoundsException.class, () -> collection.get(0));
+	}
+	
+	/**
+	 * Test for remove method that removes given value
+	 */
+	@Test
+	public void testRemoveValue() {
+		LinkedListIndexedCollection collection = new LinkedListIndexedCollection();
+		collection.add(kisa);
+		collection.add(oluja);
+		collection.add(vjetar);
+		collection.remove(oluja);
+		
+		assertEquals(kisa, collection.get(0));
+		assertEquals(vjetar, collection.get(1));
+	}
+	
+	@Test
+	public void testIsEmpty() {
+		LinkedListIndexedCollection collection = new LinkedListIndexedCollection();
+		boolean beforeAddingElement = collection.isEmpty();
+		collection.add(kisa);
+		boolean afterAddingElement = collection.isEmpty();
+		
+		assertEquals(true, beforeAddingElement);
+		assertEquals(false, afterAddingElement);
 	}
 }

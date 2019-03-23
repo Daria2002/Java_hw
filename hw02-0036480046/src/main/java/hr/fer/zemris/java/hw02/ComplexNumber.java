@@ -8,9 +8,12 @@ package hr.fer.zemris.java.hw02;
  *
  */  
 public class ComplexNumber {
-	// after initialization real and imaginary are unmodifiable
+	/** unmodifiable real part of complex number **/
 	private final double real; 
+	/** unmodifiable imaginary part of complex number **/
 	private final double imaginary;
+	/** tolerance used for comparing floating point numbers **/
+	private static final double TOLERANCE = 0.00001;
 	
 	/**
 	 * Constructor initialize unmodifiable real and imaginary part of complex
@@ -22,7 +25,7 @@ public class ComplexNumber {
 		this.real = real;
 		this.imaginary = imaginary;
 	}
-	 
+	  
 	/**
 	 * Makes complex number from real number
 	 * @param real given real number
@@ -340,5 +343,32 @@ public class ComplexNumber {
 		return Double.toString(this.real) + (this.imaginary >= 0 ? "+" : "") +
 				Double.toString(this.imaginary) + "i";
 	}
-	
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		long temp;
+		temp = Double.doubleToLongBits(imaginary);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(real);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ComplexNumber other = (ComplexNumber) obj;
+		if (Math.abs(imaginary - other.imaginary) > TOLERANCE)
+			return false;
+		if (Math.abs(real - other.real) > TOLERANCE)
+			return false;
+		return true;
+	}
 }

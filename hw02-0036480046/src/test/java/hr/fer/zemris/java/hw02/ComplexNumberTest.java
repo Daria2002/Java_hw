@@ -17,16 +17,19 @@ public class ComplexNumberTest {
 		assertEquals("1.3+2.7i", complexNumber.toString());
 	} 
 	
-	@Test 
+	@Test  
 	void testFromReal() {
-		assertEquals(-10.79, ComplexNumber.fromReal(-10.79).getReal(), tolerance);
-		assertEquals(0, ComplexNumber.fromReal(-10.79).getImaginary(), tolerance);
+		ComplexNumber complexNumber1 = new ComplexNumber(-10.79, 0);
+		ComplexNumber complexNumber2 = ComplexNumber.fromReal(-10.79);
+		
+		assertTrue(complexNumber1.equals(complexNumber2));
 	}
 	
 	@Test
 	void testFromImaginary() {
-		assertEquals(0, ComplexNumber.fromImaginary(-75.45).getReal(), tolerance);
-		assertEquals(-75.45, ComplexNumber.fromImaginary(-75.45).getImaginary(), tolerance);
+		ComplexNumber complexNumber1 = new ComplexNumber(0, -75.45);
+		
+		assertTrue(complexNumber1.equals(ComplexNumber.fromImaginary(-75.45)));
 	}
 
 	@Test
@@ -66,6 +69,8 @@ public class ComplexNumberTest {
 				() -> ComplexNumber.parse("-i2.7" ).toString());
 		assertThrows(IllegalArgumentException.class,
 				() -> ComplexNumber.parse("").toString());
+		assertThrows(IllegalArgumentException.class,
+				() -> ComplexNumber.parse("5+4").toString());
 	}
 	
 	@Test
@@ -110,31 +115,29 @@ public class ComplexNumberTest {
 	void testDiv() {
 		ComplexNumber complexNumber1 = new ComplexNumber(-1, 8);
 		ComplexNumber complexNumber2 = new ComplexNumber(5, 8);
+		ComplexNumber complexNumber3 = new ComplexNumber(0.66292, 0.53932);
 		
-		assertEquals(complexNumber1.div(complexNumber2).getImaginary(),
-				0.53932, tolerance);
-		assertEquals(complexNumber1.div(complexNumber2).getReal(),
-				0.66292, tolerance);
+		assertTrue(complexNumber3.equals((complexNumber1).div(complexNumber2)));
 	}
 	
 	@Test
 	void testPower() {
 		ComplexNumber complexNumber1 = new ComplexNumber(-7, 8);
+		ComplexNumber complexNumber2 = new ComplexNumber(1000.99999, 664.0);
 		
-		assertEquals(complexNumber1.power(3).getImaginary(), 664.0, tolerance);
-		assertEquals(complexNumber1.power(3).getReal(), 1000.99999, tolerance);
+		assertTrue(complexNumber2.equals(complexNumber1.power(3)));
 	}
 	
 	@Test
 	void testRoot() {
 		ComplexNumber complexNumber1 = new ComplexNumber(-7, 8);
+		ComplexNumber complexNumber2 = new ComplexNumber(1.58887, 1.51988);
+		ComplexNumber complexNumber3 = new ComplexNumber(-2.11069, 0.61606);
+		ComplexNumber complexNumber4 = new ComplexNumber(0.52182, -2.13595);
 		
-		assertEquals(complexNumber1.root(3)[0].getImaginary(), 1.51988, tolerance);
-		assertEquals(complexNumber1.root(3)[0].getReal(), 1.58887, tolerance);
-		assertEquals(complexNumber1.root(3)[1].getImaginary(), 0.61606, tolerance);
-		assertEquals(complexNumber1.root(3)[1].getReal(), -2.11069, tolerance);
-		assertEquals(complexNumber1.root(3)[2].getImaginary(), -2.13595, tolerance);
-		assertEquals(complexNumber1.root(3)[2].getReal(), 0.52182, tolerance);
+		assertTrue(complexNumber2.equals(complexNumber1.root(3)[0]));
+		assertTrue(complexNumber3.equals(complexNumber1.root(3)[1]));
+		assertTrue(complexNumber4.equals(complexNumber1.root(3)[2]));
 	}
 	
 	@Test

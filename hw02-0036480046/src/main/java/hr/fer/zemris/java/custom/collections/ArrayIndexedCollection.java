@@ -1,29 +1,34 @@
 package hr.fer.zemris.java.custom.collections;
 
+import java.util.Arrays;
+
 /**
  * This program implements resizable array-backed collection of objects. It is
  * allowed to store duplicate elements, but null references are not allowed.
  * @author Daria Matkovic
- *
+ * 
  */
 public class ArrayIndexedCollection extends Collection {
+	/** size of array elements **/
 	private int size;
+	/** array of Objects **/
 	private Object[] elements;
-	public int capacity;
+	/** initial capacity **/
+	private static final int INITIAL_CAPACITY = 16;
 	
 	/**
 	 * Initialize capacity variable to 16 and preallocates elements to that size.
 	 */
 	public ArrayIndexedCollection() {
-		this(16);
+		this(INITIAL_CAPACITY);
 	}
-
+	
 	/**
 	 * Checks if collection is null and delegates to previous constructor
 	 * @param collection collection is given collection to check if it is null
 	 */
 	public ArrayIndexedCollection(Collection collection) {
-		this(collection, 16);
+		this(collection, INITIAL_CAPACITY);
 	}
 	
 	/**
@@ -34,8 +39,7 @@ public class ArrayIndexedCollection extends Collection {
 		if(initialCapacity < 1) {
 			throw new IllegalArgumentException("Initial capacity is less than 1");
 		}
-		this.capacity = initialCapacity;
-		this.elements = new Object[this.capacity];
+		this.elements = new Object[initialCapacity];
 	}
 	
 	/**
@@ -46,30 +50,33 @@ public class ArrayIndexedCollection extends Collection {
 	 * @param initialCapacity initial value for capacity
 	 */
 	public ArrayIndexedCollection(Collection collection, int initialCapacity) {
-		this(initialCapacity);
 		if(collection == null) {
 			throw new NullPointerException("Collection object is null.");
 		}
+		int capacity;
 		if(initialCapacity < collection.size()) {
-			this.capacity = collection.size();
-			this.elements = new Object[this.capacity];
+			capacity = collection.size();
+		} else {
+			capacity = initialCapacity;
 		}
+
+		this.elements = new Object[capacity];
 		this.addAll(collection);
+	}
+	
+	/**
+	 * Gets capacity of elements list
+	 * @return capacity
+	 */
+	public int getCapacity() {
+		return elements.length;
 	}
 	
 	/**
 	 * Doubling element's capacity
 	 */
-	private void doubleCapacity() {
-		Object[] helpArray = new Object[this.size];
-		for(int i = 0; i < this.size; i++) {
-			helpArray[i] = this.elements[i];
-		}
-		this.capacity *= 2;
-		this.elements = new Object[this.capacity];
-		for(int i = 0; i < this.size; i++) {
-			this.elements[i] = helpArray[i];
-		}
+	private void doubleCapacity() { 
+		elements = Arrays.copyOf(elements, elements.length*2);
 	}
 	
 	/**
@@ -79,10 +86,10 @@ public class ArrayIndexedCollection extends Collection {
 	 */
 	public void add(Object value) {
 		if(value == null) {
-			throw new NullPointerException();
+			throw new NullPointerException("Null can't be added.");
 		}
 		// doubling array's size if array is full
-		if(this.capacity == this.size) {
+		if(elements.length == this.size) {
 			doubleCapacity();
 		}
 		// adding elements into first empty place
@@ -124,7 +131,7 @@ public class ArrayIndexedCollection extends Collection {
 	 */
 	public void insert(Object value, int position) {
 		if(position < 0 || position > size) {
-			throw new IndexOutOfBoundsException();
+			throw new IndexOutOfBoundsException("Index out of bounds.");
 		}
 		
 		if(value == null) {
@@ -132,7 +139,7 @@ public class ArrayIndexedCollection extends Collection {
 		}
 		
 		// doubling array's size if array is full
-		if(this.capacity == this.size) {
+		if(elements.length == this.size) {
 			doubleCapacity();
 		}
 		
@@ -151,17 +158,22 @@ public class ArrayIndexedCollection extends Collection {
 	
 	/**
 	 * Searches for the given value in the collection
+	 * Complexity: O(n)
 	 * @param value value to search in collection
 	 * @return the index of the first occurrence of the given value or 
 	 * -1 if the value is not found
-	 * complexity: O(n)
 	 */
 	public int indexOf(Object value) {
+		if(value == null) {
+			return -1;
+		}
+		
 		for(int i = 0; i < this.size; i++) {
 			if(this.elements[i].equals(value)) {
 				return i;
 			}
 		}
+		
 		return -1;
 	}
 	
@@ -186,12 +198,13 @@ public class ArrayIndexedCollection extends Collection {
 	
 	@Override
 	public boolean remove(Object value) {
-		if(this.contains(value)) {
-			int index = this.indexOf(value);
-			this.remove(index);
-			return true;
+		int index = this.indexOf(value);
+		if(index < 0) {
+			return false;
 		}
-		return false;
+		
+		this.remove(index);
+		return true;
 	}
 	
 	@Override

@@ -19,5 +19,5 @@ public class ComplexDemo {
 		ComplexNumber c3 = c1.add(ComplexNumber.fromMagnitudeAndAngle(2, 1.57))
 				.div(c2).power(3).root(2)[1];
 		System.out.println(c3);
-	}
+	} 
 } 

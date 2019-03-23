@@ -6,7 +6,7 @@ package hr.fer.zemris.java.custom.collections;
  *
  */
 public class ObjectStack {
-	
+	/** Collection for stack implementation **/
 	private ArrayIndexedCollection collection;
 	
 	/**
@@ -14,7 +14,7 @@ public class ObjectStack {
 	 */
 	public ObjectStack() {
 		collection = new ArrayIndexedCollection();
-	}
+	} 
 	
 	/**
 	 * Checks if stack is empty.
@@ -54,10 +54,7 @@ public class ObjectStack {
 	 * @return removed value
 	 */
 	public Object pop() {
-		if(this.isEmpty()) {
-			throw new EmptyStackException("Stack is empty.");
-		}
-		Object object = collection.get(this.size()-1);
+		Object object = peek();
 		collection.remove(this.size() - 1);
 		return object;
 	}

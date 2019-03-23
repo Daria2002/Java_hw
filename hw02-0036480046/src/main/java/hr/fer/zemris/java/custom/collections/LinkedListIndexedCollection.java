@@ -20,12 +20,28 @@ public class LinkedListIndexedCollection extends Collection {
 		ListNode next;
 		// value of current node
 		Object value;
+		
+		/**
+		 * Initialize list node.
+		 * @param previous previous reference
+		 * @param next next reference
+		 * @param value node value
+		 */
+		public ListNode(ListNode previous, ListNode next, Object value) {
+			this.previous = previous;
+			this.next = next;
+			this.value = value;
+		}
+		
 	}
+	/** size of node list **/
 	private int size;
+	/** first node **/
 	private ListNode first;
+	/** last node **/
 	private ListNode last;
 	
-	/**
+	/** 
 	 * Default constructor creates empty collection
 	 */
 	public LinkedListIndexedCollection() {
@@ -54,10 +70,7 @@ public class LinkedListIndexedCollection extends Collection {
 					+ " linked list indexed collection.");
 		}
 		
-		ListNode node = new ListNode();
-		node.next = null;
-		node.previous = null;
-		node.value = value;
+		ListNode node = new ListNode(null, null, value);
 		
 		if(this.size == 0) {
 			this.first = node;
@@ -81,7 +94,19 @@ public class LinkedListIndexedCollection extends Collection {
 					+ " from 0 to size-1.");
 		}
 		
-		ListNode node = new ListNode();
+		ListNode node = getNode(index);
+		
+		return node.value;
+	}
+	
+	/**
+	 * Gets list node object at index position.
+	 * Complexity: n/2 + 1
+	 * @param index position of node
+	 * @return node at index
+	 */
+	private ListNode getNode(int index) {
+		ListNode node = new ListNode(null, null, null);
 		
 		if(index < size/2) {
 			node = this.first;
@@ -95,15 +120,15 @@ public class LinkedListIndexedCollection extends Collection {
 			}
 		}
 		
-		return node.value;
+		return node;
 	}
 	
 	/**
 	 * Removes all elements from the collection
 	 */
 	public void clear() {
-		ListNode node = new ListNode();
-		node = this.first;
+		ListNode node = new ListNode(this.first.previous, this.first.next,
+				this.first.value);
 		
 		for(int i = 0; i < this.size; i++) {
 			if(i > 0) {
@@ -132,43 +157,36 @@ public class LinkedListIndexedCollection extends Collection {
 					+ " linked list indeced collection.");
 		}
 		
-		ListNode newNode = new ListNode();
-		newNode.value = value;
-		newNode.next = null;
-		newNode.previous = null;
+		ListNode newNode = new ListNode(null, null, value);
 		// if list is empty
 		if(this.size == 0) {
 			this.first = newNode;
 			this.last = newNode;
+			this.size += 1;
+			return;
+		}
+		
+		// if list is not empty
+		if(position == 0) {
+			// if first element need to be added
+			newNode.next = this.first;
+			this.first.previous = newNode;
+			this.first = newNode;
+			
+		} else if(position == this.size) {
+			// shifting is not needed because element must be added at the end
+			newNode.previous = this.last;
+			this.last.next = newNode;
+			this.last = newNode;
 			
 		} else {
-			// if list is not empty
-			if(position == 0) {
-				// if first element need to be added
-				newNode.next = this.first;
-				this.first.previous = newNode;
-				this.first = newNode;
-				
-			} else if(position == this.size) {
-				// shifting is not needed because element must be added at the end
-				newNode.previous = this.last;
-				this.last.next = newNode;
-				this.last = newNode;
-				
-			} else {
-				// if shifting is needed
-				ListNode helpNode = new ListNode();
-				helpNode = this.first;
-				
-				for(int i = 0; i < position; i++) {
-					helpNode = helpNode.next;
-				}
-				
-				newNode.next = helpNode;
-				newNode.previous = helpNode.previous;
-				helpNode.previous.next = newNode;
-				helpNode.previous = newNode;
-			}
+			// if shifting is needed
+			ListNode helpNode = getNode(position);
+			
+			newNode.next = helpNode;
+			newNode.previous = helpNode.previous;
+			helpNode.previous.next = newNode;
+			helpNode.previous = newNode;
 		}
 		
 		this.size += 1;
@@ -182,14 +200,19 @@ public class LinkedListIndexedCollection extends Collection {
 	 * appears in the collection, otherwise -1
 	 */
 	public int indexOf(Object value) {
-		ListNode node = new ListNode();
-		node = this.first;
+		if(value == null) {
+			return -1;
+		}
+		
+		ListNode node = new ListNode(this.first.previous, this.first.next,
+				this.first.value);
 		for(int i = 0; i < this.size; i++) {
 			if(node.value.equals(value)) {
 				return i;
 			}
 			node = node.next;
 		}
+		
 		return -1;
 	}
 	
@@ -202,44 +225,58 @@ public class LinkedListIndexedCollection extends Collection {
 			throw new IndexOutOfBoundsException("Index out of range");
 		}
 		
-		if(size == 1) {
-			this.last = null;
-			this.first = null;
+		ListNode currentNode = getNode(index);
+		removeObject(currentNode);
 		
-		}else if(index == 0) {
-			this.first = this.first.next;
-			this.first.previous = null;
-			
-		} else if(index == size-1) {
-			this.last = this.last.previous;
-			this.last.next = null;
-		
-		} else {
-			ListNode node = new ListNode();
-			node = this.first;
-			
-			for(int i = 0; i < index-1 && node != null; i++) {
-				node = node.next;
-			}
-			
-			ListNode helpNode = new ListNode();
-			helpNode = node.next.next;
-			node.next = helpNode;
-		}
 		this.size -= 1;
 	}
 	
 	@Override
 	public boolean remove(Object value) {
-		if(this.contains(value)) {
-			int index = indexOf(value);
-			remove(index);
-			return true;
+		if(value == null) {
+			return false;
 		}
 		
-		return false;
+		ListNode currentNode = new ListNode(this.first.previous, this.first.next,
+				this.first.value);
+		
+		while(currentNode != null && !currentNode.value.equals(value)) {
+			currentNode = currentNode.next;
+		}
+
+		if(currentNode == null) {
+			return false;
+		}
+		
+		removeObject(currentNode);
+		size -= 1;
+		
+		return true;
 	}
 	
+	/**
+	 * Removes currentNode from node list
+	 * @param currentNode node to remove
+	 */
+	private void removeObject(ListNode currentNode) {
+		// if first node
+		if(currentNode.previous == null) {
+			this.first = currentNode.next;
+		}
+		// if last node
+		if(currentNode.next == null) {
+			this.last = currentNode.previous;
+		}
+		// if not last node
+		if(currentNode.next != null) {
+			currentNode.next.previous = currentNode.previous;
+		}
+		// if not first node
+		if(currentNode.previous != null) {
+			currentNode.previous.next = currentNode.next; 
+		}
+	}
+
 	@Override
 	public int size() {
 		return this.size;
@@ -256,8 +293,8 @@ public class LinkedListIndexedCollection extends Collection {
 	@Override
 	public Object[] toArray() {
 		Object[] array = new Object[this.size];
-		ListNode node = new ListNode();
-		node = this.first;
+		ListNode node = new ListNode(this.first.previous, this.first.next, 
+				this.first.value);
 		for(int i = 0; i < this.size; i++) {
 			array[i] = node.value;
 			node = node.next;
@@ -267,8 +304,8 @@ public class LinkedListIndexedCollection extends Collection {
 	
 	@Override
 	public void forEach(Processor processor) {
-		ListNode node = new ListNode();
-		node = this.first;
+		ListNode node = new ListNode(this.first.previous, this.first.next, 
+				this.first.value);
 		for(int i = 0; i < this.size; i++) {
 			processor.process(node.value);
 			node = node.next;

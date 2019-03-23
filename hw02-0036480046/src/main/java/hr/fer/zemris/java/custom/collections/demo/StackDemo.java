@@ -15,7 +15,7 @@ public class StackDemo {
 	 * @param args expression to split.
 	 */
 	public static void main(String[] args) {
-		
+		 
 		if(args.length != 1) {
 			System.out.println("Write one argument expression.");
 			return;

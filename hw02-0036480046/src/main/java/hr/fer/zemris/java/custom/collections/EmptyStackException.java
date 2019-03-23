@@ -15,7 +15,7 @@ public class EmptyStackException extends RuntimeException {
 	public EmptyStackException() { 
 		 
 	}
-	
+	 
 	/**
 	 * Constructor that sets message.
 	 * @param message message is error message.

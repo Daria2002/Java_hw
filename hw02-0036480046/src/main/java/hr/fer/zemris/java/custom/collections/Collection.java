@@ -19,10 +19,7 @@ public class Collection {
 	 * @return true if collection contains no object, otherwise false
 	 */ 
 	public boolean isEmpty() {
-		if(this.size() > 0) {
-			return false;
-		}
-		return true;
+		return size() == 0;
 	}
 	
 	/**

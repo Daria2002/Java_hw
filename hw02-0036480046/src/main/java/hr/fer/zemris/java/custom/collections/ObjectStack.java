@@ -21,10 +21,7 @@ public class ObjectStack {
 	 * @return true if stack is empty, otherwise false.
 	 */
 	public boolean isEmpty() {
-		if(this.size() > 0) {
-			return false;
-		}
-		return true;
+		return size() < 0;
 	}
 	
 	/**

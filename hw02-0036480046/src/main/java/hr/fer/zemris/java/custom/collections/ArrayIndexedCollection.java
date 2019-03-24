@@ -214,10 +214,7 @@ public class ArrayIndexedCollection extends Collection {
 	
 	@Override
 	public boolean contains(Object value) {
-		if(indexOf(value) == -1) {
-			return false;
-		}
-		return true;
+		return indexOf(value) != -1;
 	}
 	
 	@Override

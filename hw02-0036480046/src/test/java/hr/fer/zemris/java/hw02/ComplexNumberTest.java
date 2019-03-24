@@ -14,7 +14,7 @@ public class ComplexNumberTest {
 	void testConstructor() {
 		ComplexNumber complexNumber = new ComplexNumber(1.3, 2.7);
 		
-		assertEquals("1.3+2.7i", complexNumber.toString());
+		assertEquals("1.300+2.700i", complexNumber.toString());
 	} 
 	
 	@Test  
@@ -41,17 +41,17 @@ public class ComplexNumberTest {
 	
 	@Test
 	void testParse() {
-		assertEquals("0.0+1.0i", ComplexNumber.parse("i").toString());
-		assertEquals("1.0+0.0i", ComplexNumber.parse("1").toString());
-		assertEquals("0.0-1.0i", ComplexNumber.parse("-i").toString());
-		assertEquals("-1.0+0.0i", ComplexNumber.parse("-1").toString());
-		assertEquals("2.758+0.0i", ComplexNumber.parse("2.758").toString());
-		assertEquals("14.78+54.3i", ComplexNumber.parse("14.78+54.3i").toString());
-		assertEquals("-7.2-1.3i", ComplexNumber.parse("-7.2-1.3i").toString());
-		assertEquals("-9.4+3.2i", ComplexNumber.parse("-9.4+3.2i").toString());
-		assertEquals("351.0+0.0i", ComplexNumber.parse("351").toString());
-		assertEquals("0.0+0.0i", ComplexNumber.parse("0").toString());
-		assertEquals("0.0+1.0i", ComplexNumber.parse("i+0").toString());
+		assertEquals("0.000+1.000i", ComplexNumber.parse("i").toString());
+		assertEquals("1.000+0.000i", ComplexNumber.parse("1").toString());
+		assertEquals("0.000-1.000i", ComplexNumber.parse("-i").toString());
+		assertEquals("-1.000+0.000i", ComplexNumber.parse("-1").toString());
+		assertEquals("2.758+0.000i", ComplexNumber.parse("2.758").toString());
+		assertEquals("14.780+54.300i", ComplexNumber.parse("14.78+54.3i").toString());
+		assertEquals("-7.200-1.300i", ComplexNumber.parse("-7.2-1.3i").toString());
+		assertEquals("-9.400+3.200i", ComplexNumber.parse("-9.4+3.2i").toString());
+		assertEquals("351.000+0.000i", ComplexNumber.parse("351").toString());
+		assertEquals("0.000+0.000i", ComplexNumber.parse("0").toString());
+		assertEquals("0.000+1.000i", ComplexNumber.parse("i+0").toString());
 		
 		assertThrows(IllegalArgumentException.class, 
 				() -> ComplexNumber.parse("i+i").toString());
@@ -96,19 +96,19 @@ public class ComplexNumberTest {
 	@Test
 	void testAdd() {
 		assertEquals(new ComplexNumber(-1, 8).
-				add(new ComplexNumber(5, 8)).toString(), "4.0+16.0i");
+				add(new ComplexNumber(5, 8)).toString(), "4.000+16.000i");
 	}
 	
 	@Test
 	void testSub() {
 		assertEquals(new ComplexNumber(-1, 8).
-				sub(new ComplexNumber(5, 8)).toString(), "-6.0+0.0i");
+				sub(new ComplexNumber(5, 8)).toString(), "-6.000+0.000i");
 	}
 	
 	@Test
 	void testMul() {
 		assertEquals(new ComplexNumber(-1, 8).
-				mul(new ComplexNumber(5, 8)).toString(), "-69.0+32.0i");
+				mul(new ComplexNumber(5, 8)).toString(), "-69.000+32.000i");
 	}
 
 	@Test
@@ -142,6 +142,6 @@ public class ComplexNumberTest {
 	
 	@Test
 	void testToString() {
-		assertEquals(new ComplexNumber(-7, 8).toString(), "-7.0+8.0i");
+		assertEquals(new ComplexNumber(-7, 8).toString(), "-7.000+8.000i");
 	}
 }

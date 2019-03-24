@@ -1,5 +1,7 @@
 package hr.fer.zemris.java.hw02;
 
+import java.io.DataOutput;
+
 /**
  * Represents an unmodifiable complex number.
  * When comparing two double numbers tolerance for difference between two numbers
@@ -59,16 +61,13 @@ public class ComplexNumber {
 	}
 	
 	/**
-	 * Parse given string. Given string is complex number. Real and imaginary
-	 * components of given complex number are real numbers. Letter 'i' must be
-	 * after imaginary component.
+	 * Parse given complex number. Real and imaginary components are real numbers.
+	 * Letter 'i' must be after imaginary component.
 	 * @param s given string to parse
 	 * @return complex number
 	 */
 	public static ComplexNumber parse(String s) {
-		if("".equals(s) || s == null) {
-			throw new IllegalArgumentException("Invalid expression.");
-		}
+		checkCondition("".equals(s) || s == null);
 		
 		StringBuilder helpString = new StringBuilder();
 		boolean realAdded = false;
@@ -79,115 +78,88 @@ public class ComplexNumber {
 		char[] charArray = s.toCharArray();
 		
 		for(int i = 0; i < charArray.length; i++) {
-			
-			if(realAdded && imaginaryAdded) {
-				throw new IllegalArgumentException("Enter complex number in"
-						+ " format a+bi.");
-			}
+			checkCondition(realAdded && imaginaryAdded);
 			
 			// if + is between imaginary and real number
 			if('+' == (charArray[i]) && helpString.length() > 0) {
-				real = Double.parseDouble(helpString.toString());
+				checkCondition(i+1 <= charArray.length-1 &&
+						('+' == charArray[i+1] || '-' == charArray[i+1]));
 				
-				if(i+1 <= charArray.length-1) {
-					if('+' == charArray[i+1] || '-' == charArray[i+1]) {
-						throw new IllegalArgumentException("Multiple signs are not"
-								+ " acceptable.");
-					}
-				}
-				
-				if(helpNegative) {
-					real *= (-1);
-				}
+				real = makeNegative(Double.parseDouble(helpString.toString()),
+						helpNegative);
 				
 				helpNegative = false;
 				realAdded = true;
 				helpString = new StringBuilder();
+				continue;
 				
 			} else if('-' == (charArray[i]) && helpString.length() > 0) {
 				// if minus is between imaginary and real number
-				if(i+1 <= charArray.length-1) {
-					if('+' == charArray[i+1] || '-' == charArray[i+1]) {
-						throw new IllegalArgumentException("Multiple signs are not"
-								+ " acceptable.");
-					}
-				}
-				
-				real = Double.parseDouble(helpString.toString());
+				checkCondition(i+1 <= charArray.length-1 && 
+						('+' == charArray[i+1] || '-' == charArray[i+1]));
+
+				real = makeNegative(Double.parseDouble(helpString.toString()),
+						helpNegative);
 				realAdded = true;
 				helpString = new StringBuilder();
-				if(helpNegative) {
-					real *= (-1);
-				}
 				helpNegative = true;
+				continue;
 				
-			} else if('+' == (charArray[i]) && helpString.length() == 0) {
+			} else if(('+' == (charArray[i]) || '-' == (charArray[i])) &&
+					helpString.length() == 0) {
 				// if + is before first number
-				if('+' == charArray[i+1] || '-' == charArray[i+1]) {
-					throw new IllegalArgumentException("Multiple signs are not"
-							+ " acceptable.");
-				}
+				checkCondition('+' == charArray[i+1] || '-' == charArray[i+1]);
+				helpNegative = '-' == charArray[i] ? true : false;
 				continue;
 				
-			} else if('-' == (charArray[i]) && helpString.length() == 0) {
-				// if minus is before first number
-				if('+' == charArray[i+1] || '-' == charArray[i+1]) {
-					throw new IllegalArgumentException("Multiple signs are not"
-							+ " acceptable.");
-				}
-				helpNegative = true;
-				continue;
+			}  else if('i' == (charArray[i])) {
+				checkCondition(i+1 <= charArray.length-1 &&
+						Character.isDigit(charArray[i+1]) || imaginaryAdded);
 				
-			} else if('i' == (charArray[i])) {
-
-				if(i+1 <= charArray.length-1) {
-					if(Character.isDigit(charArray[i+1])) {
-						throw new IllegalArgumentException("Letter 'i' comes "
-								+ "after imaginary number.");
-					}
-				}
-				
-				// if "i" is after number
-				if(imaginaryAdded) {
-					throw new IllegalArgumentException("Enter complex number in "
-							+ "format a+bi.");
-					
-				} else if(helpString.length() < 1) {
-					// if nothing stands before i
-					imaginary = Double.parseDouble("1");
-					
-				} else if(helpString.length() >= 1){
-					imaginary = Double.parseDouble(helpString.toString());
-				}
+				// length < 1 than complex number is "i"
+				imaginary = makeNegative(helpString.length() < 1 ?
+					Double.parseDouble("1") : Double.parseDouble(helpString.toString()),
+					helpNegative);
 				
 				imaginaryAdded = true;
 				helpString = new StringBuilder();
-				
-				if(helpNegative) {
-					imaginary *= (-1);
-				}
 				helpNegative = false;
-				
-			} else {
-				helpString.append(charArray[i]);
+				continue;
 			}
+			
+			helpString.append(charArray[i]);
 		}
 		
 		if((charArray[charArray.length-1]) != 'i') {
-			if(realAdded) {
-				throw new IllegalArgumentException("Enter complex number in "
-						+ "format a+bi.");
-			}
-			
-			real = Double.parseDouble(helpString.toString());
+			checkCondition(realAdded);
+
+			real = makeNegative(Double.parseDouble(helpString.toString()),
+					helpNegative);
 			realAdded = true;
 			helpString = new StringBuilder();
-			if(helpNegative) {
-				real *= (-1);
-			}
 		}
 		
 		return new ComplexNumber(real, imaginary);
+	}
+	
+	/**
+	 * Throws exception is condition is true, otherwise does nothing
+	 * @param condition condition to check
+	 */
+	private static void checkCondition(boolean condition) {
+		if(condition) {
+			throw new IllegalArgumentException("Invalid format.");
+		}
+	}
+	
+	/**
+	 * Makes negative value of given value if condition is true, otherwise does
+	 * nothing
+	 * @param value value to make negative
+	 * @return negative value of value if condition is true, otherwise return value
+	 */
+	private static double makeNegative(double value, boolean condition) {
+		return condition ? value * (-1) : value;
 	}
 	
 	/**
@@ -340,8 +312,9 @@ public class ComplexNumber {
 	 * @return string of complex number
 	 */
 	public String toString() {
-		return Double.toString(this.real) + (this.imaginary >= 0 ? "+" : "") +
-				Double.toString(this.imaginary) + "i";
+		String realString = String.format("%.3f", real);
+		String imaginaryString = String.format("%.3f", imaginary);
+		return realString + (imaginary >= 0 ? "+" : "") + imaginaryString + "i";
 	}
 
 	@Override

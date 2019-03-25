@@ -127,7 +127,6 @@ public class Prob1Test {
 		checkTokenStream(lexer, correctData);
 	}
 
-	@Disabled
 	@Test
 	public void testTwoNumbers() {
 		// Lets check for several numbers...
@@ -142,7 +141,6 @@ public class Prob1Test {
 		checkTokenStream(lexer, correctData);
 	}
 
-	@Disabled
 	@Test
 	public void testTooBigNumber() {
 		Lexer lexer = new Lexer("  12345678912123123432123   ");
@@ -151,7 +149,6 @@ public class Prob1Test {
 		assertThrows(LexerException.class, () -> lexer.nextToken());
 	}
 
-	@Disabled
 	@Test
 	public void testWordWithManyEscapesAndNumbers() {
 		// Lets check for several words...

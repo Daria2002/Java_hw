@@ -77,6 +77,18 @@ public class Lexer {
 		TokenType type;
 		for(int i = currentIndex+1; i <= data.length-1; i++) {
 			checkMode = checkMode(data, i);
+			// checking range if mode is for digit
+			if(mode == 1) {
+				try {
+					long valueLong = Long.parseLong(stringValue);
+					if(valueLong < Long.MIN_VALUE || valueLong > Long.MAX_VALUE) {
+						throw new LexerException("Too big nuber.");
+					}
+				} catch (Exception e) {
+					throw new LexerException("Too big number");
+				}
+			}
+			
 			// if mode changed, etc.before letters, now numbers
 			if(mode == checkMode) {
 				// don't add \\ if it is used for escaping
@@ -137,7 +149,7 @@ public class Lexer {
 		if(index-2 >= 0 && data[index] == '\\' && data[index-1] != '\\') {
 			return 2;
 		} else if(Character.isDigit(c)) {
-			if(data[index-1] == '\\') {
+			if(index-1 > 0 && data[index-1] == '\\') {
 				return 2;
 			}
 			return 1;

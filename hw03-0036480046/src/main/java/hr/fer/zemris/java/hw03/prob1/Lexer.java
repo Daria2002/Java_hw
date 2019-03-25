@@ -79,8 +79,18 @@ public class Lexer {
 			checkMode = checkMode(data, i);
 			// if mode changed, etc.before letters, now numbers
 			if(mode == checkMode) {
+				// don't add \\ if it is used for escaping
+				if(data[i] == '\\' && data[i-1] != '\\') {
+					continue;
+				} else {
+					stringValue += data[i];
+				}
+			}
+			
+			if(mode == 2 && data[i-1] == '\\' && checkMode == 3) {
 				stringValue += data[i];
 			}
+			
 			if(mode != checkMode || i == data.length-1) {
 				currentIndex = i+1;
 				switch (mode) {
@@ -123,10 +133,13 @@ public class Lexer {
 	
 	private int checkMode(char[] data, int index) {
 		char c = data[index];
-		// if \\ in the middle
-		if(index-2 >= 0 && data[index-1] == '\\' && data[index-2] != '\\') {
+		// if \ before data[index] is escaped in the middle
+		if(index-2 >= 0 && data[index] == '\\' && data[index-1] != '\\') {
 			return 2;
 		} else if(Character.isDigit(c)) {
+			if(data[index-1] == '\\') {
+				return 2;
+			}
 			return 1;
 		} else if(Character.isAlphabetic(c)) {
 			return 2;

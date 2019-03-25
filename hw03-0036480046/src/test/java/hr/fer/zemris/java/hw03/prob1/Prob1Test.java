@@ -83,7 +83,6 @@ public class Prob1Test {
 		checkTokenStream(lexer, correctData);
 	}
 
-	@Disabled
 	@Test
 	public void testInvalidEscapeEnding() {
 		Lexer lexer = new Lexer("   \\");  // this is three spaces and a single backslash -- 4 letters string
@@ -92,7 +91,6 @@ public class Prob1Test {
 		assertThrows(LexerException.class, () -> lexer.nextToken());
 	}
 
-	@Disabled
 	@Test
 	public void testInvalidEscape() {
 		Lexer lexer = new Lexer("   \\a    ");
@@ -101,7 +99,6 @@ public class Prob1Test {
 		assertThrows(LexerException.class, () -> lexer.nextToken());
 	}
 
-	@Disabled
 	@Test
 	public void testSingleEscapedDigit() {
 		Lexer lexer = new Lexer("  \\1  ");
@@ -115,7 +112,6 @@ public class Prob1Test {
 		checkTokenStream(lexer, correctData);
 	}
 
-	@Disabled
 	@Test
 	public void testWordWithManyEscapes() {
 		// Lets check for several words...

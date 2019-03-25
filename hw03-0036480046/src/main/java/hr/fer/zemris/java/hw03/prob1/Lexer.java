@@ -38,13 +38,17 @@ public class Lexer {
 	 */
 	public Token nextToken() {
 		
+		if(data.length == 1 && data[0] == '\\') {
+			throw new LexerException("EOF can't be WORD");
+		}
+		
 		// check if token called after EOF
 		// first check if token != null because token.getType() throws exception 
 		// if token is null
 		if(token != null && token.getType().equals(TokenType.EOF)) {
 			throw new LexerException("Called token after EOF");
-		} 
-
+		}
+		
 		// check if next token is EOF
 		if(currentIndex > data.length-1) {
 			token = new Token(TokenType.EOF, null);
@@ -59,6 +63,9 @@ public class Lexer {
 		int mode = checkMode(data, currentIndex);
 		// if there is \\ on first place
 		if(data[currentIndex] == '\\') {
+			if(Character.isAlphabetic(data[currentIndex+1])) {
+				throw new LexerException("\\ before WORD");
+			}
 			mode = 2;
 			currentIndex++;
 		}
@@ -66,7 +73,8 @@ public class Lexer {
 		int checkMode = 0;
 		String stringValue = "";
 		stringValue += data[currentIndex];
-		
+
+		TokenType type;
 		for(int i = currentIndex+1; i <= data.length-1; i++) {
 			checkMode = checkMode(data, i);
 			// if mode changed, etc.before letters, now numbers
@@ -74,8 +82,7 @@ public class Lexer {
 				stringValue += data[i];
 			}
 			if(mode != checkMode || i == data.length-1) {
-				currentIndex = i;
-				TokenType type;
+				currentIndex = i+1;
 				switch (mode) {
 				case 1:
 					type = TokenType.NUMBER;
@@ -94,7 +101,24 @@ public class Lexer {
 				}
 			}
 		}
-		return new Token(TokenType.EOF, null);
+		currentIndex++;
+		switch (mode) {
+		case 1:
+			type = TokenType.NUMBER;
+			Long value = Long.parseLong(stringValue);
+			return new Token(type, value);
+		case 2:
+			type = TokenType.WORD;
+			return new Token(type, stringValue);
+		case 3:
+			type = TokenType.SYMBOL;
+			Character valueChar = data[currentIndex];
+			return new Token(type, valueChar);
+		default:
+			type = TokenType.EOF;
+			return new Token(type, null);
+		}
+		//return new Token(TokenType.EOF, null);
 	}
 	
 	private int checkMode(char[] data, int index) {
@@ -102,8 +126,7 @@ public class Lexer {
 		// if \\ in the middle
 		if(index-2 >= 0 && data[index-1] == '\\' && data[index-2] != '\\') {
 			return 2;
-		}
-		if(Character.isDigit(c)) {
+		} else if(Character.isDigit(c)) {
 			return 1;
 		} else if(Character.isAlphabetic(c)) {
 			return 2;

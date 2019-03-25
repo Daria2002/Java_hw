@@ -1,5 +1,7 @@
 package hr.fer.zemris.java.hw03.prob1;
 
+import java.util.ConcurrentModificationException;
+
 /** 
  * This program implements simple static lexical analyzer
  * Lexer is used as token producer. Token type is defined in enumeration TokenType.
@@ -61,6 +63,25 @@ public class Lexer {
 		}
 		
 		int mode = checkMode(data, currentIndex);
+		
+		// return token with symbol
+		if(mode == 3) {
+			// if symbol need to be word
+			// if sign before is ignored so symbol is not word
+			if((currentIndex-1 >= 0  && data[currentIndex-1] != '\\' && 
+					data[currentIndex] != '\\')) {
+				currentIndex++;
+				return new Token(TokenType.SYMBOL, data[currentIndex-1]);
+			} else if(currentIndex == 0 && data[currentIndex] != '\\') {
+				currentIndex++;
+				return new Token(TokenType.SYMBOL, data[currentIndex-1]);
+			}
+		}
+		
+		if(mode == 0) {
+			return new Token(TokenType.EOF, null);
+		}
+		
 		// if there is \\ on first place
 		if(data[currentIndex] == '\\') {
 			if(Character.isAlphabetic(data[currentIndex+1])) {
@@ -104,7 +125,11 @@ public class Lexer {
 			}
 			
 			if(mode != checkMode || i == data.length-1) {
-				currentIndex = i+1;
+				if(i == data.length-1) {
+					currentIndex = i+1;
+				} else {
+					currentIndex = i;
+				}
 				switch (mode) {
 				case 1:
 					type = TokenType.NUMBER;
@@ -183,37 +208,6 @@ public class Lexer {
 	}
 	
 	/**
-	 * Analyzes given value to get token type.
-	 * 
-	 * @param value value to be analyzed
-	 * @return TokenType of given value
-	 */
-	public TokenType getTokenType(String value) {
-		if(isNumber(value)) {
-			return TokenType.NUMBER;
-		} else if(isWord(value)) {
-			return TokenType.WORD;
-		} else if(isSymbol(value)) {
-			return TokenType.SYMBOL;
-		} else if(isEOF(value)) {
-			return TokenType.EOF;
-		} else {
-			throw new LexerException();
-		}
-	}
-	
-	/**
-	 * Checks if charValue is number, letter, symbol or null.
-	 * 
-	 * @param charValue value to check what type it is
-	 * @return 1 if charValue is number, 2 if charValue is letter, 3 if
-	 * charValue is symbol and 4 if charValue id null
-	 */
-	private int getCharType(char charValue) {
-		return 0;
-	}
-	
-	/**
 	 * Gets last generated token. Can be called more times and it doesn't runs
 	 * generation of next token.
 	 * 
@@ -221,34 +215,6 @@ public class Lexer {
 	 */
 	public Token getToken() {
 		return token;
-	}
-	
-
-	public boolean isSymbol(String value) {
-		if(value == null) {
-			return true;
-		}
-		return false;
-	}
-	
-	public boolean isEOF(String value) {
-		if(value == null) {
-			return true;
-		}
-		return false;
-	}
-	
-	public boolean isWord(String value) {
-		return true;
-	}
-	
-	public boolean isNumber(String value) {
-		try {
-			Integer.parseInt(value);
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
 	}
 	
 }

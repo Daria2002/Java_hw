@@ -166,7 +166,6 @@ public class Prob1Test {
 		checkTokenStream(lexer, correctData);
 	}
 	
-	@Disabled
 	@Test
 	public void testSomeSymbols() {
 		// Lets check for several symbols...
@@ -184,7 +183,6 @@ public class Prob1Test {
 		checkTokenStream(lexer, correctData);
 	}
 	
-	@Disabled
 	@Test
 	public void testCombinedInput() {
 		// Lets check for several symbols...

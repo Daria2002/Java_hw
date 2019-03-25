@@ -74,12 +74,14 @@ public class Lexer {
 					data[currentIndex] != '\\') ||
 					(currentIndex == 0 && data[currentIndex] != '\\')) {
 				currentIndex++;
-				return new Token(TokenType.SYMBOL, data[currentIndex-1]);
+				token = new Token(TokenType.SYMBOL, data[currentIndex-1]);
+				return token;
 			}
 		}
 		
 		if(mode == 0) {
-			return new Token(TokenType.EOF, null);
+			token = new Token(TokenType.EOF, null);
+			return token;
 		}
 		
 		// if there is \\ on first place
@@ -118,11 +120,13 @@ public class Lexer {
 				} else {
 					if(data[i] == ' ' && lexerState.equals(LexerState.EXTENDED)) {
 						currentIndex = i+1;
-						return new Token(TokenType.WORD, stringValue);
+						token = new Token(TokenType.WORD, stringValue);
+						return token;
 					} else if(data[i] == '#') {
 						currentIndex = i;
 						setState(LexerState.BASIC);
-						return new Token(TokenType.WORD, stringValue);
+						token = new Token(TokenType.WORD, stringValue);
+						return token;
 					}
 					stringValue += data[i];
 				}
@@ -142,17 +146,21 @@ public class Lexer {
 				case 1:
 					type = TokenType.NUMBER;
 					Long value = Long.parseLong(stringValue);
-					return new Token(type, value);
+					token = new Token(type, value);
+					return token;
 				case 2:
 					type = TokenType.WORD;
-					return new Token(type, stringValue);
+					token = new Token(type, stringValue);
+					return token;
 				case 3:
 					type = TokenType.SYMBOL;
 					Character valueChar = data[currentIndex];
-					return new Token(type, valueChar);
+					token = new Token(type, valueChar);
+					return token;
 				default:
 					type = TokenType.EOF;
-					return new Token(type, null);
+					token = new Token(type, null);
+					return token;
 				}
 			}
 		}
@@ -161,17 +169,21 @@ public class Lexer {
 		case 1:
 			type = TokenType.NUMBER;
 			Long value = Long.parseLong(stringValue);
-			return new Token(type, value);
+			token = new Token(type, value);
+			return token;
 		case 2:
 			type = TokenType.WORD;
-			return new Token(type, stringValue);
+			token = new Token(type, stringValue);
+			return token;
 		case 3:
 			type = TokenType.SYMBOL;
 			Character valueChar = data[currentIndex];
-			return new Token(type, valueChar);
+			token = new Token(type, valueChar);
+			return token;
 		default:
 			type = TokenType.EOF;
-			return new Token(type, null);
+			token = new Token(type, null);
+			return token;
 		}
 		//return new Token(TokenType.EOF, null);
 	}

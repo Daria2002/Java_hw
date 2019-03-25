@@ -219,15 +219,12 @@ public class Prob1Test {
 	// ----------------------------------------------------------------------------------------------------------
 	// --------------------- Second part of tests; uncomment when everything above works ------------------------
 	// ----------------------------------------------------------------------------------------------------------
-/*
 
-	@Disabled
 	@Test
 	public void testNullState() {
 		assertThrows(NullPointerException.class, () -> new Lexer("").setState(null));
 	}
 	
-	@Disabled
 	@Test
 	public void testNotNullInExtended() {
 		Lexer lexer = new Lexer("");
@@ -236,7 +233,6 @@ public class Prob1Test {
 		assertNotNull(lexer.nextToken(), "Token was expected but null was returned.");
 	}
 
-	@Disabled
 	@Test
 	public void testEmptyInExtended() {
 		Lexer lexer = new Lexer("");
@@ -245,7 +241,6 @@ public class Prob1Test {
 		assertEquals(TokenType.EOF, lexer.nextToken().getType(), "Empty input must generate only EOF token.");
 	}
 
-	@Disabled
 	@Test
 	public void testGetReturnsLastNextInExtended() {
 		// Calling getToken once or several times after calling nextToken must return each time what nextToken returned...
@@ -257,7 +252,6 @@ public class Prob1Test {
 		assertEquals(token, lexer.getToken(), "getToken returned different token than nextToken.");
 	}
 
-	@Disabled
 	@Test
 	public void testRadAfterEOFInExtended() {
 		Lexer lexer = new Lexer("");
@@ -269,7 +263,6 @@ public class Prob1Test {
 		assertThrows(LexerException.class, () -> lexer.nextToken());
 	}
 	
-	@Disabled
 	@Test
 	public void testNoActualContentInExtended() {
 		// When input is only of spaces, tabs, newlines, etc...
@@ -279,7 +272,6 @@ public class Prob1Test {
 		assertEquals(TokenType.EOF, lexer.nextToken().getType(), "Input had no content. Lexer should generated only EOF token.");
 	}
 	
-	@Disabled
 	@Test
 	public void testMultipartInput() {
 		// Test input which has parts which are tokenized by different rules...
@@ -307,7 +299,4 @@ public class Prob1Test {
 			assertEquals(expected.getType(), actual.getType(), msg);
 			assertEquals(expected.getValue(), actual.getValue(), msg);
 	}
-
-*/
-
 }

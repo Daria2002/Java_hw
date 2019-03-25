@@ -16,6 +16,7 @@ public class Lexer {
 	private Token token;
 	// index of first unanalyzed sign
 	private int currentIndex;
+	LexerState lexerState;
 	
 	/**
 	 * Constructor get text that need to be analyzed.
@@ -31,6 +32,7 @@ public class Lexer {
 		for(int i = 0; i < data.length; i++)
 			System.out.println(data[i]);
 		currentIndex = 0;
+		setState(LexerState.BASIC);
 	} 
 	
 	/**
@@ -69,10 +71,8 @@ public class Lexer {
 			// if symbol need to be word
 			// if sign before is ignored so symbol is not word
 			if((currentIndex-1 >= 0  && data[currentIndex-1] != '\\' && 
-					data[currentIndex] != '\\')) {
-				currentIndex++;
-				return new Token(TokenType.SYMBOL, data[currentIndex-1]);
-			} else if(currentIndex == 0 && data[currentIndex] != '\\') {
+					data[currentIndex] != '\\') ||
+					(currentIndex == 0 && data[currentIndex] != '\\')) {
 				currentIndex++;
 				return new Token(TokenType.SYMBOL, data[currentIndex-1]);
 			}
@@ -113,9 +113,17 @@ public class Lexer {
 			// if mode changed, etc.before letters, now numbers
 			if(mode == checkMode) {
 				// don't add \\ if it is used for escaping
-				if(data[i] == '\\' && data[i-1] != '\\') {
+				if(data[i] == '\\' && data[i-1] != '\\' && lexerState.equals(LexerState.BASIC)) {
 					continue;
 				} else {
+					if(data[i] == ' ' && lexerState.equals(LexerState.EXTENDED)) {
+						currentIndex = i+1;
+						return new Token(TokenType.WORD, stringValue);
+					} else if(data[i] == '#') {
+						currentIndex = i;
+						setState(LexerState.BASIC);
+						return new Token(TokenType.WORD, stringValue);
+					}
 					stringValue += data[i];
 				}
 			}
@@ -171,7 +179,9 @@ public class Lexer {
 	private int checkMode(char[] data, int index) {
 		char c = data[index];
 		// if \ before data[index] is escaped in the middle
-		if(index-2 >= 0 && data[index] == '\\' && data[index-1] != '\\') {
+		// if lexer state is extended everything is word
+		if(lexerState.equals(LexerState.EXTENDED) || 
+				index-2 >= 0 && data[index] == '\\' && data[index-1] != '\\') {
 			return 2;
 		} else if(Character.isDigit(c)) {
 			if(index-1 > 0 && data[index-1] == '\\') {
@@ -188,24 +198,6 @@ public class Lexer {
 		}
 		return 0;
 	}
-
-	/**
-	 * Parse to long if value is number, otherwise returns given value
-	 * 
-	 * @param type
-	 * @param value
-	 * @return long number if value is number, null if value is EOF,
-	 * otherwise given value
-	 */
-	private Object getObject(TokenType type, String value) {
-		if(type == TokenType.EOF) {
-			return null;
-		} else if(type == TokenType.NUMBER) {
-			return Long.parseLong(value);
-		} else {
-			return value;
-		}
-	}
 	
 	/**
 	 * Gets last generated token. Can be called more times and it doesn't runs
@@ -217,4 +209,10 @@ public class Lexer {
 		return token;
 	}
 	
+	public void setState(LexerState state) {
+		if(state == null) {
+			throw new NullPointerException("Lexer state can't be null.");
+		}
+		lexerState = state;
+	}
 }

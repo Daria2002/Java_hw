@@ -45,20 +45,11 @@ public class Lexer {
         }
         Lexer lexer = new Lexer(content);
         System.out.println();
-        System.out.println("Next token is:");
-		lexer.nextToken();
-		
-		System.out.println("Next token is: ");
-		lexer.nextToken();
-
-		System.out.println("Next token is: ");
-		lexer.nextToken();
-
-		System.out.println("Next token is: ");
-		lexer.nextToken();
-
-		System.out.println("Next token is: ");
-		lexer.nextToken();
+        
+        for(int i = 0; i < 40; i++) {
+            System.out.println("Next token is:");
+    		lexer.nextToken();
+        }
 	}
 	
 	/**
@@ -88,14 +79,20 @@ public class Lexer {
 				data[currentIndex] == ' ') {
 			currentIndex++;
 		}
-		// build tag name
+		// build tag name while whitespace doesn't occur or while tag close 
+		// doesn't occur
 		while(data[currentIndex] != '\r' && data[currentIndex] != '\t' && 
 				data[currentIndex] != '\n' && data[currentIndex] != '\n' &&
-				data[currentIndex] != ' ') {
+				data[currentIndex] != ' ' && data[currentIndex] != '$' && 
+				data[currentIndex+1] != '}') {
 			tagName += data[currentIndex];
 			currentIndex++;
+			
+			// if tag name is = break after = is added in tag name
+			if(data[currentIndex-1] == '=') {
+				break;
+			}
 		}
-		
 		return tagName;
 	}
 	
@@ -126,7 +123,7 @@ public class Lexer {
 			stringValue += data[currentIndex];
 			currentIndex++;
 		} 
-		// tag occured
+		// tag occurred
 		if(currentIndex+1 <= data.length-1 && data[currentIndex] == '{' &&
 				data[currentIndex+1] == '$' && lexerState == LexerState.TAG) {
 			// if tag open occurred go to tag state
@@ -139,6 +136,7 @@ public class Lexer {
 		// return tag name token
 		if(lexerState == LexerState.TAG && !tagNameAdded) {
 			String tagName = addTagName();
+			System.out.println("tag name: "+tagName);
 			// throw exception if tag name is unknown
 			if(!("end".equalsIgnoreCase(tagName) || "for".equalsIgnoreCase(tagName) ||
 				"=".equalsIgnoreCase(tagName))) {
@@ -150,12 +148,18 @@ public class Lexer {
 			return token;
 		}
 		
-		// add tag elements
-		if(lexerState == LexerState.TAG && tagNameAdded && !tagElementsAdded) {
+		// add tag elements, only if tag name is not end
+		// tag end doesn't have elements
+		if(lexerState == LexerState.TAG && tagNameAdded && !tagElementsAdded &&
+				!"end".equalsIgnoreCase(getToken().getValue().toString())) {
 			String tagElements = "";
-			while(data[currentIndex] != '{' && data[currentIndex+1] != '$') {
+			while(currentIndex+1 < data.length && data[currentIndex] != '$' && data[currentIndex+1] != '}') {
 				tagElements += data[currentIndex];
 				currentIndex++;
+			}
+			// no more elements, but tag didn't close
+			if(currentIndex == data.length-1) {
+				throw new LexerException("Tag didn''t close.");
 			}
 			token = new Token(TokenType.TAG_ELEMENT, tagElements);
 			tagElementsAdded = true;
@@ -164,7 +168,9 @@ public class Lexer {
 		}
 		
 		// if tag elements and tag name added, add tag close
-		if(lexerState == LexerState.TAG && tagNameAdded && !tagElementsAdded) {
+		// tag elements added when close tag occurred, so next element is tag close
+		if(lexerState == LexerState.TAG && tagNameAdded && (tagElementsAdded
+				|| "end".equalsIgnoreCase(getToken().getValue().toString()))) {
 			token = new Token(TokenType.TAG_CLOSE, "$}");
 			currentIndex += 2;
 			setState(LexerState.BASIC);
@@ -173,8 +179,7 @@ public class Lexer {
 			System.out.println("$}");
 			return token;
 		}
-		System.out.println("bezveze");
-		return token;
+		throw new LexerException("No more token in given document.");
 	}
 	
 	/**

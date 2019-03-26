@@ -28,7 +28,7 @@ public class LexerSmart {
 				"{$ FOR i 1 10 1 $}\\n" + 
 				" This is {$= i $}-th time this message is generated.\\n" + 
 				"{$END$}\\n" + 
-				"{$FOR i 0 10 2 $}\\n" + 
+				"{$FOR i-10 10 2 $}\\n" + 
 				" sin({$=i$}^2) = {$= i i * @sin \\\"0.000\\\" @decfmt $}\\n" + 
 				"{$END$}");
 		/*

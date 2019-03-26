@@ -31,7 +31,7 @@ public class SmartScriptTester {
 			System.out.println("If this line ever executes, you have failed this class!");
 			System.exit(-1);
 		}
-		//DocumentNode document = parser.getDocumentNode();
+		DocumentNode document = parser.getDocumentNode();
 		//String originalDocumentBody = createOriginalDocumentBody(document);
 		//System.out.println(originalDocumentBody); // should write something like original
 		 // content of docBody

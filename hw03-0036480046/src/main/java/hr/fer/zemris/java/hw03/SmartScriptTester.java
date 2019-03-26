@@ -22,8 +22,15 @@ public class SmartScriptTester {
 		System.out.println(docBody);
 		SmartScriptParser parser = null;
 		
+		String s = "\" BLA \" \n \\n";
+		char[] c = s.toCharArray();
+
+		System.out.println(c[8] == '\n');
+		
+		System.out.println(s);
 		try {
 			parser = new SmartScriptParser(docBody);
+			//parser = new SmartScriptParser("{$ \"ja\\n volim lovru najvise na svijetu\"$}");
 		} catch(SmartScriptParserException e) {
 			System.out.println("Unable to parse document!");
 			System.exit(-1);

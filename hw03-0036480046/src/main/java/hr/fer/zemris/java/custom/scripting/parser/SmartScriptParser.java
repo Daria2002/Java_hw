@@ -2,10 +2,12 @@ package hr.fer.zemris.java.custom.scripting.parser;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import hr.fer.zemris.java.custom.collections.ArrayIndexedCollection;
 import hr.fer.zemris.java.custom.collections.Tester;
 import hr.fer.zemris.java.custom.scripting.elems.Element;
 import hr.fer.zemris.java.custom.scripting.elems.ElementConstantDouble;
 import hr.fer.zemris.java.custom.scripting.elems.ElementConstantInteger;
+import hr.fer.zemris.java.custom.scripting.elems.ElementFunction;
 import hr.fer.zemris.java.custom.scripting.elems.ElementString;
 import hr.fer.zemris.java.custom.scripting.elems.ElementVariable;
 import hr.fer.zemris.java.custom.scripting.lexer.LexerSmart;
@@ -31,8 +33,146 @@ public class SmartScriptParser {
 		documentNode = new DocumentNode();
 	}
 	
+	private Element[] makeElementsForEchoNode(Object value) {
+		Element[] elements = new Element[];
+		
+		ArrayIndexedCollection collection = new ArrayIndexedCollection();
+		int counter = 0;
+		char[] valueArray = value.toString().toCharArray(); 
+		// flag for making function element
+		boolean makeFunction = false;
+		// flag for making string element
+		boolean makeString = false;
+		// flag for making number (int or double)
+		boolean makeNumber = false;
+		// flag for making variable
+		boolean makeVariable = false;
+		String buildValue = "";
+		
+		for(int i = 0; i < valueArray.length; i++) {
+			
+			// if prefix @ than set makeFunction flag
+			if(valueArray[i] == '@') {
+				makeFunction = true;
+				continue;
+				
+			// if next element is function
+			} else if(makeFunction && valueArray[i] != ' ' && valueArray[i] != '"') {
+				// if value number, letter or underscore
+				if(Character.isAlphabetic(valueArray[i]) || Character.isDigit(valueArray[i]) 
+						|| valueArray[i] == '_') {
+					buildValue += valueArray[i];
+				} else {
+					// value is not number, letter or underscore
+					throw new SmartScriptParserException("Invalid function name");
+				}
+				
+				// if building function is turned on and ' ' or '\"'  sign occurs
+			} else if(makeFunction && !(valueArray[i] != ' ' && valueArray[i] != '"')) {
+				// check that function name is not empty 
+				if(buildValue == "") {
+					throw new SmartScriptParserException("Invalid expression.");
+				}
+				ElementFunction function = new ElementFunction(buildValue);
+				elements[counter] = function;
+				counter++;
+				buildValue = "";
+				makeFunction = false;
+				
+				// if next element needs to be string set string flag
+				if(valueArray[i] == '"') {
+					makeString = true;
+				}
+			// if building string
+			} else if(makeString) {
+				// save value and stop building string
+				if(valueArray[i] == '"') {
+					makeString = false;
+					ElementString elementString = new ElementString(buildValue);
+					elements[counter] = elementString;
+					counter++;
+					buildValue = "";
+				} else {
+					buildValue += valueArray[i];
+				}
+			
+				// if element is not function, then check if element is variable or number(int, double)
+			} else {
+				// if buildValue starts to build
+				if(buildValue == ""  && valueArray[i] != ' ' && valueArray[i] != '"') {
+					buildValue += valueArray[i];
+					// if next element is number
+					if(Character.isDigit(valueArray[i]) || valueArray[i] == '-') {
+						makeNumber = true;
+						//if next element is word
+					} else if(Character.isAlphabetic(valueArray[i])) {
+						makeVariable = true;
+					} else {
+						throw new SmartScriptParserException();
+					}
+
+					// continue building value
+				} else if(valueArray[i] != ' ' && valueArray[i] != '"') {
+					// is letter occurred stop building number
+					if(makeNumber && Character.isAlphabetic(valueArray[i])) {
+						// check if number is int or double 
+						elements[counter] = rightNumber(buildValue);
+						counter++;
+						
+						makeNumber = false;
+						buildValue = "";
+						buildValue += valueArray[i];
+						
+						//throw exception if ',' occurs in number
+					} else if(makeNumber && valueArray[i] == ',') {
+						throw new SmartScriptParserException();
+						
+					} else {
+						buildValue += valueArray[i];
+					}
+				}
+			}
+		}
+		// if buildValue is not empty
+		if(buildValue != "") {
+			if(makeString) {
+				ElementString stringElement = new ElementString(buildValue);
+				elements[counter] = stringElement;
+			} else if(makeNumber) {
+				elements[counter] = rightNumber(buildValue);
+				counter++;
+			} else if(makeFunction) {
+				ElementFunction functionElement = new ElementFunction(buildValue);
+				elements[counter] = functionElement;
+			} else if(makeVariable) {
+				ElementVariable variableElement = new ElementVariable(buildValue);
+				elements[counter] = variableElement;
+			}
+		}
+		
+		return elements;
+	}
+	
+	private Element rightNumber(String buildValue) {
+		try {
+			Integer intValue = Integer.parseInt(buildValue);
+			return new ElementConstantInteger(intValue);
+		} catch (Exception e) {
+			// if exception occurred parse to double
+			try {
+				Double doubleValue = Double.parseDouble(buildValue);
+				return new ElementConstantDouble(doubleValue);
+			} catch (Exception e2) {
+				throw new SmartScriptParserException("Invalid expression");
+			}
+		}
+	}
+	
 	private EchoNode getEchoNode(Object value) {
-		return new EchoNode(null);
+		Element[] elements = makeElementsForEchoNode(value);
+		EchoNode echoNode = new EchoNode(elements);
+		
+		return echoNode;
 	}
 	
 	private Object[] getForLoopArguments(Object arguments) {		
@@ -141,6 +281,14 @@ public class SmartScriptParser {
 				if(lexer.getToken() != null &&
 						lexer.getToken().getType() == TokenSmartType.TAG_NAME) {
 					
+					String tagName = lexer.getToken().getValue().toString();
+					
+					// throw exception if tag name is unknown
+					if(!("end".equalsIgnoreCase(tagName) || "for".equalsIgnoreCase(tagName) ||
+						"=".equalsIgnoreCase(tagName))) {
+						throw new SmartScriptParserException("Wrong tag name");
+					}
+					
 					// if tag name was for
 					if("for".equalsIgnoreCase(lexer.getToken().getValue().toString())) {
 						// take elements
@@ -199,9 +347,10 @@ public class SmartScriptParser {
 						documentNode.addChildNode(textNode);
 					}
 				}
-				lexer.nextToken();
+				token = lexer.nextToken();
 			}
 		} catch (Exception e) {
+			e.printStackTrace(System.out);
 			throw new LexerSmartException("Error message");
 		}
 		

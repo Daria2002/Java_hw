@@ -146,11 +146,6 @@ public class LexerSmart {
 		if(lexerState == LexerSmartState.TAG && !tagNameAdded) {
 			String tagName = addTagName();
 			System.out.println("tag name: " + tagName);
-			// throw exception if tag name is unknown
-			if(!("end".equalsIgnoreCase(tagName) || "for".equalsIgnoreCase(tagName) ||
-				"=".equalsIgnoreCase(tagName))) {
-				throw new LexerSmartException("Wrong tag name");
-			}
 			tagNameAdded = true;
 			token = new TokenSmart(TokenSmartType.TAG_NAME, tagName);
 			System.out.println(tagName);

@@ -4,6 +4,9 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import hr.fer.zemris.java.custom.collections.Tester;
 import hr.fer.zemris.java.custom.scripting.elems.Element;
+import hr.fer.zemris.java.custom.scripting.elems.ElementConstantDouble;
+import hr.fer.zemris.java.custom.scripting.elems.ElementConstantInteger;
+import hr.fer.zemris.java.custom.scripting.elems.ElementString;
 import hr.fer.zemris.java.custom.scripting.elems.ElementVariable;
 import hr.fer.zemris.java.custom.scripting.lexer.LexerSmart;
 import hr.fer.zemris.java.custom.scripting.lexer.LexerSmartException;
@@ -102,6 +105,28 @@ public class SmartScriptParser {
 		return array;
 	}
 	
+	
+	private Element initializeElement(String value) {
+		// check if value if integer
+		try {
+			Integer intValue = Integer.parseInt(value);
+			ElementConstantInteger intElement = new ElementConstantInteger(intValue);
+			return intElement;
+		} catch (Exception e) {
+			// exception occurs if given value is not int
+			// check if given value is double
+			try {
+				Double doubleValue = Double.parseDouble(value);
+				ElementConstantDouble doubleElement = new ElementConstantDouble(doubleValue);
+				return doubleElement;
+			} catch (Exception e2) {
+				//exception occurs if given value is not int and double
+				ElementString stringValue = new ElementString(value);
+				return stringValue;
+			}
+		}
+	}
+	
 	public DocumentNode getDocumentNode() {
 		LexerSmart lexer = new LexerSmart(documentBody);
 		TokenSmart token;
@@ -124,11 +149,12 @@ public class SmartScriptParser {
 						
 						// make forLoopNode
 						ElementVariable variable = new ElementVariable(forLoopArguments[0].toString());
-						Element startExpression = (Element)forLoopArguments[1];
-						Element endExpression = (Element)forLoopArguments[2];
+						
+						Element startExpression = initializeElement(forLoopArguments[1].toString());
+						Element endExpression =  initializeElement(forLoopArguments[2].toString());
 						Element stepExpression = null;
 						if(forLoopArguments.length == 4) {
-							stepExpression = (Element)forLoopArguments[3];
+							stepExpression =  initializeElement(forLoopArguments[3].toString());;
 						}
 						
 						ForLoopNode forLoopNode = new ForLoopNode(variable, 
@@ -173,6 +199,7 @@ public class SmartScriptParser {
 						documentNode.addChildNode(textNode);
 					}
 				}
+				lexer.nextToken();
 			}
 		} catch (Exception e) {
 			throw new LexerSmartException("Error message");

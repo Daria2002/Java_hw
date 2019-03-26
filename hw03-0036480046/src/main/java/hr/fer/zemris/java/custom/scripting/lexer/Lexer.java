@@ -3,7 +3,6 @@ package hr.fer.zemris.java.custom.scripting.lexer;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ConcurrentModificationException;
 
 /** 
  * This program implements simple static lexical analyzer
@@ -45,6 +44,20 @@ public class Lexer {
             e.printStackTrace();
         }
         Lexer lexer = new Lexer(content);
+        System.out.println();
+        System.out.println("Next token is:");
+		lexer.nextToken();
+		
+		System.out.println("Next token is: ");
+		lexer.nextToken();
+
+		System.out.println("Next token is: ");
+		lexer.nextToken();
+
+		System.out.println("Next token is: ");
+		lexer.nextToken();
+
+		System.out.println("Next token is: ");
 		lexer.nextToken();
 	}
 	
@@ -69,11 +82,20 @@ public class Lexer {
 	
 	private String addTagName() {
 		String tagName = "";
+		// skip whitespace
+		while(data[currentIndex] == '\r' || data[currentIndex] == '\t' || 
+				data[currentIndex] == '\n' || data[currentIndex] == '\n' ||
+				data[currentIndex] == ' ') {
+			currentIndex++;
+		}
+		// build tag name
 		while(data[currentIndex] != '\r' && data[currentIndex] != '\t' && 
-				data[currentIndex] != '\n' && data[currentIndex] != '\n') {
+				data[currentIndex] != '\n' && data[currentIndex] != '\n' &&
+				data[currentIndex] != ' ') {
 			tagName += data[currentIndex];
 			currentIndex++;
 		}
+		
 		return tagName;
 	}
 	
@@ -88,36 +110,43 @@ public class Lexer {
 		// work in basic mode
 		while(currentIndex <= data.length-1 && lexerState == LexerState.BASIC) {
 			// if tag occurs, break
-			if(currentIndex+1 <= data.length-1 && data[currentIndex] != '{' &&
-					data[currentIndex+1] != '$') {
-				break;
+			if(data[currentIndex] == '{' && data[currentIndex+1] == '$') {
+				token = new Token(TokenType.TEXT, stringValue);
+				setState(LexerState.TAG);
+				System.out.println(stringValue);
+				return token;
+			// if end, return text
+			} else if(currentIndex+1 > data.length-1) {
+				token = new Token(TokenType.TEXT, stringValue);
+				currentIndex++;
+				System.out.println(stringValue);
+				return token;
 			}
 			// if basic mode continue adding text
 			stringValue += data[currentIndex];
 			currentIndex++;
 		} 
-		// if no more elements left while basic text was building
-		if(currentIndex == data.length-1 && lexerState == LexerState.BASIC) {
-			token = new Token(TokenType.TEXT, stringValue);
-			currentIndex++;
-			return token;
-			
-		} else if(currentIndex+1 <= data.length-1 && data[currentIndex] == '{' &&
-				data[currentIndex+1] == '$' && lexerState == LexerState.BASIC) {
+		// tag occured
+		if(currentIndex+1 <= data.length-1 && data[currentIndex] == '{' &&
+				data[currentIndex+1] == '$' && lexerState == LexerState.TAG) {
 			// if tag open occurred go to tag state
-			setState(LexerState.TAG);
+			//setState(LexerState.TAG);
 			token = new Token(TokenType.TAG_OPEN, "{$");
 			currentIndex += 2;
+			System.out.println("{$");
 			return token;
 		} 
 		// return tag name token
 		if(lexerState == LexerState.TAG && !tagNameAdded) {
 			String tagName = addTagName();
-			if(tagName != "" || tagName != "" || tagName != "") {
+			// throw exception if tag name is unknown
+			if(!("end".equalsIgnoreCase(tagName) || "for".equalsIgnoreCase(tagName) ||
+				"=".equalsIgnoreCase(tagName))) {
 				throw new LexerException("Wrong tag name");
 			}
 			tagNameAdded = true;
 			token = new Token(TokenType.TAG_NAME, tagName);
+			System.out.println(tagName);
 			return token;
 		}
 		
@@ -129,6 +158,9 @@ public class Lexer {
 				currentIndex++;
 			}
 			token = new Token(TokenType.TAG_ELEMENT, tagElements);
+			tagElementsAdded = true;
+			System.out.println(tagElements);
+			return token;
 		}
 		
 		// if tag elements and tag name added, add tag close
@@ -138,8 +170,10 @@ public class Lexer {
 			setState(LexerState.BASIC);
 			tagElementsAdded = false;
 			tagNameAdded = false;
+			System.out.println("$}");
 			return token;
 		}
+		System.out.println("bezveze");
 		return token;
 	}
 	

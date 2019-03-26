@@ -31,7 +31,7 @@ public class LexerSmart {
 				"{$FOR i 0 10 2 $}\\n" + 
 				" sin({$=i$}^2) = {$= i i * @sin \\\"0.000\\\" @decfmt $}\\n" + 
 				"{$END$}");
-		
+		/*
 		String filePath = args[0];
 		String content = "";
 		 
@@ -42,7 +42,7 @@ public class LexerSmart {
         catch (IOException e)
         {
             e.printStackTrace();
-        }
+        }*/
         LexerSmart lexer = new LexerSmart(testString);
         System.out.println();
         
@@ -114,10 +114,13 @@ public class LexerSmart {
 		while(currentIndex <= data.length-1 && lexerState == LexerSmartState.BASIC) {
 			// if tag occurs, break
 			if(data[currentIndex] == '{' && data[currentIndex+1] == '$') {
-				token = new TokenSmart(TokenSmartType.TEXT, stringValue);
-				setState(LexerSmartState.TAG);
-				System.out.println(stringValue);
-				return token;
+				// if \ is before tag, continue building text, otherwise return token
+				if(currentIndex-1 >= 0 && data[currentIndex-1] != '\\') {
+					token = new TokenSmart(TokenSmartType.TEXT, stringValue);
+					setState(LexerSmartState.TAG);
+					System.out.println(stringValue);
+					return token;
+				}
 			// if end, return text
 			} else if(currentIndex+1 > data.length-1) {
 				token = new TokenSmart(TokenSmartType.TEXT, stringValue);
@@ -159,7 +162,12 @@ public class LexerSmart {
 		if(lexerState == LexerSmartState.TAG && tagNameAdded && !tagElementsAdded &&
 				!"end".equalsIgnoreCase(getToken().getValue().toString())) {
 			String tagElements = "";
-			while(currentIndex+1 < data.length && data[currentIndex] != '$' && data[currentIndex+1] != '}') {
+			while(currentIndex+1 < data.length) {
+				// if tag occurred, checks that before tag is no \
+				if(currentIndex-1 >= 0 && data[currentIndex-1] != '\\' &&
+						data[currentIndex] == '$' && data[currentIndex+1] == '}' ) {
+					break;
+				}
 				tagElements += data[currentIndex];
 				currentIndex++;
 			}

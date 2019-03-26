@@ -10,6 +10,7 @@ import hr.fer.zemris.java.custom.scripting.elems.Element;
 import hr.fer.zemris.java.custom.scripting.elems.ElementConstantDouble;
 import hr.fer.zemris.java.custom.scripting.elems.ElementConstantInteger;
 import hr.fer.zemris.java.custom.scripting.elems.ElementFunction;
+import hr.fer.zemris.java.custom.scripting.elems.ElementOperator;
 import hr.fer.zemris.java.custom.scripting.elems.ElementString;
 import hr.fer.zemris.java.custom.scripting.elems.ElementVariable;
 import hr.fer.zemris.java.custom.scripting.lexer.LexerSmart;
@@ -53,6 +54,14 @@ public class SmartScriptParser {
 			// if prefix @ than set makeFunction flag
 			if(valueArray[i] == '@') {
 				makeFunction = true;
+				continue;
+				
+			} else if(valueArray[i] == '*' || valueArray[i] == '+' ||
+					valueArray[i] == '-' || valueArray[i] == '/' || valueArray[0] == '^') {
+				buildValue += valueArray[i];
+				ElementOperator operator = new ElementOperator(buildValue);
+				elements.add(operator);
+				buildValue = "";
 				continue;
 				
 			// if next element is function
@@ -126,6 +135,16 @@ public class SmartScriptParser {
 					} else {
 						buildValue += valueArray[i];
 					}
+					// stop building variable
+				} else if((valueArray[i] == ' ' || valueArray[i] == '"') && 
+						makeVariable) {
+					makeVariable = false;
+					ElementVariable variableElement = new ElementVariable(buildValue);
+					elements.add(variableElement);
+					buildValue = "";
+				} else if (!(makeFunction && makeNumber && makeString && makeVariable) &&
+						valueArray[i] == '"') {
+					makeString = true;
 				}
 			}
 		}
@@ -142,6 +161,10 @@ public class SmartScriptParser {
 			} else if(makeVariable) {
 				ElementVariable variableElement = new ElementVariable(buildValue);
 				elements.add(variableElement);
+			} else if(buildValue == "*" || buildValue == "+" ||
+					buildValue == "-" || buildValue == "/" || buildValue == "^") {
+				ElementOperator operator = new ElementOperator(buildValue);
+				elements.add(operator);
 			}
 		}
 		Element[] elementsArray = new Element[elements.size()];

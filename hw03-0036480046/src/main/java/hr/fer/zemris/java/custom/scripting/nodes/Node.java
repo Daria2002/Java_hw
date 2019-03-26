@@ -16,18 +16,18 @@ public class Node {
 	 * Adds given child node to collection of children.
 	 * @param child node to add
 	 */
-	void addChildNode(Node child) {
+	public void addChildNode(Node child) {
 		if(collection == null) {
 			collection = new ArrayIndexedCollection();
 		}
 		collection.add(child);
 	}
 	
-	int numberOfChildren() {
+	public int numberOfChildren() {
 		return collection.size();
 	}
 	
-	Node getChild(int index) {
+	public Node getChild(int index) {
 		return (Node)collection.get(index);
 	}
 }

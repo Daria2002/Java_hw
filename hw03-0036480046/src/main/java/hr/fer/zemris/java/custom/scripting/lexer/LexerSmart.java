@@ -46,7 +46,7 @@ public class LexerSmart {
         LexerSmart lexer = new LexerSmart(testString);
         System.out.println();
         
-        for(int i = 0; i < 40; i++) {
+        for(int i = 0; i < 33; i++) {
             System.out.println("Next token is:");
     		lexer.nextToken();
         }
@@ -104,6 +104,12 @@ public class LexerSmart {
 	public TokenSmart nextToken() {
 		String stringValue = "";
 		
+		if(currentIndex > data.length-1) {
+			currentIndex++;
+			token = new TokenSmart(TokenSmartType.EOF, null);
+			return token;
+		}
+		
 		// work in basic mode
 		while(currentIndex <= data.length-1 && lexerState == LexerSmartState.BASIC) {
 			// if tag occurs, break
@@ -136,7 +142,7 @@ public class LexerSmart {
 		// return tag name token
 		if(lexerState == LexerSmartState.TAG && !tagNameAdded) {
 			String tagName = addTagName();
-			System.out.println("tag name: "+tagName);
+			System.out.println("tag name: " + tagName);
 			// throw exception if tag name is unknown
 			if(!("end".equalsIgnoreCase(tagName) || "for".equalsIgnoreCase(tagName) ||
 				"=".equalsIgnoreCase(tagName))) {

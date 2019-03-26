@@ -1,5 +1,7 @@
 package hr.fer.zemris.java.custom.scripting.parser;
 
+import java.util.Arrays;
+
 import javax.xml.parsers.ParserConfigurationException;
 
 import hr.fer.zemris.java.custom.collections.ArrayIndexedCollection;
@@ -34,10 +36,7 @@ public class SmartScriptParser {
 	}
 	
 	private Element[] makeElementsForEchoNode(Object value) {
-		Element[] elements = new Element[];
-		
-		ArrayIndexedCollection collection = new ArrayIndexedCollection();
-		int counter = 0;
+		ArrayIndexedCollection elements = new ArrayIndexedCollection();
 		char[] valueArray = value.toString().toCharArray(); 
 		// flag for making function element
 		boolean makeFunction = false;
@@ -74,8 +73,7 @@ public class SmartScriptParser {
 					throw new SmartScriptParserException("Invalid expression.");
 				}
 				ElementFunction function = new ElementFunction(buildValue);
-				elements[counter] = function;
-				counter++;
+				elements.add(function);
 				buildValue = "";
 				makeFunction = false;
 				
@@ -89,8 +87,7 @@ public class SmartScriptParser {
 				if(valueArray[i] == '"') {
 					makeString = false;
 					ElementString elementString = new ElementString(buildValue);
-					elements[counter] = elementString;
-					counter++;
+					elements.add(elementString);
 					buildValue = "";
 				} else {
 					buildValue += valueArray[i];
@@ -116,8 +113,7 @@ public class SmartScriptParser {
 					// is letter occurred stop building number
 					if(makeNumber && Character.isAlphabetic(valueArray[i])) {
 						// check if number is int or double 
-						elements[counter] = rightNumber(buildValue);
-						counter++;
+						elements.add(rightNumber(buildValue));
 						
 						makeNumber = false;
 						buildValue = "";
@@ -137,20 +133,24 @@ public class SmartScriptParser {
 		if(buildValue != "") {
 			if(makeString) {
 				ElementString stringElement = new ElementString(buildValue);
-				elements[counter] = stringElement;
+				elements.add(stringElement);
 			} else if(makeNumber) {
-				elements[counter] = rightNumber(buildValue);
-				counter++;
+				elements.add(rightNumber(buildValue));
 			} else if(makeFunction) {
 				ElementFunction functionElement = new ElementFunction(buildValue);
-				elements[counter] = functionElement;
+				elements.add(functionElement);
 			} else if(makeVariable) {
 				ElementVariable variableElement = new ElementVariable(buildValue);
-				elements[counter] = variableElement;
+				elements.add(variableElement);
 			}
 		}
+		Element[] elementsArray = new Element[elements.size()];
 		
-		return elements;
+		for(int i = 0; i < elements.size(); i++) {
+			elementsArray[i] = (Element)elements.get(i);
+		}
+		
+		return elementsArray;
 	}
 	
 	private Element rightNumber(String buildValue) {

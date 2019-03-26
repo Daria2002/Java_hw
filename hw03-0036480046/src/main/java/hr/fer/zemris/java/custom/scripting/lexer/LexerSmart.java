@@ -11,14 +11,14 @@ import java.nio.file.Paths;
  * @author Daria Matković
  *
  */
-public class Lexer {
+public class LexerSmart {
 	// given text
 	private char[] data;
 	// current token
-	private Token token;
+	private TokenSmart token;
 	// index of first unanalyzed sign
 	private int currentIndex;
-	private LexerState lexerState;
+	private LexerSmartState lexerState;
 	private String text;
 	private boolean tagNameAdded = false;
 	private boolean tagElementsAdded = false;
@@ -43,7 +43,7 @@ public class Lexer {
         {
             e.printStackTrace();
         }
-        Lexer lexer = new Lexer(content);
+        LexerSmart lexer = new LexerSmart(testString);
         System.out.println();
         
         for(int i = 0; i < 40; i++) {
@@ -57,7 +57,7 @@ public class Lexer {
 	 * 
 	 * @param text text need to be analyzed.
 	 */
-	public Lexer(String text) {
+	public LexerSmart(String text) {
 		if(text == null) {
 			throw new NullPointerException("Input is null.");
 		}
@@ -68,7 +68,7 @@ public class Lexer {
 		for(int i = 0; i < data.length; i++)
 			System.out.print(data[i]);
 		currentIndex = 0;
-		setState(LexerState.BASIC);
+		setState(LexerSmartState.BASIC);
 	} 
 	
 	private String addTagName() {
@@ -101,20 +101,20 @@ public class Lexer {
 	 * 
 	 * @return next token
 	 */
-	public Token nextToken() {
+	public TokenSmart nextToken() {
 		String stringValue = "";
 		
 		// work in basic mode
-		while(currentIndex <= data.length-1 && lexerState == LexerState.BASIC) {
+		while(currentIndex <= data.length-1 && lexerState == LexerSmartState.BASIC) {
 			// if tag occurs, break
 			if(data[currentIndex] == '{' && data[currentIndex+1] == '$') {
-				token = new Token(TokenType.TEXT, stringValue);
-				setState(LexerState.TAG);
+				token = new TokenSmart(TokenSmartType.TEXT, stringValue);
+				setState(LexerSmartState.TAG);
 				System.out.println(stringValue);
 				return token;
 			// if end, return text
 			} else if(currentIndex+1 > data.length-1) {
-				token = new Token(TokenType.TEXT, stringValue);
+				token = new TokenSmart(TokenSmartType.TEXT, stringValue);
 				currentIndex++;
 				System.out.println(stringValue);
 				return token;
@@ -125,32 +125,32 @@ public class Lexer {
 		} 
 		// tag occurred
 		if(currentIndex+1 <= data.length-1 && data[currentIndex] == '{' &&
-				data[currentIndex+1] == '$' && lexerState == LexerState.TAG) {
+				data[currentIndex+1] == '$' && lexerState == LexerSmartState.TAG) {
 			// if tag open occurred go to tag state
 			//setState(LexerState.TAG);
-			token = new Token(TokenType.TAG_OPEN, "{$");
+			token = new TokenSmart(TokenSmartType.TAG_OPEN, "{$");
 			currentIndex += 2;
 			System.out.println("{$");
 			return token;
 		} 
 		// return tag name token
-		if(lexerState == LexerState.TAG && !tagNameAdded) {
+		if(lexerState == LexerSmartState.TAG && !tagNameAdded) {
 			String tagName = addTagName();
 			System.out.println("tag name: "+tagName);
 			// throw exception if tag name is unknown
 			if(!("end".equalsIgnoreCase(tagName) || "for".equalsIgnoreCase(tagName) ||
 				"=".equalsIgnoreCase(tagName))) {
-				throw new LexerException("Wrong tag name");
+				throw new LexerSmartException("Wrong tag name");
 			}
 			tagNameAdded = true;
-			token = new Token(TokenType.TAG_NAME, tagName);
+			token = new TokenSmart(TokenSmartType.TAG_NAME, tagName);
 			System.out.println(tagName);
 			return token;
 		}
 		
 		// add tag elements, only if tag name is not end
 		// tag end doesn't have elements
-		if(lexerState == LexerState.TAG && tagNameAdded && !tagElementsAdded &&
+		if(lexerState == LexerSmartState.TAG && tagNameAdded && !tagElementsAdded &&
 				!"end".equalsIgnoreCase(getToken().getValue().toString())) {
 			String tagElements = "";
 			while(currentIndex+1 < data.length && data[currentIndex] != '$' && data[currentIndex+1] != '}') {
@@ -159,9 +159,9 @@ public class Lexer {
 			}
 			// no more elements, but tag didn't close
 			if(currentIndex == data.length-1) {
-				throw new LexerException("Tag didn''t close.");
+				throw new LexerSmartException("Tag didn''t close.");
 			}
-			token = new Token(TokenType.TAG_ELEMENT, tagElements);
+			token = new TokenSmart(TokenSmartType.TAG_ELEMENT, tagElements);
 			tagElementsAdded = true;
 			System.out.println(tagElements);
 			return token;
@@ -169,17 +169,17 @@ public class Lexer {
 		
 		// if tag elements and tag name added, add tag close
 		// tag elements added when close tag occurred, so next element is tag close
-		if(lexerState == LexerState.TAG && tagNameAdded && (tagElementsAdded
+		if(lexerState == LexerSmartState.TAG && tagNameAdded && (tagElementsAdded
 				|| "end".equalsIgnoreCase(getToken().getValue().toString()))) {
-			token = new Token(TokenType.TAG_CLOSE, "$}");
+			token = new TokenSmart(TokenSmartType.TAG_CLOSE, "$}");
 			currentIndex += 2;
-			setState(LexerState.BASIC);
+			setState(LexerSmartState.BASIC);
 			tagElementsAdded = false;
 			tagNameAdded = false;
 			System.out.println("$}");
 			return token;
 		}
-		throw new LexerException("No more token in given document.");
+		throw new LexerSmartException("No more token in given document.");
 	}
 	
 	/**
@@ -188,11 +188,15 @@ public class Lexer {
 	 * 
 	 * @return next token
 	 */
-	public Token getToken() {
+	public TokenSmart getToken() {
 		return token;
 	}
 	
-	public void setState(LexerState state) {
+	/**
+	 * Set lexer state.
+	 * @param state new state
+	 */
+	public void setState(LexerSmartState state) {
 		if(state == null) {
 			throw new NullPointerException("Lexer state can't be null.");
 		}

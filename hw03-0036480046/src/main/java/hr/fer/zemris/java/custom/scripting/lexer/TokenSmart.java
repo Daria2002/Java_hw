@@ -7,9 +7,9 @@ package hr.fer.zemris.java.custom.scripting.lexer;
  * @author Daria Matkovic
  *
  */
-public class Token {
+public class TokenSmart {
 	private Object value;
-	private TokenType type;
+	private TokenSmartType type;
 	
 	/**
 	 * Constructor initialize token value and type
@@ -17,7 +17,7 @@ public class Token {
 	 * @param type type is token type
 	 * @param value token value
 	 */
-	public Token(TokenType type, Object value) {
+	public TokenSmart(TokenSmartType type, Object value) {
 		this.value = value;
 		this.type = type;
 	}
@@ -36,7 +36,7 @@ public class Token {
 	 * 
 	 * @return token type
 	 */
-	public TokenType getType() {
+	public TokenSmartType getType() {
 		return type;
 	}
 }

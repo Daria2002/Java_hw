@@ -1,7 +1,5 @@
 package hr.fer.zemris.java.hw02;
 
-import java.io.DataOutput;
-
 /**
  * Represents an unmodifiable complex number.
  * When comparing two double numbers tolerance for difference between two numbers

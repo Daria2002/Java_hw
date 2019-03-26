@@ -5,7 +5,7 @@ package hr.fer.zemris.java.custom.scripting.lexer;
  * @author Daria Matkovic
  *
  */
-public enum TokenType {
+public enum TokenSmartType {
 	
 	EOF,
 	TEXT,

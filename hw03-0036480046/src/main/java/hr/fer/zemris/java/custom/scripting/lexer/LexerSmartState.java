@@ -5,7 +5,7 @@ package hr.fer.zemris.java.custom.scripting.lexer;
  * @author Daria Matković
  *
  */
-public enum LexerState {
+public enum LexerSmartState {
 	
 	TAG, 
 	BASIC

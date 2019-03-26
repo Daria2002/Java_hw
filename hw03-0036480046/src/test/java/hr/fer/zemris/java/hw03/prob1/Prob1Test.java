@@ -5,6 +5,12 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import hr.fer.zemris.java.hw03.prob1.Lexer;
+import hr.fer.zemris.java.hw03.prob1.LexerException;
+import hr.fer.zemris.java.hw03.prob1.LexerState;
+import hr.fer.zemris.java.hw03.prob1.Token;
+import hr.fer.zemris.java.hw03.prob1.TokenType;
+
 public class Prob1Test {
 
 	@Test

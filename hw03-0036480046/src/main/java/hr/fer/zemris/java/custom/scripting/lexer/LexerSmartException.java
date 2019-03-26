@@ -6,14 +6,14 @@ package hr.fer.zemris.java.custom.scripting.lexer;
  * @author Daria Matkovic
  *
  */
-public class LexerException extends RuntimeException {
+public class LexerSmartException extends RuntimeException {
 	
 	private static final long serialVersionUID = 1L;
 	 
 	/**
 	 * Default constructor.
 	 */
-	public LexerException() {
+	public LexerSmartException() {
 		
 	}
 	
@@ -22,7 +22,7 @@ public class LexerException extends RuntimeException {
 	 * 
 	 * @param message message to be printed when error happens.
 	 */
-	public LexerException(String message) {
+	public LexerSmartException(String message) {
 		super(message);
 	}
 	
@@ -31,7 +31,7 @@ public class LexerException extends RuntimeException {
 	 * 
 	 * @param cause cause is simple description of exception.
 	 */
-	public LexerException(Throwable cause) {
+	public LexerSmartException(Throwable cause) {
 		super(cause);
 	}
 	
@@ -41,7 +41,7 @@ public class LexerException extends RuntimeException {
 	 * @param message error message that prints when error happens.
 	 * @param cause cause of exception
 	 */
-	public LexerException(String message, Throwable cause) {
+	public LexerSmartException(String message, Throwable cause) {
 		super(message, cause);
 	}
 }

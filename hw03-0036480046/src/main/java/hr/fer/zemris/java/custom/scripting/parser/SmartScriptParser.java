@@ -125,11 +125,15 @@ public class SmartScriptParser {
 			}
 		} catch (Exception e) {
 			e.printStackTrace(System.out);
-			throw new LexerSmartException("Error message");
+			throw new SmartScriptParserException("Error message");
 		}
 	}
 	
 	public SmartScriptParser(String documentBody) {
+		if(documentBody == null) {
+			throw new SmartScriptParserException("Document body is null");
+		}
+		
 		this.documentBody = documentBody;
 		documentNode = new DocumentNode();
 		stack = new ObjectStack();

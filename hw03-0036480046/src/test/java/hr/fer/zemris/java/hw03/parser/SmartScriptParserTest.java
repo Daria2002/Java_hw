@@ -96,7 +96,6 @@ public class SmartScriptParserTest {
 		TextNode txt0 = (TextNode)docNode.getChild(0);
 		EchoNode txt1 = (EchoNode)docNode.getChild(1);
 		Element[] elem1 = txt1.getElements();
-		
 		assertEquals(txt0.getText().equals("A tag follows "), true);
 		assertEquals(elem1[0] instanceof ElementString, true);
 		assertEquals( ((ElementString)elem1[0]).getValue(), "Joe \"Long\" Smith");
@@ -125,7 +124,7 @@ public class SmartScriptParserTest {
 				new TokenSmart(TokenSmartType.TEXT, "A tag follows "),
 				new TokenSmart(TokenSmartType.TAG_OPEN, "{$"),
 				new TokenSmart(TokenSmartType.TAG_NAME, "="),
-				new TokenSmart(TokenSmartType.TAG_ELEMENT, "Joe \\\"Long\\\" Smith"),
+				new TokenSmart(TokenSmartType.TAG_ELEMENT, "\"Joe \\\"Long\\\" Smith\""),
 				new TokenSmart(TokenSmartType.TAG_CLOSE, "$}")
 		};
 		
@@ -159,17 +158,20 @@ public class SmartScriptParserTest {
 		assertEquals(node.getStepExpression() instanceof ElementConstantInteger, true);
 		assertEquals(node.getStepExpression().asText(), "1");
 	}
-	/*
-	@Test(expected = SmartScriptParserException.class)
+	
+	@Test
 	public void invalidForLoopNoEnd() {
 		String document = loader("test2.txt");
-		new SmartScriptParser(document);
+		
+		
+		assertThrows(SmartScriptParserException.class, () -> new SmartScriptParser(document));
 	}
 	
-	@Test(expected = SmartScriptParserException.class)
+	@Test
 	public void invalidForLoopTooManyElements(){
 		String document = loader("test3.txt");
-		new SmartScriptParser(document);
+		
+		assertThrows(SmartScriptParserException.class, () -> new SmartScriptParser(document));
 	}
 	
 	@Test
@@ -184,59 +186,67 @@ public class SmartScriptParserTest {
 		assertEquals(nestedLoop.getStepExpression().asText(), "3");
 	}
 	
-	@Test(expected = SmartScriptParserException.class)
+	@Test
 	public void catchIlelgalEscape() {
 		String document = loader("test5.txt");
-		new SmartScriptParser(document);
+		
+		assertThrows(SmartScriptParserException.class, () -> new SmartScriptParser(document));
 	}
 	
-	@Test(expected = SmartScriptParserException.class)
+	@Test
 	public void noTagTypeFound() {
 		String document = loader("test6.txt");
-		new SmartScriptParser(document);
+		
+		assertThrows(SmartScriptParserException.class, () -> new SmartScriptParser(document));
+
 	}
 	
-	@Test(expected = SmartScriptParserException.class)
+	@Test
 	public void invalidForToken() {
 		String document = loader("test7.txt");
-		new SmartScriptParser(document);
+		
+		assertThrows(SmartScriptParserException.class, () -> new SmartScriptParser(document));
 	}
 	
-	@Test(expected = SmartScriptParserException.class)
+	@Test
 	public void invalidEndToken() {
 		String document = loader("test8.txt");
-		new SmartScriptParser(document);
+		
+		assertThrows(SmartScriptParserException.class, () -> new SmartScriptParser(document));
 	}
 	
-	@Test(expected = SmartScriptParserException.class)
+	@Test
 	public void invalidForVariableToken() {
 		String document = loader("test9.txt");
-		new SmartScriptParser(document);
+		assertThrows(SmartScriptParserException.class, () -> new SmartScriptParser(document));
+
 	}
 	
-	@Test(expected = SmartScriptParserException.class)
+	@Test
 	public void functionInFor() {
 		String document = loader("test10.txt");
-		new SmartScriptParser(document);
+		assertThrows(SmartScriptParserException.class, () -> new SmartScriptParser(document));
 	}
 	
-	@Test(expected = SmartScriptParserException.class)
+	@Test
 	public void documentIsNull() {
-		new SmartScriptParser(null);
+		assertThrows(SmartScriptParserException.class, () -> new SmartScriptParser(null));
+
 	}
 	
-	@Test(expected = SmartScriptParserException.class)
+	@Test
 	public void unclosedBrackets() {
 		String document = loader("test11.txt");
-		new SmartScriptParser(document);
+		assertThrows(SmartScriptParserException.class, () -> new SmartScriptParser(document));
 	}
 	
-	@Test(expected = SmartScriptParserException.class)
+	@Test
 	public void unclosedBrackets2() {
 		String document = loader("test12.txt");
-		new SmartScriptParser(document);
+		assertThrows(SmartScriptParserException.class, () -> new SmartScriptParser(document));
+
 	}
-	*/
+	
 	@Test
 	public void validEscape() {
 		String document = loader("test13.txt");
@@ -280,7 +290,9 @@ public class SmartScriptParserTest {
 			TokenSmart actual = lexer.nextToken();
 			String msg = "Checking token "+counter + ":";
 			assertEquals(expected.getType(), actual.getType());
-			assertEquals(expected.getValue(), actual.getValue());
+			assertEquals(
+					expected.getValue().toString().trim(), 
+					actual.getValue().toString().trim());
 			counter++;
 		}
 	}

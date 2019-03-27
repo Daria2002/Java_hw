@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 
 import hr.fer.zemris.java.custom.scripting.lexer.LexerSmart;
 import hr.fer.zemris.java.custom.scripting.nodes.DocumentNode;
+import hr.fer.zemris.java.custom.scripting.nodes.Node;
 import hr.fer.zemris.java.custom.scripting.parser.SmartScriptParser;
 import hr.fer.zemris.java.custom.scripting.parser.SmartScriptParserException;
 
@@ -39,7 +40,11 @@ public class SmartScriptTester {
 			System.exit(-1);
 		}
 		DocumentNode document = parser.getDocumentNode();
-		//String originalDocumentBody = createOriginalDocumentBody(document);
+		String originalDocumentBody = createOriginalDocumentBody(document);
+		SmartScriptParser parser2 = new SmartScriptParser(originalDocumentBody);
+		DocumentNode document2 = parser2.getDocumentNode();
+		String originalDocumentBody2 = createOriginalDocumentBody(document2);
+		// now document and document2 should be structurally identical trees
 		//System.out.println(originalDocumentBody); // should write something like original
 		 // content of docBody
 	}
@@ -51,13 +56,23 @@ public class SmartScriptTester {
 			byte[] buffer = new byte[1024];
 			while(true) {
 				int read = is.read(buffer);
-				if(read<1) break;
+				if(read < 1) break;
 				bos.write(buffer, 0, read);
 			}	
 			return new String(bos.toByteArray(), StandardCharsets.UTF_8);
 		} catch(IOException ex) {
 			return null;
 		}
+	}
+	
+	private static String createOriginalDocumentBody(Node node) {
+		String documentString = "";
+		documentString += node.toString();
+		for(int i = 0; i < node.numberOfChildren(); i++) {
+			documentString += node.getChild(i).toString();
+		}
+		System.err.println(documentString);
+		return documentString;
 	}
 	
 }

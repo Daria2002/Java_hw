@@ -14,6 +14,6 @@ public class ElementConstantInteger extends Element {
 	
 	@Override
 	public String asText() {
-		return String.valueOf(getValue());
+		return String.valueOf(value);
 	}
 }

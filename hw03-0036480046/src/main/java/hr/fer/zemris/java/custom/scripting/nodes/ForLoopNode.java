@@ -42,4 +42,18 @@ public class ForLoopNode extends Node {
 		return stepExpression;
 	}
 	
+	@Override
+	public String toString() {
+		String nodeString = "";
+		nodeString += "{$FOR " + this.variable.asText() + " " +
+		this.startExpression.asText() + " " + this.endExpression.asText() +
+		" " + this.stepExpression.asText() + " $}";
+		for(int i = 0; i < this.numberOfChildren(); i++) {
+			nodeString += this.getChild(i).toString();
+		}
+		nodeString += "{$END$}";
+		
+		return nodeString;
+	}
+	
 }

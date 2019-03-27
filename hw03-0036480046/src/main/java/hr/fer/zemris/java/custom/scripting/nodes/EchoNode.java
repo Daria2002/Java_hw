@@ -19,4 +19,16 @@ public class EchoNode extends Node {
 	public Element[] getElements() {
 		return elements;
 	}
+	
+	@Override
+	public String toString() {
+		String nodeString = "";
+		nodeString += "{$= ";
+		for(int i = 0; i < this.elements.length; i++) {
+			nodeString += this.elements[i].asText() + " ";
+		}
+		nodeString += "$}";
+		
+		return nodeString;
+	}
 }

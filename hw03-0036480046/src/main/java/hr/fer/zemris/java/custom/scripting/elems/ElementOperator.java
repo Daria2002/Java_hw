@@ -14,6 +14,6 @@ public class ElementOperator extends Element {
 	
 	@Override
 	public String asText() {
-		return getSymbol();
+		return symbol;
 	}
 }

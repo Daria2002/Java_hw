@@ -14,6 +14,8 @@ public class ElementString extends Element {
 	
 	@Override
 	public String asText() {
-		return getValue();
+		return "\"" + value.replace("\\", "\\\\").replace("\n", "\\n")
+				.replace("\r", "\\r").replace("\t", "\\t")
+				.replace("\"", "\\\"") + "\"";
 	}
 }

@@ -155,6 +155,7 @@ public class SmartScriptParser {
 		// flag for making variable
 		boolean makeVariable = false;
 		String buildValue = "";
+		boolean escapeSequence = false;
 		
 		for(int i = 0; i < valueArray.length; i++) {
 			
@@ -199,10 +200,35 @@ public class SmartScriptParser {
 				}
 			// if building string
 			} else if(makeString) {
+				
+				char currChar = valueArray[i];
+				if (escapeSequence && (
+						currChar == '\\' || currChar == '"' ||
+						currChar == '\n' || currChar == '\t' ||
+						currChar == '\r'))
+				{
+					buildValue += '\\';
+					buildValue += currChar;
+					escapeSequence = false;
+					continue;
+				}
+
+				if (valueArray[i] == '\\' && !escapeSequence)
+				{
+					escapeSequence = true;
+					continue;
+				}
+				
 				// save value and stop building string
-				if(valueArray[i] == '"') {
+				if(valueArray[i] == '"' && !escapeSequence) {
 					makeString = false;
-					ElementString elementString = new ElementString(buildValue);
+					ElementString elementString = new ElementString(
+							buildValue
+								.replace("\\\\", "\\")
+								.replace("\\n", "\n")
+								.replace("\\r", "\r")
+								.replace("\\t", "\t")
+								.replace("\\\"", "\""));
 					elements.add(elementString);
 					buildValue = "";
 				} else {

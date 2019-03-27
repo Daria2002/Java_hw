@@ -254,7 +254,12 @@ public class LexerSmart {
 						
 					// if string occurred and escapeSequense is on, don't change state of inString
 					// change escapeSequence to false, if " escaped
-					} else if(data[currentIndex] == '\"' && escapeSequence) {
+					} else if(
+							(data[currentIndex] == '\"' ||
+							data[currentIndex] == '\\' ||
+							data[currentIndex] == '\n' ||
+							data[currentIndex] == '\r' ||
+							data[currentIndex] == '\t') && escapeSequence) {
 						tagElements += '\\';
 						escapeSequence = false; 
 					}

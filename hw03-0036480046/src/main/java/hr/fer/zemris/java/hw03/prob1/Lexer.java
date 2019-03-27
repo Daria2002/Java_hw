@@ -18,6 +18,8 @@ public class Lexer {
 	private int currentIndex;
 	LexerState lexerState;
 	
+	boolean escapeSequence = false;
+	
 	/**
 	 * Constructor get text that need to be analyzed.
 	 * 
@@ -70,7 +72,7 @@ public class Lexer {
 		if(mode == 3) {
 			// if symbol need to be word
 			// if sign before is ignored so symbol is not word
-			if((currentIndex-1 >= 0  && data[currentIndex-1] != '\\' && 
+			if((currentIndex-1 >= 0  && !escapeSequence && 
 					data[currentIndex] != '\\') ||
 					(currentIndex == 0 && data[currentIndex] != '\\')) {
 				currentIndex++;
@@ -86,9 +88,12 @@ public class Lexer {
 		
 		// if there is \\ on first place
 		if(data[currentIndex] == '\\') {
-			if(Character.isAlphabetic(data[currentIndex+1])) {
-				throw new LexerException("\\ before WORD");
+			if(currentIndex+1 < data.length && 
+					!(Character.isDigit(data[currentIndex+1]) ||
+							data[currentIndex+1] == '\\')) {
+				throw new LexerException("invalid escaping");
 			}
+			escapeSequence = true;
 			mode = 2;
 			currentIndex++;
 		}
@@ -115,7 +120,8 @@ public class Lexer {
 			// if mode changed, etc.before letters, now numbers
 			if(mode == checkMode) {
 				// don't add \\ if it is used for escaping
-				if(data[i] == '\\' && data[i-1] != '\\' && lexerState.equals(LexerState.BASIC)) {
+				if(data[i] == '\\' && !escapeSequence && lexerState.equals(LexerState.BASIC)) {
+					escapeSequence = true;
 					continue;
 				} else {
 					if(data[i] == ' ' && lexerState.equals(LexerState.EXTENDED)) {
@@ -129,10 +135,17 @@ public class Lexer {
 						return token;
 					}
 					stringValue += data[i];
+					if(escapeSequence) {
+						escapeSequence = false;
+					}
 				}
 			}
 			
-			if(mode == 2 && data[i-1] == '\\' && checkMode == 3) {
+			if(mode == 2 && escapeSequence && checkMode == 3) {
+				if(data[i] != '\\' && !Character.isDigit(data[i])) {
+					throw new LexerException("invalid escape sequence");
+				}
+				escapeSequence = false;
 				stringValue += data[i];
 			}
 			
@@ -193,10 +206,10 @@ public class Lexer {
 		// if \ before data[index] is escaped in the middle
 		// if lexer state is extended everything is word
 		if(lexerState.equals(LexerState.EXTENDED) || 
-				index-2 >= 0 && data[index] == '\\' && data[index-1] != '\\') {
+				index-2 >= 0 && data[index] == '\\' && !escapeSequence) {
 			return 2;
 		} else if(Character.isDigit(c)) {
-			if(index-1 > 0 && data[index-1] == '\\') {
+			if(index-1 > 0 && escapeSequence) {
 				return 2;
 			}
 			return 1;

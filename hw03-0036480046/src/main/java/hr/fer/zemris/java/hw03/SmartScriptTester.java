@@ -31,7 +31,7 @@ public class SmartScriptTester {
 		System.out.println(s);
 		try {
 			parser = new SmartScriptParser(docBody);
-			//parser = new SmartScriptParser("{$ \"ja\\n volim lovru najvise na svijetu\"$}");
+			//parser = new SmartScriptParser("{$ \"ovo\\n je neki tekst\"$}");
 		} catch(SmartScriptParserException e) {
 			System.out.println("Unable to parse document!");
 			System.exit(-1);

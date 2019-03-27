@@ -1,5 +1,7 @@
 package hr.fer.zemris.java.custom.scripting.nodes;
 
+import java.util.Arrays;
+
 import hr.fer.zemris.java.custom.scripting.elems.Element;
 
 /**
@@ -30,5 +32,26 @@ public class EchoNode extends Node {
 		nodeString += "$}";
 		
 		return nodeString;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + Arrays.hashCode(elements);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (getClass() != obj.getClass())
+			return false;
+		EchoNode other = (EchoNode) obj;
+		for(int i = 0; i < elements.length; i++) {
+			if(!other.elements[i].equals(this.elements[i])) {
+				return false;
+			}
+		}
+		return true;
 	}
 }

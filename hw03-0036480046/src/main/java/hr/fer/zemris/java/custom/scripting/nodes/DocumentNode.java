@@ -11,5 +11,4 @@ public class DocumentNode extends Node {
 	public String toString() {
 		return "";
 	}
-	
 }

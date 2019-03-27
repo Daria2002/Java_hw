@@ -17,8 +17,6 @@ public class SmartScriptTester {
 	
 	public static void main(String[] args) {
 		String filePath = args[0];
-		//String fileName = "document1";
-		SmartScriptTester test = new SmartScriptTester();
 		String docBody = "";
 		
 		try {
@@ -43,12 +41,17 @@ public class SmartScriptTester {
 		}
 		DocumentNode document = parser.getDocumentNode();
 		String originalDocumentBody = createOriginalDocumentBody(document);
+		
 		SmartScriptParser parser2 = new SmartScriptParser(originalDocumentBody);
 		DocumentNode document2 = parser2.getDocumentNode();
 		String originalDocumentBody2 = createOriginalDocumentBody(document2);
-		// now document and document2 should be structurally identical trees
-		//System.out.println(originalDocumentBody); // should write something like original
-		 // content of docBody
+		
+		// compare document and document2
+		if(document.equals(document2)) {
+			System.out.println("documents are the same.");
+		} else {
+			System.out.println("documents are not the same.");
+		}
 	}
 	
 	private String loader(String filename) {

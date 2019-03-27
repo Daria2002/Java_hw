@@ -6,5 +6,4 @@ public interface List extends Collection {
 	void insert(Object value, int position);
 	int indexOf(Object value);
 	void remove(int index);
-	
 }

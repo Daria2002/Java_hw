@@ -22,15 +22,15 @@ public class LexerSmart {
 	private String text;
 	private boolean tagNameAdded = false;
 	private boolean tagElementsAdded = false;
-	private boolean escapeSequence = true;
+	private boolean escapeSequence = false;
 	
 	public static void main(String[] args) {
-		String testString = ("This is sample text.\\n" + 
-				"{$ FOR i 1 10 1 $}\\n" + 
-				" This is \\\\{$= i $}-th time this message is generated.\\n" + 
-				"{$END$}\\n" + 
-				"{$FOR i-10 10 2 $}\\n" + 
-				" sin({$=i$}^2) = {$= i i * @sin \\\"0.000\\\" @decfmt $}\\n" + 
+		String testString = ("This is sample text.\n" + 
+				"{$ FOR i 1 10 1 $}\n" + 
+				" This is \\\\{$= i $}-th time \\\\ \\{ this message is generated.\\\\n" + 
+				"{$END$}\n" + 
+				"{$FOR i-10 10 2 $}\n" + 
+				" sin({$=i$}^2) = {$= i i * @sin \"hello \\ \\n\" \\\"0.000\\\" @decfmt $}\n" + 
 				"{$END$}");
 		/*
 		String filePath = args[0];
@@ -138,11 +138,12 @@ public class LexerSmart {
 						(data[currentIndex+1] == '\\' || data[currentIndex+1] == '{')) {
 					escapeSequence = true;
 					currentIndex++;
-				} else if(data[currentIndex+1] == 'n' || data[currentIndex+1] == 'r' ||
+				}/* else if(data[currentIndex+1] == 'n' || data[currentIndex+1] == 'r' ||
 						data[currentIndex+1] == 't') {
+					System.out.println("##################################");
 					stringValue += '\n';
 					currentIndex += 2;
-				} else {
+				} */else {
 					throw new LexerSmartException("Invalid escaping.");
 				}
 				// escaping {

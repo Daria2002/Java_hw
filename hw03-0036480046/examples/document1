@@ -3,7 +3,7 @@ This is sample text.
  This is {$= i $}-th time this message is generated.
 {$END$}
 {$FOR i-10 10 2 $}
- sin({$=i$}^2) = {$= i i * @sin "0.000" @decfmt $}
+ sin({$=i$}^2) = {$= i i * @sin "0.000" @decfmt "Joe \"Long \" Smith" $}
  {$FOR b 1 2 3 $}
 	HELLO
 	 {$FOR b 1 2 3 $}

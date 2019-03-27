@@ -68,8 +68,10 @@ import java.nio.charset.StandardCharsets;
 
 
 import hr.fer.zemris.java.custom.scripting.elems.Element;
+import hr.fer.zemris.java.custom.scripting.elems.ElementConstantDouble;
 import hr.fer.zemris.java.custom.scripting.elems.ElementConstantInteger;
 import hr.fer.zemris.java.custom.scripting.elems.ElementString;
+import hr.fer.zemris.java.custom.scripting.elems.ElementVariable;
 import hr.fer.zemris.java.custom.scripting.lexer.LexerSmart;
 import hr.fer.zemris.java.custom.scripting.lexer.TokenSmart;
 import hr.fer.zemris.java.custom.scripting.lexer.TokenSmartType;
@@ -83,6 +85,29 @@ import hr.fer.zemris.java.custom.scripting.parser.SmartScriptParserException;
 @SuppressWarnings("javadoc")
 public class SmartScriptParserTest {
 
+	@Test
+	public void testElementsTypeInForLoop() {
+		String string = "{$FOR i\"1\"5 1.5 $}\n{$end$}";
+		SmartScriptParser parser = new SmartScriptParser(string);
+		
+		DocumentNode docNode = parser.getDocumentNode();
+		
+		assertEquals(docNode.getChild(0) instanceof ForLoopNode, true);
+		
+		assertTrue(
+				((ForLoopNode)docNode.getChild(0)).getVariable()
+				instanceof ElementVariable);
+		
+		assertTrue(
+				((ForLoopNode)docNode.getChild(0)).getEndExpression()
+				instanceof ElementConstantInteger);
+		
+
+		assertTrue(
+				((ForLoopNode)docNode.getChild(0)).getStepExpression()
+				instanceof ElementConstantDouble);
+	}
+	
 	@Test
 	public void testEchoNodeEscaping() {
 		String simpleDoc = "A tag follows {$= \"Joe \\\"Long\\\" Smith\"$}.";

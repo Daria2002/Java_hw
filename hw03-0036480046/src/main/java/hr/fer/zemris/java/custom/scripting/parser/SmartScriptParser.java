@@ -374,10 +374,12 @@ public class SmartScriptParser {
 					array[arrayCounter] = buildValue.toString();
 					buildValue = "";
 					arrayCounter++;
+					
 				} else if(charArray[i] == '"' && buildValue == "" && !inQuotation) {
 					// if " occurs and nothing is in buildValue that means that
 					// inQuotation mode is on
 					inQuotation = true;
+					
 				} else if(charArray[i] == '"' && buildValue != "" && inQuotation) {
 					// if " occurs and something is in buildValue that means that
 					// inQuotation mode is off and value stops
@@ -385,10 +387,12 @@ public class SmartScriptParser {
 					array[arrayCounter] = buildValue.toString();
 					buildValue = "";
 					arrayCounter++;
+					
 				} else if(charArray[i] == '"' && buildValue != "" && !inQuotation) {
-					// if " occurs and something is in buildValue and inQuotation in off, 
-					// it means error occurred because " can't be part of variable name
-					throw new SmartScriptParserException("\" can't be part of variable name.");
+					array[arrayCounter] = buildValue;
+					buildValue = "";
+					inQuotation = true;
+					arrayCounter++;
 				}
 			} else {
 				// build variable name, number, etc.

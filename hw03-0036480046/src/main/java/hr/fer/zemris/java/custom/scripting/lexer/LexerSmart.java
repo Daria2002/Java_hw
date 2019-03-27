@@ -108,10 +108,16 @@ public class LexerSmart {
 	public TokenSmart nextToken() {
 		String stringValue = "";
 		
-		if(currentIndex > data.length-1) {
+		// EOF
+		if(currentIndex == data.length) {
 			currentIndex++;
 			token = new TokenSmart(TokenSmartType.EOF, null);
 			return token;
+		}
+		
+		// call after EOF
+		if(currentIndex > data.length) {
+			throw new LexerSmartException();
 		}
 		
 		// work in basic mode
@@ -120,10 +126,15 @@ public class LexerSmart {
 			if(data[currentIndex] == '{' && data[currentIndex+1] == '$' && !escapeSequence) {
 				// if \ is before tag, continue building text, otherwise return token
 				
-				token = new TokenSmart(TokenSmartType.TEXT, stringValue);
 				setState(LexerSmartState.TAG);
 				System.out.println(stringValue);
-				return token;
+				
+				// if value is not empty make token and return it
+				if(!stringValue.isEmpty()) {
+					token = new TokenSmart(TokenSmartType.TEXT, stringValue);
+					currentIndex++;
+					return token;
+				}
 				
 			// if end, return text
 			} else if(currentIndex+1 > data.length-1) {
@@ -168,13 +179,13 @@ public class LexerSmart {
 			}
 		} 
 		// tag occurred
-		if(currentIndex+1 <= data.length-1 && data[currentIndex] == '{' &&
-				data[currentIndex+1] == '$' && lexerState == LexerSmartState.TAG
+		if(currentIndex-1 >= 0 && data[currentIndex-1] == '{' &&
+				data[currentIndex] == '$' && lexerState == LexerSmartState.TAG
 				&& !escapeSequence) {
 			// if tag open occurred go to tag state
 			setState(LexerSmartState.TAG);
 			token = new TokenSmart(TokenSmartType.TAG_OPEN, "{$");
-			currentIndex += 2;
+			currentIndex ++;
 			System.out.println("{$");
 			
 			return token;
@@ -201,6 +212,18 @@ public class LexerSmart {
 			
 			// build tagElements value
 			while(currentIndex+1 < data.length) {
+				char current = data[currentIndex];
+				
+				/*
+				if(Character.isWhitespace(current)) {
+					if(!stringValue.isEmpty()) {
+						stringValue += data[currentIndex];
+					}
+					currentIndex++;
+					continue;
+				}
+				*/
+				
 				// if tag close occurred, checks that escapeSequence is off
 				if(!escapeSequence && data[currentIndex] == '$' && data[currentIndex+1] == '}' ) {
 					break;
@@ -215,14 +238,13 @@ public class LexerSmart {
 					
 					// add element and turn escapeSequence off
 				} else {
-					tagElements += data[currentIndex];
 					
-					char current = data[currentIndex];
 					if(!(Character.isDigit(current) || Character.isAlphabetic(current)
 							|| current == '_' || current == '*' || current == '+'
 							|| current == '/' || current == '^' || current == '-'
 							|| current == ' ' || current == '@' || current == '\"'
-							|| current == '.') && !inString) {
+							|| current == '.' || current == '\t' || current == '\r' 
+							|| current == '\n') && !inString) {
 						throw new LexerSmartException("Invalid expression");
 					}
 					
@@ -233,9 +255,11 @@ public class LexerSmart {
 					// if string occurred and escapeSequense is on, don't change state of inString
 					// change escapeSequence to false, if " escaped
 					} else if(data[currentIndex] == '\"' && escapeSequence) {
+						tagElements += '\\';
 						escapeSequence = false; 
 					}
 					
+					tagElements += data[currentIndex];
 					escapeSequence = false;
 				}
 

@@ -124,7 +124,7 @@ public class SmartScriptParser {
 				token = lexer.nextToken();
 			}
 		} catch (Exception e) {
-			//e.printStackTrace(System.out);
+			e.printStackTrace(System.out);
 			throw new LexerSmartException("Error message");
 		}
 	}
@@ -337,10 +337,10 @@ public class SmartScriptParser {
 			}
 			
 			// skip whitespace and "", set next element if this occurs
-			if(charArray[i] == ' ' || charArray[i] == '"') {
+			if(charArray[i] == '"' || Character.isWhitespace(charArray[i])) {
 				// if something in build value and than whitespace occurs, that
 				// means that argument need to be saved
-				if(buildValue != "" && charArray[i] == ' ') {
+				if(!buildValue.isEmpty() && Character.isWhitespace(charArray[i])) {
 					array[arrayCounter] = buildValue.toString();
 					buildValue = "";
 					arrayCounter++;
@@ -353,6 +353,7 @@ public class SmartScriptParser {
 					// inQuotation mode is off and value stops
 					inQuotation = false;
 					array[arrayCounter] = buildValue.toString();
+					buildValue = "";
 					arrayCounter++;
 				} else if(charArray[i] == '"' && buildValue != "" && !inQuotation) {
 					// if " occurs and something is in buildValue and inQuotation in off, 
@@ -369,7 +370,7 @@ public class SmartScriptParser {
 			array[arrayCounter] = buildValue;
 		}
 		
-		if(arrayCounter < 2 || arrayCounter > 3) {
+		if(arrayCounter-1 < 2 || arrayCounter-1 > 3) {
 			throw new SmartScriptParserException("For loop can have 3 or 4 args.");
 		}
 		return array;

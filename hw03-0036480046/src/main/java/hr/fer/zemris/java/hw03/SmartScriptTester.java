@@ -54,10 +54,10 @@ public class SmartScriptTester {
 		}
 	}
 	
-	private String loader(String filename) {
+	private String loader(String filePath) {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		try(InputStream is =
-		this.getClass().getClassLoader().getResourceAsStream(filename)) {
+		this.getClass().getClassLoader().getResourceAsStream(filePath)) {
 			byte[] buffer = new byte[1024];
 			while(true) {
 				int read = is.read(buffer);
@@ -81,5 +81,4 @@ public class SmartScriptTester {
 		System.out.println("******************************");
 		return documentString;
 	}
-	
 }

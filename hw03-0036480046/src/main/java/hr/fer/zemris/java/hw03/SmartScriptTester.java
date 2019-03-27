@@ -16,22 +16,24 @@ import hr.fer.zemris.java.custom.scripting.parser.SmartScriptParserException;
 public class SmartScriptTester {
 	
 	public static void main(String[] args) {
-		//String fileName = args[0];
-		String fileName = "document1";
+		String filePath = args[0];
+		//String fileName = "document1";
 		SmartScriptTester test = new SmartScriptTester();
-		String docBody = test.loader(fileName);
+		String docBody = "";
+		
+		try {
+			docBody = new String(Files.readAllBytes(Paths.get(filePath)), 
+					StandardCharsets.UTF_8);
+		} catch (Exception e) {
+			System.out.println("Can't open file.");
+			System.exit(1);
+		}
+		
 		System.out.println(docBody);
 		SmartScriptParser parser = null;
 		
-		String s = "\" BLA \" \n \\n";
-		char[] c = s.toCharArray();
-
-		System.out.println(c[8] == '\n');
-		
-		System.out.println(s);
 		try {
 			parser = new SmartScriptParser(docBody);
-			//parser = new SmartScriptParser("{$ \"ovo\\n je neki tekst\"$}");
 		} catch(SmartScriptParserException e) {
 			System.out.println("Unable to parse document!");
 			System.exit(-1);

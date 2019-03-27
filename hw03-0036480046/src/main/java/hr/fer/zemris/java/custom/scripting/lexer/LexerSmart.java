@@ -28,9 +28,12 @@ public class LexerSmart {
 		String testString = ("This is sample text.\n" + 
 				"{$ FOR i 1 10 1 $}\n" + 
 				" This is \\\\{$= i $}-th time \\\\ \\{ this message is generated.\\\\n" + 
+				"{$FOR i-10 10 2 $}\n" + 
+				" sin({$=i$}^2) = {$= i i * @sin \"hell\\\\on\\\" \"0.000\" @decfmt $}\n" + 
+				"{$END$}" +
 				"{$END$}\n" + 
 				"{$FOR i-10 10 2 $}\n" + 
-				" sin({$=i$}^2) = {$= i i * \\\\ @sin \"hell\\\\on\\\" \"0.000\" @decfmt $}\n" + 
+				" sin({$=i$}^2) = {$= i i * @sin \"hell\\\\on\\\" \"0.000\" @decfmt $}\n" + 
 				"{$END$}");
 		/*
 		String filePath = args[0];
@@ -47,7 +50,7 @@ public class LexerSmart {
         LexerSmart lexer = new LexerSmart(testString);
         System.out.println();
         
-        for(int i = 0; i < 33; i++) {
+        for(int i = 0; i < 40; i++) {
             System.out.println("Next token is:");
     		lexer.nextToken();
         }
@@ -192,20 +195,18 @@ public class LexerSmart {
 				!"end".equalsIgnoreCase(getToken().getValue().toString())) {
 			String tagElements = "";
 			
-			// flag used for detecting string, because only in strings in tag
+			// flag used for detecting string, because only in strings (in tag)
 			// should use escaping
-			boolean buildingString = false;
+			boolean inString = false;
 			
 			// build tagElements value
 			while(currentIndex+1 < data.length) {
 				// if tag close occurred, checks that escapeSequence is off
-				if(currentIndex-1 >= 0 && !escapeSequence &&
-						data[currentIndex] == '$' && data[currentIndex+1] == '}' ) {
+				if(!escapeSequence && data[currentIndex] == '$' && data[currentIndex+1] == '}' ) {
 					break;
 					
 					// if illegal escape occurred
-				} else if(escapeSequence &&
-						!(data[currentIndex] == '\\' || data[currentIndex] == '"')) {
+				} else if(escapeSequence && !(data[currentIndex] == '\\' || data[currentIndex] == '"')) {
 					throw new LexerSmartException("Invalid escape.");
 					
 					//escapeSequence on
@@ -215,6 +216,26 @@ public class LexerSmart {
 					// add element and turn escapeSequence off
 				} else {
 					tagElements += data[currentIndex];
+					
+					char current = data[currentIndex];
+					if(!(Character.isDigit(current) || Character.isAlphabetic(current)
+							|| current == '_' || current == '*' || current == '+'
+							|| current == '/' || current == '^' || current == '-'
+							|| current == ' ' || current == '@' || current == '\"'
+							|| current == '.') && !inString) {
+						throw new LexerSmartException("Invalid expression");
+					}
+					
+					// if string occurred and escapeSequence is off change state of inString
+					if(data[currentIndex] == '\"' && !escapeSequence) {
+						inString = !inString;
+						
+					// if string occurred and escapeSequense is on, don't change state of inString
+					// change escapeSequence to false, if " escaped
+					} else if(data[currentIndex] == '\"' && escapeSequence) {
+						escapeSequence = false; 
+					}
+					
 					escapeSequence = false;
 				}
 

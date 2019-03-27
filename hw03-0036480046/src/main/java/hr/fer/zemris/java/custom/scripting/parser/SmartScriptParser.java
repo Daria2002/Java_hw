@@ -5,6 +5,7 @@ import java.util.Arrays;
 import javax.xml.parsers.ParserConfigurationException;
 
 import hr.fer.zemris.java.custom.collections.ArrayIndexedCollection;
+import hr.fer.zemris.java.custom.collections.ObjectStack;
 import hr.fer.zemris.java.custom.collections.Tester;
 import hr.fer.zemris.java.custom.scripting.elems.Element;
 import hr.fer.zemris.java.custom.scripting.elems.ElementConstantDouble;
@@ -27,13 +28,119 @@ import hr.fer.zemris.java.hw03.prob1.LexerException;
 public class SmartScriptParser {
 	
 	private String documentBody;
-	DocumentNode documentNode;
-	boolean forLoop = false;
+	private DocumentNode documentNode;
+	private ObjectStack stack;
 	
+	private void makeDocumentNode() {
+		LexerSmart lexer = new LexerSmart(documentBody);
+		TokenSmart token;
+		
+		try {
+			token = lexer.nextToken();
+			// while token EOF don't occur call nextToken method
+			while(token.getType() != TokenSmartType.EOF) {
+				
+				// take elements after tag
+				// this is used for reading loop arguments
+				if(lexer.getToken() != null &&
+						lexer.getToken().getType() == TokenSmartType.TAG_NAME) {
+					
+					String tagName = lexer.getToken().getValue().toString();
+					
+					// throw exception if tag name is unknown
+					if(!("end".equalsIgnoreCase(tagName) || "for".equalsIgnoreCase(tagName) ||
+						"=".equalsIgnoreCase(tagName))) {
+						throw new SmartScriptParserException("Wrong tag name");
+					}
+					
+					// if tag name was for
+					if("for".equalsIgnoreCase(lexer.getToken().getValue().toString())) {
+						// take elements
+						token = lexer.nextToken();
+						Object[] forLoopArguments = getForLoopArguments(token.getValue());
+						
+						// make forLoopNode
+						ElementVariable variable = new ElementVariable(forLoopArguments[0].toString());
+						
+						Element startExpression = initializeElement(forLoopArguments[1].toString());
+						Element endExpression =  initializeElement(forLoopArguments[2].toString());
+						Element stepExpression = null;
+						if(forLoopArguments.length == 4) {
+							stepExpression =  initializeElement(forLoopArguments[3].toString());;
+						}
+						
+						ForLoopNode forLoopNode = new ForLoopNode(variable, 
+								startExpression, endExpression, stepExpression);
+						
+						// add forLoopNode to parent documentNode, forLoop node
+						// is now open and till end doesn't occur every node is 
+						// child of for loop
+						//documentNode.addChildNode(forLoopNode);
+						//forLoop = true;
+						stack.push(forLoopNode);
+						
+					} else if("=".equalsIgnoreCase(lexer.getToken().getValue().toString())) {
+					// if tag name was =
+						// get arguments in = tag
+						token = lexer.nextToken();
+						EchoNode echoNode = getEchoNode(token.getValue());
+						/*
+						// if tag = was in for loop add echoNode as child of forLoopNode
+						if(forLoop) {
+							documentNode.getChild(documentNode.numberOfChildren()-1).addChildNode(echoNode);;
+						} else if(!forLoop) {
+							// if tag = occurred in outside of for loop node add echoNode as documentNode's child
+							documentNode.addChildNode(echoNode);
+						}
+						*/
+						Node parent = (Node)stack.peek();
+						parent.addChildNode(echoNode);
+					} else if("end".equalsIgnoreCase(lexer.getToken().getValue().toString())) {
+					// if tag name was end 
+						//forLoop = false;
+						Node child = (Node)stack.pop();
+						Node parent = (Node)stack.peek();
+						parent.addChildNode(child);
+					}
+					
+				// this is used for:
+				// a)reading text and adding text node on documentNode or forLoopNode
+				// b)for reading end tag and changing forLoop flag, so it doesn't store
+				// nodes like forLoopNode's children any more 
+				} else if(lexer.getToken() != null && lexer.getToken().getType() == TokenSmartType.TEXT) {
+					// if token type is text, make text node
+					TextNode textNode = new TextNode(lexer.getToken().getValue().toString());
+					//add textNode to documentNode if forLoop is not opened
+					Node parent = (Node)stack.peek();
+					parent.addChildNode(textNode);
+					/*
+					if(forLoop) {
+						documentNode.getChild(documentNode.numberOfChildren()-1).addChildNode(textNode);;
+					} else {
+						documentNode.addChildNode(textNode);
+					}
+					*/
+				}
+				token = lexer.nextToken();
+			}
+		} catch (Exception e) {
+			//e.printStackTrace(System.out);
+			throw new LexerSmartException("Error message");
+		}
+	}
 	
 	public SmartScriptParser(String documentBody) {
 		this.documentBody = documentBody;
 		documentNode = new DocumentNode();
+		stack = new ObjectStack();
+		stack.push(documentNode);
+		makeDocumentNode();
+		
+		Node node = (Node)stack.peek();
+		if(!(node instanceof DocumentNode)) {
+			throw new SmartScriptParserException("Expression is incompleted.");
+		}
+		documentNode = (DocumentNode)stack.pop();
 	}
 	
 	private Element[] makeElementsForEchoNode(Object value) {
@@ -291,92 +398,6 @@ public class SmartScriptParser {
 	}
 	
 	public DocumentNode getDocumentNode() {
-		LexerSmart lexer = new LexerSmart(documentBody);
-		TokenSmart token;
-		
-		try {
-			token = lexer.nextToken();
-			// while token EOF don't occur call nextToken method
-			while(token.getType() != TokenSmartType.EOF) {
-				
-				// take elements after tag
-				// this is used for reading loop arguments
-				if(lexer.getToken() != null &&
-						lexer.getToken().getType() == TokenSmartType.TAG_NAME) {
-					
-					String tagName = lexer.getToken().getValue().toString();
-					
-					// throw exception if tag name is unknown
-					if(!("end".equalsIgnoreCase(tagName) || "for".equalsIgnoreCase(tagName) ||
-						"=".equalsIgnoreCase(tagName))) {
-						throw new SmartScriptParserException("Wrong tag name");
-					}
-					
-					// if tag name was for
-					if("for".equalsIgnoreCase(lexer.getToken().getValue().toString())) {
-						// take elements
-						token = lexer.nextToken();
-						Object[] forLoopArguments = getForLoopArguments(token.getValue());
-						
-						// make forLoopNode
-						ElementVariable variable = new ElementVariable(forLoopArguments[0].toString());
-						
-						Element startExpression = initializeElement(forLoopArguments[1].toString());
-						Element endExpression =  initializeElement(forLoopArguments[2].toString());
-						Element stepExpression = null;
-						if(forLoopArguments.length == 4) {
-							stepExpression =  initializeElement(forLoopArguments[3].toString());;
-						}
-						
-						ForLoopNode forLoopNode = new ForLoopNode(variable, 
-								startExpression, endExpression, stepExpression);
-						
-						// add forLoopNode to parent documentNode, forLoop node
-						// is now open and till end doesn't occur every node is 
-						// child of for loop
-						documentNode.addChildNode(forLoopNode);
-						forLoop = true;
-						
-					} else if("=".equalsIgnoreCase(lexer.getToken().getValue().toString())) {
-					// if tag name was =
-						// get arguments in = tag
-						token = lexer.nextToken();
-						EchoNode echoNode = getEchoNode(token.getValue());
-						
-						// if tag = was in for loop add echoNode as child of forLoopNode
-						if(forLoop) {
-							documentNode.getChild(documentNode.numberOfChildren()-1).addChildNode(echoNode);;
-						} else if(!forLoop) {
-							// if tag = occurred in outside of for loop node add echoNode as documentNode's child
-							documentNode.addChildNode(echoNode);
-						}
-						
-					} else if("end".equalsIgnoreCase(lexer.getToken().getValue().toString())) {
-					// if tag name was end 
-						forLoop = false;
-					}
-					
-				// this is used for:
-				// a)reading text and adding text node on documentNode or forLoopNode
-				// b)for reading end tag and changing forLoop flag, so it doesn't store
-				// nodes like forLoopNode's children any more 
-				} else if(lexer.getToken() != null && lexer.getToken().getType() == TokenSmartType.TEXT) {
-					// if token type is text, make text node
-					TextNode textNode = new TextNode(lexer.getToken().getValue().toString());
-					//add textNode to documentNode if forLoop is not opened
-					if(forLoop) {
-						documentNode.getChild(documentNode.numberOfChildren()-1).addChildNode(textNode);;
-					} else {
-						documentNode.addChildNode(textNode);
-					}
-				}
-				token = lexer.nextToken();
-			}
-		} catch (Exception e) {
-			e.printStackTrace(System.out);
-			throw new LexerSmartException("Error message");
-		}
-		
 		return documentNode;
 	}
 }

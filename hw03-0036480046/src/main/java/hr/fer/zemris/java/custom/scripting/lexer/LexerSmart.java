@@ -30,7 +30,7 @@ public class LexerSmart {
 				" This is \\\\{$= i $}-th time \\\\ \\{ this message is generated.\\\\n" + 
 				"{$END$}\n" + 
 				"{$FOR i-10 10 2 $}\n" + 
-				" sin({$=i$}^2) = {$= i i * @sin \"hello \\ \\n\" \\\"0.000\\\" @decfmt $}\n" + 
+				" sin({$=i$}^2) = {$= i i * \\\\ @sin \"hell\\\\on\\\" \"0.000\" @decfmt $}\n" + 
 				"{$END$}");
 		/*
 		String filePath = args[0];
@@ -152,11 +152,13 @@ public class LexerSmart {
 				lexerState = LexerSmartState.BASIC;
 				stringValue += data[currentIndex];
 				currentIndex++;
+				
 				// escaping /
 			} else if(data[currentIndex] == '\\' && escapeSequence) {
 				escapeSequence = false;
 				stringValue += data[currentIndex];
 				currentIndex++;
+				// add basic element
 			} else {
 				stringValue += data[currentIndex];
 				currentIndex++;
@@ -167,10 +169,11 @@ public class LexerSmart {
 				data[currentIndex+1] == '$' && lexerState == LexerSmartState.TAG
 				&& !escapeSequence) {
 			// if tag open occurred go to tag state
-			//setState(LexerState.TAG);
+			setState(LexerSmartState.TAG);
 			token = new TokenSmart(TokenSmartType.TAG_OPEN, "{$");
 			currentIndex += 2;
 			System.out.println("{$");
+			
 			return token;
 		} 
 		// return tag name token
@@ -188,22 +191,44 @@ public class LexerSmart {
 		if(lexerState == LexerSmartState.TAG && tagNameAdded && !tagElementsAdded &&
 				!"end".equalsIgnoreCase(getToken().getValue().toString())) {
 			String tagElements = "";
+			
+			// flag used for detecting string, because only in strings in tag
+			// should use escaping
+			boolean buildingString = false;
+			
+			// build tagElements value
 			while(currentIndex+1 < data.length) {
-				// if tag occurred, checks that before tag is no \
+				// if tag close occurred, checks that escapeSequence is off
 				if(currentIndex-1 >= 0 && !escapeSequence &&
 						data[currentIndex] == '$' && data[currentIndex+1] == '}' ) {
 					break;
+					
+					// if illegal escape occurred
+				} else if(escapeSequence &&
+						!(data[currentIndex] == '\\' || data[currentIndex] == '"')) {
+					throw new LexerSmartException("Invalid escape.");
+					
+					//escapeSequence on
+				} else if(!escapeSequence && data[currentIndex] == '\\') {
+					escapeSequence = true;
+					
+					// add element and turn escapeSequence off
+				} else {
+					tagElements += data[currentIndex];
+					escapeSequence = false;
 				}
-				tagElements += data[currentIndex];
+
 				currentIndex++;
 			}
 			// no more elements, but tag didn't close
 			if(currentIndex == data.length-1) {
 				throw new LexerSmartException("Tag didn''t close.");
 			}
+			
 			token = new TokenSmart(TokenSmartType.TAG_ELEMENT, tagElements);
 			tagElementsAdded = true;
 			System.out.println(tagElements);
+			
 			return token;
 		}
 		

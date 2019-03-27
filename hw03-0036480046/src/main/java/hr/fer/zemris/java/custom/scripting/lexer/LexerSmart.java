@@ -22,11 +22,12 @@ public class LexerSmart {
 	private String text;
 	private boolean tagNameAdded = false;
 	private boolean tagElementsAdded = false;
+	private boolean escapeSequence = true;
 	
 	public static void main(String[] args) {
 		String testString = ("This is sample text.\\n" + 
 				"{$ FOR i 1 10 1 $}\\n" + 
-				" This is {$= i $}-th time this message is generated.\\n" + 
+				" This is \\{$= i $}-th time this message is generated.\\n" + 
 				"{$END$}\\n" + 
 				"{$FOR i-10 10 2 $}\\n" + 
 				" sin({$=i$}^2) = {$= i i * @sin \\\"0.000\\\" @decfmt $}\\n" + 
@@ -115,7 +116,7 @@ public class LexerSmart {
 			// if tag occurs, break
 			if(data[currentIndex] == '{' && data[currentIndex+1] == '$') {
 				// if \ is before tag, continue building text, otherwise return token
-				if(currentIndex-1 >= 0 && data[currentIndex-1] != '\\') {
+				if(currentIndex-1 >= 0 && !escapeSequence) {
 					token = new TokenSmart(TokenSmartType.TEXT, stringValue);
 					setState(LexerSmartState.TAG);
 					System.out.println(stringValue);
@@ -129,8 +130,32 @@ public class LexerSmart {
 				return token;
 			}
 			// if basic mode continue adding text
-			stringValue += data[currentIndex];
-			currentIndex++;
+			/*stringValue += data[currentIndex];*/
+			// if escape sequence starts
+			if(data[currentIndex] == '\\' && !escapeSequence) {
+				// if escape sequence is valid
+				if(currentIndex+1 < data.length &&
+						(data[currentIndex] == '\\' || data[currentIndex] == '{')) {
+					escapeSequence = true;
+					currentIndex++;
+				} else {
+					throw new LexerSmartException("Invalid escaping.");
+				}
+				// escaping {
+			} else if(data[currentIndex] == '{' && escapeSequence) {
+				escapeSequence = false;
+				lexerState = LexerSmartState.BASIC;
+				stringValue += data[currentIndex];
+				currentIndex++;
+				// escaping /
+			} else if(data[currentIndex] == '\\' && escapeSequence) {
+				escapeSequence = false;
+				stringValue += data[currentIndex];
+				currentIndex++;
+			} else {
+				stringValue += data[currentIndex];
+				currentIndex++;
+			}
 		} 
 		// tag occurred
 		if(currentIndex+1 <= data.length-1 && data[currentIndex] == '{' &&
@@ -159,7 +184,7 @@ public class LexerSmart {
 			String tagElements = "";
 			while(currentIndex+1 < data.length) {
 				// if tag occurred, checks that before tag is no \
-				if(currentIndex-1 >= 0 && data[currentIndex-1] != '\\' &&
+				if(currentIndex-1 >= 0 && !escapeSequence &&
 						data[currentIndex] == '$' && data[currentIndex+1] == '}' ) {
 					break;
 				}

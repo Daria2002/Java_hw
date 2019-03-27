@@ -71,7 +71,9 @@ public class SmartScriptTester {
 		for(int i = 0; i < node.numberOfChildren(); i++) {
 			documentString += node.getChild(i).toString();
 		}
-		System.err.println(documentString);
+		System.out.println("******************************");
+		System.out.println(documentString);
+		System.out.println("******************************");
 		return documentString;
 	}
 	

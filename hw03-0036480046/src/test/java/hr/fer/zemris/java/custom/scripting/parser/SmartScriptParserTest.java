@@ -56,7 +56,7 @@ public class SmartScriptParserTest {
 	}
 	
 }*/
-package hr.fer.zemris.java.hw03.parser;
+package hr.fer.zemris.java.custom.scripting.parser;
 
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
@@ -82,12 +82,11 @@ import hr.fer.zemris.java.custom.scripting.nodes.TextNode;
 import hr.fer.zemris.java.custom.scripting.parser.SmartScriptParser;
 import hr.fer.zemris.java.custom.scripting.parser.SmartScriptParserException;
 
-@SuppressWarnings("javadoc")
 public class SmartScriptParserTest {
 
 	@Test
 	public void testElementsTypeInForLoop() {
-		String string = "{$FOR i\"1\"5 1.5 $}\n{$end$}";
+		String string = "{$FOR i-1 5 1.5 $}\n{$end$}";
 		SmartScriptParser parser = new SmartScriptParser(string);
 		
 		DocumentNode docNode = parser.getDocumentNode();
@@ -99,13 +98,31 @@ public class SmartScriptParserTest {
 				instanceof ElementVariable);
 		
 		assertTrue(
+				((ForLoopNode)docNode.getChild(0)).getStartExpression()
+				instanceof ElementConstantInteger);
+		
+		assertTrue(
 				((ForLoopNode)docNode.getChild(0)).getEndExpression()
 				instanceof ElementConstantInteger);
 		
-
 		assertTrue(
 				((ForLoopNode)docNode.getChild(0)).getStepExpression()
 				instanceof ElementConstantDouble);
+	}
+	
+	@Test
+	public void testNestedLoop() {
+		String document = loader("document2.txt");
+		SmartScriptParser parser = new SmartScriptParser(document);
+		DocumentNode docNode = parser.getDocumentNode();
+		
+		assertEquals(docNode.numberOfChildren(), 2);
+		/*
+		ForLoopNode node = (ForLoopNode) docNode.getChild(0);
+		assertEquals(node.getStartExpression() instanceof ElementConstantInteger, true);
+		assertEquals(node.getStartExpression().asText(), "-1");
+		assertEquals(node.getStepExpression() instanceof ElementConstantInteger, true);
+		assertEquals(node.getStepExpression().asText(), "1");*/
 	}
 	
 	@Test
@@ -296,13 +313,14 @@ public class SmartScriptParserTest {
 	
 	private String loader(String filename) {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		try(InputStream is = this.getClass().getClassLoader().getResourceAsStream(filename)) {
+		try(InputStream is =
+		this.getClass().getClassLoader().getResourceAsStream(filename)) {
 			byte[] buffer = new byte[1024];
 			while(true) {
 				int read = is.read(buffer);
-				if(read<1) break;
+				if(read < 1) break;
 				bos.write(buffer, 0, read);
-			}
+			}	
 			return new String(bos.toByteArray(), StandardCharsets.UTF_8);
 		} catch(IOException ex) {
 			return null;

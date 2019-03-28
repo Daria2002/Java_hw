@@ -35,18 +35,7 @@ public class LexerSmart {
 				"{$FOR i-10 10 2 $}\n" + 
 				" sin({$=i$}^2) = {$= i i * @sin \"hell\\\\on\\\" \"0.000\" @decfmt $}\n" + 
 				"{$END$}");
-		/*
-		String filePath = args[0];
-		String content = "";
-		 
-        try
-        {
-            content = new String ( Files.readAllBytes( Paths.get(filePath) ) );
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }*/
+		
         LexerSmart lexer = new LexerSmart(testString);
         System.out.println();
         
@@ -138,6 +127,7 @@ public class LexerSmart {
 				
 			// if end, return text
 			} else if(currentIndex+1 > data.length-1) {
+				stringValue += data[currentIndex];
 				token = new TokenSmart(TokenSmartType.TEXT, stringValue);
 				currentIndex++;
 				System.out.println(stringValue);

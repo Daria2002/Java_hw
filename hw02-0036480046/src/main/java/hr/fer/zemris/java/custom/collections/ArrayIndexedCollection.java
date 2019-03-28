@@ -53,6 +53,7 @@ public class ArrayIndexedCollection extends Collection {
 		if(collection == null) {
 			throw new NullPointerException("Collection object is null.");
 		}
+		
 		int capacity;
 		if(initialCapacity < collection.size()) {
 			capacity = collection.size();
@@ -186,6 +187,7 @@ public class ArrayIndexedCollection extends Collection {
 		if(index < 0 || index > size-1) {
 			throw new IndexOutOfBoundsException();
 		}
+		
 		if(index == size-1) {
 			this.elements[index] = null;
 		} else {
@@ -193,6 +195,7 @@ public class ArrayIndexedCollection extends Collection {
 				this.elements[i] = this.elements[i+1];
 			}
 		}
+		
 		this.size -= 1;
 	}
 	
@@ -220,9 +223,11 @@ public class ArrayIndexedCollection extends Collection {
 	@Override
 	public Object[] toArray() {
 		Object[] newArray = new Object[this.size];
+		
 		for(int i = 0; i < this.size; i++) {
 			newArray[i] = this.elements[i];
 		}
+		
 		return newArray;
 	}
 	

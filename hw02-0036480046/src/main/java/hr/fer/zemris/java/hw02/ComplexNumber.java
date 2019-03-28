@@ -312,6 +312,7 @@ public class ComplexNumber {
 	public String toString() {
 		String realString = String.format("%.3f", real);
 		String imaginaryString = String.format("%.3f", imaginary);
+		
 		return realString + (imaginary >= 0 ? "+" : "") + imaginaryString + "i";
 	}
 
@@ -324,6 +325,7 @@ public class ComplexNumber {
 		result = prime * result + (int) (temp ^ (temp >>> 32));
 		temp = Double.doubleToLongBits(real);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
+		
 		return result;
 	}
 
@@ -340,6 +342,7 @@ public class ComplexNumber {
 			return false;
 		if (Math.abs(real - other.real) > TOLERANCE)
 			return false;
+		
 		return true;
 	}
 }

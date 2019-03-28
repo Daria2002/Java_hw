@@ -11,7 +11,7 @@ public class ComplexDemo {
 
 	/**
 	 * Method executes when program starts.
-	 * @param args args are given arguments.
+	 * @param args given arguments.
 	 */
 	public static void main(String[] args) {
 		ComplexNumber c1 = new ComplexNumber(2, 3);

@@ -15,7 +15,6 @@ public class StackDemo {
 	 * @param args expression to split.
 	 */
 	public static void main(String[] args) {
-		 
 		if(args.length != 1) {
 			System.out.println("Write one argument expression.");
 			return;
@@ -39,9 +38,9 @@ public class StackDemo {
 					System.exit(1); 
 				}
 				
-				// number2 is number that is 2nd putted on stack
+				// number2 is number that is 2nd put on stack
 				int number2 = (int)objectStack.pop();
-				// number1 is number that is 1st putted on stack
+				// number1 is number that is 1st put on stack
 				int number1 = (int)objectStack.pop();
 				
 				switch (splitExpression[i]) {
@@ -71,7 +70,6 @@ public class StackDemo {
 					default:
 						System.out.println("Given value is not operator or number.");
 						System.exit(1);
-						
 				}
 				objectStack.push(result);
 			}

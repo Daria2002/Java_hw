@@ -78,6 +78,7 @@ public class LinkedListIndexedCollection extends Collection {
 			node.previous = this.last;
 			this.last.next = node;
 		}
+		
 		this.last = node;
 		this.size += 1;
 	}
@@ -94,9 +95,7 @@ public class LinkedListIndexedCollection extends Collection {
 					+ " from 0 to size-1.");
 		}
 		
-		ListNode node = getNode(index);
-		
-		return node.value;
+		return getNode(index).value;
 	}
 	
 	/**
@@ -136,6 +135,7 @@ public class LinkedListIndexedCollection extends Collection {
 			}
 			node = node.next;
 		}
+		
 		this.size = 0;
 		this.first = null;
 		this.last = null;
@@ -151,6 +151,7 @@ public class LinkedListIndexedCollection extends Collection {
 		if(position < 0 || position > size) {
 			throw new IndexOutOfBoundsException("Position is out of range.");
 		}
+		
 		// null value can't be inserted
 		if(value == null) {
 			throw new NullPointerException("Null reference can't be inserted in"
@@ -182,7 +183,6 @@ public class LinkedListIndexedCollection extends Collection {
 		} else {
 			// if shifting is needed
 			ListNode helpNode = getNode(position);
-			
 			newNode.next = helpNode;
 			newNode.previous = helpNode.previous;
 			helpNode.previous.next = newNode;
@@ -206,6 +206,7 @@ public class LinkedListIndexedCollection extends Collection {
 		
 		ListNode node = new ListNode(this.first.previous, this.first.next,
 				this.first.value);
+		
 		for(int i = 0; i < this.size; i++) {
 			if(node.value.equals(value)) {
 				return i;
@@ -263,14 +264,17 @@ public class LinkedListIndexedCollection extends Collection {
 		if(currentNode.previous == null) {
 			this.first = currentNode.next;
 		}
+		
 		// if last node
 		if(currentNode.next == null) {
 			this.last = currentNode.previous;
 		}
+		
 		// if not last node
 		if(currentNode.next != null) {
 			currentNode.next.previous = currentNode.previous;
 		}
+		
 		// if not first node
 		if(currentNode.previous != null) {
 			currentNode.previous.next = currentNode.next; 
@@ -292,10 +296,12 @@ public class LinkedListIndexedCollection extends Collection {
 		Object[] array = new Object[this.size];
 		ListNode node = new ListNode(this.first.previous, this.first.next, 
 				this.first.value);
+		
 		for(int i = 0; i < this.size; i++) {
 			array[i] = node.value;
 			node = node.next;
 		}
+		
 		return array;
 	}
 	
@@ -303,10 +309,10 @@ public class LinkedListIndexedCollection extends Collection {
 	public void forEach(Processor processor) {
 		ListNode node = new ListNode(this.first.previous, this.first.next, 
 				this.first.value);
+		
 		for(int i = 0; i < this.size; i++) {
 			processor.process(node.value);
 			node = node.next;
 		}
 	}
-	
 }

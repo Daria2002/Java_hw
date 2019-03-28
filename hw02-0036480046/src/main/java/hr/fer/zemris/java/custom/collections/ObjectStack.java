@@ -52,7 +52,7 @@ public class ObjectStack {
 	 */
 	public Object pop() {
 		Object object = peek();
-		collection.remove(this.size() - 1);
+		collection.remove(size() - 1);
 		return object;
 	}
 	
@@ -65,15 +65,15 @@ public class ObjectStack {
 		if(this.isEmpty()) {
 			throw new EmptyStackException("Stack is empty.");
 		}
-		return collection.get(this.size()-1);
+		return collection.get(size()-1);
 	}
 	
 	/**
 	 * Removes all elements from stack.
 	 */
 	public void clear() {
-		for(int i = 0; i < this.size(); i++) {
-			this.pop();
+		for(int i = 0; i < size(); i++) {
+			pop();
 		}
 	}
 }

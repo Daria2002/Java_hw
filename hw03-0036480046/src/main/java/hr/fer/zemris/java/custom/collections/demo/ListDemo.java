@@ -5,7 +5,16 @@ import hr.fer.zemris.java.custom.collections.Collection;
 import hr.fer.zemris.java.custom.collections.LinkedListIndexedCollection;
 import hr.fer.zemris.java.custom.collections.List;
 
+/**
+ * Demonstrates list
+ * @author Daria Matkovicć
+ *
+ */
 public class ListDemo {
+	/**
+	 * This method executes when program starts
+	 * @param args not needed
+	 */
 	public static void main(String[] args) {
 		List col1 = new ArrayIndexedCollection();
 		List col2 = new LinkedListIndexedCollection();

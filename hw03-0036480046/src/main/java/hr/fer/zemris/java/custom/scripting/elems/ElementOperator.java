@@ -1,13 +1,26 @@
 package hr.fer.zemris.java.custom.scripting.elems;
 
+/**
+ * This class extends Element, and provides string value that represents symbol
+ * @author Daria Matković
+ *
+ */
 public class ElementOperator extends Element {
 
+	/**
+	 * Constructor that initialize symbol
+	 * @param symbol symbol to initialize 
+	 */
 	public ElementOperator(String symbol) {
 		this.symbol = symbol;
 	}
 	
 	private String symbol;
 
+	/**
+	 * Returns symbol
+	 * @return symbol
+	 */
 	public String getSymbol() {
 		return symbol;
 	}

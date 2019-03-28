@@ -7,12 +7,20 @@ package hr.fer.zemris.java.custom.scripting.nodes;
  */
 public class TextNode extends Node {
 	
+	/**
+	 * Default constructor, initialize text
+	 * @param text text to initialize
+	 */
 	public TextNode(String text) {
 		this.text = text;
 	}
 	
 	private String text;
 
+	/**
+	 * Returns text from text node
+	 * @return text
+	 */
 	public String getText() {
 		return text;
 	}

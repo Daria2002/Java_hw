@@ -4,7 +4,16 @@ import hr.fer.zemris.java.custom.collections.ArrayIndexedCollection;
 import hr.fer.zemris.java.custom.collections.Collection;
 import hr.fer.zemris.java.custom.collections.ElementsGetter;
 
+/**
+ * Demonstrates elements getter
+ * @author Daria Matković
+ *
+ */
 public class GetterDemo {
+	/**
+	 * This method executes when program starts
+	 * @param args not needed
+	 */
 	public static void main(String[] args) {
 		Collection col1 = new ArrayIndexedCollection();
 		Collection col2 = new ArrayIndexedCollection();

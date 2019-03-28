@@ -1,13 +1,26 @@
 package hr.fer.zemris.java.custom.scripting.elems;
 
+/**
+ * This class extends Element, and provides function name
+ * @author Daria Matković
+ *
+ */
 public class ElementFunction extends Element {
 	
+	/**
+	 * Constructor that initialize function name
+	 * @param name name to initialize
+	 */
 	public ElementFunction(String name) {
 		this.name = name;
 	}
 	
 	private String name;
 
+	/**
+	 * Returns function name
+	 * @return function name
+	 */
 	public String getName() {
 		return name;
 	}

@@ -10,6 +10,14 @@ import hr.fer.zemris.java.custom.scripting.elems.ElementVariable;
  */
 public class ForLoopNode extends Node {
 	
+	/**
+	 * Default constructor that initialize variable, start expression, end
+	 * expression and step expression
+	 * @param variable variable 
+	 * @param startExpression start value
+	 * @param endExpression end value
+	 * @param stepExpression step
+	 */
 	public ForLoopNode(ElementVariable variable, Element startExpression,
 			Element endExpression, Element stepExpression) {
 		super();
@@ -24,18 +32,34 @@ public class ForLoopNode extends Node {
 	private Element endExpression;
 	private Element stepExpression = null;
 	
+	/**
+	 * Returns variable
+	 * @return variable
+	 */
 	public ElementVariable getVariable() {
 		return variable;
 	}
 	
+	/**
+	 * Returns start expression
+	 * @return start expression
+	 */
 	public Element getStartExpression() {
 		return startExpression;
 	}
 	
+	/**
+	 * Returns end expression
+	 * @return end expression
+	 */
 	public Element getEndExpression() {
 		return endExpression;
 	}
 	
+	/**
+	 * Returns step expression
+	 * @return step expression
+	 */
 	public Element getStepExpression() {
 		return stepExpression;
 	}

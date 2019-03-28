@@ -1,0 +1,1 @@
+Formula {$= "is \\\"i\\\" * \\\"i\\\" " $} special sin function.

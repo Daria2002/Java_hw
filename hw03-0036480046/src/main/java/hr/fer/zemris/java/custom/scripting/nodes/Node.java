@@ -1,7 +1,6 @@
 package hr.fer.zemris.java.custom.scripting.nodes;
 
 import hr.fer.zemris.java.custom.collections.ArrayIndexedCollection;
-import hr.fer.zemris.java.custom.collections.Collection;
 
 /**
  * Base class for all graph nodes.
@@ -23,10 +22,19 @@ public class Node {
 		collection.add(child);
 	}
 	
+	/**
+	 * returns size
+	 * @return returns number of children
+	 */
 	public int numberOfChildren() {
 		return collection.size();
 	}
 	
+	/**
+	 * returns child node at given position
+	 * @param index position
+	 * @return child node
+	 */
 	public Node getChild(int index) {
 		return (Node)collection.get(index);
 	}

@@ -1,13 +1,26 @@
 package hr.fer.zemris.java.custom.scripting.elems;
 
+/**
+ * This class extends Element, and provides string value for it
+ * @author Daria Matković
+ *
+ */
 public class ElementString extends Element {
 
+	/**
+	 * Constructor that initialize string value
+	 * @param value value to initialize
+	 */
 	public ElementString(String value) {
 		this.value = value;
 	}
 	
 	private String value;
 
+	/**
+	 * Returns string value
+	 * @return value
+	 */
 	public String getValue() {
 		return value;
 	}

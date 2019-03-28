@@ -17,6 +17,10 @@ public class ElementConstantDouble extends Element {
 	
 	private double value;
 
+	/**
+	 * returns double value
+	 * @return value
+	 */
 	public double getValue() {
 		return value;
 	}

@@ -11,6 +11,10 @@ import hr.fer.zemris.java.custom.scripting.elems.Element;
  */
 public class EchoNode extends Node {
 
+	/**
+	 * Default constructor, initialize elements
+	 * @param elements given value to initialize
+	 */
 	public EchoNode(Element[] elements) {
 		super();
 		this.elements = elements;
@@ -18,6 +22,10 @@ public class EchoNode extends Node {
 
 	private Element[] elements;
 
+	/**
+	 * Returns elements
+	 * @return elements
+	 */
 	public Element[] getElements() {
 		return elements;
 	}

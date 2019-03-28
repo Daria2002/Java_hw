@@ -1,8 +1,5 @@
 package hr.fer.zemris.java.custom.scripting.lexer;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 /** 
  * This program implements simple static lexical analyzer
@@ -19,31 +16,9 @@ public class LexerSmart {
 	// index of first unanalyzed sign
 	private int currentIndex;
 	private LexerSmartState lexerState;
-	private String text;
 	private boolean tagNameAdded = false;
 	private boolean tagElementsAdded = false;
 	private boolean escapeSequence = false;
-	
-	public static void main(String[] args) {
-		String testString = ("This is sample text.\n" + 
-				"{$ FOR i 1 10 1 $}\n" + 
-				" This is \\\\{$= i $}-th time \\\\ \\{ this message is generated.\\\\n" + 
-				"{$FOR i-10 10 2 $}\n" + 
-				" sin({$=i$}^2) = {$= i i * @sin \"hell\\\\on\\\" \"0.000\" @decfmt $}\n" + 
-				"{$END$}" +
-				"{$END$}\n" + 
-				"{$FOR i-10 10 2 $}\n" + 
-				" sin({$=i$}^2) = {$= i i * @sin \"hell\\\\on\\\" \"0.000\" @decfmt $}\n" + 
-				"{$END$}");
-		
-        LexerSmart lexer = new LexerSmart(testString);
-        System.out.println();
-        
-        for(int i = 0; i < 40; i++) {
-            System.out.println("Next token is:");
-    		lexer.nextToken();
-        }
-	}
 	
 	/**
 	 * Constructor get text that need to be analyzed.
@@ -54,9 +29,7 @@ public class LexerSmart {
 		if(text == null) {
 			throw new NullPointerException("Input is null.");
 		}
-		//String reducedText = text.replaceAll("\\s+", " ");
-		//data = reducedText.trim().toCharArray();
-		this.text = text;
+		
 		data = text.toCharArray();
 		for(int i = 0; i < data.length; i++)
 			System.out.print(data[i]);
@@ -134,7 +107,6 @@ public class LexerSmart {
 				return token;
 			}
 			// if basic mode continue adding text
-			/*stringValue += data[currentIndex];*/
 			// if escape sequence starts
 			if(data[currentIndex] == '\\' && !escapeSequence) {
 				// if escape sequence is valid
@@ -142,12 +114,7 @@ public class LexerSmart {
 						(data[currentIndex+1] == '\\' || data[currentIndex+1] == '{')) {
 					escapeSequence = true;
 					currentIndex++;
-				}/* else if(data[currentIndex+1] == 'n' || data[currentIndex+1] == 'r' ||
-						data[currentIndex+1] == 't') {
-					System.out.println("##################################");
-					stringValue += '\n';
-					currentIndex += 2;
-				} */else {
+				} else {
 					throw new LexerSmartException("Invalid escaping.");
 				}
 				// escaping {
@@ -204,16 +171,6 @@ public class LexerSmart {
 			while(currentIndex+1 < data.length) {
 				char current = data[currentIndex];
 				
-				/*
-				if(Character.isWhitespace(current)) {
-					if(!stringValue.isEmpty()) {
-						stringValue += data[currentIndex];
-					}
-					currentIndex++;
-					continue;
-				}
-				*/
-				
 				// if tag close occurred, checks that escapeSequence is off
 				if(!escapeSequence && data[currentIndex] == '$' && data[currentIndex+1] == '}' ) {
 					break;
@@ -234,7 +191,7 @@ public class LexerSmart {
 							|| current == '/' || current == '^' || current == '-'
 							|| current == ' ' || current == '@' || current == '\"'
 							|| current == '.' || current == '\t' || current == '\r' 
-							|| current == '\n') && !inString) {
+							|| current == '\n' || current == '\\') && !inString) {
 						throw new LexerSmartException("Invalid expression");
 					}
 					

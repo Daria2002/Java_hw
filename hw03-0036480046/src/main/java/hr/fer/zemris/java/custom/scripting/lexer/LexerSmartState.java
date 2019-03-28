@@ -6,8 +6,9 @@ package hr.fer.zemris.java.custom.scripting.lexer;
  *
  */
 public enum LexerSmartState {
-	
+	/** Lexer state while in tag **/
 	TAG, 
+	/** Default laxer state **/
 	BASIC
 	
 }

@@ -1,13 +1,26 @@
 package hr.fer.zemris.java.custom.scripting.elems;
 
+/**
+ * This class extends Element, and provides constant integer value for it
+ * @author Daria Matković
+ *
+ */
 public class ElementConstantInteger extends Element {
 	
+	/**
+	 * Constructor that initialize value
+	 * @param value
+	 */
 	public ElementConstantInteger(int value) {
 		this.value = value;
 	}
 	
 	private int value;
 
+	/**
+	 * Returns int value
+	 * @return value
+	 */
 	public int getValue() {
 		return value;
 	}

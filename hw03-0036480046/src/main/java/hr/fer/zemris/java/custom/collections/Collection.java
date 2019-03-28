@@ -53,6 +53,10 @@ public interface Collection {
 	 */
 	public abstract void clear();
 
+	/**
+	 * Creates element getter
+	 * @return created element getter
+	 */
 	public abstract ElementsGetter createElementsGetter();
 	
 	/**
@@ -87,6 +91,11 @@ public interface Collection {
 		return size() == 0;
 	}
 	
+	/**
+	 * In given collection adds all elements that given tester accepts 
+	 * @param col collection to add tested elements
+	 * @param tester tester to test elements
+	 */
 	public default void addAllSatisfying(Collection col, Tester tester) {
 		ElementsGetter getter = col.createElementsGetter();
 		while(getter.hasNextElement()) {

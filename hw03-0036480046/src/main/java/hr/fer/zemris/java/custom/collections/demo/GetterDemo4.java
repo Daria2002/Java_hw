@@ -3,9 +3,17 @@ package hr.fer.zemris.java.custom.collections.demo;
 import hr.fer.zemris.java.custom.collections.ArrayIndexedCollection;
 import hr.fer.zemris.java.custom.collections.Collection;
 import hr.fer.zemris.java.custom.collections.ElementsGetter;
-import hr.fer.zemris.java.custom.collections.LinkedListIndexedCollection;
 
+/**
+ * Demonstrates elements getter
+ * @author Daria Matković
+ *
+ */
 public class GetterDemo4 {
+	/**
+	 * This method executes when program starts
+	 * @param args not needed
+	 */
 	public static void main(String[] args) {
 		Collection col = new ArrayIndexedCollection();
 		col.add("Ivo");

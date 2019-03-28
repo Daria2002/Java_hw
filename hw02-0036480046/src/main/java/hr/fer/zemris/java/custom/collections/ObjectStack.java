@@ -72,8 +72,6 @@ public class ObjectStack {
 	 * Removes all elements from stack.
 	 */
 	public void clear() {
-		for(int i = 0; i < size(); i++) {
-			pop();
-		}
+		collection.clear();
 	}
 }

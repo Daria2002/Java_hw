@@ -1,0 +1,158 @@
+Recenzija 1:
+Draga kolegice...
+1)
+cisto ovako stye savjet, kada se za return ispituje samo neki uvjet nekako je meni osobno jako fancy koristiti ternarni operator, tako bi isEmpty mogao ovako izgledati: return size() == 0 ? true : false; sto je bas forica zar ne?
+joooooj kolegice... upravo sam imao slicnu gresku koju ste vi naoravili i bilo je katastrofalnih posljedica na sve ostale klase ove zadace. pogeldajte si opet tu metodu isEmpty... sto mislite kada bi onda trebala vracati true? kada je prazna ili kada nije? popraviti pod hitno, cak sam vam gore dao rjesenje sa fancy ternarnim operatorom pa iskoristite to.
+2)
+magic number 16 bolje staviti nekakvu konstantu nazvati recimo DEFAULT_CAPACITY tako nesto.\
+niste implementirali metodu remove(value)... ali u ispravku da dam mali hint, implementirati pomocu indexOf() i psotojece dobroradece metdode remove(index).
+3)
+opet nema remove(value), implementirati
+takodjer se isEmpty greska propagira pa to ne sljaka. Takodjer, siguran sam da ste u nekom trenutku isli testirati tu metodu isEmpty, pa ako se ne ponasa kao sto ocekujete dajte to rayrjesite nemojte samo izbjegavati onda testove koji u sebi imaju taj isEmpty. KOlegice, nije mi jasno kakva je ovo metoda size()... pa imate lokalnu varijablu size u kojoj cuvate velicinu liste, samo to vratite u metodi size(). Ugl za sada je dobra vijest sto cim popravite isEmpty u Colelctionu, carobno ce proraditi svi testovi za 2) i 3) zadatak. Btw contains isto moze sa fancy ternarnim operatorom ;)
+4)
+etoo napokon dobro implementirana metoda isEmpty, no ona bi i u ovome slucaju morala samo pozvati collection.isEmpty a ne imati nekakve uvjete i sve.
+linija 52, nakon switch case-a fali break; pa ovdje propada uvjet dalje pa se cudne stvari desavajau, tako da treba dodati break. Radi tog breaka ti ne radi ovaj test za minimalnu prihvaljivost.. .treba paziti vidis kako jedan break moze uciniti razliku. ostal ose u ovom zadatku cini ok.
+5)
+sve radi super, odlicno! samo mali savjet, mozda bi u ispisu bilo ljepse zaokruziti izraz na 2,3 decimale a ne printati po tisucu decimala. Takodjer ova metoda parse je nekako bas ruzna... nisam ju citao ali ovako na prvi pogled, ima skoro 100 linija koda i nekako je zbrkano, bilo bi bolje napraviti parmanjih metoda pa ih koristiti
+
+sve u ssvem kolegice lijepa zadaca, samo eto mali pripaziti na neke stvari i biti ce to ok. radi stoga i neimplementiranih metoda ce morati biti 1 ali nadam se kak ocete pomocu ove recenzije lako i brzo ispraviti sve grekse u kodu :)
+
+Odgovor na recenziju 1:
+-Popravila sam isEmpty, upotrijebila sam ternarni operatoru u svakoj prilici za koju sam vidjela da se može koristiti.
+-Izdvjila sam konstante u privatne statičke varijable.
+-Implementirala sam metodu boolean remove(Object value) u ArrayIndexedCollection i u LinkedListIndexedCollection.
+-Pojednostavljena je metoda size() u razredu LinkedListIndexedCollection.
+-Napisani su testovi za metode remove i metode isEmpty kod ArrayIndexedCollection i kod LinkedListIndexedCollection.
+-U razredu StackDemo dodan je break u switch petlju kada je zadovoljen jedan uvjet, time je popravljena funkcionalnost
+StackDemo razreda.
+-Realni brojevi kod pretvorbe kompleksnih brojeva u string zaokruženi su na 3 decimale.
+
+Recenzija 2:
+1. Zad: Sve ok
+2. Zad: 
+Koristiš magične brojeve, bolje bi bilo npr. ovih 16 staviti u statičku konstantu s obzirom da je to default vrijednost
+za sve kolekcije iz te klase.
+U metodi indexOf nemaš provjeru za null, trebala bi samo dodati da ako je value null, da ne baci NullPointerException nego da vrati -1 jer je u zadatku specificirano da mora biti moguće kao argument unijeti null.
+Nema implementacije metode remove(Object value) koja je naslijeđena iz klase Collections, razlikuju se remove(int index) i remove(Object value) - prema uputama profesora ovo je dovoljan razlog za 1 :(
+Lijepo napisani testovi.
+3. Zad:
+U metodi insert umjesto puno else-ova možeš samo unutar if-a napisati return da ne granaš dalje kod.
+U metodi remove opet nepotrebno puno if-ova, princip micanja čvora je isti i za prvi i zadnji čvor kao i za ostale, ne moraš izdvajati to u posebne slučajeve.
+Metoda size bi samo trebala vraćati vrijednost članske varijable size - nepotrebno kompliciranje jer već imaš tu vrijednost.
+4. Zad:
+ObjectStack klasa - sve ok.
+StackDemo ne izbacuje pravilan rezultat, ali dobro rješena obrada iznimki.
+Ovo je drugi razlog za 1 - ne zadovoljava minimalne uvjete.
+5. Zad:
+Sve ok, samo mala napomena da je možda bilo pametno override-at equals i hashCode da lakše možeš uspoređivati brojeve.
+
+Odgovor na recenziju 2:
+-Izdvjila sam konstante u privatne statičke varijable.
+-IndexOf metoda je promjenjena tako da za ulaz null vraća -1, a ne baca NullPointerException.
+-Implementirala sam metodu boolean remove(Object value) u ArrayIndexedCollection i u LinkedListIndexedCollection.
+-Metoda remove(Object value) je pojednostavljena, neppotrebne provjere if-ovima su uklonjene.
+-Popravljena metoda insert i nepotrebne provjere su uklonjene.
+-Pojednostavljena je metoda size() u razredu LinkedListIndexedCollection.
+-U razredu StackDemo dodan je break u switch petlju kada je zadovoljen jedan uvjet, time je popravljena funkcionalnost
+StackDemo razreda.
+-U razredu ComplexNumber su override-ane equals i hashCode metode, za metodu equals ja sam napravila implementaciju, a
+hashCode je ostao kao po defaultu.
+
+Recenzija 3:
+Collection
+
+metoda isEmpty: if(this.size() > 0) {return true;} vjerojatno tipfeler, ali ni u jednom od testova nisi provjerila da li ova metoda radi
+
+u izvedenim razredima nije implementirana ni void remove(Object value);
+
+
+ArrayIndexedCollection
+
+u zadnjem konstruktoru zbog delegiranja drugom konstruktoru dogodi ti se da prvo zauzmeš polje, a tek onda provjeravaš je li zapravo inicijalizacija legalna (collection!=null) što može dovesti do stvaranja nepotrebnog smeća , nije greška, ali skrećem pažnju
+
+varijabla capacity ti ovdje nema neku veliku ulogu pošto čuva vrijednost koju možeš dobiti bilo kada pozivom elements.length
+
+kopiranje i realokacija polja možeš riješiti jednom naredbom arr=Arrays.copyOf(arr,arr.length*2); umjesto cijele metode doubleCapacity()
+
+metoda void remove(Object value); nije napisana
+
+metoda indexOf je pisana tako da ispituje jednakost referenci dok u zadatku piše da elemente uspoređuje sa equals
+
+metoda isEmpty() vraća krivi rezultat i nemaš test za nju
+
+
+LinkedListIndexedCollection
+
+Umjesto "ručne" inicijalizacije ListNode-a preporučam da to odradiš preko konstruktora
+
+ideja insert i remove metoda je riješiti ih kao što si riješila metodu get
+
+u metodu size nepotrebno prolaziš kroz listu da bi poslala broj koji već imaš u varijabli spremljen
+
+u metodi Object[] to Array()  vraćaš polje čvorova, a ne elemenata
+
+isEmpty() vraća krivi rezultat i nema svoj test
+
+
+
+
+ObjectStack
+
+metoda clear() će se zavrtiti i rekurziji
+
+metoda pop je kopija metode peek() uz dodatnu liniju collection.remove(this.size()-1); iskoristi to
+
+Za izraz "8 2 / 5 1 - * 1 +" dobiva se rješenje 21 gdje bi trebalo bit 17
+problem nastaje na liniji 52/53
+
+splitanje ti se odvija po jednom razmaku i onda tu dolazi do problema ako ima više razmaka između dva znaka javlja se greška "Given value is not operator or number."
+
+
+ComplexNumber
+
+Testovi bi ti bili puno lakši da si implementirala metodu equals i onda jednostavno uspoređivala dva kompleksna broja pa ne bi morala ih uspoređivati po komponentama
+
+Metoda parse ti sadrži 100 linija koda, a jedino objašnjenje u java docu je "Parse given string"
+
+Za prazan string metoda vraća kompleksni broj "0+0i"
+
+Za string "-+2.71" metoda vraća kompleksni broj "-2.71+0.0i"
+
+Za string "-2.71+-3.15i" vraća "-2.71-3.15i"
+
+"+i200" -> "200.0+1.0i"
+
+"-i2.7" -> "-2.71+0.0i"
+
+
+Sve u svemu ima dobrih ideja, ali dosta propusta i nedovoljnog testiranja
+metoda parse iz ComplexNumbera radi dosta loše
+i implementacija ObjectStacka neće raditi za većinu unosa gdje se nalazi minus(bezvezna greška je u pitanju) i tamo gdje se nalazi više od jednog razmaka između simbola (pogledaj si metodu String::trim())
+u kolekcijama si sve jednakosti provjeravala s operatorom == , ali to su objekti i za to onda služi metoda equals
+
+Odgovor na recenziju 3:
+-Popravila sam isEmpty.
+-Implementirala sam metodu boolean remove(Object value) u ArrayIndexedCollection i u LinkedListIndexedCollection.
+-Napisani su testovi za metode remove i metode isEmpty kod ArrayIndexedCollection i kod LinkedListIndexedCollection.
+-U razredu ArrayIndexedCollection popravljeno je delegiranje, nepotrebno zauzimanje polja je uklonjeno.
+-U razredu ArrayIndexedCollection varijabla capacity je u potpunosti uklonjena, te je kopiranje i realokacija polja
+pojednostavljena pomoću gotove metode Arrays.copyOf.
+-U razredu ArrayIndexedCollection u metodi indexOf uspoređivanje se radi pomoću metode equals.
+-U LinkedListIndexedCollection razredu inicijalizacija ListNode-a odrađena je preko konstruktora.
+-Smanjena je kompleksnost remove i insert metoda na n/2 + 1 u LinkedListIndexedCollection razredu.
+-Pojednostavljena je metoda size() u razredu LinkedListIndexedCollection.
+-U LinkedListIndexedCollection vraća se vrijednost Node-ova, a ne sami Node-ovi.
+-Izmjenjena je metoda clear u ObjectStack razredu.
+-U razredu StackDemo metoda pop je implementirana pomoću metode peek kako bi se izbjegla redundancija
+-U razredu StackDemo dodan je break u switch petlju kada je zadovoljen jedan uvjet, time je popravljena funkcionalnost
+StackDemo razreda.
+-U razredu ComplexNumber su override-ane equals i hashCode metode, za metodu equals ja sam napravila implementaciju, a
+hashCode je ostao kao po defaultu.
+-Popravljena je dokumentacija za metodu parse u razredu ComplexNumber
+-za spomenute slučajeve parsiranja kompleksnih bojeva koji nisu ispravno funkcionirali, sada je
+popravljena metoda za parsiranje i primjeri ispravno funkcioniraju
+
+
+
+
+ 

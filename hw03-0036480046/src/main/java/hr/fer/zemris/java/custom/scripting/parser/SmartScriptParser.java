@@ -1,12 +1,7 @@
 package hr.fer.zemris.java.custom.scripting.parser;
 
-import java.util.Arrays;
-
-import javax.xml.parsers.ParserConfigurationException;
-
 import hr.fer.zemris.java.custom.collections.ArrayIndexedCollection;
 import hr.fer.zemris.java.custom.collections.ObjectStack;
-import hr.fer.zemris.java.custom.collections.Tester;
 import hr.fer.zemris.java.custom.scripting.elems.Element;
 import hr.fer.zemris.java.custom.scripting.elems.ElementConstantDouble;
 import hr.fer.zemris.java.custom.scripting.elems.ElementConstantInteger;
@@ -15,7 +10,6 @@ import hr.fer.zemris.java.custom.scripting.elems.ElementOperator;
 import hr.fer.zemris.java.custom.scripting.elems.ElementString;
 import hr.fer.zemris.java.custom.scripting.elems.ElementVariable;
 import hr.fer.zemris.java.custom.scripting.lexer.LexerSmart;
-import hr.fer.zemris.java.custom.scripting.lexer.LexerSmartException;
 import hr.fer.zemris.java.custom.scripting.lexer.TokenSmart;
 import hr.fer.zemris.java.custom.scripting.lexer.TokenSmartType;
 import hr.fer.zemris.java.custom.scripting.nodes.DocumentNode;
@@ -23,14 +17,23 @@ import hr.fer.zemris.java.custom.scripting.nodes.EchoNode;
 import hr.fer.zemris.java.custom.scripting.nodes.ForLoopNode;
 import hr.fer.zemris.java.custom.scripting.nodes.Node;
 import hr.fer.zemris.java.custom.scripting.nodes.TextNode;
-import hr.fer.zemris.java.hw03.prob1.LexerException;
 
+/**
+ * Represents smart parser
+ * @author Daria Matković
+ *
+ */
 public class SmartScriptParser {
-	
+	/** Document text **/
 	private String documentBody;
+	/** Node from document **/
 	private DocumentNode documentNode;
+	/** Stack for nodes, so nesting is possible **/
 	private ObjectStack stack;
 	
+	/**
+	 * Sets document node
+	 */
 	private void makeDocumentNode() {
 		LexerSmart lexer = new LexerSmart(documentBody);
 		TokenSmart token;
@@ -61,10 +64,10 @@ public class SmartScriptParser {
 						
 						// make forLoopNode
 						ElementVariable variable = new ElementVariable(forLoopArguments[0].toString());
-						
 						Element startExpression = initializeElement(forLoopArguments[1].toString());
 						Element endExpression =  initializeElement(forLoopArguments[2].toString());
 						Element stepExpression = null;
+						
 						if(forLoopArguments.length == 4) {
 							stepExpression =  initializeElement(forLoopArguments[3].toString());;
 						}
@@ -72,11 +75,6 @@ public class SmartScriptParser {
 						ForLoopNode forLoopNode = new ForLoopNode(variable, 
 								startExpression, endExpression, stepExpression);
 						
-						// add forLoopNode to parent documentNode, forLoop node
-						// is now open and till end doesn't occur every node is 
-						// child of for loop
-						//documentNode.addChildNode(forLoopNode);
-						//forLoop = true;
 						stack.push(forLoopNode);
 						
 					} else if("=".equalsIgnoreCase(lexer.getToken().getValue().toString())) {
@@ -84,20 +82,11 @@ public class SmartScriptParser {
 						// get arguments in = tag
 						token = lexer.nextToken();
 						EchoNode echoNode = getEchoNode(token.getValue());
-						/*
-						// if tag = was in for loop add echoNode as child of forLoopNode
-						if(forLoop) {
-							documentNode.getChild(documentNode.numberOfChildren()-1).addChildNode(echoNode);;
-						} else if(!forLoop) {
-							// if tag = occurred in outside of for loop node add echoNode as documentNode's child
-							documentNode.addChildNode(echoNode);
-						}
-						*/
 						Node parent = (Node)stack.peek();
 						parent.addChildNode(echoNode);
+						
 					} else if("end".equalsIgnoreCase(lexer.getToken().getValue().toString())) {
 					// if tag name was end 
-						//forLoop = false;
 						Node child = (Node)stack.pop();
 						Node parent = (Node)stack.peek();
 						parent.addChildNode(child);
@@ -113,40 +102,49 @@ public class SmartScriptParser {
 					//add textNode to documentNode if forLoop is not opened
 					Node parent = (Node)stack.peek();
 					parent.addChildNode(textNode);
-					/*
-					if(forLoop) {
-						documentNode.getChild(documentNode.numberOfChildren()-1).addChildNode(textNode);;
-					} else {
-						documentNode.addChildNode(textNode);
-					}
-					*/
 				}
 				token = lexer.nextToken();
 			}
+			
 		} catch (Exception e) {
 			e.printStackTrace(System.out);
 			throw new SmartScriptParserException("Error message");
 		}
 	}
 	
+	/**
+	 * Default constructor, delegate to method that creates document node
+	 * @param documentBody document text
+	 */
 	public SmartScriptParser(String documentBody) {
-		if(documentBody == null) {
-			throw new SmartScriptParserException("Document body is null");
-		}
 		
-		this.documentBody = documentBody;
-		documentNode = new DocumentNode();
-		stack = new ObjectStack();
-		stack.push(documentNode);
-		makeDocumentNode();
-		
-		Node node = (Node)stack.peek();
-		if(!(node instanceof DocumentNode)) {
-			throw new SmartScriptParserException("Expression is incompleted.");
+		try {
+			if(documentBody == null) {
+				throw new SmartScriptParserException("Document body is null");
+			}
+			
+			this.documentBody = documentBody;
+			documentNode = new DocumentNode();
+			stack = new ObjectStack();
+			stack.push(documentNode);
+			makeDocumentNode();
+			
+			Node node = (Node)stack.peek();
+			if(!(node instanceof DocumentNode)) {
+				throw new SmartScriptParserException("Expression is incompleted.");
+			}
+			documentNode = (DocumentNode)stack.pop();
+			
+		} catch (Exception e) {
+			throw new SmartScriptParserException("Invalid data.");
 		}
-		documentNode = (DocumentNode)stack.pop();
 	}
 	
+	/**
+	 * Separates echo node elements
+	 * @param value value with all arguments together
+	 * @return separated elements
+	 */
 	private Element[] makeElementsForEchoNode(Object value) {
 		ArrayIndexedCollection elements = new ArrayIndexedCollection();
 		char[] valueArray = value.toString().toCharArray(); 
@@ -193,6 +191,7 @@ public class SmartScriptParser {
 				if(buildValue == "") {
 					throw new SmartScriptParserException("Invalid expression.");
 				}
+				
 				ElementFunction function = new ElementFunction(buildValue);
 				elements.add(function);
 				buildValue = "";
@@ -202,23 +201,20 @@ public class SmartScriptParser {
 				if(valueArray[i] == '"') {
 					makeString = true;
 				}
+				
 			// if building string
 			} else if(makeString) {
-				
 				char currChar = valueArray[i];
-				if (escapeSequence && (
-						currChar == '\\' || currChar == '"' ||
-						currChar == '\n' || currChar == '\t' ||
-						currChar == '\r'))
-				{
+				
+				if (escapeSequence && ( currChar == '\\' || currChar == '"' ||
+						currChar == '\n' || currChar == '\t' || currChar == '\r')) {
 					buildValue += '\\';
 					buildValue += currChar;
 					escapeSequence = false;
 					continue;
 				}
 
-				if (valueArray[i] == '\\' && !escapeSequence)
-				{
+				if(valueArray[i] == '\\' && !escapeSequence) {
 					escapeSequence = true;
 					continue;
 				}
@@ -227,11 +223,8 @@ public class SmartScriptParser {
 				if(valueArray[i] == '"' && !escapeSequence) {
 					makeString = false;
 					ElementString elementString = new ElementString(
-							buildValue
-								.replace("\\\\", "\\")
-								.replace("\\n", "\n")
-								.replace("\\r", "\r")
-								.replace("\\t", "\t")
+							buildValue.replace("\\\\", "\\").replace("\\n", "\n")
+								.replace("\\r", "\r").replace("\\t", "\t")
 								.replace("\\\"", "\""));
 					elements.add(elementString);
 					buildValue = "";
@@ -244,23 +237,26 @@ public class SmartScriptParser {
 				// if buildValue starts to build
 				if(buildValue == ""  && valueArray[i] != ' ' && valueArray[i] != '"') {
 					buildValue += valueArray[i];
+					
 					// if next element is number
 					if(Character.isDigit(valueArray[i]) || valueArray[i] == '-') {
 						makeNumber = true;
+						
 						//if next element is word
 					} else if(Character.isAlphabetic(valueArray[i])) {
 						makeVariable = true;
+						
 					} else {
 						throw new SmartScriptParserException();
 					}
 
 					// continue building value
 				} else if(valueArray[i] != ' ' && valueArray[i] != '"') {
+					
 					// is letter occurred stop building number
 					if(makeNumber && Character.isAlphabetic(valueArray[i])) {
 						// check if number is int or double 
 						elements.add(rightNumber(buildValue));
-						
 						makeNumber = false;
 						buildValue = "";
 						buildValue += valueArray[i];
@@ -273,12 +269,12 @@ public class SmartScriptParser {
 						buildValue += valueArray[i];
 					}
 					// stop building variable
-				} else if((valueArray[i] == ' ' || valueArray[i] == '"') && 
-						makeVariable) {
+				} else if((valueArray[i] == ' ' || valueArray[i] == '"') && makeVariable) {
 					makeVariable = false;
 					ElementVariable variableElement = new ElementVariable(buildValue);
 					elements.add(variableElement);
 					buildValue = "";
+					
 				} else if (!(makeFunction && makeNumber && makeString && makeVariable) &&
 						valueArray[i] == '"') {
 					makeString = true;
@@ -290,14 +286,18 @@ public class SmartScriptParser {
 			if(makeString) {
 				ElementString stringElement = new ElementString(buildValue);
 				elements.add(stringElement);
+				
 			} else if(makeNumber) {
 				elements.add(rightNumber(buildValue));
+				
 			} else if(makeFunction) {
 				ElementFunction functionElement = new ElementFunction(buildValue);
 				elements.add(functionElement);
+				
 			} else if(makeVariable) {
 				ElementVariable variableElement = new ElementVariable(buildValue);
 				elements.add(variableElement);
+				
 			} else if(buildValue == "*" || buildValue == "+" ||
 					buildValue == "-" || buildValue == "/" || buildValue == "^") {
 				ElementOperator operator = new ElementOperator(buildValue);
@@ -313,21 +313,33 @@ public class SmartScriptParser {
 		return elementsArray;
 	}
 	
+	/**
+	 * Returns right Element object that depends on buildValue
+	 * @param buildValue given value
+	 * @return Element from buildValue
+	 */
 	private Element rightNumber(String buildValue) {
 		try {
 			Integer intValue = Integer.parseInt(buildValue);
 			return new ElementConstantInteger(intValue);
+			
 		} catch (Exception e) {
 			// if exception occurred parse to double
 			try {
 				Double doubleValue = Double.parseDouble(buildValue);
 				return new ElementConstantDouble(doubleValue);
+				
 			} catch (Exception e2) {
 				throw new SmartScriptParserException("Invalid expression");
 			}
 		}
 	}
 	
+	/**
+	 * Returns echo node
+	 * @param value value to set in echo node
+	 * @return echo node
+	 */
 	private EchoNode getEchoNode(Object value) {
 		Element[] elements = makeElementsForEchoNode(value);
 		EchoNode echoNode = new EchoNode(elements);
@@ -335,6 +347,11 @@ public class SmartScriptParser {
 		return echoNode;
 	}
 	
+	/**
+	 * Analyze arguments and separates them in array
+	 * @param arguments from for loop node
+	 * @return array of arguments in for loop 
+	 */
 	private Object[] getForLoopArguments(Object arguments) {		
 		Object[] array = new Object[4];
 		int arrayCounter = 0;
@@ -410,13 +427,18 @@ public class SmartScriptParser {
 		return array;
 	}
 	
-	
+	/**
+	 * Checks type of value (string, double, int) and convert it to righ element
+	 * @param value value to check
+	 * @return Element object from given value
+	 */
 	private Element initializeElement(String value) {
 		// check if value if integer
 		try {
 			Integer intValue = Integer.parseInt(value);
 			ElementConstantInteger intElement = new ElementConstantInteger(intValue);
 			return intElement;
+			
 		} catch (Exception e) {
 			// exception occurs if given value is not int
 			// check if given value is double
@@ -424,6 +446,7 @@ public class SmartScriptParser {
 				Double doubleValue = Double.parseDouble(value);
 				ElementConstantDouble doubleElement = new ElementConstantDouble(doubleValue);
 				return doubleElement;
+				
 			} catch (Exception e2) {
 				//exception occurs if given value is not int and double
 				ElementString stringValue = new ElementString(value);
@@ -432,6 +455,10 @@ public class SmartScriptParser {
 		}
 	}
 	
+	/**
+	 * Returns document node
+	 * @return document node
+	 */
 	public DocumentNode getDocumentNode() {
 		return documentNode;
 	}

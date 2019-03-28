@@ -1,20 +1,25 @@
 package hr.fer.zemris.java.hw03;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import hr.fer.zemris.java.custom.scripting.lexer.LexerSmart;
 import hr.fer.zemris.java.custom.scripting.nodes.DocumentNode;
 import hr.fer.zemris.java.custom.scripting.nodes.Node;
 import hr.fer.zemris.java.custom.scripting.parser.SmartScriptParser;
 import hr.fer.zemris.java.custom.scripting.parser.SmartScriptParserException;
 
+/**
+ * This class is used for testing functionality of smart script parser
+ * @author Daria Matković
+ *
+ */
 public class SmartScriptTester {
 	
+	/**
+	 * Method which executes when program is run
+	 * @param args one argument filePath of .txt file
+	 */
 	public static void main(String[] args) {
 		String filePath = args[0];
 		String docBody = "";
@@ -45,6 +50,7 @@ public class SmartScriptTester {
 		SmartScriptParser parser2 = new SmartScriptParser(originalDocumentBody);
 		DocumentNode document2 = parser2.getDocumentNode();
 		String originalDocumentBody2 = createOriginalDocumentBody(document2);
+		System.out.println(originalDocumentBody2);
 		
 		// compare document and document2
 		if(document.equals(document2)) {
@@ -54,22 +60,11 @@ public class SmartScriptTester {
 		}
 	}
 	
-	private String loader(String filePath) {
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		try(InputStream is =
-		this.getClass().getClassLoader().getResourceAsStream(filePath)) {
-			byte[] buffer = new byte[1024];
-			while(true) {
-				int read = is.read(buffer);
-				if(read < 1) break;
-				bos.write(buffer, 0, read);
-			}	
-			return new String(bos.toByteArray(), StandardCharsets.UTF_8);
-		} catch(IOException ex) {
-			return null;
-		}
-	}
-	
+	/**
+	 * Creates string from node
+	 * @param node given node
+	 * @return string created from node
+	 */
 	private static String createOriginalDocumentBody(Node node) {
 		String documentString = "";
 		documentString += node.toString();

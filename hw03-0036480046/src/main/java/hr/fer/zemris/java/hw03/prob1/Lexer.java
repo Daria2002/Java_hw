@@ -1,7 +1,5 @@
 package hr.fer.zemris.java.hw03.prob1;
 
-import java.util.ConcurrentModificationException;
-
 /** 
  * This program implements simple static lexical analyzer
  * Lexer is used as token producer. Token type is defined in enumeration TokenType.
@@ -22,7 +20,6 @@ public class Lexer {
 	
 	/**
 	 * Constructor get text that need to be analyzed.
-	 * 
 	 * @param text text need to be analyzed.
 	 */
 	public Lexer(String text) {
@@ -39,7 +36,6 @@ public class Lexer {
 	
 	/**
 	 * Generates and returns next token. Throws LexerException if error occurs.
-	 * 
 	 * @return next token
 	 */
 	public Token nextToken() {
@@ -203,37 +199,46 @@ public class Lexer {
 	
 	private int checkMode(char[] data, int index) {
 		char c = data[index];
+		
 		// if \ before data[index] is escaped in the middle
 		// if lexer state is extended everything is word
 		if(lexerState.equals(LexerState.EXTENDED) || 
 				index-2 >= 0 && data[index] == '\\' && !escapeSequence) {
 			return 2;
+			
 		} else if(Character.isDigit(c)) {
 			if(index-1 > 0 && escapeSequence) {
 				return 2;
 			}
 			return 1;
+			
 		} else if(Character.isAlphabetic(c)) {
 			return 2;
+			
 		} else if(data[index] == ' ') {
 			return 4;
+			
 		} else if(index <= data.length-1) {
 			// Symbol
 			return 3;
 		}
+		
 		return 0;
 	}
 	
 	/**
 	 * Gets last generated token. Can be called more times and it doesn't runs
 	 * generation of next token.
-	 * 
 	 * @return next token
 	 */
 	public Token getToken() {
 		return token;
 	}
 	
+	/**
+	 * Set lexer state
+	 * @param state state to set lexer on
+	 */
 	public void setState(LexerState state) {
 		if(state == null) {
 			throw new NullPointerException("Lexer state can't be null.");

@@ -5,15 +5,15 @@ package hr.fer.zemris.java.custom.collections;
  * @author Daria Matkovic
  *
  */
-public class ObjectStack<T> {
+public class ObjectStack {
 	/** Collection for stack implementation **/
-	private ArrayIndexedCollection<T> collection;
+	private ArrayIndexedCollection collection;
 	
 	/**
 	 * Default constructor initializes stack.
 	 */
 	public ObjectStack() {
-		collection = new ArrayIndexedCollection<T>();
+		collection = new ArrayIndexedCollection();
 	} 
 	
 	/**
@@ -37,7 +37,7 @@ public class ObjectStack<T> {
 	 * Complexity: O(1)
 	 * @param value value to push on stack
 	 */
-	public void push(T value) {
+	public void push(Object value) {
 		if(value == null) {
 			throw new NullPointerException("Null can't pushed on stack.");
 		}
@@ -50,8 +50,8 @@ public class ObjectStack<T> {
 	 * Complexity: O(1)
 	 * @return removed value
 	 */
-	public T pop() {
-		T object = peek();
+	public Object pop() {
+		Object object = peek();
 		collection.remove(this.size() - 1);
 		return object;
 	}
@@ -61,7 +61,7 @@ public class ObjectStack<T> {
 	 * Throws EmptyStackException if stack is empty.
 	 * @return last element pushed on stack
 	 */
-	public T peek() {
+	public Object peek() {
 		if(this.isEmpty()) {
 			throw new EmptyStackException("Stack is empty.");
 		}

@@ -26,7 +26,7 @@ public interface List<T> extends Collection<T> {
 	 * @param value value to check index
 	 * @return index of given value
 	 */
-	int indexOf(T value);
+	int indexOf(Object value);
 	
 	/**
 	 * Remove value at position index

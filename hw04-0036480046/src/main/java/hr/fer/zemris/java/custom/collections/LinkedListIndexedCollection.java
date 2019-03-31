@@ -202,7 +202,7 @@ public class LinkedListIndexedCollection<T> implements List<T> {
 					+ " linked list indeced collection.");
 		}
 		
-		ListNode<T> newNode = new ListNode<T>(null, null, value);
+		ListNode<T> newNode = new ListNode<>(null, null, value);
 		// if list is empty
 		if(this.size == 0) {
 			this.first = newNode;
@@ -244,12 +244,12 @@ public class LinkedListIndexedCollection<T> implements List<T> {
 	 * @return index index of first appearance of value in the collection if value 
 	 * appears in the collection, otherwise -1
 	 */
-	public int indexOf(T value) {
+	public int indexOf(Object value) {
 		if(value == null) {
 			return -1;
 		}
 		
-		ListNode<T> node = new ListNode<T>(this.first.previous, this.first.next,
+		ListNode<T> node = new ListNode<>(this.first.previous, this.first.next,
 				this.first.value);
 		for(int i = 0; i < this.size; i++) {
 			if(node.value.equals(value)) {
@@ -278,12 +278,12 @@ public class LinkedListIndexedCollection<T> implements List<T> {
 	}
 	
 	@Override
-	public boolean remove(T value) {
+	public boolean remove(Object value) {
 		if(value == null) {
 			return false;
 		}
 		
-		ListNode<T> currentNode = new ListNode<T>(this.first.previous, this.first.next,
+		ListNode<T> currentNode = new ListNode<>(this.first.previous, this.first.next,
 				this.first.value);
 		
 		while(currentNode != null && !currentNode.value.equals(value)) {
@@ -331,14 +331,14 @@ public class LinkedListIndexedCollection<T> implements List<T> {
 	}
 	
 	@Override
-	public boolean contains(T value) {
+	public boolean contains(Object value) {
 		return indexOf(value) != -1;
 	}
 	
 	@Override
 	public T[] toArray() {
 		T[] array = (T[])new Object[this.size];
-		ListNode<T> node = new ListNode<T>(this.first.previous, this.first.next, 
+		ListNode<T> node = new ListNode<>(this.first.previous, this.first.next, 
 				this.first.value);
 		for(int i = 0; i < this.size; i++) {
 			array[i] = node.value;

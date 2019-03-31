@@ -2,6 +2,7 @@ package hr.fer.zemris.java.custom.collections;
 
 /**
  * Class Collection represents collection of objects.
+ * @param <T> Generic data type
  * @author Daria Matković
  *
  */
@@ -23,28 +24,28 @@ public interface Collection<T> {
 	 * @param value value is given value to check if it is in collection
 	 * @return true if collection contains given value, otherwise false
 	 */
-	public abstract boolean contains(T value);
+	public abstract boolean contains(Object value);
 	
 	/**
 	 * Checks if collection contains given value and removes one occurrence of it.
 	 * @param value value is given value to check if it is in collection.
 	 * @return returns true if collection contains given value, otherwise false.
 	 */
-	public abstract boolean remove(T value);
+	public abstract boolean remove(Object value);
 	
 	/**
 	 * Allocates new array with size equals to the size of this collection and 
 	 * fills it with collection content
 	 * @return array filled with collection content
 	 */
-	public abstract T[] toArray();
+	public abstract Object[] toArray();
 	
 	/**
 	 * Calls processor.process(.) for each element of this collection
 	 * @param processor
 	 */
-	public default void forEach(Processor processor) {
-		ElementsGetter getter = createElementsGetter();
+	public default void forEach(Processor<T> processor) {
+		ElementsGetter<T> getter = createElementsGetter();
 		getter.processRemaining(processor);
 	}
 	
@@ -64,7 +65,7 @@ public interface Collection<T> {
 	 * @param other other is collection which elements need to be added in current 
 	 * collection
 	 */
-	public default void addAll(Collection other) {
+	public default void addAll(Collection<T> other) {
 		/**
 		 * Local class which extends Processor
 		 * @author Daria Matkovic
@@ -96,7 +97,7 @@ public interface Collection<T> {
 	 * @param col collection to add tested elements
 	 * @param tester tester to test elements
 	 */
-	public default void addAllSatisfying(Collection col, Tester tester) {
+	public default void addAllSatisfying(Collection<T> col, Tester<T> tester) {
 		ElementsGetter<T> getter = col.createElementsGetter();
 		while(getter.hasNextElement()) {
 			T help = getter.getNextElement();

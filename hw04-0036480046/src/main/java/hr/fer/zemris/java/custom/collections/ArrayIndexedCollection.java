@@ -48,7 +48,6 @@ public class ArrayIndexedCollection<T> implements List<T> {
 			}
 			return array.elements[index++];
 		}
-		
 	}
 	
 	@Override
@@ -209,11 +208,10 @@ public class ArrayIndexedCollection<T> implements List<T> {
 	 * @return the index of the first occurrence of the given value or 
 	 * -1 if the value is not found
 	 */
-	public int indexOf(T value) {
+	public int indexOf(Object value) {
 		if(value == null) {
 			return -1;
 		}
-		
 		for(int i = 0; i < this.size; i++) {
 			if(this.elements[i].equals(value)) {
 				return i;
@@ -244,7 +242,7 @@ public class ArrayIndexedCollection<T> implements List<T> {
 	}
 	
 	@Override
-	public boolean remove(T value) {
+	public boolean remove(Object value) {
 		int index = this.indexOf(value);
 		if(index < 0) {
 			return false;
@@ -262,7 +260,7 @@ public class ArrayIndexedCollection<T> implements List<T> {
 	}
 	
 	@Override
-	public boolean contains(T value) {
+	public boolean contains(Object value) {
 		return indexOf(value) != -1;
 	}
 	

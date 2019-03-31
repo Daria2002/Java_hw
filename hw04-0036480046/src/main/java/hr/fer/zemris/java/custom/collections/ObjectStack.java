@@ -13,7 +13,7 @@ public class ObjectStack<T> {
 	 * Default constructor initializes stack.
 	 */
 	public ObjectStack() {
-		collection = new ArrayIndexedCollection<T>();
+		collection = new ArrayIndexedCollection<>();
 	} 
 	
 	/**

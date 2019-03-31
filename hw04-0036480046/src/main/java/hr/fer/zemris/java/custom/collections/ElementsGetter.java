@@ -22,7 +22,7 @@ public interface ElementsGetter<T> {
 	 * Calls set processor on all remain elements
 	 * @param p processor
 	 */
-	default void processRemaining(Processor p) {
+	default void processRemaining(Processor<T> p) {
 		while(hasNextElement()) {
 			p.process(getNextElement());
 		}

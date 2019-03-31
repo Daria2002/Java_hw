@@ -12,7 +12,7 @@ public interface List<T> extends Collection<T> {
 	 * @param index position
 	 * @return Object at position index
 	 */
-	Object get(int index);
+	T get(int index);
 	
 	/**
 	 * Inserts value at given position

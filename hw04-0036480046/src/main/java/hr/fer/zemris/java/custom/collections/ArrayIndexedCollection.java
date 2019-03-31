@@ -10,21 +10,21 @@ import java.util.NoSuchElementException;
  * @author Daria Matkovic
  * 
  */
-public class ArrayIndexedCollection implements List {
+public class ArrayIndexedCollection<T> implements List<T> {
 	/** size of array elements **/
 	private int size;
 	/** array of Objects **/
-	private Object[] elements;
+	private T[] elements;
 	/** initial capacity **/
 	private static final int INITIAL_CAPACITY = 16;
 	private long modificationCount = 0;
 	
-	private static class ElementsGetterArray implements ElementsGetter {
+	private static class ElementsGetterArray<T> implements ElementsGetter<T> {
 		private int index = 0;
 		private long savedModificationCount;
-		ArrayIndexedCollection array;
+		ArrayIndexedCollection<T> array;
 		
-		public ElementsGetterArray(ArrayIndexedCollection collection) {
+		public ElementsGetterArray(ArrayIndexedCollection<T> collection) {
 			array = collection;
 			savedModificationCount = array.modificationCount;
 		}
@@ -39,7 +39,7 @@ public class ArrayIndexedCollection implements List {
 		}
 
 		@Override
-		public Object getNextElement() {
+		public T getNextElement() {
 			if(array.modificationCount != savedModificationCount) {
 				throw new ConcurrentModificationException("Array is modified.");
 			}
@@ -52,8 +52,8 @@ public class ArrayIndexedCollection implements List {
 	}
 	
 	@Override
-	public ElementsGetter createElementsGetter() {
-		return new ElementsGetterArray(this);
+	public ElementsGetter<T> createElementsGetter() {
+		return new ElementsGetterArray<T>(this);
 	}
 	
 	/**
@@ -67,7 +67,7 @@ public class ArrayIndexedCollection implements List {
 	 * Checks if collection is null and delegates to previous constructor
 	 * @param collection collection is given collection to check if it is null
 	 */
-	public ArrayIndexedCollection(Collection collection) {
+	public ArrayIndexedCollection(Collection<T> collection) {
 		this(collection, INITIAL_CAPACITY);
 	}
 	
@@ -79,7 +79,7 @@ public class ArrayIndexedCollection implements List {
 		if(initialCapacity < 1) {
 			throw new IllegalArgumentException("Initial capacity is less than 1");
 		}
-		this.elements = new Object[initialCapacity];
+		this.elements = (T[])new Object[initialCapacity];
 	}
 	
 	/**
@@ -89,7 +89,7 @@ public class ArrayIndexedCollection implements List {
 	 * if it is equal to null
 	 * @param initialCapacity initial value for capacity
 	 */
-	public ArrayIndexedCollection(Collection collection, int initialCapacity) {
+	public ArrayIndexedCollection(Collection<T> collection, int initialCapacity) {
 		if(collection == null) {
 			throw new NullPointerException("Collection object is null.");
 		}
@@ -100,7 +100,7 @@ public class ArrayIndexedCollection implements List {
 			capacity = initialCapacity;
 		}
 
-		this.elements = new Object[capacity];
+		this.elements = (T[])new Object[capacity];
 		this.addAll(collection);
 	}
 	
@@ -124,7 +124,7 @@ public class ArrayIndexedCollection implements List {
 	 * complexity: O(1) if array is not full, otherwise O(n)
 	 * @param value value added to collection.
 	 */
-	public void add(Object value) {
+	public void add(T value) {
 		if(value == null) {
 			throw new NullPointerException("Null can't be added.");
 		}
@@ -145,7 +145,7 @@ public class ArrayIndexedCollection implements List {
 	 * @return the object that is stored in elements at given index
 	 * complexity: O(1)
 	 */
-	public Object get(int index) {
+	public T get(int index) {
 		if(index < 0 || index > size-1) {
 			throw new IndexOutOfBoundsException();
 		}
@@ -171,7 +171,7 @@ public class ArrayIndexedCollection implements List {
 	 * @param position position in array where value need to be inserted
 	 * complexity: O(n)
 	 */
-	public void insert(Object value, int position) {
+	public void insert(T value, int position) {
 		if(position < 0 || position > size) {
 			throw new IndexOutOfBoundsException("Index out of bounds.");
 		}
@@ -209,7 +209,7 @@ public class ArrayIndexedCollection implements List {
 	 * @return the index of the first occurrence of the given value or 
 	 * -1 if the value is not found
 	 */
-	public int indexOf(Object value) {
+	public int indexOf(T value) {
 		if(value == null) {
 			return -1;
 		}
@@ -244,7 +244,7 @@ public class ArrayIndexedCollection implements List {
 	}
 	
 	@Override
-	public boolean remove(Object value) {
+	public boolean remove(T value) {
 		int index = this.indexOf(value);
 		if(index < 0) {
 			return false;
@@ -262,13 +262,13 @@ public class ArrayIndexedCollection implements List {
 	}
 	
 	@Override
-	public boolean contains(Object value) {
+	public boolean contains(T value) {
 		return indexOf(value) != -1;
 	}
 	
 	@Override
-	public Object[] toArray() {
-		Object[] newArray = new Object[this.size];
+	public T[] toArray() {
+		T[] newArray = (T[])new Object[this.size];
 		for(int i = 0; i < this.size; i++) {
 			newArray[i] = this.elements[i];
 		}

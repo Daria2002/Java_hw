@@ -65,7 +65,7 @@ class Vector2DTest {
 	void testRotated() {
 		Vector2D vector1 = new Vector2D(2.5, 4.5);
 		Vector2D vector2 = vector1.rotated(Math.PI/2);
-		
+//		 
 		assertEquals(new Vector2D(-4.5, 2.5), vector2);
 	}
 	

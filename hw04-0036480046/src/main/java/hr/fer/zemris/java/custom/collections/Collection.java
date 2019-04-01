@@ -44,7 +44,7 @@ public interface Collection<T> {
 	 * Calls processor.process(.) for each element of this collection
 	 * @param processor
 	 */
-	public default void forEach(Processor<T> processor) {
+	public default void forEach(Processor<? super T> processor) {
 		ElementsGetter<T> getter = createElementsGetter();
 		getter.processRemaining(processor);
 	}
@@ -65,7 +65,7 @@ public interface Collection<T> {
 	 * @param other other is collection which elements need to be added in current 
 	 * collection
 	 */
-	public default void addAll(Collection<T> other) {
+	public default void addAll(Collection<? extends T> other) {
 		/**
 		 * Local class which extends Processor
 		 * @author Daria Matkovic
@@ -97,8 +97,8 @@ public interface Collection<T> {
 	 * @param col collection to add tested elements
 	 * @param tester tester to test elements
 	 */
-	public default void addAllSatisfying(Collection<T> col, Tester<T> tester) {
-		ElementsGetter<T> getter = col.createElementsGetter();
+	public default void addAllSatisfying(Collection<? extends T> col, Tester<? super T> tester) {
+		ElementsGetter<? extends T> getter = col.createElementsGetter();
 		while(getter.hasNextElement()) {
 			T help = getter.getNextElement();
 			if(tester.test(help)) {

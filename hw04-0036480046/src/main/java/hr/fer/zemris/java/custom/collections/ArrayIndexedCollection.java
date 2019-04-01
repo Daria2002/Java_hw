@@ -35,7 +35,7 @@ public class ArrayIndexedCollection<T> implements List<T> {
 				throw new ConcurrentModificationException("Array is modified.");
 			}
 			
-			return array.size-1 >= index ?  true : false;
+			return array.size-1 >= index;
 		}
 
 		@Override
@@ -66,7 +66,7 @@ public class ArrayIndexedCollection<T> implements List<T> {
 	 * Checks if collection is null and delegates to previous constructor
 	 * @param collection collection is given collection to check if it is null
 	 */
-	public ArrayIndexedCollection(Collection<T> collection) {
+	public ArrayIndexedCollection(Collection<? extends T> collection) {
 		this(collection, INITIAL_CAPACITY);
 	}
 	
@@ -88,7 +88,7 @@ public class ArrayIndexedCollection<T> implements List<T> {
 	 * if it is equal to null
 	 * @param initialCapacity initial value for capacity
 	 */
-	public ArrayIndexedCollection(Collection<T> collection, int initialCapacity) {
+	public ArrayIndexedCollection(Collection<? extends T> collection, int initialCapacity) {
 		if(collection == null) {
 			throw new NullPointerException("Collection object is null.");
 		}
@@ -265,8 +265,8 @@ public class ArrayIndexedCollection<T> implements List<T> {
 	}
 	
 	@Override
-	public T[] toArray() {
-		T[] newArray = (T[])new Object[this.size];
+	public Object[] toArray() {
+		Object[] newArray = new Object[this.size];
 		for(int i = 0; i < this.size; i++) {
 			newArray[i] = this.elements[i];
 		}

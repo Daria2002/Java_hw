@@ -97,7 +97,7 @@ public class LinkedListIndexedCollection<T> implements List<T> {
 	 * @param collection collection is reference to other Collection whose 
 	 * elements are copied into this newly constructed collection
 	 */
-	public LinkedListIndexedCollection(Collection<T> collection) {
+	public LinkedListIndexedCollection(Collection<? extends T> collection) {
 		this.addAll(collection);
 	}
 	
@@ -336,8 +336,8 @@ public class LinkedListIndexedCollection<T> implements List<T> {
 	}
 	
 	@Override
-	public T[] toArray() {
-		T[] array = (T[])new Object[this.size];
+	public Object[] toArray() {
+		Object[] array = new Object[this.size];
 		ListNode<T> node = new ListNode<>(this.first.previous, this.first.next, 
 				this.first.value);
 		for(int i = 0; i < this.size; i++) {

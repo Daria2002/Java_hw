@@ -111,16 +111,40 @@ public class SimpleHashtable<K, V> {
 		// add new tableEntry on end
 		if(helpTable.next == null) {
 			helpTable.next = newTableEntry;
+			size++;
 		} else {
 			// if key already saved, change value
 			helpTable.value = newTableEntry.value;
 		}
 	}
-	/*
+	
 	public V get(Object key) {
-		return 
+		// the key with value null doesn't exists
+		if(key == null) {
+			return null;
+		}
+		
+		int slotIndex = getKeySlot((K)key);
+		TableEntry<K, V> helpTable = table[slotIndex];
+		
+		while(helpTable.next != null) {
+			if(helpTable.key == key) {
+				return helpTable.value;
+			}
+			helpTable = helpTable.next;
+		}
+		
+		return null;
 	}
-	*/
+	
+	public int size() {
+		return size;
+	}
+	
+	public boolean containsKey(Object key) {
+		return get(key) != null;
+	}
+	
 	private int getKeySlot(K key) {
 		int hashNumber = Math.abs(key.hashCode());
 		

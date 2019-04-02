@@ -1,43 +1,144 @@
 package hr.fer.zemris.java.custom.collections;
 
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 public class SimpleHashtable<K, V> implements Iterable<SimpleHashtable.TableEntry<K, V>>{
 
-	@Override
-	public Iterator<SimpleHashtable.TableEntry<K, V>> iterator() {
-		return new SimpleHashtableIterator<K, V>();
-	}
-	
-	public class SimpleHashtableIterator<K, V> implements
-	Iterator<SimpleHashtable.TableEntry<K, V>> {
-		
-		private TableEntry<K, V>[] table;
-		private int size;
-		
-		public SimpleHashtableIterator() {
-			this.table = table;
-			this.size = size;
-		}
-		
-		public boolean hasNext() {
-			return size > 0;
-	    }
-
-	    public SimpleHashtable.TableEntry next() {
-	    	size--;
-	    	return new TableEntry<String, Integer>("..", 0, null);
-	    }
-
-	    public void remove() {
-	    	remove();
-	    }
-	}
-	
+	private int modificationCount;
 	private TableEntry<K, V>[] table;
 	private int size;
 	private static final int INITIAL_CAPACITY = 16;
 	private static final double OVERFLOW_FACTOR = 0.75;
+	
+	@Override
+	public Iterator<SimpleHashtable.TableEntry<K, V>> iterator() {
+		return new SimpleHashtableIterator();
+	}
+	
+	public class SimpleHashtableIterator implements
+	Iterator<SimpleHashtable.TableEntry<K, V>> {
+		private int slotIndex;
+		private TableEntry<K, V> currentHead;
+		private int nestedModificationCount;
+		private boolean removeMode;
+		
+		public SimpleHashtableIterator() {
+			slotIndex = -1;
+			currentHead = null;
+			nestedModificationCount = modificationCount;
+			removeMode = false;
+		}
+		/**
+		 * Returns true if iteration has more elements
+		 */
+		public boolean hasNext() {
+			checkModification();
+			
+			if(currentHead != null && currentHead.next != null) {
+				return true;
+			}
+			TableEntry<K, V> helpTableEntry;
+			for(int i = slotIndex+1; i < table.length; i++) {
+				helpTableEntry = table[i];
+				
+				if(helpTableEntry != null) {
+					return true;
+				}
+			}
+			return false;
+	    }
+
+	    public SimpleHashtable.TableEntry next() {
+	    	checkModification();
+	    	removeMode = false;
+	    	
+	    	if(currentHead == null || currentHead != null && currentHead.next == null) {
+	    		while(slotIndex < table.length) {
+	    			slotIndex++;
+		    		currentHead = table[slotIndex];
+		    		
+		    		if(currentHead != null) {
+		    			break;
+		    		}
+	    		}
+	    		if(currentHead == null) {
+	    			throw new NoSuchElementException("No more elements in table");
+	    		}
+	    		
+	    	} else {
+	    		currentHead = currentHead.next;
+	    	}
+	    	
+	    	return currentHead;
+	    }
+
+	    public void remove() {
+	    	checkModification();
+	    	
+	    	if(removeMode) {
+	    		throw new IllegalStateException("Current element already removed.");
+	    	}
+	    	removeMode = true;
+	    	
+	    	if(currentHead == null) {
+	    		return;
+	    	}
+	    	
+			TableEntry<K, V> helpTable = table[slotIndex];
+			TableEntry<K, V> previousTable = table[slotIndex];
+			
+			// get all tableEntries in slot
+			while(helpTable != null) {
+				// if key is found
+				if(helpTable.equals(currentHead)) {
+					
+					// if table entry is first element
+					if(previousTable.next == helpTable.next) {
+						table[slotIndex] = previousTable.next;
+					} else {
+						previousTable.next = helpTable.next;
+					}
+					
+					size--;
+					currentHead = previousTable;
+					
+					if(currentHead == null) {
+						for(int i = slotIndex-1; i >= 0; i--) {
+							if(table[i] != null) {
+								currentHead = table[i];
+								while (currentHead.next != null) {
+									currentHead = currentHead.next;
+								}
+								slotIndex = i;
+								break;
+							}
+						}
+					}
+					if(currentHead == null) {
+						slotIndex = -1;
+					}
+					
+					nestedModificationCount++;
+					modificationCount++;
+					return;
+				}
+				// previousTable is current table
+				previousTable = helpTable;
+				// current table is next table
+				helpTable = helpTable.next;
+			}
+	    }
+	    
+
+		private void checkModification() {
+			if(nestedModificationCount != modificationCount) {
+				throw new ConcurrentModificationException("Hashtable changed"
+						+ " while iterating.");
+			}
+		}
+	}
 	
 	public static class TableEntry<K, V> {
 		private K key;
@@ -103,8 +204,10 @@ public class SimpleHashtable<K, V> implements Iterable<SimpleHashtable.TableEntr
 		if(capacity < 1) {
 			throw new IllegalArgumentException("Capacity must be at least 1.");
 		}
+		
 		capacity = getRightCapacity(capacity);
 		table = new TableEntry[capacity];
+		modificationCount = 0;
 		size = 0;
 	}
 	
@@ -131,6 +234,7 @@ public class SimpleHashtable<K, V> implements Iterable<SimpleHashtable.TableEntr
 		if(table[slotIndex] == null) {
 			table[slotIndex] = newTableEntry;
 			size++;
+			modificationCount++;
 			return;
 		}
 		
@@ -143,12 +247,18 @@ public class SimpleHashtable<K, V> implements Iterable<SimpleHashtable.TableEntr
 		// add new tableEntry on end
 		if(helpTable.next == null) {
 			helpTable.next = newTableEntry;
+			modificationCount++;
 			size++;
 			sizeCheck();
+			
 		} else {
 			// if key already saved, change value
 			helpTable.value = newTableEntry.value;
 		}
+	}
+	
+	public int getCapacity() {
+		return table.length;
 	}
 	
 	private void sizeCheck() {
@@ -158,6 +268,8 @@ public class SimpleHashtable<K, V> implements Iterable<SimpleHashtable.TableEntr
 		
 		SimpleHashtable<K, V> newHashtable = 
 				new SimpleHashtable<K, V>(table.length * 2);
+		
+		modificationCount++;
 		
 		for(int i = 0; i < table.length; i++) {
 			TableEntry<K, V> helpTable = table[i];
@@ -234,14 +346,18 @@ public class SimpleHashtable<K, V> implements Iterable<SimpleHashtable.TableEntr
 		
 		// get all tableEntries in slot
 		while(helpTable != null) {
+			
 			// if key is found
-			if(helpTable.key == key) {
+			if(helpTable.key.equals(key)) {
+				
 				// if table entry is first element
 				if(previousTable.next == helpTable.next) {
 					table[slotIndex] = previousTable.next;
 				} else {
 					previousTable.next = helpTable.next;
 				}
+				
+				modificationCount++;
 				size--;
 				return;
 			}
@@ -281,6 +397,7 @@ public class SimpleHashtable<K, V> implements Iterable<SimpleHashtable.TableEntr
 		for(int i = 0; i < table.length; i++) {
 			table[i] = null;
 		}
+		modificationCount++;
 		size = 0;
 	}
 	

@@ -233,4 +233,15 @@ class SimpleHashtableTest {
 		assertEquals(7, table.get("tree"));
 		assertEquals(5, table.get("river"));
 	}
+	
+	@Test
+	void testDoubling() {
+		SimpleHashtable<String, Integer> table = new SimpleHashtable<String, Integer>(1);
+		
+		table.put("sun", 3);
+		table.put("rain", 4);
+		table.put("river", 5);
+		
+		assertEquals(8, table.getCapacity());
+	}
 }

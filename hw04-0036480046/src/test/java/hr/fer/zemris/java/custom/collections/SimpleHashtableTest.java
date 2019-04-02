@@ -45,7 +45,7 @@ class SimpleHashtableTest {
 	}
 	
 	@Test
-	void testCapacity2() {
+	void testCapacityException() {
 		SimpleHashtable<String, Integer> table = new SimpleHashtable<String, Integer>(4);
 		
 		table.put("sun", 3);
@@ -53,7 +53,7 @@ class SimpleHashtableTest {
 		table.put("wind", 4);
 		table.put("storm", 5);
 
-		assertThrows(IllegalArgumentException.class, () -> table.put("snow", 8));
+		assertThrows(NullPointerException.class, () -> table.put(null, 8));
 	}
 	
 	@Test
@@ -198,5 +198,39 @@ class SimpleHashtableTest {
 		
 		assertFalse(isEmptyBefore);
 		assertTrue(isEmptyAfter);
+	}
+
+	@Test
+	void testCapacityManagment() {
+		SimpleHashtable<String, Integer> table = new SimpleHashtable<String, Integer>(1);
+		
+		table.put("sun", 3);
+		table.put("rain", 4);
+		table.put("wind", 4);
+		table.put("storm", 5);
+		table.remove("storm");
+		
+		assertEquals(3, table.get("sun"));
+		assertEquals(4, table.get("rain"));
+		assertTrue(table.containsKey("wind"));
+		assertTrue(table.containsValue(4));
+		assertFalse(table.containsKey("storm"));
+	}
+	
+	@Test
+	void testOverridingValue() {
+		SimpleHashtable<String, Integer> table = new SimpleHashtable<String, Integer>(1);
+		
+		table.put("sun", 3);
+		table.put("rain", 4);
+		table.put("river", 5);
+		table.put("sun", null);
+		table.put("rain", 3);
+		table.put("tree", 7);
+		
+		assertEquals(null, table.get("sun"));
+		assertEquals(3, table.get("rain"));
+		assertEquals(7, table.get("tree"));
+		assertEquals(5, table.get("river"));
 	}
 }

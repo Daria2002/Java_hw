@@ -1,10 +1,43 @@
 package hr.fer.zemris.java.custom.collections;
 
-public class SimpleHashtable<K, V> {
+import java.util.Iterator;
 
+public class SimpleHashtable<K, V> implements Iterable<SimpleHashtable.TableEntry<K, V>>{
+
+	@Override
+	public Iterator<SimpleHashtable.TableEntry<K, V>> iterator() {
+		return new SimpleHashtableIterator<K, V>();
+	}
+	
+	public class SimpleHashtableIterator<K, V> implements
+	Iterator<SimpleHashtable.TableEntry<K, V>> {
+		
+		private TableEntry<K, V>[] table;
+		private int size;
+		
+		public SimpleHashtableIterator() {
+			this.table = table;
+			this.size = size;
+		}
+		
+		public boolean hasNext() {
+			return size > 0;
+	    }
+
+	    public SimpleHashtable.TableEntry next() {
+	    	size--;
+	    	return new TableEntry<String, Integer>("..", 0, null);
+	    }
+
+	    public void remove() {
+	    	remove();
+	    }
+	}
+	
 	private TableEntry<K, V>[] table;
 	private int size;
 	private static final int INITIAL_CAPACITY = 16;
+	private static final double OVERFLOW_FACTOR = 0.75;
 	
 	public static class TableEntry<K, V> {
 		private K key;
@@ -87,10 +120,6 @@ public class SimpleHashtable<K, V> {
 	}
 
 	public void put(K key, V value) {
-		if(size >= table.length) {
-			throw new IllegalArgumentException("Table is full.");
-		}
-		
 		if(key == null) {
 			throw new NullPointerException("Key can't be null.");
 		}
@@ -123,6 +152,23 @@ public class SimpleHashtable<K, V> {
 	}
 	
 	private void sizeCheck() {
+		if(size < 0.75 * table.length) {
+			return;
+		}
+		
+		SimpleHashtable<K, V> newHashtable = 
+				new SimpleHashtable<K, V>(table.length * 2);
+		
+		for(int i = 0; i < table.length; i++) {
+			TableEntry<K, V> helpTable = table[i];
+			
+			while(helpTable != null) {
+				newHashtable.put(helpTable.key, helpTable.value);
+				helpTable = helpTable.next;
+			}
+		}
+		
+		this.table = newHashtable.table;
 	}
 	
 	public V get(Object key) {

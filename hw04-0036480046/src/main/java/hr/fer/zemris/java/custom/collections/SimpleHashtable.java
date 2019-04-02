@@ -1,7 +1,5 @@
 package hr.fer.zemris.java.custom.collections;
 
-import javax.swing.text.TabExpander;
-
 public class SimpleHashtable<K, V> {
 
 	private TableEntry<K, V>[] table;
@@ -89,6 +87,10 @@ public class SimpleHashtable<K, V> {
 	}
 
 	public void put(K key, V value) {
+		if(size >= table.length) {
+			throw new IllegalArgumentException("Table is full.");
+		}
+		
 		if(key == null) {
 			throw new NullPointerException("Key can't be null.");
 		}
@@ -99,12 +101,13 @@ public class SimpleHashtable<K, V> {
 		// if empty
 		if(table[slotIndex] == null) {
 			table[slotIndex] = newTableEntry;
+			size++;
 			return;
 		}
 		
 		// helpTable points on first tableEntry of slotIndex
 		TableEntry<K, V> helpTable = table[slotIndex];
-		while(helpTable.next != null && helpTable.equals(newTableEntry)) {
+		while(helpTable.next != null && !helpTable.equals(newTableEntry)) {
 			helpTable = helpTable.next;
 		}
 		
@@ -112,10 +115,14 @@ public class SimpleHashtable<K, V> {
 		if(helpTable.next == null) {
 			helpTable.next = newTableEntry;
 			size++;
+			sizeCheck();
 		} else {
 			// if key already saved, change value
 			helpTable.value = newTableEntry.value;
 		}
+	}
+	
+	private void sizeCheck() {
 	}
 	
 	public V get(Object key) {
@@ -124,14 +131,9 @@ public class SimpleHashtable<K, V> {
 			return null;
 		}
 		
-		int slotIndex = getKeySlot((K)key);
-		TableEntry<K, V> helpTable = table[slotIndex];
-		
-		while(helpTable.next != null) {
-			if(helpTable.key == key) {
-				return helpTable.value;
-			}
-			helpTable = helpTable.next;
+		TableEntry<K, V> table = searchTable(key);
+		if(table != null) {
+			return table.value;
 		}
 		
 		return null;
@@ -141,8 +143,99 @@ public class SimpleHashtable<K, V> {
 		return size;
 	}
 	
+	private TableEntry<K, V> searchTable(Object key) {
+		int slotIndex = getKeySlot((K)key);
+		TableEntry<K, V> helpTable = table[slotIndex];
+		
+		while(helpTable != null) {
+			if(helpTable.key == key) {
+				return helpTable;
+			}
+			helpTable = helpTable.next;
+		}
+		
+		return null;
+	}
+	
 	public boolean containsKey(Object key) {
-		return get(key) != null;
+		return searchTable(key) != null;
+	}
+	
+	public boolean containsValue(Object value) {
+		// in every slot search for value
+		for(int i = 0; i < table.length; i++) {
+			TableEntry<K, V> helpTable = table[i];
+			
+			while(helpTable != null) {
+				if(helpTable.value == value) {
+					return true;
+				}
+				helpTable = helpTable.next;
+			}
+		}
+		return false;
+	}
+	
+	public void remove(Object key) {
+		// if key doesn't exists or key is null
+		if(key == null || !containsKey(key)) {
+			return;
+		}
+		
+		int slotIndex = getKeySlot((K)key);
+		TableEntry<K, V> helpTable = table[slotIndex];
+		TableEntry<K, V> previousTable = table[slotIndex];
+		
+		// get all tableEntries in slot
+		while(helpTable != null) {
+			// if key is found
+			if(helpTable.key == key) {
+				// if table entry is first element
+				if(previousTable.next == helpTable.next) {
+					table[slotIndex] = previousTable.next;
+				} else {
+					previousTable.next = helpTable.next;
+				}
+				size--;
+				return;
+			}
+			// previousTable is current table
+			previousTable = helpTable;
+			// current table is next table
+			helpTable = helpTable.next;
+		}
+	}
+	
+	public boolean isEmpty() {
+		return size <= 0;
+	}
+	
+	@Override
+	public String toString() {
+		String tableEntryString = "[";
+		
+		// in every slot search for value
+		for(int i = 0; i < table.length; i++) {
+			TableEntry<K, V> helpTable = table[i];
+			
+			while(helpTable != null) {
+				tableEntryString += helpTable.toString();
+				if(helpTable.next != null) {
+					tableEntryString += ", ";
+				}
+				helpTable = helpTable.next;
+			}
+		}
+		
+		return tableEntryString + "]";
+	}
+	
+	public void clear() {
+		// in every slot search for value
+		for(int i = 0; i < table.length; i++) {
+			table[i] = null;
+		}
+		size = 0;
 	}
 	
 	private int getKeySlot(K key) {

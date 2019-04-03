@@ -3,8 +3,9 @@ package hr.fer.zemris.java.custom.collections;
 /**
  * The Processor is a model of an object capable of performing
  * some operation on the passed object.
- * @author Daria Matkovic
+ * @author Daria Matković
  *
+ * @param <T> generic element type
  */
 public interface Processor<T> {
 	
@@ -14,4 +15,4 @@ public interface Processor<T> {
 	 * @param value value is given object of type Object 
 	 */
 	public abstract void process(T value);
-} 
+}

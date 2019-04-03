@@ -1,9 +1,10 @@
 package hr.fer.zemris.java.custom.collections;
 
 /**
- * List extends collection
+ * Interface for extending collection and defining list specific methods.
  * @author Daria Matković
  *
+ * @param <T> generic element type
  */
 public interface List<T> extends Collection<T> {
 

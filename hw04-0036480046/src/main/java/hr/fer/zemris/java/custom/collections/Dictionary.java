@@ -8,11 +8,24 @@ package hr.fer.zemris.java.custom.collections;
  * @param <V> type of dictionary value
  */
 public class Dictionary<K, V> {
-
+	/**
+	 * Class that represents entry in dictionary 
+	 * @author Daria Matković
+	 *
+	 * @param <KeyType> type of dictionary entry key
+	 * @param <ValueType> type of dictionary entry value
+	 */
 	private static class DictionaryEntry<KeyType, ValueType> {
+		/** entry key **/
 		private KeyType key;
+		/** entry value **/
 		private ValueType value;
-		
+		 
+		/**
+		 * Constructor for dictionary entry
+		 * @param key entry key
+		 * @param value entry value
+		 */
 		public DictionaryEntry(KeyType key, ValueType value) {
 			if(key == null) {
 				throw new IllegalArgumentException("Key must not be null value.");
@@ -48,25 +61,51 @@ public class Dictionary<K, V> {
 		}
 	}
 
+	/**
+	 * Array that represents collection of dictionary entries
+	 */
 	ArrayIndexedCollection<DictionaryEntry<K, V>> array;
 	
+	/**
+	 * Dictionary constructor that initialize array of dictionary entries
+	 */
 	public Dictionary() {
 		 array = new ArrayIndexedCollection<>();
 	}
 	
+	/**
+	 * Checks if erray is empty
+	 * @return true if array is empty, otherwise false
+	 */
 	public boolean isEmpty() {
 		return array.isEmpty();
 	}
 	
+	/**
+	 * Size of array
+	 * @return size of array
+	 */
 	public int size() {
 		return array.size();
 	}
 	
+	/**
+	 * Removes all elements in array
+	 */
 	public void clear() {
 		array.clear();
 	}
 	
+	/**
+	 * Insert key and value in dictionary
+	 * @param key entry's key
+	 * @param value entry's value
+	 */
 	public void put(K key, V value) {
+		if(key == null) {
+			throw new IllegalArgumentException("Key can't be null");
+		}
+		
 		DictionaryEntry<K, V> newDictionaryEntry = new DictionaryEntry<>(key, value);
 		int index = array.indexOf(newDictionaryEntry);
 		
@@ -78,6 +117,11 @@ public class Dictionary<K, V> {
 		}
 	}
 	
+	/**
+	 * Returns value for a given key
+	 * @param key of searched element
+	 * @return value for a given key
+	 */
 	public V get(Object key) {
 		ElementsGetter<DictionaryEntry<K, V>> elementsGetter = array.createElementsGetter();
 		

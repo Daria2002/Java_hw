@@ -4,11 +4,12 @@ import java.util.Arrays;
 import java.util.ConcurrentModificationException;
 import java.util.NoSuchElementException;
 
-/**
+/*
  * This program implements resizable array-backed collection of objects. It is
  * allowed to store duplicate elements, but null references are not allowed.
- * @author Daria Matkovic
- * 
+ * @author Daria Matković
+ *
+ * @param <T> generic array type parameter
  */
 public class ArrayIndexedCollection<T> implements List<T> {
 	/** size of array elements **/
@@ -17,13 +18,28 @@ public class ArrayIndexedCollection<T> implements List<T> {
 	private T[] elements;
 	/** initial capacity **/
 	private static final int INITIAL_CAPACITY = 16;
+	/** counts number of modifications **/
 	private long modificationCount = 0;
 	
+	/**
+	 * This nested class implements ElementsGetter interface for the ArrayIndexedCollection.
+	 * It is used for returning elements from this collection
+	 * @author Daria Matković
+	 *
+	 * @param <T> generic array type parameter
+	 */
 	private static class ElementsGetterArray<T> implements ElementsGetter<T> {
+		/** index of the current element **/
 		private int index = 0;
+		/** saves the current modification count **/
 		private long savedModificationCount;
+		/** array of elements **/ 
 		ArrayIndexedCollection<T> array;
 		
+		/**
+		 * Constructor that initialize array and savedModifictionCount
+		 * @param collection collection used for getting elements
+		 */
 		public ElementsGetterArray(ArrayIndexedCollection<T> collection) {
 			array = collection;
 			savedModificationCount = array.modificationCount;

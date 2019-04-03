@@ -1,7 +1,7 @@
 package hr.fer.zemris.java.custom.collections;
 
 /**
- * Class Collection represents collection of objects.
+ * Interface Collection represents collection of objects.
  * @param <T> Generic data type
  * @author Daria Matković
  *
@@ -105,5 +105,5 @@ public interface Collection<T> {
 				this.add(help);
 			}
 		}
-	}
+	} 
 }

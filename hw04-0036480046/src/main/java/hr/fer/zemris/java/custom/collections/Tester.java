@@ -1,9 +1,10 @@
 package hr.fer.zemris.java.custom.collections;
 
 /**
- * Checks if object is acceptable or not
+ * Checks if object is acceptable or not.
  * @author Daria Matković
  *
+ * @param <T> generic element type
  */
 public interface Tester<T> {
 	

@@ -1,9 +1,10 @@
 package hr.fer.zemris.java.custom.collections;
 
 /**
- * This program implements getter for elements
+ * Interface for getting elements in collection.
  * @author Daria Matković
  *
+ * @param <T> generic element type
  */
 public interface ElementsGetter<T> {
 	/**
@@ -23,7 +24,7 @@ public interface ElementsGetter<T> {
 	 * @param p processor
 	 */
 	default void processRemaining(Processor<? super T> p) {
-		while(hasNextElement()) {
+		while(hasNextElement()) { 
 			p.process(getNextElement());
 		}
 	}

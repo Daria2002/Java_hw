@@ -13,7 +13,7 @@ public class EmptyStackException extends RuntimeException {
 	 * Default constructor.
 	 */
 	public EmptyStackException() { 
-		 
+		  
 	}
 	 
 	/**

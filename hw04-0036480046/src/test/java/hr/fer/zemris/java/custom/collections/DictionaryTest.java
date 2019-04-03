@@ -21,8 +21,24 @@ class DictionaryTest {
 		
 		assertThrows(IllegalArgumentException.class, () -> dictionary.put(null, 7));
 	}
-
+	
 	@Test
+	void testValueNull() {
+		Dictionary<String, Integer> dictionary = initializeDictionary();
+		dictionary.put("test", null);
+		
+		assertEquals(null, dictionary.get("test"));
+	}
+	
+	@Test
+	void testGetNonExisting() {
+		Dictionary<String, Integer> dictionary = initializeDictionary();
+		
+		assertEquals(null, dictionary.get("Table"));
+		assertEquals(null, dictionary.get(null));
+	}
+
+	@Test 
 	void testIsEmpty() {
 		Dictionary<String, Integer> dictionary1 = initializeDictionary();
 		Dictionary<String, Integer> dictionary2 = new Dictionary<>();

@@ -2,14 +2,15 @@ package hr.fer.zemris.java.custom.collections;
 
 /**
  * Implementation of the stack-like collection.
- * @author Daria Matkovic
+ * @author Daria Matković
  *
+ * @param <T> Generic element type
  */
 public class ObjectStack<T> {
 	/** Collection for stack implementation **/
 	private ArrayIndexedCollection<T> collection;
 	
-	/**
+	/** 
 	 * Default constructor initializes stack.
 	 */
 	public ObjectStack() {

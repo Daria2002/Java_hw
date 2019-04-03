@@ -8,6 +8,7 @@ import java.util.NoSuchElementException;
  * Duplicate elements are allowed, storage of null references is not allowed.
  * @author Daria Matković
  *
+ * @param <T> generic element type
  */
 public class LinkedListIndexedCollection<T> implements List<T> {
 	/**
@@ -26,7 +27,7 @@ public class LinkedListIndexedCollection<T> implements List<T> {
 		/**
 		 * Initialize list node.
 		 * @param previous previous reference
-		 * @param next next reference
+		 * @param next next reference 
 		 * @param value node value
 		 */
 		public ListNode(ListNode<T> previous, ListNode<T> next, T value) {
@@ -42,14 +43,27 @@ public class LinkedListIndexedCollection<T> implements List<T> {
 	private ListNode<T> first;
 	/** last node **/
 	private ListNode<T> last;
-	
+	/** counts number of modifications **/
 	private long modificationCount = 0;
 	
+	/**
+	 * Nested class that is used for getting elements in LinkedListCollection
+	 * @author Daria Matković
+	 *
+	 * @param <T> generic element type
+	 */
 	private static class ElementsGetterList<T> implements ElementsGetter<T> {
+		/** Last visited node **/
 		private ListNode<T> lastVisitedNode;
+		/** saved modification count **/
 		private long savedModificationCount;
+		/** list with elements **/
 		LinkedListIndexedCollection<T> list;
 		
+		/**
+		 * Constructor that initializes list, lastVisitedNode and savedModificationCount
+		 * @param list initial list
+		 */
 		public ElementsGetterList(LinkedListIndexedCollection<T> list) {
 			this.list = list;
 			savedModificationCount = list.modificationCount;

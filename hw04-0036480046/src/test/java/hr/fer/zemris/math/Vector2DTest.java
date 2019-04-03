@@ -19,7 +19,7 @@ class Vector2DTest {
 		Vector2D vector2 = new Vector2D(2500, 4.5);
 		Vector2D vector3 = new Vector2D(0.99, 4.5);
 		
-		assertEquals(2.5, vector1.getX());
+		assertEquals(2.5, vector1.getX()); 
 		assertEquals(2500, vector2.getX());
 		assertEquals(0.99, vector3.getX());
 	}
@@ -50,6 +50,7 @@ class Vector2DTest {
 		Vector2D vector2 = new Vector2D(4.3, 7.1);
 		Vector2D vector3 = vector1.translated(vector2);
 		
+		assertEquals(new Vector2D(2.5, 4.5), vector1);
 		assertEquals(new Vector2D(6.8, 11.6), vector3);
 	}
 	
@@ -65,7 +66,8 @@ class Vector2DTest {
 	void testRotated() {
 		Vector2D vector1 = new Vector2D(2.5, 4.5);
 		Vector2D vector2 = vector1.rotated(Math.PI/2);
-//		 
+
+		assertEquals(new Vector2D(2.5, 4.5), vector1);
 		assertEquals(new Vector2D(-4.5, 2.5), vector2);
 	}
 	
@@ -82,6 +84,7 @@ class Vector2DTest {
 		Vector2D vector1 = new Vector2D(1.05, 4);
 		Vector2D vector2 = vector1.scaled(0.5);
 		
+		assertEquals(new Vector2D(1.05, 4), vector1);
 		assertEquals(new Vector2D(1.05*0.5, 4*0.5), vector2);
 	}
 	
@@ -90,6 +93,7 @@ class Vector2DTest {
 		Vector2D vector1 = new Vector2D(1.05, 4);
 		Vector2D vector2 = vector1.copy();
 		
+		assertEquals(new Vector2D(1.05, 4), vector1);
 		assertEquals(new Vector2D(1.05, 4), vector2);
 	}
 }

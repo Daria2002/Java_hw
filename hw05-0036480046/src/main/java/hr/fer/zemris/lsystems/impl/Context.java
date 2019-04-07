@@ -8,7 +8,7 @@ package hr.fer.zemris.lsystems.impl;
 public class Context {
 
 	/** stack for remembering TurtleState **/
-	private ObjectStack<TurtleState> stack;
+	private ObjectStack<TurtleState> stack = new ObjectStack<>();
 	
 	/**
 	 * Returns last element from stack and doesn't remove it. 

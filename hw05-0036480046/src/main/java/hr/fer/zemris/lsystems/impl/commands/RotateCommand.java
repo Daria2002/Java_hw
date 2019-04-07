@@ -24,6 +24,6 @@ public class RotateCommand implements Command {
 
 	@Override
 	public void execute(Context ctx, Painter painter) {
-		ctx.getCurrentState().getCurrentUnitVector().rotate(angle);
+		ctx.getCurrentState().getCurrentUnitVector().rotate(angle * Math.PI / 180.0);
 	}
 }

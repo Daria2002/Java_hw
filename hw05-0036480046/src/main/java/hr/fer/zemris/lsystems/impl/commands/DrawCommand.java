@@ -30,7 +30,7 @@ public class DrawCommand implements Command{
 
 	@Override
 	public void execute(Context ctx, Painter painter) {
-		float translationLength = 
+		float translationLength =
 				(float) (step * ctx.getCurrentState().getEffectiveStepLength());
 		
 		// remembers start position

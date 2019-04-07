@@ -36,6 +36,7 @@ public class DrawCommand implements Command{
 		// remembers start position
 		double x1 = ctx.getCurrentState().getCurrentVector().getX();
 		double y1 = ctx.getCurrentState().getCurrentVector().getY();
+		System.out.println("Drawing line - Start: " + ctx.getCurrentState().getCurrentVector().toString());
 		
 		// translates current vector
 		Vector2D helpVector = ctx.getCurrentState().getCurrentUnitVector()
@@ -45,9 +46,15 @@ public class DrawCommand implements Command{
 		// remembers new position
 		double x2 = ctx.getCurrentState().getCurrentVector().getX();
 		double y2 = ctx.getCurrentState().getCurrentVector().getY();
+		System.out.println("Drawing line - Stop: " + ctx.getCurrentState().getCurrentVector().toString());
 		
 		// draw line
 		painter.drawLine(x1, y1, x2, y2, ctx.getCurrentState().getColor(),
 				translationLength);
+	}
+	
+	@Override
+	public String toString() {
+		return "Draw: " + this.step;
 	}
 }

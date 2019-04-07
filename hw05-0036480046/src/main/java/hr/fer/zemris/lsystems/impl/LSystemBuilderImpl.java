@@ -50,14 +50,18 @@ public class LSystemBuilderImpl implements LSystemBuilder {
 		
 		@Override
 		public void draw(int depth, Painter painter) {
+			System.out.println("Hello from draw()");
+			System.out.println("Current origin is: " + LSystemBuilderImpl.this.origin.toString());
 			Context newContext = new Context();
 			TurtleState newState = new TurtleState(
-					LSystemBuilderImpl.this.origin.translated(new Vector2D(0.1, 0.1)),
+					LSystemBuilderImpl.this.origin.copy(),
 					new Vector2D(1, 0), Color.BLACK, getInitialEffectiveLength(depth));
 			newContext.pushState(newState);
 			String generatedAxiom = generate(depth);
 			
 			for(int i = 0; i < generatedAxiom.length(); i++) {
+				System.out.println("Getting command for: " + generatedAxiom.charAt(i));
+				
 				Command command = LSystemBuilderImpl.this.commandDictionary
 						.get(generatedAxiom.charAt(i));
 				
@@ -66,7 +70,9 @@ public class LSystemBuilderImpl implements LSystemBuilder {
 					continue;
 				}
 				
+				System.out.println(command.toString());
 				command.execute(newContext, painter);
+				System.out.println();
 			}
 		}
 

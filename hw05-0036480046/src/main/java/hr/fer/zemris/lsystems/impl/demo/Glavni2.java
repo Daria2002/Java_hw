@@ -10,7 +10,7 @@ import hr.fer.zemris.lsystems.impl.LSystemBuilderImpl;
  * @author Daria Matković
  *
  */
-public class Glavni1 {
+public class Glavni2 {
 
 	/**
 	 * Method that executes when program is run.
@@ -21,7 +21,7 @@ public class Glavni1 {
 	}
 	
 	/**
-	 * Method sets properties for drawing fractal
+	 * Method that set properties for drawing fractal
 	 * @param provider LSystemBuilderProvider object
 	 * @return LSystem object with commands for drawing fractal
 	 */

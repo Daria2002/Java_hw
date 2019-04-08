@@ -175,7 +175,7 @@ public class LSystemBuilderImpl implements LSystemBuilder {
 				break;	
 			
 			case AXIOM:
-				if(array.length != 2 || array[1].length() != 1) {
+				if(array.length != 2) {
 					throw new IllegalArgumentException("Illegal action arguments");
 				}
 				setAxiom(array[1]);
@@ -276,9 +276,6 @@ public class LSystemBuilderImpl implements LSystemBuilder {
 
 	@Override
 	public LSystemBuilder setAxiom(String arg0) {
-		if(arg0.length() > 1) {
-			throw new IllegalArgumentException("Axiom should be only one letter");
-		}
 		this.axiom = arg0;
 		return this;
 	}

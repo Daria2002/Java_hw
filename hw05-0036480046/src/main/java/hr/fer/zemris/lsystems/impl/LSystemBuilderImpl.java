@@ -1,7 +1,6 @@
 package hr.fer.zemris.lsystems.impl;
 
 import java.awt.Color;
-
 import hr.fer.zemris.lsystems.LSystem;
 import hr.fer.zemris.lsystems.LSystemBuilder;
 import hr.fer.zemris.lsystems.Painter;
@@ -52,11 +51,14 @@ public class LSystemBuilderImpl implements LSystemBuilder {
 		public void draw(int depth, Painter painter) {
 			System.out.println("Hello from draw()");
 			System.out.println("Current origin is: " + LSystemBuilderImpl.this.origin.toString());
+			
 			Context newContext = new Context();
 			TurtleState newState = new TurtleState(
-					LSystemBuilderImpl.this.origin.copy(),
-					new Vector2D(1, 0), Color.BLACK, getInitialEffectiveLength(depth));
+					LSystemBuilderImpl.this.origin.copy(), new Vector2D(1, 0),
+					Color.BLACK, getInitialEffectiveLength(depth));
+			
 			newContext.pushState(newState);
+			
 			String generatedAxiom = generate(depth);
 			
 			for(int i = 0; i < generatedAxiom.length(); i++) {
@@ -78,15 +80,20 @@ public class LSystemBuilderImpl implements LSystemBuilder {
 
 		@Override
 		public String generate(int depth) {
-			Character axiomChar = LSystemBuilderImpl.this.axiom.charAt(0);
-			String axiomString = String.valueOf(axiomChar);
-			String axiomHelp = String.valueOf(axiomChar);
-			String production = LSystemBuilderImpl.this.productionDictionary.get(axiomChar);
+			String axiomString = String.valueOf(LSystemBuilderImpl.this.axiom);
+			String axiomHelp = String.valueOf(LSystemBuilderImpl.this.axiom);
 			
 			for(int i = 0; i < depth; i++) {
-				axiomString = axiomString.replaceAll(axiomHelp, production);
+				for(int n = 0; n < axiomHelp.length(); n++) {
+					String value = LSystemBuilderImpl.this.productionDictionary
+							.get(axiomHelp.charAt(n));
+					
+					if(value != null) {
+						axiomString = axiomString.replaceAll(
+								String.valueOf(axiomHelp.charAt(n)), value);
+					}
+				}
 			}
-			
 			return axiomString;
 		}
 	}
@@ -108,12 +115,15 @@ public class LSystemBuilderImpl implements LSystemBuilder {
 			
 			switch (array[0]) {
 			case COMMAND:
-				if(array.length != 4 || array[1].length() != 1) {
+				if(array[1].length() != 1) {
 					throw new IllegalArgumentException("Illegal action arguments");
 				}
 				
 				StringBuilder builderCommand = new StringBuilder();
-				builderCommand.append(array[2]).append(" ").append(array[3]);
+				
+				for(int l = 2; l < array.length; l++) {
+					builderCommand.append(array[l]).append(" ");
+				}
 				
 				registerCommand(array[1].charAt(0), builderCommand.toString());
 				break;
@@ -123,7 +133,8 @@ public class LSystemBuilderImpl implements LSystemBuilder {
 					throw new IllegalArgumentException("Illegal action arguments");
 				}
 				try {
-					this.setOrigin(Double.parseDouble(array[1]), Double.parseDouble(array[2]));
+					this.setOrigin(Double.parseDouble(array[1]),
+							Double.parseDouble(array[2]));
 				} catch (Exception e) {
 					throw new IllegalArgumentException("Illegal origin action");
 				}
@@ -211,7 +222,7 @@ public class LSystemBuilderImpl implements LSystemBuilder {
 		
 		String[] array = commandString.trim().split("\\s+");
 		if(array.length > 2) {
-			throw new IllegalArgumentException("Illegal command " + commandString);
+			throw new IllegalArgumentException("Illegal command");
 		}
 		
 		double argument;

@@ -54,7 +54,8 @@ public class LSystemBuilderImpl implements LSystemBuilder {
 			
 			Context newContext = new Context();
 			TurtleState newState = new TurtleState(
-					LSystemBuilderImpl.this.origin.copy(), new Vector2D(1, 0),
+					LSystemBuilderImpl.this.origin.copy(),
+					new Vector2D(1, 0).rotated(LSystemBuilderImpl.this.angle * Math.PI/180),
 					Color.BLACK, getInitialEffectiveLength(depth));
 			
 			newContext.pushState(newState);
@@ -81,21 +82,54 @@ public class LSystemBuilderImpl implements LSystemBuilder {
 		@Override
 		public String generate(int depth) {
 			String axiomString = String.valueOf(LSystemBuilderImpl.this.axiom);
-			String axiomHelp = String.valueOf(LSystemBuilderImpl.this.axiom);
+			String axiomStringHelp = "";
+			
+			if(depth == 0) {
+				axiomStringHelp = axiomString;
+			}
 			
 			for(int i = 0; i < depth; i++) {
-				for(int n = 0; n < axiomHelp.length(); n++) {
+				if(i > 0) {
+					axiomString = String.valueOf(axiomStringHelp);
+					axiomStringHelp = "";
+				}
+				for(int k = 0; k < axiomString.length(); k++) {
 					String value = LSystemBuilderImpl.this.productionDictionary
-							.get(axiomHelp.charAt(n));
+							.get(axiomString.charAt(k));
 					
 					if(value != null) {
-						axiomString = axiomString.replaceAll(
-								String.valueOf(axiomHelp.charAt(n)), value);
+						axiomStringHelp += axiomString.substring(k, k+1)
+								.replaceAll(String.valueOf(axiomString.charAt(k)), value);
+					} else {
+						axiomStringHelp += axiomString.charAt(k);
 					}
 				}
 			}
-			return axiomString;
+			
+			System.out.println("depth="+depth+", axiom" + axiomStringHelp);
+			return axiomStringHelp;
 		}
+	}
+	
+	public static String removeDuplicate(String s) {
+	    char[] temp = s.toCharArray();
+	    int length = temp.length;
+	    for (int i = 0; i < length; i++) {
+	        for (int j = i + 1; j < length; j++) {
+	            if (temp[i] == temp[j]) {
+	                int test = j;
+	                for (int k = j + 1; k < length; k++) {
+	                	if(Character.isLetter(temp[k])) {
+		                    temp[test] = temp[k];
+		                    test++;
+	                	}
+	                }
+	                length--;
+	                j--;
+	            }
+	        }
+	    }
+	    return String.copyValueOf(temp).substring(0, length);
 	}
 	
 	@Override

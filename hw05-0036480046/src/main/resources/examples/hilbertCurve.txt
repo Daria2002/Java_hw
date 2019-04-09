@@ -11,4 +11,3 @@ axiom L
 
 production L +RF-LFL-FR+
 production R -LF+RFR+FL-
-

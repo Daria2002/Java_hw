@@ -7,11 +7,34 @@ public class ComparisonOperator {
 		@Override
 		public boolean satisfied(String value1, String value2) {
 			checkSymbol(value1);
-			checkSymbol(value2);
+			int position = checkSymbol(value2);
+			
+			if(position == 0) {
+				checkEnding(value1, value2);
+				
+			} else if(position == 1) {
+				checkBeginningAndEnding(value1, value2);
+				
+			} else if(position == 2) {
+				checkBeginning(value1, value2);
+			}
+			
+			return value1.compareTo(value2) == 0;
+		}
+
+		private void checkBeginningAndEnding(String value1, String value2) {
+			int index = value1.indexOf('*');
+			
+		}
+
+		private void checkBeginning(String value1, String value2) {
 			
 			
+		}
+
+		private void checkEnding(String value1, String value2) {
+			// TODO Auto-generated method stub
 			
-			return false;
 		}
 
 		/**
@@ -19,17 +42,17 @@ public class ComparisonOperator {
 		 * more than once, it throws exception
 		 * 
 		 * @param value string to check
-		 * @return 0 if * is first char in string, 1 if * is somewhere in the middle
-		 * and 2 if * is last char in string
+		 * @return 0 if * is first char in string, 1 if * is somewhere in the middle,
+		 * 2 if * is last char in string and 3 if * didin't occurred
 		 */
 		private int checkSymbol(String value) {
-			int symbolPosition = 5;
+			int symbolPosition = 3;
 			
 			for(int i = 0; i < value.length(); i++) {
 				
 				if(value.charAt(i) == '*') {
 					
-					if(symbolPosition != 5) {
+					if(symbolPosition != 3) {
 						throw new IllegalArgumentException("More occurrances of * in string.");
 					}
 					

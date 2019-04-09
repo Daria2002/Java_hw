@@ -1,40 +1,80 @@
 package hr.fer.zemris.java.hw05.db;
 
-public class ComparisonOperator {
+public class ComparisonOperators {
 	
 	private static class LikeComparison implements IComparisonOperator {
 
 		@Override
 		public boolean satisfied(String value1, String value2) {
 			checkSymbol(value1);
+			// second string contains *
 			int position = checkSymbol(value2);
 			
 			if(position == 0) {
-				checkEnding(value1, value2);
+				return checkEnding(value1, value2);
 				
 			} else if(position == 1) {
-				checkBeginningAndEnding(value1, value2);
+				return checkBeginning(value1, value2);
 				
 			} else if(position == 2) {
-				checkBeginning(value1, value2);
+				return checkBeginningAndEnding(value1, value2);
 			}
 			
 			return value1.compareTo(value2) == 0;
 		}
 
-		private void checkBeginningAndEnding(String value1, String value2) {
-			int index = value1.indexOf('*');
+		/**
+		 * If * is in the middle checking beginning and ending
+		 * @param value1 string to be checked
+		 * @param value2 pattern to be checked
+		 * @return result of value like value2 operation
+		 */
+		private boolean checkBeginningAndEnding(String value1, String value2) {
+			String[] array = value2.split("\\*");
 			
+			boolean beginning = checkBeginning(value1, array[0] + '*');
+			boolean end = checkEnding(value1, '*' + array[1]);
+			
+			return beginning && end && value1.length() >= value2.length()-1;
 		}
 
-		private void checkBeginning(String value1, String value2) {
+		/**
+		 * If * is last element of value2 pattern check that strings have same
+		 * beginning
+		 * @param value1 string to be checked
+		 * @param value2 pattern to be checked
+		 * @return result of value like value2 operation
+		 */
+		private boolean checkBeginning(String value1, String value2) {
+			// take part of string before *
+			String value = value2.substring(0, value2.length()-1);
 			
-			
+			for(int i = 0; i < value.length(); i++) {
+				if(value1.charAt(i) != value.charAt(i)) {
+					return false;
+				}
+			}
+			return true;
 		}
 
-		private void checkEnding(String value1, String value2) {
-			// TODO Auto-generated method stub
+		/**
+		 * If * is first char in value2, this method checks that value1 and value2
+		 * have same end
+		 * @param value1 string to be checked
+		 * @param value2 pattern to be checked
+		 * @return result of value like value2 operation
+		 */
+		private boolean checkEnding(String value1, String value2) {
+			// take part of string after *
+			String value = value2.substring(1, value2.length());
 			
+			// check if value1 ends with string
+			for(int i = value.length()-1; i >= 0; i--) {
+				if(value.charAt(i) != value1.charAt(value1.length()+i-value.length()+1-1)) {
+					return false;
+				}
+			}
+			return true;
 		}
 
 		/**
@@ -99,10 +139,5 @@ public class ComparisonOperator {
 	};
 	
 	public static final IComparisonOperator LIKE = new LikeComparison();
-	
-	public static void main(String[] args) {
-		IComparisonOperator x = ComparisonOperator.LESS;
-		System.out.println(x.satisfied("Ana", "Jasna"));
-	}
 	
 }

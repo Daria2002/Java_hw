@@ -47,4 +47,20 @@ public class StudentRecord {
 	public String toString() {
 		return this.jmbag;
 	}
+
+	public int getGrade() {
+		return grade;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public String getJmbag() {
+		return jmbag;
+	}
 }

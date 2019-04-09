@@ -111,27 +111,6 @@ public class LSystemBuilderImpl implements LSystemBuilder {
 		}
 	}
 	
-	public static String removeDuplicate(String s) {
-	    char[] temp = s.toCharArray();
-	    int length = temp.length;
-	    for (int i = 0; i < length; i++) {
-	        for (int j = i + 1; j < length; j++) {
-	            if (temp[i] == temp[j]) {
-	                int test = j;
-	                for (int k = j + 1; k < length; k++) {
-	                	if(Character.isLetter(temp[k])) {
-		                    temp[test] = temp[k];
-		                    test++;
-	                	}
-	                }
-	                length--;
-	                j--;
-	            }
-	        }
-	    }
-	    return String.copyValueOf(temp).substring(0, length);
-	}
-	
 	@Override
 	public LSystem build() {
 		return new NestedLSystem();
@@ -293,7 +272,7 @@ public class LSystemBuilderImpl implements LSystemBuilder {
 			if(array.length != 2) {
 				throw new IllegalArgumentException("Illegal command color");
 			}
-			return new ColorCommand(Color.getColor(array[1]));
+			return new ColorCommand(Color.decode("#" + array[1]));
 		
 		default:
 			throw new IllegalArgumentException("Illegal command " + array[0]);

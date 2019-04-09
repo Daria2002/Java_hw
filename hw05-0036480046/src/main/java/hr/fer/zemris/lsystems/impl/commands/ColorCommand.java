@@ -27,5 +27,4 @@ public class ColorCommand implements Command{
 	public void execute(Context ctx, Painter painter) {
 		ctx.getCurrentState().setColor(color);
 	}
-	
 }

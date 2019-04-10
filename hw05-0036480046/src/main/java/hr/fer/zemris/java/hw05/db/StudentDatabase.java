@@ -11,6 +11,11 @@ public class StudentDatabase {
 	private Map<String, StudentRecord> studentMap = new HashMap<String, StudentRecord>();
 	
 	public StudentDatabase(List<String> studentList) {
+		
+		if(studentList == null) {
+			throw new IllegalArgumentException("Student database is null.");
+		}
+		
 		for(int i = 0; i < studentList.size(); i++) {
 			String[] array = studentList.get(i).trim().split("\\s+");
 			
@@ -53,12 +58,39 @@ public class StudentDatabase {
 
 	private String getFirstName(String string) {
 		String[] array = string.trim().split(" ");
-		return array[0];
+		
+		String value = "";
+		for(int i = 0; i < array.length - 1; i++) {
+			if(array[i].isEmpty()) {
+				continue;
+			} 
+			
+			value += array[i];
+			
+			if(i != array.length - 2) {
+				value += " ";
+			}
+		}
+		return value.trim();
 	}
 
 	private String getLastName(String string) {
 		String[] array = string.trim().split(" ");
-		return array[array.length-1];
+		
+		String value = "";
+		for(int i = 1; i < array.length; i++) {
+			if(array[i].isEmpty()) {
+				continue;
+			} 
+			
+			value += array[i];
+			
+			if(i != array.length - 1) {
+				value += " ";
+			}
+		}
+		
+		return value;
 	}
 	
 	public StudentRecord forJMBAG(String jmbag) {

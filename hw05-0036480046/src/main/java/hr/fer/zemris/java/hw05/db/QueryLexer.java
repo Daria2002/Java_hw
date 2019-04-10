@@ -27,17 +27,27 @@ public class QueryLexer {
 	 * @param query given query
 	 */
 	public QueryLexer(String query) {
-		this.query = query.trim().replaceAll("(\\s)+", " ");
+		this.query = query.trim().replaceAll("\\s+", " ");
 		this.token = new TokenQuery(TokenQueryType.ATRIBUTE_NAME, "");
 		
 		this.lastQueryIndex = -1;
 		this.nextTokenType = 1;
 		
 		this.numberOfQueries = countQueries(this.query, AND);
+		
+		if(numberOfQueries == 0) {
+			throw new IllegalArgumentException("No queries found");
+		}
+		
 		this.queriesArray = new String[numberOfQueries];
 		
 		if(numberOfQueries > 1) {
 			queriesArray = addQueries(this.query);
+			
+			if(numberOfQueries > queriesArray.length) {
+				throw new IllegalArgumentException("Invalid query");
+			}
+			
 		} else {
 			queriesArray[0] = query;
 		}
@@ -93,18 +103,39 @@ public class QueryLexer {
 	private TokenQuery getStringLiteralToken() {
 		String currentQuery = queriesArray[lastQueryIndex + 1].trim(); 
 		
-		int startIndex = currentQuery.indexOf("\"");
-		int endIndex = currentQuery.lastIndexOf("\"");
+		int startIndex = -1;
+		int endIndex = -1;
+		
+		for (int i = 0; i< currentQuery.length(); i++) {
+			if (currentQuery.charAt(i) == '"') {
+				
+				if (startIndex < 0) {
+					startIndex = i;
+					continue;
+				}
+				
+				if (endIndex < 0) {
+					endIndex = i;
+					break;
+				}
+			}
+		}
+		
+		if(startIndex >= endIndex) {
+			throw new IllegalArgumentException("Invalid string literal.");
+		}
+		
 		String value = currentQuery.substring(startIndex + 1, endIndex);
+		
+		checkSymbol(value);
 		
 		return new TokenQuery(TokenQueryType.STRING_LITERAL, value);
 	}
 	
 	private String checkOperator(String operator, String query) {
-		if(query.contains(operator)) {
+		if(query.matches(".*[a-zA-Z]+(\\s+)?" + operator + "(\\s+)?\".*")) {
 			return operator;
 		}
-		
 		return null;
 	}
 	
@@ -119,15 +150,16 @@ public class QueryLexer {
 	}
 	
 	private TokenQuery getOperatorToken() {
-		String[] operators = setArray(new String[]{"<=", "<", ">", ">=", "=", "!=", "LIKE"});
+		String[] operators = setArray(new String[]{
+				"<=", ">=", "<", ">", "!=", "=", "LIKE"});
 				
 		for (int i = 0; i < operators.length; i++) {
 			if(checkOperator(operators[i], queriesArray[lastQueryIndex + 1]) != null) {
+				
 				return new TokenQuery(TokenQueryType.OPERATOR, operators[i]);
 			}
 		}
-		
-		return null;
+		throw new IllegalArgumentException("Invalid operator");
 	}
 
 	private TokenQuery getAttributeToken() {
@@ -141,13 +173,41 @@ public class QueryLexer {
 					(wholeQuery.charAt(i) == '>' && wholeQuery.charAt(i) == '=') ||
 					(wholeQuery.charAt(i) == '!' && wholeQuery.charAt(i+1) == '=')) {
 				
+				if(checkSymbol(value)) {
+					throw new IllegalArgumentException("Atribute contains *.");
+				}
+				
 				return new TokenQuery(TokenQueryType.ATRIBUTE_NAME, value);
 			}
 			value += wholeQuery.charAt(i);
 		}
-		return null;
+		throw new IllegalArgumentException("Invalid atribute.");
 	}
 
+	private boolean checkSymbol(String value) {
+		boolean symbolPosition = false;
+		
+		for(int i = 0; i < value.length(); i++) {
+			
+			if(value.charAt(i) == '*') {
+				
+				if(symbolPosition) {
+					throw new IllegalArgumentException("More occurrances of * in string.");
+				}
+				symbolPosition = true;
+			}
+		}
+		return symbolPosition;
+	}
+	
+	private String checkAnd(String operator, String query) {
+		if(query.contains(operator)) {
+			return operator;
+		}
+		
+		return null;
+	}
+	
 	/**
 	 * Separate queries in the array
 	 * @param query string of queries
@@ -158,12 +218,10 @@ public class QueryLexer {
 				{"and", "AND", "anD", "aND", "And", "ANd", "AnD", "aNd"});
 			
 		for(int i = 0; i < operators.length; i++) {
-			if(checkOperator(operators[i], query) != null) {
-				return query.split(operators[i]);
-			}
+			query = query.replaceAll(operators[i], AND);
 		}
 		
-		return null;
+		return query.split(AND);
 	}
 
 	/**
@@ -172,19 +230,20 @@ public class QueryLexer {
 	 * @return true if there are more queries, otherwise false
 	 */
 	private int countQueries(String query, String and) {
-		if (query.isEmpty() || and.isEmpty()) {
-			return 0;
-		}
-		
+		String helpQuery = query.toLowerCase();
+		int lastIndex = 0;
 		int count = 0;
-		int help = 0;
-		
-		while ((help = query.toLowerCase().indexOf(and, help)) != -1) {
-			count++;
-			help += and.length();
+
+		while(lastIndex != -1){
+
+		    lastIndex = helpQuery.indexOf(and,lastIndex);
+
+		    if(lastIndex != -1){
+		        count ++;
+		        lastIndex += and.length();
+		    }
 		}
-		// if there is no logical operator and, only one query
-		return count + 1;
+		return count+1;
 	}
 
 	/**

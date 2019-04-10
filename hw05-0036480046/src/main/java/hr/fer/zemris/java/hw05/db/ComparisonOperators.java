@@ -6,7 +6,9 @@ public class ComparisonOperators {
 
 		@Override
 		public boolean satisfied(String value1, String value2) {
-			checkSymbol(value1);
+			if(checkSymbol(value1) != 3) {
+				throw new IllegalArgumentException("First string contains *.");
+			}
 			// second string contains *
 			int position = checkSymbol(value2);
 			

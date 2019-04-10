@@ -22,6 +22,9 @@ public class QueryParser {
 	 * @param queryString everything user entered after query keyword. -
 	 */
 	public QueryParser(String queryString) {
+		if(queryString == null) {
+			throw new IllegalArgumentException("Query string is null");
+		}
 		this.queryString = queryString;
 		this.lexer = new QueryLexer(queryString);
 	}
@@ -35,6 +38,10 @@ public class QueryParser {
 		lexer.nextToken();
 		if(lexer.getToken().getType() != TokenQueryType.ATRIBUTE_NAME ||
 				!"jmbag".equals(lexer.getToken().getValue())) {
+			
+			if(lexer.getToken().getValue().toString().contains("\"")) {
+				throw new IllegalArgumentException("Atribute contains \"");
+			}
 			return false;
 		}
 
@@ -62,7 +69,6 @@ public class QueryParser {
 	 * otherwise throws IllegalStateException
 	 */
 	public String getQueriedJMBAG() {
-		this.lexer = new QueryLexer(queryString);
 		if(!isDirectQuery()) {
 			throw new IllegalStateException("Given query is not direct query");
 		}
@@ -83,11 +89,14 @@ public class QueryParser {
 		String attribute;
 		String operator;
 		String stringLiteral;
-		
 		while(lexer.nextToken() != null) {
 			attribute = lexer.getToken().getValue().toString();
 			operator = lexer.nextToken().getValue().toString();
 			stringLiteral = lexer.nextToken().getValue().toString();
+
+			if(attribute.contains("\"")) {
+				throw new IllegalArgumentException("Atribute contains \"");
+			}
 			
 			if(attribute == null || operator == null || stringLiteral == null) {
 				throw new IllegalArgumentException("Illegal query expression.");

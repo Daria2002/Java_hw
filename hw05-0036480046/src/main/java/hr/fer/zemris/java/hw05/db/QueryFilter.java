@@ -12,8 +12,18 @@ public class QueryFilter implements IFilter {
 	
 	@Override
 	public boolean accepts(StudentRecord record) {
-		// TODO Auto-generated method stub
-		return false;
+		ConditionalExpression expression;
+		
+		for(int i = 0; i < list.size(); i++) {
+			expression = list.get(i);
+			if(!expression.getComparisonOperator()
+			.satisfied(expression.getFieldGetter().get(record), 
+					expression.getStringLiteral())) {
+				return false;
+			}
+		}
+		
+		return true;
 	}
 
 }

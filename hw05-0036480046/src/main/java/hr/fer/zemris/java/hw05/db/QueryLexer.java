@@ -54,9 +54,8 @@ public class QueryLexer {
 	public TokenQuery nextToken() {
 		
 		// if all queries analyzed
-		if(lastQueryIndex >= this.queriesArray.length) {
+		if(lastQueryIndex >= this.queriesArray.length-1) {
 			return null;
-			
 		}
 		
 		switch (nextTokenType) {
@@ -93,28 +92,29 @@ public class QueryLexer {
 		return new TokenQuery(TokenQueryType.STRING_LITERAL, value);
 	}
 	
-	private String checkOperator(String operator) {
-		String query = queriesArray[lastQueryIndex + 1];
-		
+	private String checkOperator(String operator, String query) {
 		if(query.contains(operator)) {
 			return operator;
 		}
+		
 		return null;
 	}
 	
-	private TokenQuery getOperatorToken() {
+	private String[] setArray(String[] operators) {
+		String[] array = new String[operators.length];
 		
-		String[] operators = new String[7];
-		operators[0] = "<=";
-		operators[1] = "<";
-		operators[2] = ">";
-		operators[3] = ">=";
-		operators[4] = "=";
-		operators[5] = "!=";
-		operators[6] = "LIKE";
+		for(int i = 0; i < operators.length; i++) {
+			array[i] = operators[i];
+		}
+		
+		return array;
+	}
+	
+	private TokenQuery getOperatorToken() {
+		String[] operators = setArray(new String[]{"<=", "<", ">", ">=", "=", "!=", "LIKE"});
 				
 		for (int i = 0; i < operators.length; i++) {
-			if(checkOperator(operators[i]) != null) {
+			if(checkOperator(operators[i], queriesArray[lastQueryIndex + 1]) != null) {
 				return new TokenQuery(TokenQueryType.OPERATOR, operators[i]);
 			}
 		}
@@ -142,8 +142,22 @@ public class QueryLexer {
 		return null;
 	}
 
+	/**
+	 * Separate queries in the array
+	 * @param query string of queries
+	 * @return array of queries
+	 */
 	private String[] addQueries(String query) {
-		return query.toLowerCase().trim().split("and|AND|And|aNd|anD|ANd|AnD|aND");
+		String[] operators = setArray(new String[]
+				{"and", "AND", "anD", "aND", "And", "ANd", "AnD", "aNd"});
+			
+		for(int i = 0; i < operators.length; i++) {
+			if(checkOperator(operators[i], query) != null) {
+				return query.split(operators[i]);
+			}
+		}
+		
+		return null;
 	}
 
 	/**

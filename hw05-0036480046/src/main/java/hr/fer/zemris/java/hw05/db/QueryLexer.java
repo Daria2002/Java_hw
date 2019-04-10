@@ -41,10 +41,6 @@ public class QueryLexer {
 		} else {
 			queriesArray[0] = query;
 		}
-		
-		for(int i = 0; i < queriesArray.length; i++) {
-			System.out.println(queriesArray[i]);
-		}
 	}
 	
 	/**
@@ -61,16 +57,28 @@ public class QueryLexer {
 		switch (nextTokenType) {
 		case 1:
 			token = getAttributeToken();
+			if(token == null) {
+				throw new IllegalArgumentException("Illegal expression");
+			}
+			
 			nextTokenType++;
 			break;
 			
 		case 2:
 			token = getOperatorToken();
+			if(token == null) {
+				throw new IllegalArgumentException("Illegal expression");
+			}
 			nextTokenType++;
 			break;
 
 		case 3:
 			token = getStringLiteralToken();
+			
+			if(token == null) {
+				throw new IllegalArgumentException("Illegal expression");
+			}
+			
 			nextTokenType = 1;
 			this.lastQueryIndex++;
 			break;
@@ -131,9 +139,7 @@ public class QueryLexer {
 					(wholeQuery.charAt(i)  == '<' && wholeQuery.charAt(i+1) == '=') ||
 					wholeQuery.charAt(i) == '>' || wholeQuery.charAt(i) == ' ' ||
 					(wholeQuery.charAt(i) == '>' && wholeQuery.charAt(i) == '=') ||
-					(wholeQuery.charAt(i) == '!' && wholeQuery.charAt(i+1) == '=') ||
-					(wholeQuery.charAt(i) == 'L' && wholeQuery.charAt(i+1) == 'I' ||
-					wholeQuery.charAt(i+2) == 'K' && wholeQuery.charAt(i+3) == 'E')) {
+					(wholeQuery.charAt(i) == '!' && wholeQuery.charAt(i+1) == '=')) {
 				
 				return new TokenQuery(TokenQueryType.ATRIBUTE_NAME, value);
 			}

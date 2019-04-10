@@ -1,6 +1,8 @@
 package hr.fer.zemris.java.hw05.db;
 
-import java.awt.List;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * This class represents a parser of query statement. It gets query string through
@@ -12,6 +14,8 @@ public class QueryParser {
 
 	/** everything user entered after query keyword **/
 	private String queryString;
+	/** lexer **/
+	private QueryLexer lexer; 
 	
 	/**
 	 * Constructor that initialize queryString.
@@ -19,6 +23,7 @@ public class QueryParser {
 	 */
 	public QueryParser(String queryString) {
 		this.queryString = queryString;
+		this.lexer = new QueryLexer(queryString);
 	}
 	
 	/**
@@ -26,6 +31,28 @@ public class QueryParser {
 	 * @return true if query has form jmbag="xxx", otherwise false
 	 */
 	public boolean isDirectQuery() {
+		this.lexer = new QueryLexer(queryString);
+		lexer.nextToken();
+		if(lexer.getToken().getType() != TokenQueryType.ATRIBUTE_NAME ||
+				!"jmbag".equals(lexer.getToken().getValue())) {
+			return false;
+		}
+
+		lexer.nextToken();
+		if(lexer.getToken().getType() != TokenQueryType.OPERATOR ||
+				!"=".equals(lexer.getToken().getValue())) {
+			return false;
+		}
+		
+		lexer.nextToken();
+		if(lexer.getToken().getType() != TokenQueryType.STRING_LITERAL) {
+			return false;
+		}
+		
+		if(lexer.nextToken() != null) {
+			return false;
+		}
+		
 		return true;
 	}
 	
@@ -34,17 +61,96 @@ public class QueryParser {
 	 * @return string that represents queried jmbag value if query is direct one, 
 	 * otherwise throws IllegalStateException
 	 */
-	public String getQueriedJBMAG() {
-		return "";
+	public String getQueriedJMBAG() {
+		this.lexer = new QueryLexer(queryString);
+		if(!isDirectQuery()) {
+			throw new IllegalStateException("Given query is not direct query");
+		}
+		
+		String currentQuery = queryString.trim(); 
+		return currentQuery.substring(currentQuery.indexOf("\"") + 1, 
+				currentQuery.lastIndexOf("\""));
 	}
 	
 	/**
 	 * For all queries, this method must return a list of conditional expressions from query; 
 	 * @return list of conditional expressions from query
 	 */
-	/*public List<ConditionalExpression> getQuery() {
-		//todo!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	}*/
+	public List<ConditionalExpression> getQuery() {
+		this.lexer = new QueryLexer(queryString);
+		List<ConditionalExpression> list = new ArrayList<>();
+		
+		String attribute;
+		String operator;
+		String stringLiteral;
+		
+		while(lexer.nextToken() != null) {
+			attribute = lexer.getToken().getValue().toString();
+			operator = lexer.nextToken().getValue().toString();
+			stringLiteral = lexer.nextToken().getValue().toString();
+			
+			if(attribute == null || operator == null || stringLiteral == null) {
+				throw new IllegalArgumentException("Illegal query expression.");
+			}
+			
+			list.add(new ConditionalExpression(getFieldValueGetter(attribute),
+					stringLiteral, getComparisonOperator(operator)));
+		}
+		
+		return list;
+	}
+
+	/**
+	 * Returns field value for given attribute
+	 * @param attribute given attribute
+	 * @return field value
+	 */
+	private IFieldValueGetter getFieldValueGetter(String attribute) {
+		switch (attribute) {
+		case "lastName":
+			return FieldValueGetters.LAST_NAME;
+
+		case "firstName":
+			return FieldValueGetters.FIRST_NAME;
 	
+		case "jmbag":
+			return FieldValueGetters.JMBAG;
+			
+		default:
+			throw new IllegalArgumentException("Unknown attribute.");
+		}
+	}
 	
+	/**
+	 * Returns IComparisonOperator for given operator
+	 * @param operator given operator
+	 * @return IComparisonOperator for operator
+	 */
+	private IComparisonOperator getComparisonOperator(String operator) {
+		switch (operator) {
+		case "=":
+			return ComparisonOperators.EQUALS;
+
+		case "!=":
+			return ComparisonOperators.NOT_EQUALS;
+	
+		case ">":
+			return ComparisonOperators.GREATER;
+			
+		case ">=":
+			return ComparisonOperators.GREATER_OR_EQUALS;
+
+		case "<":
+			return ComparisonOperators.LESS;
+	
+		case "<=":
+			return ComparisonOperators.LESS_OR_EQUALS;
+		
+		case "LIKE":
+			return ComparisonOperators.LIKE;
+			
+		default:
+			throw new IllegalArgumentException("Unknown operator.");
+		}
+	}
 }

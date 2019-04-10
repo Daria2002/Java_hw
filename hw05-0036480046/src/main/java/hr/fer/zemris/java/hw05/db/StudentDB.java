@@ -85,10 +85,10 @@ public class StudentDB {
 			if(record.get(i).getLastName().length() > col2) {
 				col2 = record.get(i).getLastName().length();
 			}
-			if(record.get(i).getJmbag().length() > col3) {
+			if(record.get(i).getFirstName().length() > col3) {
 				col3 = record.get(i).getFirstName().length();
 			} 
-			if(record.get(i).getLastName().length() > col4) {
+			if(String.valueOf(record.get(i).getGrade()).length() > col4) {
 				col4 = String.valueOf(record.get(i).getGrade()).length();
 			}
 		}
@@ -98,8 +98,8 @@ public class StudentDB {
 
 		for(int i = 0; i < record.size(); i++) {
 			printData(col1, col2, col3, col4, record.get(i));
+			System.out.println();
 		}
-		System.out.println();
 		
 		printFrame(col1, col2, col3, col4);
 		System.out.println();
@@ -108,13 +108,13 @@ public class StudentDB {
 	private static void printData(int col1, int col2, int col3, int col4,
 			StudentRecord studentRecord) {
 		System.out.print("| ");
-		System.out.print(studentRecord.getJmbag());
+		System.out.print(String.format("%-" + col1 + "s", studentRecord.getJmbag()));
 		System.out.print(" | ");
-		System.out.print(studentRecord.getLastName());
+		System.out.print(String.format("%-" + col2 + "s", studentRecord.getLastName()));
 		System.out.print(" | ");
-		System.out.print(studentRecord.getFirstName());
+		System.out.print(String.format("%-" + col3 + "s", studentRecord.getFirstName()));
 		System.out.print(" | ");
-		System.out.print(studentRecord.getGrade());
+		System.out.print(String.format("%-" + col4 + "d", studentRecord.getGrade()));
 		System.out.print(" |");
 	}
 

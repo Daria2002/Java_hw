@@ -26,7 +26,7 @@ public class QueryParser {
 	 * @return true if query has form jmbag="xxx", otherwise false
 	 */
 	public boolean isDirectQuery() {
-		
+		return true;
 	}
 	
 	/**
@@ -35,16 +35,16 @@ public class QueryParser {
 	 * otherwise throws IllegalStateException
 	 */
 	public String getQueriedJBMAG() {
-		
+		return "";
 	}
 	
 	/**
 	 * For all queries, this method must return a list of conditional expressions from query; 
 	 * @return list of conditional expressions from query
 	 */
-	public List<ConditionalExpression> getQuery() {
-		
-	}
+	/*public List<ConditionalExpression> getQuery() {
+		//todo!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	}*/
 	
 	
 }

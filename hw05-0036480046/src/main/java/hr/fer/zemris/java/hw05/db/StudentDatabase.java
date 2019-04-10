@@ -5,11 +5,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This class implements student database. 
+ * @author Daria Matković
+ *
+ */
 public class StudentDatabase {
-	
+	/** List for getting List of records **/
 	private List<StudentRecord> studentRecordList = new ArrayList<>();
+	/** mapping student jmbag to student record **/
 	private Map<String, StudentRecord> studentMap = new HashMap<String, StudentRecord>();
 	
+	/**
+	 * Constructor that initialize database and checks conditions for grade range
+	 * and unique jmbag condition
+	 * @param studentList list with data to save in database
+	 */
 	public StudentDatabase(List<String> studentList) {
 		
 		if(studentList == null) {
@@ -56,6 +67,11 @@ public class StudentDatabase {
 		}
 	}
 
+	/**
+	 * Returns first name
+	 * @param string query
+	 * @return first name
+	 */
 	private String getFirstName(String string) {
 		String[] array = string.trim().split(" ");
 		
@@ -74,6 +90,11 @@ public class StudentDatabase {
 		return value.trim();
 	}
 
+	/**
+	 * Returns last name
+	 * @param string query
+	 * @return returns last name
+	 */
 	private String getLastName(String string) {
 		String[] array = string.trim().split(" ");
 		
@@ -93,10 +114,20 @@ public class StudentDatabase {
 		return value;
 	}
 	
+	/**
+	 * Returns student record for given jmbag
+	 * @param jmbag given jmbag
+	 * @return student record
+	 */
 	public StudentRecord forJMBAG(String jmbag) {
 		return studentMap.get(jmbag);
 	}
 	
+	/**
+	 * Returns list of filtered records
+	 * @param filter filter for records
+	 * @return List of filtered records
+	 */
 	public List<StudentRecord> filter(IFilter filter) {
 		
 		List<StudentRecord> tempList = new ArrayList<>();

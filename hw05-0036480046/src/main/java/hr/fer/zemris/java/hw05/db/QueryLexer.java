@@ -100,6 +100,10 @@ public class QueryLexer {
 		return token;
 	}
 	
+	/**
+	 * Gets token of type string literal
+	 * @return token of type string literal
+	 */
 	private TokenQuery getStringLiteralToken() {
 		String currentQuery = queriesArray[lastQueryIndex + 1].trim(); 
 		
@@ -132,6 +136,12 @@ public class QueryLexer {
 		return new TokenQuery(TokenQueryType.STRING_LITERAL, value);
 	}
 	
+	/**
+	 * Checks that operator occurred in given query
+	 * @param operator operator to check
+	 * @param query given query
+	 * @return operator if occurred, otherwise false  
+	 */
 	private String checkOperator(String operator, String query) {
 		if(query.matches(".*[a-zA-Z]+(\\s+)?" + operator + "(\\s+)?\".*")) {
 			return operator;
@@ -139,6 +149,11 @@ public class QueryLexer {
 		return null;
 	}
 	
+	/**
+	 * Sets array of operators
+	 * @param operators operators
+	 * @return Array of operators
+	 */
 	private String[] setArray(String[] operators) {
 		String[] array = new String[operators.length];
 		
@@ -149,6 +164,10 @@ public class QueryLexer {
 		return array;
 	}
 	
+	/**
+	 * Gets token of type operator
+	 * @return token of type operator
+	 */
 	private TokenQuery getOperatorToken() {
 		String[] operators = setArray(new String[]{
 				"<=", ">=", "<", ">", "!=", "=", "LIKE"});
@@ -162,6 +181,10 @@ public class QueryLexer {
 		throw new IllegalArgumentException("Invalid operator");
 	}
 
+	/**
+	 * Gets attribute token
+	 * @return token of type attribute
+	 */
 	private TokenQuery getAttributeToken() {
 		String value = "";
 		String wholeQuery = queriesArray[lastQueryIndex+1].trim(); 
@@ -184,6 +207,12 @@ public class QueryLexer {
 		throw new IllegalArgumentException("Invalid atribute.");
 	}
 
+	/**
+	 * Checks that given value doesn't contain multiple *
+	 * @param value given value to check
+	 * @return true if symbol occurred once, throws exception if * occurred more times
+	 * and false if * didn't occurred
+	 */
 	private boolean checkSymbol(String value) {
 		boolean symbolPosition = false;
 		
@@ -198,14 +227,6 @@ public class QueryLexer {
 			}
 		}
 		return symbolPosition;
-	}
-	
-	private String checkAnd(String operator, String query) {
-		if(query.contains(operator)) {
-			return operator;
-		}
-		
-		return null;
 	}
 	
 	/**

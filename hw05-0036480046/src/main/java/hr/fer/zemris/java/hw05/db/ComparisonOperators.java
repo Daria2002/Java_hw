@@ -1,7 +1,18 @@
 package hr.fer.zemris.java.hw05.db;
 
+/**
+ * This class implements operators and functions for operator operations.
+ * @author Daria Matković
+ *
+ */
 public class ComparisonOperators {
 	
+	/**
+	 * Class that implements IComparisonOperator interface and that is used
+	 * for doing LIKE operations
+	 * @author Daria Matković
+	 *
+	 */
 	private static class LikeComparison implements IComparisonOperator {
 
 		@Override

@@ -28,14 +28,26 @@ public class ConditionalExpression {
 		this.comparisonOperator = operator;
 	}
 
+	/**
+	 * This method gets field value
+	 * @return field value
+	 */
 	public IFieldValueGetter getFieldGetter() {
 		return fieldGetter;
 	}
 
+	/**
+	 * This method gets string literal
+	 * @return string literal
+	 */
 	public String getStringLiteral() {
 		return stringLiteral;
 	}
 
+	/**
+	 * Gets operator for comparing values
+	 * @return operator
+	 */
 	public IComparisonOperator getComparisonOperator() {
 		return comparisonOperator;
 	}

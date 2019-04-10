@@ -19,6 +19,7 @@ import hr.fer.zemris.lsystems.impl.Dictionary;
  */
 public class StudentDB {   
 
+	/** Student database **/
 	private static StudentDatabase studentDatabase;
 	
 	/**
@@ -72,6 +73,10 @@ public class StudentDB {
 		}
 	}
 	
+	/**
+	 * Prints table 
+	 * @param record data to print
+	 */
 	private static void printTable(List<StudentRecord> record) {
 		int col1 = 0;
 		int col2 = 0;
@@ -105,6 +110,14 @@ public class StudentDB {
 		System.out.println();
 	}
 
+	/**
+	 * Print data in table
+	 * @param col1 jmbag column width
+	 * @param col2 last name column width
+	 * @param col3 first name column width
+	 * @param col4 grade column width
+	 * @param studentRecord data to show in table
+	 */
 	private static void printData(int col1, int col2, int col3, int col4,
 			StudentRecord studentRecord) {
 		System.out.print("| ");
@@ -118,6 +131,10 @@ public class StudentDB {
 		System.out.print(" |");
 	}
 
+	/**
+	 * Prints =
+	 * @param length number of =
+	 */
 	private static void printEqual(int length) {
 		for(int i = 0; i < length; i++) {
 			System.out.print("=");
@@ -125,6 +142,13 @@ public class StudentDB {
 		System.out.print('+');
 	}
 	
+	/**
+	 * Prints frame on top and bottom
+	 * @param col1 jmbag column width
+	 * @param col2 last name column width
+	 * @param col3 first name column width
+	 * @param col4 grade column width
+	 */
 	private static void printFrame(int col1, int col2, int col3, int col4) {
 		System.out.print('+');
 		printEqual(col1+2);
@@ -133,6 +157,10 @@ public class StudentDB {
 		printEqual(col4+2);
 	}
 
+	/**
+	 * Loads database.txt, gets data, save data in student database and checks
+	 * conditions
+	 */
 	private static void checkFile() {
 		File file = new File("src/main/java/hr/fer/zemris/java/hw05/db/database.txt");
 		FileInputStream fstream;

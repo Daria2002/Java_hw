@@ -180,7 +180,7 @@ public class SmartScriptParserTest {
 			byte[] buffer = new byte[1024];
 			while(true) {
 				int read = is.read(buffer);
-				if(read<1) break;
+				if(read < 1) break;
 				bos.write(buffer, 0, read);
 			}
 			return new String(bos.toByteArray(), StandardCharsets.UTF_8);

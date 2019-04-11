@@ -13,5 +13,5 @@ public interface Processor {
 	 * Its implementation exists but does nothing.
 	 * @param value value is given object of type Object 
 	 */
-	public abstract void process(Object value);
+	void process(Object value);
 } 

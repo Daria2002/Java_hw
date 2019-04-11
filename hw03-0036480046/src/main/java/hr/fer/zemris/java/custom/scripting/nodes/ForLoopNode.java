@@ -93,13 +93,24 @@ public class ForLoopNode extends Node {
 	public boolean equals(Object obj) {
 		if(getClass() != obj.getClass())
 			return false;
+		
 		ForLoopNode node = (ForLoopNode)obj;
 		if(!(this.variable.equals(node.variable) &&
 				this.startExpression.equals(node.startExpression) &&
 				this.endExpression.equals(node.endExpression) &&
 				this.stepExpression.equals(node.stepExpression))) {
 			return false;
+		} 
+		
+		for(int i = 0; i < numberOfChildren(); i++) {
+			if(!(this.getChild(i).equals(node) &&
+					this.getChild(i).equals(node) &&
+					this.getChild(i).equals(node) &&
+					this.getChild(i).equals(node))) {
+				return false;
+			} 
 		}
+		
 		return true;
 	}
 }

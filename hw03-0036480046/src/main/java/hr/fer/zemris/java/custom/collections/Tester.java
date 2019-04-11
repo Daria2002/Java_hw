@@ -12,6 +12,5 @@ public interface Tester {
 	 * @param object object to check 
 	 * @return true if object is acceptable, otherwise false
 	 */
-	abstract boolean test(Object object);
-	
+	boolean test(Object object);
 }

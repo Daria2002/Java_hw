@@ -157,11 +157,11 @@ public class ArrayIndexedCollection implements List {
 	 * variable, initialize array elements to null and sets size variable to 0
 	 */
 	public void clear() {
-		for(int i = 0; i < this.size; i++) {
-			this.elements[i] = null; 
+		for(int i = 0; i < size; i++) {
+			elements[i] = null; 
 		}
 		modificationCount++;
-		this.size = 0;
+		size = 0;
 	}
 	
 	/**
@@ -181,25 +181,25 @@ public class ArrayIndexedCollection implements List {
 		}
 		
 		// doubling array's size if array is full
-		if(elements.length == this.size) {
+		if(elements.length == size) {
 			doubleCapacity();
 		}
 		
 		// element at size index should be empty, because array is filled at 
 		// indexes in range from 0 to size-1
-		if(position < this.size) {
+		if(position < size) {
 			// shifting elements from position to end
-			for(int i = this.size; i > position; i--) {
-				this.elements[i] = this.elements[i-1];
+			for(int i = size; i > position; i--) {
+				elements[i] = elements[i-1];
 			}
 		}
 		
-		if(position != this.size) {
+		if(position != size) {
 			modificationCount++;
 		}
 		
-		this.elements[position] = value;
-		this.size += 1;
+		elements[position] = value;
+		size += 1;
 	}
 	
 	/**
@@ -214,8 +214,8 @@ public class ArrayIndexedCollection implements List {
 			return -1;
 		}
 		
-		for(int i = 0; i < this.size; i++) {
-			if(this.elements[i].equals(value)) {
+		for(int i = 0; i < size; i++) {
+			if(elements[i].equals(value)) {
 				return i;
 			}
 		}
@@ -233,26 +233,25 @@ public class ArrayIndexedCollection implements List {
 			throw new IndexOutOfBoundsException();
 		}
 		if(index == size-1) {
-			this.elements[index] = null;
+			elements[index] = null;
 		} else {
-			for(int i = index; i < this.size; i++) {
-				this.elements[i] = this.elements[i+1];
+			for(int i = index; i < size; i++) {
+				elements[i] = elements[i+1];
 			}
 			modificationCount++;
 		}
-		this.size -= 1;
+		size -= 1;
 	}
 	
 	@Override
 	public boolean remove(Object value) {
-		int index = this.indexOf(value);
+		int index = indexOf(value);
+		
 		if(index < 0) {
 			return false;
 		}
-		if(index != size) {
-			modificationCount++;
-		}
-		this.remove(index);
+		
+		remove(index);
 		return true;
 	}
 	
@@ -269,8 +268,8 @@ public class ArrayIndexedCollection implements List {
 	@Override
 	public Object[] toArray() {
 		Object[] newArray = new Object[this.size];
-		for(int i = 0; i < this.size; i++) {
-			newArray[i] = this.elements[i];
+		for(int i = 0; i < size; i++) {
+			newArray[i] = elements[i];
 		}
 		return newArray;
 	}

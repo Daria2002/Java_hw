@@ -36,26 +36,24 @@ public class LexerSmart {
 	
 	private String addTagName() {
 		String tagName = "";
+		
 		// skip whitespace
-		while(data[currentIndex] == '\r' || data[currentIndex] == '\t' || 
-				data[currentIndex] == '\n' || data[currentIndex] == '\n' ||
-				data[currentIndex] == ' ') {
+		while(Character.isWhitespace(data[currentIndex]) || data[currentIndex] == ' ') {
 			currentIndex++;
 		}
+		
 		// build tag name while whitespace doesn't occur or while tag close 
 		// doesn't occur
-		while(data[currentIndex] != '\r' && data[currentIndex] != '\t' && 
-				data[currentIndex] != '\n' && data[currentIndex] != '\n' &&
-				data[currentIndex] != ' ' && data[currentIndex] != '$' && 
-				data[currentIndex+1] != '}') {
-			tagName += data[currentIndex];
-			currentIndex++;
+		while(!Character.isWhitespace(data[currentIndex]) &&
+				data[currentIndex] != '$' && data[currentIndex+1] != '}') {
+			tagName += data[currentIndex++];
 			
 			// if tag name is = break after = is added in tag name
 			if(data[currentIndex-1] == '=') {
 				break;
 			}
 		}
+		
 		return tagName;
 	}
 	
@@ -94,10 +92,9 @@ public class LexerSmart {
 				}
 				
 			// if end, return text
-			} else if(currentIndex+1 > data.length-1) {
-				stringValue += data[currentIndex];
+			} else if(currentIndex + 1 > data.length-1) {
+				stringValue += data[currentIndex++];
 				token = new TokenSmart(TokenSmartType.TEXT, stringValue);
-				currentIndex++;
 				
 				return token;
 			}
@@ -105,30 +102,27 @@ public class LexerSmart {
 			// if escape sequence starts
 			if(data[currentIndex] == '\\' && !escapeSequence) {
 				// if escape sequence is valid
-				if(currentIndex+1 < data.length &&
-						(data[currentIndex+1] == '\\' || data[currentIndex+1] == '{')) {
+				if(currentIndex + 1 < data.length && (data[currentIndex + 1] == '\\'
+						|| data[currentIndex + 1] == '{')) {
 					escapeSequence = true;
 					currentIndex++;
+					continue;
+					
 				} else {
 					throw new LexerSmartException("Invalid escaping.");
 				}
-				// escaping {
+				
 			} else if(data[currentIndex] == '{' && escapeSequence) {
+				// escaping {
 				escapeSequence = false;
 				lexerState = LexerSmartState.BASIC;
-				stringValue += data[currentIndex];
-				currentIndex++;
 				
 				// escaping /
 			} else if(data[currentIndex] == '\\' && escapeSequence) {
 				escapeSequence = false;
-				stringValue += data[currentIndex];
-				currentIndex++;
 				// add basic element
-			} else {
-				stringValue += data[currentIndex];
-				currentIndex++;
 			}
+			stringValue += data[currentIndex++];
 		} 
 		// tag occurred
 		if(currentIndex-1 >= 0 && data[currentIndex-1] == '{' &&
@@ -143,9 +137,8 @@ public class LexerSmart {
 		} 
 		// return tag name token
 		if(lexerState == LexerSmartState.TAG && !tagNameAdded) {
-			String tagName = addTagName();
 			tagNameAdded = true;
-			token = new TokenSmart(TokenSmartType.TAG_NAME, tagName);
+			token = new TokenSmart(TokenSmartType.TAG_NAME, addTagName());
 			
 			return token;
 		}
@@ -161,15 +154,17 @@ public class LexerSmart {
 			boolean inString = false;
 			
 			// build tagElements value
-			while(currentIndex+1 < data.length) {
+			while(currentIndex + 1 < data.length) {
 				char current = data[currentIndex];
 				
 				// if tag close occurred, checks that escapeSequence is off
-				if(!escapeSequence && data[currentIndex] == '$' && data[currentIndex+1] == '}' ) {
+				if(!escapeSequence && data[currentIndex] == '$' &&
+						data[currentIndex+1] == '}' ) {
 					break;
 					
 					// if illegal escape occurred
-				} else if(escapeSequence && !(data[currentIndex] == '\\' || data[currentIndex] == '"')) {
+				} else if(escapeSequence && !(data[currentIndex] == '\\' ||
+						data[currentIndex] == '"')) {
 					throw new LexerSmartException("Invalid escape.");
 					
 					//escapeSequence on
@@ -183,8 +178,8 @@ public class LexerSmart {
 							|| current == '_' || current == '*' || current == '+'
 							|| current == '/' || current == '^' || current == '-'
 							|| current == ' ' || current == '@' || current == '\"'
-							|| current == '.' || current == '\t' || current == '\r' 
-							|| current == '\n' || current == '\\') && !inString) {
+							|| current == '.' || Character.isWhitespace(current) 
+							|| current == '\\') && !inString) {
 						throw new LexerSmartException("Invalid expression");
 					}
 					
@@ -194,12 +189,9 @@ public class LexerSmart {
 						
 					// if string occurred and escapeSequense is on, don't change state of inString
 					// change escapeSequence to false, if " escaped
-					} else if(
-							(data[currentIndex] == '\"' ||
-							data[currentIndex] == '\\' ||
-							data[currentIndex] == '\n' ||
-							data[currentIndex] == '\r' ||
-							data[currentIndex] == '\t') && escapeSequence) {
+					} else if((Character.isWhitespace(data[currentIndex]) ||
+							data[currentIndex] == '\"' || data[currentIndex] == '\\') &&
+							escapeSequence) {
 						tagElements += '\\';
 						escapeSequence = false; 
 					}

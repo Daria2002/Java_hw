@@ -211,7 +211,7 @@ public class SmartScriptParser {
 					escapeSequence = false;
 					continue;
 				}
-
+				
 				if(valueArray[i] == '\\' && !escapeSequence) {
 					escapeSequence = true;
 					continue;
@@ -372,31 +372,22 @@ public class SmartScriptParser {
 			
 			// skip whitespace and "", set next element if this occurs
 			if(charArray[i] == '"' || Character.isWhitespace(charArray[i])) {
+				
 				// if something in build value and than whitespace occurs, that
 				// means that argument need to be saved
-				if(!buildValue.isEmpty() && Character.isWhitespace(charArray[i])) {
-					array[arrayCounter++] = buildValue.toString();
-					buildValue = "";
+				if(!buildValue.isEmpty() && Character.isWhitespace(charArray[i]) ||
+						charArray[i] == '"' && buildValue != "") {
+					array[arrayCounter++] = buildValue;
 					
 				} else if(charArray[i] == '"' && buildValue == "" && !inQuotation) {
 					// if " occurs and nothing is in buildValue that means that
 					// inQuotation mode is on
-					inQuotation = true;
 					continue;
-					
-				} else if(charArray[i] == '"' && buildValue != "" && inQuotation) {
-					// if " occurs and something is in buildValue that means that
-					// inQuotation mode is off and value stops
-					inQuotation = false;
-					array[arrayCounter++] = buildValue;
-					buildValue = "";
-					
-				} else if(charArray[i] == '"' && buildValue != "" && !inQuotation) {
-					array[arrayCounter] = buildValue;
-					buildValue = "";
-					inQuotation = true;
-					arrayCounter++;
 				}
+				
+				inQuotation = !inQuotation;
+				buildValue = "";
+				
 			} else {
 				// build variable name, number, etc.
 				buildValue += charArray[i];

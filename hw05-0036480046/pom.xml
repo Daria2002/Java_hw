@@ -40,9 +40,7 @@
     <dependency>
 	    <groupId>lsystems</groupId>
 	    <artifactId>lsystems</artifactId>
-	    <scope>system</scope>
 	    <version>1</version>
-	    <systemPath>${basedir}/lib/lsystems.jar</systemPath>
 	</dependency>
   </dependencies>
 

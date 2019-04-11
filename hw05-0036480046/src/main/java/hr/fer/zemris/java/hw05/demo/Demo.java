@@ -7,7 +7,16 @@ import hr.fer.zemris.lsystems.LSystemBuilderProvider;
 import hr.fer.zemris.lsystems.Painter;
 import hr.fer.zemris.lsystems.gui.LSystemViewer;
 
+/**
+ * Demo program that checks fractals functions
+ * @author Daria Matković
+ *
+ */
 public class Demo {
+	/**
+	 * Method that runs when program is run
+	 * @param args no arguments
+	 */
 	public static void main(String[] args) {
 
 		LSystemViewer.showLSystem((LSystem) new LSystem() {

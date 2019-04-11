@@ -3,8 +3,17 @@ package hr.fer.zemris.java.hw05.demo;
 import hr.fer.zemris.java.hw05.db.QueryLexer;
 import hr.fer.zemris.java.hw05.db.QueryParser;
 
+/**
+ * Demo program for parser and lexer
+ * @author Daria Maktović
+ *
+ */
 public class ParserAndLexerDemo {
 
+	/**
+	 * Method executes when program is run
+	 * @param args no arguments
+	 */
 	public static void main(String[] args) {/*
 		QueryLexer lexer = new QueryLexer("firstName = \"pero\" anD jmbag LIKE \"008784\"");
 		System.out.println(lexer.nextToken().getValue());

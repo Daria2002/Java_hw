@@ -12,18 +12,30 @@ import hr.fer.zemris.lsystems.impl.commands.RotateCommand;
 import hr.fer.zemris.lsystems.impl.commands.ScaleCommand;
 import hr.fer.zemris.lsystems.impl.commands.SkipCommand;
 
+/**
+ * This class is used for managing properties for drawing fractals, implements
+ * LSystemBuilder
+ * @author Daria Matković
+ *
+ */
 public class LSystemBuilderImpl implements LSystemBuilder {
 	/** registered commands **/
 	private Dictionary<Character, Command> commandDictionary = new Dictionary<>();
 	/** registered actions **/
 	private Dictionary<Character, String> productionDictionary = new Dictionary<>();
 	
+	/**
+	 * Default properties
+	 */
 	private double unitLength = 0.1;
 	private double unitLengthDegreeScaler = 1;
 	private Vector2D origin = new Vector2D(0, 0);
 	private double angle = 0;
 	private String axiom = "";
 		
+	/**
+	 * Commands
+	 */
 	private final static String DRAW = "draw";
 	private final static String SKIP = "skip";
 	private final static String SCALE = "scale";
@@ -32,6 +44,9 @@ public class LSystemBuilderImpl implements LSystemBuilder {
 	private final static String POP = "pop";
 	private final static String COLOR = "color";
 	
+	/**
+	 * Actions
+	 */
 	private final static String ORIGIN = "origin";
 	private final static String ANGLE = "angle";
 	private final static String UNIT_LENGTH = "unitLength";
@@ -40,8 +55,18 @@ public class LSystemBuilderImpl implements LSystemBuilder {
 	private final static String AXIOM = "axiom";
 	private final static String PRODUCTION = "production";
 	
+	/**
+	 * nested class that implements LSystem and draw fractals
+	 * @author Daria Matković
+	 *
+	 */
 	private class NestedLSystem implements LSystem {
 
+		/**
+		 * Gets length
+		 * @param d depth
+		 * @return length
+		 */
 		private double getInitialEffectiveLength(int d) {
 			return LSystemBuilderImpl.this.unitLength * 
 					Math.pow(LSystemBuilderImpl.this.unitLengthDegreeScaler, d);
@@ -220,6 +245,11 @@ public class LSystemBuilderImpl implements LSystemBuilder {
 		return this;
 	}
 
+	/**
+	 * Parse command argument
+	 * @param commandArgument command argument
+	 * @return parsed command argument
+	 */
 	private double parseArgument(String[] commandArgument) {
 		try {
 			return Double.parseDouble(commandArgument[1]);
@@ -228,6 +258,11 @@ public class LSystemBuilderImpl implements LSystemBuilder {
 		}
 	}
 	
+	/**
+	 * Gets command
+	 * @param commandString given string
+	 * @return Command of given type
+	 */
 	private Command getCommand(String commandString) {
 		if(commandString.isEmpty()) {
 			throw new IllegalArgumentException("Command can't be empty string");

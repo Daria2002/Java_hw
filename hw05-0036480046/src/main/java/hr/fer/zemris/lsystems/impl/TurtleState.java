@@ -79,10 +79,17 @@ public class TurtleState {
 		return positionVector;
 	}
 
+	/**
+	 * gets color
+	 * @return color
+	 */
 	public Color getColor() {
 		return color;
 	}
 
+	/** sets color
+	 * @param color color
+	 */
 	public void setColor(Color color) {
 		this.color = color;
 	}

@@ -22,98 +22,104 @@ public class StudentDatabase {
 	 * @param studentList list with data to save in database
 	 */
 	public StudentDatabase(List<String> studentList) {
-		
-		if(studentList == null) {
-			throw new IllegalArgumentException("Student database is null.");
-		}
-		
-		for(int i = 0; i < studentList.size(); i++) {
-			String[] array = studentList.get(i).trim().split("\\s+");
-			
-			// skip if row is empty
-			if(array.length == 0) {
-				continue;
-			}
-			
-			// checking conditions for jmbags and grades
-			int grade = Integer.parseInt(array[array.length-1]);
-			String jmbag = array[0];
-			
-			try {
-				if(grade < 1 || grade > 5 || studentMap.get(jmbag) != null) {
-					throw new IllegalArgumentException("Invallid data in file.");
-				}
-			} catch (Exception e) {
-				throw new IllegalArgumentException("Invallid data in file.");
-			}
-			
-			String lastName = "";
-			String firstName = "";
-			
-			if(array.length > 4) {
-				String[] helpArray = studentList.get(i).trim().split("\t");
-				
-				lastName = getLastName(helpArray[0]);
-				firstName = getFirstName(helpArray[1]);
-				
-			} else {
-				lastName = array[1];
-				firstName = array[2];
-			}
-			
-			StudentRecord record = new StudentRecord(jmbag, lastName, firstName, grade);
-			studentRecordList.add(record);
-			studentMap.put(jmbag, record);
-		}
-	}
+	       
+        if(studentList == null) {
+            throw new IllegalArgumentException("Student database is null.");
+        }
+       
+        for(int i = 0; i < studentList.size(); i++) {
+            String[] array = studentList.get(i).trim().split("\\s+");
+           
+            // skip if row is empty
+            if(array.length == 0) {
+                continue;
+            }
+           
+            // checking conditions for jmbags and grades
+            int grade = Integer.parseInt(array[array.length-1]);
+            String jmbag = array[0];
+           
+            try {
+                if(grade < 1 || grade > 5 || studentMap.get(jmbag) != null) {
+                    throw new IllegalArgumentException("Invallid data in file.");
+                }
+            } catch (Exception e) {
+                throw new IllegalArgumentException("Invallid data in file.");
+            }
+           
+            String[] helpArray = studentList.get(i).trim().split("\t");
+            String lastName = "";
+            String firstName = "";
+            if (helpArray.length == 1)
+            {
+                lastName = array[1];
+                firstName = array[2];
+            } else if(helpArray.length == 2) {
+               
+                lastName = getLastName(helpArray[0], 1);
+                firstName = getFirstName(helpArray[1], 1);
+            } else if (helpArray.length == 4) {
+                lastName = getLastName(helpArray[1], 0);
+                firstName = getFirstName(helpArray[2], 0);
+            } else {
+                throw new IllegalArgumentException("Invalid expression");
+            }
+           
+            StudentRecord record = new StudentRecord(jmbag, lastName, firstName, grade);
+            studentRecordList.add(record);
+            studentMap.put(jmbag, record);
+        }
+    }
 
 	/**
-	 * Returns first name
+	 * Gets first name
 	 * @param string query
+	 * @param offset start index
 	 * @return first name
 	 */
-	private String getFirstName(String string) {
-		String[] array = string.trim().split(" ");
-		
-		String value = "";
-		for(int i = 0; i < array.length - 1; i++) {
-			if(array[i].isEmpty()) {
-				continue;
-			} 
-			
-			value += array[i];
-			
-			if(i != array.length - 2) {
-				value += " ";
-			}
-		}
-		return value.trim();
-	}
-
+	private String getFirstName(String string, int offset) {
+        String[] array = string.trim().split(" ");
+       
+        String value = "";
+        for(int i = 0; i < array.length - offset; i++) {
+            if(array[i].isEmpty()) {
+                continue;
+            }
+           
+            value += array[i];
+           
+            if(i != array.length - 1 - offset) {
+                value += " ";
+            }
+        }
+        return value.isEmpty() ? array[0] : value.trim();
+    }
+ 
 	/**
-	 * Returns last name
+	 * Gets last name
 	 * @param string query
-	 * @return returns last name
+	 * @param startIndex start index
+	 * @return last name
 	 */
-	private String getLastName(String string) {
-		String[] array = string.trim().split(" ");
-		
-		String value = "";
-		for(int i = 1; i < array.length; i++) {
-			if(array[i].isEmpty()) {
-				continue;
-			} 
-			
-			value += array[i];
-			
-			if(i != array.length - 1) {
-				value += " ";
-			}
-		}
-		
-		return value;
-	}
-	
+    private String getLastName(String string, int startIndex) {
+        String[] array = string.trim().split(" ");
+       
+        String value = "";
+        for(int i = startIndex; i < array.length; i++) {
+            if(array[i].isEmpty()) {
+                continue;
+            }
+           
+            value += array[i];
+           
+            if(i != array.length - 1) {
+                value += " ";
+            }
+        }
+       
+        return value.isEmpty() ? array[0] : value.trim();
+    }
+    
 	/**
 	 * Returns student record for given jmbag
 	 * @param jmbag given jmbag

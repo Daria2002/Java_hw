@@ -44,6 +44,7 @@ public class StudentDB {
 			}
 			
 			if(!query.contains("query")) {
+				System.out.println("Input doesn't contains query word");
 				continue;
 			}
 			

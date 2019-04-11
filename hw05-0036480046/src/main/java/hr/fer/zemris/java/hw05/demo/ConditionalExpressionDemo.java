@@ -6,8 +6,17 @@ import hr.fer.zemris.java.hw05.db.FieldValueGetters;
 import hr.fer.zemris.java.hw05.db.QueryParser;
 import hr.fer.zemris.java.hw05.db.StudentRecord;
 
+/**
+ * Demo program for conditional expression
+ * @author Daria Matković
+ *
+ */
 public class ConditionalExpressionDemo {
 
+	/**
+	 * Program that executes when program is run
+	 * @param args no arguments
+	 */
 	public static void main(String[] args) {
 		ConditionalExpression expr = new ConditionalExpression(
 				 FieldValueGetters.LAST_NAME, "Bos*", ComparisonOperators.LIKE

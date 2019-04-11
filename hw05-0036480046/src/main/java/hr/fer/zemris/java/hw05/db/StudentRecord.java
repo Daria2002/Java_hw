@@ -27,6 +27,9 @@ public class StudentRecord {
 	 * @param grade grade
 	 */
 	public StudentRecord(String jmbag, String lastName, String firstName, int grade) {
+		if(grade > 5 || grade < 1) {
+			throw new IllegalArgumentException("Grade out of range");
+		}
 		this.grade = grade;
 		this.firstName = firstName;
 		this.lastName = lastName;

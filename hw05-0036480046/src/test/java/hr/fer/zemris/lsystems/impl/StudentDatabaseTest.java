@@ -80,4 +80,13 @@ class StudentDatabaseTest {
 		assertEquals(EMPTY, students.size());
 	}
 	
+	@Test
+	void testForJMBAG() {
+		StudentDatabase studentDatabase = new StudentDatabase(getList());
+		StudentRecord student = studentDatabase.forJMBAG("0000000001");
+		
+		assertEquals("Akšamović", student.getLastName());
+		assertEquals("Marin", student.getFirstName());
+		assertEquals(2, student.getGrade());
+	}
 }

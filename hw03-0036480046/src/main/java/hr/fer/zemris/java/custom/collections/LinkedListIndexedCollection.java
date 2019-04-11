@@ -2,6 +2,7 @@ package hr.fer.zemris.java.custom.collections;
 
 import java.util.ConcurrentModificationException;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 /**
  * Implementation of linked list-backed collection of objects.
@@ -61,7 +62,7 @@ public class LinkedListIndexedCollection implements List {
 			if(list.modificationCount != savedModificationCount) {
 				throw new ConcurrentModificationException("List is modified.");
 			}
-			return lastVisitedNode == null ? false : true;
+			return lastVisitedNode != null;
 		}
 		
 		@Override
@@ -98,6 +99,11 @@ public class LinkedListIndexedCollection implements List {
 	 * elements are copied into this newly constructed collection
 	 */
 	public LinkedListIndexedCollection(Collection collection) {
+		Processor processor = (value) -> {
+			Objects.requireNonNull(value, "Null can't be saved.");
+		};
+		
+		forEach(processor);
 		this.addAll(collection);
 	}
 	
@@ -109,9 +115,11 @@ public class LinkedListIndexedCollection implements List {
 	public void add(Object value) {
 		// null reference is not allowed
 		if(value == null) {
-			throw new NullPointerException("Null reference can't be added in"
-					+ " linked list indexed collection.");
+			throw new NullPointerException();
 		}
+		
+		Objects.requireNonNull(value, 
+				"Null reference can't be added in linked list indexed collection.");
 		
 		ListNode node = new ListNode(null, null, value);
 		
@@ -171,15 +179,18 @@ public class LinkedListIndexedCollection implements List {
 	 * Removes all elements from the collection
 	 */
 	public void clear() {
-		ListNode node = new ListNode(this.first.previous, this.first.next,
-				this.first.value);
+		if(first == null) {
+			return;
+		}
 		
-		for(int i = 0; i < this.size; i++) {
-			if(i > 0) {
-				node.previous = null;
-			}
+		ListNode node = first;
+		node = node.next;
+		
+		for(int i = 1; i < this.size; i++) {
+			node.previous = null;
 			node = node.next;
 		}
+		
 		modificationCount++;
 		this.size = 0;
 		this.first = null;
@@ -198,9 +209,11 @@ public class LinkedListIndexedCollection implements List {
 		}
 		// null value can't be inserted
 		if(value == null) {
-			throw new NullPointerException("Null reference can't be inserted in"
-					+ " linked list indeced collection.");
+			throw new NullPointerException();
 		}
+		
+		Objects.requireNonNull(value, "Null reference can't be inserted in"
+				+ " linked list indeced collection.");
 		
 		ListNode newNode = new ListNode(null, null, value);
 		// if list is empty
@@ -340,10 +353,12 @@ public class LinkedListIndexedCollection implements List {
 		Object[] array = new Object[this.size];
 		ListNode node = new ListNode(this.first.previous, this.first.next, 
 				this.first.value);
+		
 		for(int i = 0; i < this.size; i++) {
 			array[i] = node.value;
 			node = node.next;
 		}
+		
 		return array;
 	}
 }

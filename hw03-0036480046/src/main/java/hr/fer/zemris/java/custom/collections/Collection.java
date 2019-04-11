@@ -97,8 +97,10 @@ public interface Collection {
 	 */
 	default void addAllSatisfying(Collection col, Tester tester) {
 		ElementsGetter getter = col.createElementsGetter();
+		
 		while(getter.hasNextElement()) {
 			Object help = getter.getNextElement();
+			
 			if(tester.test(help)) {
 				this.add(help);
 			}

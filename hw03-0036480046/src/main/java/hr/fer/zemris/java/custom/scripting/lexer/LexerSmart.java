@@ -1,5 +1,6 @@
 package hr.fer.zemris.java.custom.scripting.lexer;
 
+import java.util.Objects;
 
 /** 
  * This program implements simple static lexical analyzer
@@ -26,13 +27,9 @@ public class LexerSmart {
 	 * @param text text need to be analyzed.
 	 */
 	public LexerSmart(String text) {
-		if(text == null) {
-			throw new NullPointerException("Input is null.");
-		}
+		Objects.requireNonNull(text, "Input is null");
 		
 		data = text.toCharArray();
-		for(int i = 0; i < data.length; i++)
-			System.out.print(data[i]);
 		currentIndex = 0;
 		setState(LexerSmartState.BASIC);
 	} 
@@ -87,9 +84,7 @@ public class LexerSmart {
 			// if tag occurs, break
 			if(data[currentIndex] == '{' && data[currentIndex+1] == '$' && !escapeSequence) {
 				// if \ is before tag, continue building text, otherwise return token
-				
 				setState(LexerSmartState.TAG);
-				System.out.println(stringValue);
 				
 				// if value is not empty make token and return it
 				if(!stringValue.isEmpty()) {
@@ -103,7 +98,7 @@ public class LexerSmart {
 				stringValue += data[currentIndex];
 				token = new TokenSmart(TokenSmartType.TEXT, stringValue);
 				currentIndex++;
-				System.out.println(stringValue);
+				
 				return token;
 			}
 			// if basic mode continue adding text
@@ -143,17 +138,15 @@ public class LexerSmart {
 			setState(LexerSmartState.TAG);
 			token = new TokenSmart(TokenSmartType.TAG_OPEN, "{$");
 			currentIndex ++;
-			System.out.println("{$");
 			
 			return token;
 		} 
 		// return tag name token
 		if(lexerState == LexerSmartState.TAG && !tagNameAdded) {
 			String tagName = addTagName();
-			System.out.println("tag name: " + tagName);
 			tagNameAdded = true;
 			token = new TokenSmart(TokenSmartType.TAG_NAME, tagName);
-			System.out.println(tagName);
+			
 			return token;
 		}
 		
@@ -224,7 +217,6 @@ public class LexerSmart {
 			
 			token = new TokenSmart(TokenSmartType.TAG_ELEMENT, tagElements);
 			tagElementsAdded = true;
-			System.out.println(tagElements);
 			
 			return token;
 		}
@@ -233,12 +225,14 @@ public class LexerSmart {
 		// tag elements added when close tag occurred, so next element is tag close
 		if(lexerState == LexerSmartState.TAG && tagNameAdded && (tagElementsAdded
 				|| "end".equalsIgnoreCase(getToken().getValue().toString()))) {
+			
 			token = new TokenSmart(TokenSmartType.TAG_CLOSE, "$}");
 			currentIndex += 2;
 			setState(LexerSmartState.BASIC);
+			
 			tagElementsAdded = false;
 			tagNameAdded = false;
-			System.out.println("$}");
+			
 			return token;
 		}
 		throw new LexerSmartException("No more token in given document.");
@@ -259,9 +253,8 @@ public class LexerSmart {
 	 * @param state new state
 	 */
 	public void setState(LexerSmartState state) {
-		if(state == null) {
-			throw new NullPointerException("Lexer state can't be null.");
-		}
+		Objects.requireNonNull(state, "Lexer state can't be null.");
+		
 		lexerState = state;
 	}
 }

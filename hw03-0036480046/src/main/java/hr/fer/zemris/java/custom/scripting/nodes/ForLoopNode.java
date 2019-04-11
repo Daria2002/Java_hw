@@ -66,13 +66,14 @@ public class ForLoopNode extends Node {
 	
 	@Override
 	public String toString() {
-		String nodeString = "";
-		nodeString += "{$FOR " + this.variable.asText() + " " +
+		String nodeString = "{$FOR " + this.variable.asText() + " " +
 		this.startExpression.asText() + " " + this.endExpression.asText() +
 		" " + this.stepExpression.asText() + " $}";
+		
 		for(int i = 0; i < this.numberOfChildren(); i++) {
 			nodeString += this.getChild(i).toString();
 		}
+		
 		nodeString += "{$END$}";
 		
 		return nodeString;
@@ -86,6 +87,7 @@ public class ForLoopNode extends Node {
 		result = prime * result + ((startExpression == null) ? 0 : startExpression.hashCode());
 		result = prime * result + ((stepExpression == null) ? 0 : stepExpression.hashCode());
 		result = prime * result + ((variable == null) ? 0 : variable.hashCode());
+		
 		return result;
 	}
 

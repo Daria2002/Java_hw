@@ -44,16 +44,20 @@ public class Node {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((collection == null) ? 0 : collection.hashCode());
+		
 		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
 		Node other = (Node) obj;
+		
 		if(getClass() != obj.getClass()) {
 			return false;
+			
 		} else if(numberOfChildren() != other.numberOfChildren()) {
 			return false;
+			
 		} else {
 			for(int i = 0; i < numberOfChildren(); i++) {
 				if(!other.getChild(i).equals(this.getChild(i))) {

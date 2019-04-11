@@ -1,5 +1,7 @@
 package hr.fer.zemris.java.custom.scripting.parser;
 
+import java.util.Objects;
+
 import hr.fer.zemris.java.custom.collections.ArrayIndexedCollection;
 import hr.fer.zemris.java.custom.collections.ObjectStack;
 import hr.fer.zemris.java.custom.scripting.elems.Element;
@@ -37,78 +39,72 @@ public class SmartScriptParser {
 	private void makeDocumentNode() {
 		LexerSmart lexer = new LexerSmart(documentBody);
 		TokenSmart token;
-		
-		try {
-			token = lexer.nextToken();
-			// while token EOF don't occur call nextToken method
-			while(token.getType() != TokenSmartType.EOF) {
+
+		token = lexer.nextToken();
+		// while token EOF don't occur call nextToken method
+		while(token.getType() != TokenSmartType.EOF) {
+			
+			// take elements after tag
+			// this is used for reading loop arguments
+			if(lexer.getToken().getType() == TokenSmartType.TAG_NAME) {
 				
-				// take elements after tag
-				// this is used for reading loop arguments
-				if(lexer.getToken() != null &&
-						lexer.getToken().getType() == TokenSmartType.TAG_NAME) {
-					
-					String tagName = lexer.getToken().getValue().toString();
-					
-					// throw exception if tag name is unknown
-					if(!("end".equalsIgnoreCase(tagName) || "for".equalsIgnoreCase(tagName) ||
-						"=".equalsIgnoreCase(tagName))) {
-						throw new SmartScriptParserException("Wrong tag name");
-					}
-					
-					// if tag name was for
-					if("for".equalsIgnoreCase(lexer.getToken().getValue().toString())) {
-						// take elements
-						token = lexer.nextToken();
-						Object[] forLoopArguments = getForLoopArguments(token.getValue());
-						
-						// make forLoopNode
-						ElementVariable variable = new ElementVariable(forLoopArguments[0].toString());
-						Element startExpression = initializeElement(forLoopArguments[1].toString());
-						Element endExpression =  initializeElement(forLoopArguments[2].toString());
-						Element stepExpression = null;
-						
-						if(forLoopArguments.length == 4) {
-							stepExpression =  initializeElement(forLoopArguments[3].toString());;
-						}
-						
-						ForLoopNode forLoopNode = new ForLoopNode(variable, 
-								startExpression, endExpression, stepExpression);
-						
-						stack.push(forLoopNode);
-						
-					} else if("=".equalsIgnoreCase(lexer.getToken().getValue().toString())) {
-					// if tag name was =
-						// get arguments in = tag
-						token = lexer.nextToken();
-						EchoNode echoNode = getEchoNode(token.getValue());
-						Node parent = (Node)stack.peek();
-						parent.addChildNode(echoNode);
-						
-					} else if("end".equalsIgnoreCase(lexer.getToken().getValue().toString())) {
-					// if tag name was end 
-						Node child = (Node)stack.pop();
-						Node parent = (Node)stack.peek();
-						parent.addChildNode(child);
-					}
-					
-				// this is used for:
-				// a)reading text and adding text node on documentNode or forLoopNode
-				// b)for reading end tag and changing forLoop flag, so it doesn't store
-				// nodes like forLoopNode's children any more 
-				} else if(lexer.getToken() != null && lexer.getToken().getType() == TokenSmartType.TEXT) {
-					// if token type is text, make text node
-					TextNode textNode = new TextNode(lexer.getToken().getValue().toString());
-					//add textNode to documentNode if forLoop is not opened
-					Node parent = (Node)stack.peek();
-					parent.addChildNode(textNode);
+				String tagName = lexer.getToken().getValue().toString();
+				
+				// throw exception if tag name is unknown
+				if(!("end".equalsIgnoreCase(tagName) || "for".equalsIgnoreCase(tagName) ||
+					"=".equalsIgnoreCase(tagName))) {
+					throw new SmartScriptParserException("Wrong tag name");
 				}
-				token = lexer.nextToken();
+				
+				// if tag name was for
+				if("for".equalsIgnoreCase(lexer.getToken().getValue().toString())) {
+					// take elements
+					token = lexer.nextToken();
+					Object[] forLoopArguments = getForLoopArguments(token.getValue());
+					
+					// make forLoopNode
+					ElementVariable variable = new ElementVariable(forLoopArguments[0].toString());
+					Element startExpression = initializeElement(forLoopArguments[1].toString());
+					Element endExpression =  initializeElement(forLoopArguments[2].toString());
+					Element stepExpression = null;
+					
+					if(forLoopArguments.length == 4) {
+						stepExpression =  initializeElement(forLoopArguments[3].toString());;
+					}
+					
+					ForLoopNode forLoopNode = new ForLoopNode(variable, 
+							startExpression, endExpression, stepExpression);
+					
+					stack.push(forLoopNode);
+					
+				} else if("=".equalsIgnoreCase(lexer.getToken().getValue().toString())) {
+				// if tag name was =
+					// get arguments in = tag
+					token = lexer.nextToken();
+					EchoNode echoNode = getEchoNode(token.getValue());
+					Node parent = (Node)stack.peek();
+					parent.addChildNode(echoNode);
+					
+				} else if("end".equalsIgnoreCase(lexer.getToken().getValue().toString())) {
+				// if tag name was end 
+					Node child = (Node)stack.pop();
+					Node parent = (Node)stack.peek();
+					parent.addChildNode(child);
+				}
+				
+			// this is used for:
+			// a)reading text and adding text node on documentNode or forLoopNode
+			// b)for reading end tag and changing forLoop flag, so it doesn't store
+			// nodes like forLoopNode's children any more 
+			} else if(lexer.getToken() != null && lexer.getToken().getType() == TokenSmartType.TEXT) {
+				// if token type is text, make text node
+				TextNode textNode = new TextNode(lexer.getToken().getValue().toString());
+				//add textNode to documentNode if forLoop is not opened
+				Node parent = (Node)stack.peek();
+				parent.addChildNode(textNode);
 			}
 			
-		} catch (Exception e) {
-			e.printStackTrace(System.out);
-			throw new SmartScriptParserException("Error message");
+			token = lexer.nextToken();
 		}
 	}
 	
@@ -119,20 +115,21 @@ public class SmartScriptParser {
 	public SmartScriptParser(String documentBody) {
 		
 		try {
-			if(documentBody == null) {
-				throw new SmartScriptParserException("Document body is null");
-			}
+			Objects.requireNonNull(documentBody, "Document body is null");
 			
 			this.documentBody = documentBody;
+			
 			documentNode = new DocumentNode();
 			stack = new ObjectStack();
 			stack.push(documentNode);
+			
 			makeDocumentNode();
 			
 			Node node = (Node)stack.peek();
 			if(!(node instanceof DocumentNode)) {
 				throw new SmartScriptParserException("Expression is incompleted.");
 			}
+			
 			documentNode = (DocumentNode)stack.pop();
 			
 		} catch (Exception e) {
@@ -163,14 +160,16 @@ public class SmartScriptParser {
 			
 			// if prefix @ than set makeFunction flag
 			if(valueArray[i] == '@') {
+				if(!Character.isLetter(valueArray[i+1])) {
+					throw new IllegalArgumentException("Function must start with letter.");
+				}
 				makeFunction = true;
 				continue;
 				
 			} else if(valueArray[i] == '*' || valueArray[i] == '+' ||
 					valueArray[i] == '-' || valueArray[i] == '/' || valueArray[0] == '^') {
 				buildValue += valueArray[i];
-				ElementOperator operator = new ElementOperator(buildValue);
-				elements.add(operator);
+				elements.add(new ElementOperator(buildValue));
 				buildValue = "";
 				continue;
 				
@@ -208,8 +207,7 @@ public class SmartScriptParser {
 				
 				if (escapeSequence && ( currChar == '\\' || currChar == '"' ||
 						currChar == '\n' || currChar == '\t' || currChar == '\r')) {
-					buildValue += '\\';
-					buildValue += currChar;
+					buildValue += '\\' + currChar;
 					escapeSequence = false;
 					continue;
 				}
@@ -258,8 +256,7 @@ public class SmartScriptParser {
 						// check if number is int or double 
 						elements.add(rightNumber(buildValue));
 						makeNumber = false;
-						buildValue = "";
-						buildValue += valueArray[i];
+						buildValue = String.valueOf(valueArray[i]);
 						
 						//throw exception if ',' occurs in number
 					} else if(makeNumber && valueArray[i] == ',') {
@@ -271,8 +268,7 @@ public class SmartScriptParser {
 					// stop building variable
 				} else if((valueArray[i] == ' ' || valueArray[i] == '"') && makeVariable) {
 					makeVariable = false;
-					ElementVariable variableElement = new ElementVariable(buildValue);
-					elements.add(variableElement);
+					elements.add(new ElementVariable(buildValue));
 					buildValue = "";
 					
 				} else if (!(makeFunction && makeNumber && makeString && makeVariable) &&
@@ -284,24 +280,20 @@ public class SmartScriptParser {
 		// if buildValue is not empty
 		if(buildValue != "") {
 			if(makeString) {
-				ElementString stringElement = new ElementString(buildValue);
-				elements.add(stringElement);
+				elements.add(new ElementString(buildValue));
 				
 			} else if(makeNumber) {
 				elements.add(rightNumber(buildValue));
 				
 			} else if(makeFunction) {
-				ElementFunction functionElement = new ElementFunction(buildValue);
-				elements.add(functionElement);
+				elements.add(new ElementFunction(buildValue));
 				
 			} else if(makeVariable) {
-				ElementVariable variableElement = new ElementVariable(buildValue);
-				elements.add(variableElement);
+				elements.add(new ElementVariable(buildValue));
 				
 			} else if(buildValue == "*" || buildValue == "+" ||
 					buildValue == "-" || buildValue == "/" || buildValue == "^") {
-				ElementOperator operator = new ElementOperator(buildValue);
-				elements.add(operator);
+				elements.add(new ElementOperator(buildValue));
 			}
 		}
 		Element[] elementsArray = new Element[elements.size()];
@@ -320,14 +312,12 @@ public class SmartScriptParser {
 	 */
 	private Element rightNumber(String buildValue) {
 		try {
-			Integer intValue = Integer.parseInt(buildValue);
-			return new ElementConstantInteger(intValue);
+			return new ElementConstantInteger(Integer.parseInt(buildValue));
 			
 		} catch (Exception e) {
 			// if exception occurred parse to double
 			try {
-				Double doubleValue = Double.parseDouble(buildValue);
-				return new ElementConstantDouble(doubleValue);
+				return new ElementConstantDouble(Double.parseDouble(buildValue));
 				
 			} catch (Exception e2) {
 				throw new SmartScriptParserException("Invalid expression");
@@ -341,10 +331,7 @@ public class SmartScriptParser {
 	 * @return echo node
 	 */
 	private EchoNode getEchoNode(Object value) {
-		Element[] elements = makeElementsForEchoNode(value);
-		EchoNode echoNode = new EchoNode(elements);
-		
-		return echoNode;
+		return new EchoNode(makeElementsForEchoNode(value));
 	}
 	
 	/**
@@ -388,22 +375,21 @@ public class SmartScriptParser {
 				// if something in build value and than whitespace occurs, that
 				// means that argument need to be saved
 				if(!buildValue.isEmpty() && Character.isWhitespace(charArray[i])) {
-					array[arrayCounter] = buildValue.toString();
+					array[arrayCounter++] = buildValue.toString();
 					buildValue = "";
-					arrayCounter++;
 					
 				} else if(charArray[i] == '"' && buildValue == "" && !inQuotation) {
 					// if " occurs and nothing is in buildValue that means that
 					// inQuotation mode is on
 					inQuotation = true;
+					continue;
 					
 				} else if(charArray[i] == '"' && buildValue != "" && inQuotation) {
 					// if " occurs and something is in buildValue that means that
 					// inQuotation mode is off and value stops
 					inQuotation = false;
-					array[arrayCounter] = buildValue.toString();
+					array[arrayCounter++] = buildValue;
 					buildValue = "";
-					arrayCounter++;
 					
 				} else if(charArray[i] == '"' && buildValue != "" && !inQuotation) {
 					array[arrayCounter] = buildValue;
@@ -421,7 +407,7 @@ public class SmartScriptParser {
 			array[arrayCounter] = buildValue;
 		}
 		
-		if(arrayCounter-1 < 2 || arrayCounter-1 > 3) {
+		if(arrayCounter != 3 && arrayCounter != 4) {
 			throw new SmartScriptParserException("For loop can have 3 or 4 args.");
 		}
 		return array;
@@ -435,22 +421,17 @@ public class SmartScriptParser {
 	private Element initializeElement(String value) {
 		// check if value if integer
 		try {
-			Integer intValue = Integer.parseInt(value);
-			ElementConstantInteger intElement = new ElementConstantInteger(intValue);
-			return intElement;
+			return new ElementConstantInteger(Integer.parseInt(value));
 			
 		} catch (Exception e) {
 			// exception occurs if given value is not int
 			// check if given value is double
 			try {
-				Double doubleValue = Double.parseDouble(value);
-				ElementConstantDouble doubleElement = new ElementConstantDouble(doubleValue);
-				return doubleElement;
+				return new ElementConstantDouble(Double.parseDouble(value));
 				
 			} catch (Exception e2) {
 				//exception occurs if given value is not int and double
-				ElementString stringValue = new ElementString(value);
-				return stringValue;
+				return new ElementString(value);
 			}
 		}
 	}

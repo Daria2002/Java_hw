@@ -1,5 +1,7 @@
 package hr.fer.zemris.java.custom.collections;
 
+import java.util.Objects;
+
 /**
  * Implementation of the stack-like collection.
  * @author Daria Matkovic
@@ -38,9 +40,8 @@ public class ObjectStack {
 	 * @param value value to push on stack
 	 */
 	public void push(Object value) {
-		if(value == null) {
-			throw new NullPointerException("Null can't pushed on stack.");
-		}
+		Objects.requireNonNull(value, "Null can't pushed on stack.");
+		
 		collection.add(value);
 	} 
 	
@@ -53,6 +54,7 @@ public class ObjectStack {
 	public Object pop() {
 		Object object = peek();
 		collection.remove(this.size() - 1);
+		
 		return object;
 	}
 	
@@ -65,6 +67,7 @@ public class ObjectStack {
 		if(this.isEmpty()) {
 			throw new EmptyStackException("Stack is empty.");
 		}
+		
 		return collection.get(this.size()-1);
 	}
 	

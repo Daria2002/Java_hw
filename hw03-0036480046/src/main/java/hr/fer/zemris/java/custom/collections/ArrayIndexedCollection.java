@@ -3,6 +3,7 @@ package hr.fer.zemris.java.custom.collections;
 import java.util.Arrays;
 import java.util.ConcurrentModificationException;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 /**
  * This program implements resizable array-backed collection of objects. It is
@@ -35,7 +36,7 @@ public class ArrayIndexedCollection implements List {
 				throw new ConcurrentModificationException("Array is modified.");
 			}
 			
-			return array.size-1 >= index ?  true : false;
+			return array.size-1 >= index;
 		}
 
 		@Override
@@ -176,9 +177,7 @@ public class ArrayIndexedCollection implements List {
 			throw new IndexOutOfBoundsException("Index out of bounds.");
 		}
 		
-		if(value == null) {
-			throw new NullPointerException("Can't store null value.");
-		}
+		Objects.requireNonNull(value, "Can't store null value.");
 		
 		// doubling array's size if array is full
 		if(elements.length == size) {

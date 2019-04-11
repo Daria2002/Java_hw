@@ -34,9 +34,11 @@ public class EchoNode extends Node {
 	public String toString() {
 		String nodeString = "";
 		nodeString += "{$= ";
+		
 		for(int i = 0; i < this.elements.length; i++) {
 			nodeString += this.elements[i].asText() + " ";
 		}
+		
 		nodeString += "$}";
 		
 		return nodeString;
@@ -47,6 +49,7 @@ public class EchoNode extends Node {
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + Arrays.hashCode(elements);
+		
 		return result;
 	}
 
@@ -54,12 +57,15 @@ public class EchoNode extends Node {
 	public boolean equals(Object obj) {
 		if (getClass() != obj.getClass())
 			return false;
+		
 		EchoNode other = (EchoNode) obj;
+		
 		for(int i = 0; i < elements.length; i++) {
 			if(!other.elements[i].equals(this.elements[i])) {
 				return false;
 			}
 		}
+		
 		return true;
 	}
 }

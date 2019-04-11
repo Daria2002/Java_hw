@@ -1,5 +1,7 @@
 package hr.fer.zemris.java.hw03.prob1;
 
+import java.util.Objects;
+
 /** 
  * This program implements simple static lexical analyzer
  * Lexer is used as token producer. Token type is defined in enumeration TokenType.
@@ -23,13 +25,11 @@ public class Lexer {
 	 * @param text text need to be analyzed.
 	 */
 	public Lexer(String text) {
-		if(text == null) {
-			throw new NullPointerException("Input is null.");
-		}
+		Objects.requireNonNull(text, "Input is null.");
+		
 		String reducedText = text.replaceAll("\\s+", " ");
 		data = reducedText.trim().toCharArray();
-		for(int i = 0; i < data.length; i++)
-			System.out.println(data[i]);
+		
 		currentIndex = 0;
 		setState(LexerState.BASIC);
 	} 
@@ -39,7 +39,6 @@ public class Lexer {
 	 * @return next token
 	 */
 	public Token nextToken() {
-		
 		if(data.length == 1 && data[0] == '\\') {
 			throw new LexerException("EOF can't be WORD");
 		}
@@ -55,6 +54,7 @@ public class Lexer {
 		if(currentIndex > data.length-1) {
 			token = new Token(TokenType.EOF, null);
 			currentIndex++;
+			
 			return token;
 		}
 
@@ -99,15 +99,12 @@ public class Lexer {
 		stringValue += data[currentIndex];
 
 		TokenType type;
-		for(int i = currentIndex+1; i <= data.length-1; i++) {
+		for(int i = currentIndex + 1; i <= data.length - 1; i++) {
 			checkMode = checkMode(data, i);
 			// checking range if mode is for digit
 			if(mode == 1) {
 				try {
-					long valueLong = Long.parseLong(stringValue);
-					if(valueLong < Long.MIN_VALUE || valueLong > Long.MAX_VALUE) {
-						throw new LexerException("Too big nuber.");
-					}
+					Long.parseLong(stringValue);
 				} catch (Exception e) {
 					throw new LexerException("Too big number");
 				}
@@ -131,9 +128,7 @@ public class Lexer {
 						return token;
 					}
 					stringValue += data[i];
-					if(escapeSequence) {
-						escapeSequence = false;
-					}
+					escapeSequence = false;
 				}
 			}
 			
@@ -151,50 +146,45 @@ public class Lexer {
 				} else {
 					currentIndex = i;
 				}
+				
 				switch (mode) {
 				case 1:
-					type = TokenType.NUMBER;
-					Long value = Long.parseLong(stringValue);
-					token = new Token(type, value);
+					token = new Token(TokenType.NUMBER, Long.parseLong(stringValue));
 					return token;
+					
 				case 2:
-					type = TokenType.WORD;
-					token = new Token(type, stringValue);
+					token = new Token(TokenType.WORD, stringValue);
 					return token;
+					
 				case 3:
-					type = TokenType.SYMBOL;
-					Character valueChar = data[currentIndex];
-					token = new Token(type, valueChar);
+					token = new Token(TokenType.SYMBOL, data[currentIndex]);
 					return token;
+					
 				default:
-					type = TokenType.EOF;
-					token = new Token(type, null);
+					token = new Token(TokenType.EOF, null);
 					return token;
 				}
 			}
 		}
+		
 		currentIndex++;
 		switch (mode) {
 		case 1:
-			type = TokenType.NUMBER;
-			Long value = Long.parseLong(stringValue);
-			token = new Token(type, value);
+			token = new Token(TokenType.NUMBER, Long.parseLong(stringValue));
 			return token;
+			
 		case 2:
-			type = TokenType.WORD;
-			token = new Token(type, stringValue);
+			token = new Token(TokenType.WORD, stringValue);
 			return token;
+			
 		case 3:
-			type = TokenType.SYMBOL;
-			Character valueChar = data[currentIndex];
-			token = new Token(type, valueChar);
+			token = new Token(TokenType.SYMBOL, data[currentIndex]);
 			return token;
+			
 		default:
-			type = TokenType.EOF;
-			token = new Token(type, null);
+			token = new Token(TokenType.EOF, null);
 			return token;
 		}
-		//return new Token(TokenType.EOF, null);
 	}
 	
 	private int checkMode(char[] data, int index) {
@@ -240,9 +230,8 @@ public class Lexer {
 	 * @param state state to set lexer on
 	 */
 	public void setState(LexerState state) {
-		if(state == null) {
-			throw new NullPointerException("Lexer state can't be null.");
-		}
+		Objects.requireNonNull(state, "Lexer state can't be null.");
+		
 		lexerState = state;
 	}
 }

@@ -69,30 +69,51 @@ public class Crypto {
 	private static String executeOperation(String operation, String fileName) throws Exception {
 
 		Scanner scanner = new Scanner(System.in);
+		String message;
+		String keyText;
+		String ivText;
 		
 		switch (operation) {
 		case CHECK_SHA:
 			String digestExpected = getDigest(fileName);
 			String digestToCheck = getDigestToCheck(fileName, scanner);
-			
 			scanner.close();
 			
-			String message = digestExpected.equals(digestToCheck) ?
-					" matches expected digest." : 
+			message = digestExpected.equals(digestToCheck) ? " matches expected digest." : 
 					" does not match the expected digest. Digest\n" + "was: " +
 					digestExpected;
 			
 			return "Digesting completed. Digest of " + fileName + message;
 			
 		case ENCRYPT:
-			String keyText = getPassword(scanner);
-			String ivText = getIniVector(scanner);
-			
+			keyText = getPassword(scanner);
+			ivText = getIniVector(scanner);
 			scanner.close();
 			
-			SecretKeySpec keySpec = new SecretKeySpec(Util.hextobyte(keyText), "AES");
-			AlgorithmParameterSpec paramSpec = new IvParameterSpec(Util.hextobyte(ivText));
+			String newFileName = getNewFileName(fileName);
+			executeEncrypt(keyText, ivText, fileName, newFileName);
 			
+ 	       	return "Encryption completed. Generated file " + newFileName +
+ 	       			" based on file " + fileName + ".";
+		
+		case DECRYPT:
+			keyText = getPassword(scanner);
+			ivText = getIniVector(scanner);
+			scanner.close();
+			
+			//return executeDecrypt(fileName);
+		
+		default:
+			throw new IllegalArgumentException("Entered operation is invalid.");
+		}
+	}
+	
+	private static void executeEncrypt(String keyText, String ivText,
+			String fileName, String newFileName) {
+		SecretKeySpec keySpec = new SecretKeySpec(Util.hextobyte(keyText), "AES");
+		AlgorithmParameterSpec paramSpec = new IvParameterSpec(Util.hextobyte(ivText));
+		
+		try {
 			Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
 			cipher.init(Cipher.ENCRYPT_MODE, keySpec, paramSpec);
 			
@@ -100,36 +121,38 @@ public class Crypto {
 			InputStream in = new BufferedInputStream(Files.newInputStream(source),
 		            4000);
 
-			String newFileName = getNewFileName(fileName);		
-			File destinationFile = new File(PATH_TO_FOLDER + newFileName);
-			destinationFile.mkdirs();
-			destinationFile.createNewFile();
-			FileOutputStream destinationFileStream = new FileOutputStream(destinationFile, false); 
-			Path destination = Paths.get(PATH_TO_FOLDER + newFileName);
-            OutputStream out = new BufferedOutputStream(Files.newOutputStream(
-            		destination), 4000);
-            
-            int i = 0;
-            while(i<5) {
-            	i++;
-            	byte[] b  = cipher.update(in.readNBytes(4000));
-            	out.write(b);
-            }
-            out.write(cipher.doFinal());
-            
-            return "";
-            
-			//return executeEncrypt(fileName);
-		/*
-		case DECRYPT:
-			return executeDecrypt(fileName);
-		*/
-		default:
-			throw new IllegalArgumentException("Entered operation is invalid.");
+			OutputStream out = new BufferedOutputStream(Files.newOutputStream(
+					Paths.get(PATH_TO_FOLDER + newFileName)), 4000);
+
+			int indexOfLastBlock = numberOfLastBlock(source);
+			int k = 0;
+	        byte[] inputBytes = new byte[4000];
+	        
+			for(int read = in.read(inputBytes); read != -1; read = in.read(inputBytes)) {
+				k++;
+				
+				// last block to copy, call doFinal
+				if(k == indexOfLastBlock) {
+					out.write(cipher.doFinal(inputBytes), 0, read);
+					break;
+				}
+				
+				out.write(cipher.update(inputBytes), 0, read);
+			}
+			
+	        out.close();
+		    in.close();
+			
+		} catch (Exception e) {
+			System.out.println("Error occured while encrypting.");
 		}
 	}
 
-	
+	/**
+	 * Makes string for encrypted file
+	 * @param fileName base file to encrypt
+	 * @return name of encrypted file
+	 */
 	private static String getNewFileName(String fileName) {
 		StringBuilder newFileName = new StringBuilder();
 		int index = fileName.indexOf('.');
@@ -140,6 +163,34 @@ public class Crypto {
 		
 		newFileName.append(".crypted.pdf");
 		return newFileName.toString();
+	}
+	
+	/**
+	 * Sets i to value of last block because doFinal needs to be called, insted
+	 * of update.
+	 * @param source source file to encrypt
+	 * @return index of last block
+	 */
+	private static int numberOfLastBlock(Path source) {
+		int i = 0;
+		
+		try {
+			InputStream inputCheck = new BufferedInputStream(Files.newInputStream(source), 4000);
+			
+	        byte[] inputBytes = new byte[4000];
+
+			// this loop sets i to value when doFinal need to be called
+			for(int read = inputCheck.read(inputBytes); read != -1; read = inputCheck.read(inputBytes)) {
+				i++;
+			}
+
+			inputCheck.close();
+			
+		} catch (IOException e) {
+			throw new IllegalArgumentException("Error while reading source file.");
+		}
+		
+		return i;
 	}
 	
 	private static String getIniVector(Scanner scanner) {
@@ -211,12 +262,6 @@ public class Crypto {
 		String result = Util.bytetohex(byteArray);
 		
 	    return result;
-	}
-
-	private static byte[] executeEncrypt(String fileName) throws NoSuchAlgorithmException {
-		MessageDigest sha = MessageDigest.getInstance("SHA-256");
-		byte[] digest = sha.digest();
-		return digest;
 	}
 
 	private static byte[] executeDecrypt(String fileName) throws NoSuchAlgorithmException {

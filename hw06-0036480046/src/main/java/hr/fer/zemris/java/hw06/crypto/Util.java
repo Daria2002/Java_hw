@@ -9,6 +9,12 @@ public class Util {
 
 	public static byte[] hextobyte(String hex) {
 		int len = hex.length();
+		
+		// throw exception if hex length is odd
+		if(len % 2 != 0) {
+			throw new IllegalArgumentException("Hex string has odd length");
+		}
+		
 	    byte[] data = new byte[len / 2];
 	    
 	    for (int i = 0; i < len; i += 2) {

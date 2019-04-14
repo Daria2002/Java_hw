@@ -96,7 +96,7 @@ public class Crypto {
 			ivText = getIniVector(scanner);
 			scanner.close();
 			
-			executeEncrypt(keyText, ivText, fileName, newFileName, Cipher.ENCRYPT_MODE);
+			executeEncryptOrDecrypt(keyText, ivText, fileName, newFileName, Cipher.ENCRYPT_MODE);
 			
  	       	return "Encryption completed. Generated file " + newFileName +
  	       			" based on file " + fileName + ".";
@@ -106,7 +106,7 @@ public class Crypto {
 			ivText = getIniVector(scanner);
 			scanner.close();
 			
-			executeEncrypt(keyText, ivText, fileName, newFileName, Cipher.DECRYPT_MODE);
+			executeEncryptOrDecrypt(keyText, ivText, fileName, newFileName, Cipher.DECRYPT_MODE);
 			
  	       	return "Decryption completed. Generated file " + newFileName +
  	       			" based on file " + fileName + ".";
@@ -116,7 +116,7 @@ public class Crypto {
 		}
 	}
 	
-	private static void executeEncrypt(String keyText, String ivText,
+	private static void executeEncryptOrDecrypt(String keyText, String ivText,
 			String fileName, String newFileName, int mode) {
 		
 		SecretKeySpec keySpec = new SecretKeySpec(Util.hextobyte(keyText), "AES");
@@ -124,30 +124,24 @@ public class Crypto {
 		
 		try {
 			Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+			//Cipher cipher = Cipher.getInstance("AES/CBC/NoPadding");
 			cipher.init(mode, keySpec, paramSpec);
 			
 			Path source = Paths.get(PATH_TO_FOLDER + fileName);
-			InputStream in = new BufferedInputStream(Files.newInputStream(source),
-		            4000);
+			BufferedInputStream in = new BufferedInputStream(Files.newInputStream(source),
+					4096);
 
-			OutputStream out = new BufferedOutputStream(Files.newOutputStream(
-					Paths.get(PATH_TO_FOLDER + newFileName)), 4000);
+			BufferedOutputStream out = new BufferedOutputStream(Files.newOutputStream(
+					Paths.get(PATH_TO_FOLDER + newFileName)), 4096);
 
-			int indexOfLastBlock = numberOfLastBlock(source);
-			int k = 0;
-	        byte[] inputBytes = new byte[4000];
+	        byte[] inputBytes = new byte[4096];
 	        
-			for(int read = in.read(inputBytes); read != -1; read = in.read(inputBytes)) {
-				k++;
-				
-				// last block to copy, call doFinal
-				if(k == indexOfLastBlock) {
-					out.write(cipher.doFinal(inputBytes));
-					break;
-				}
-				
-				out.write(cipher.update(inputBytes));
+	        // read is number of read elements
+			for(int read = in.read(inputBytes); read >= 0; read = in.read(inputBytes)) {
+				out.write(cipher.update(inputBytes, 0, read));
 			}
+			
+			out.write(cipher.doFinal());
 			
 	        out.close();
 		    in.close();
@@ -156,35 +150,6 @@ public class Crypto {
 			e.printStackTrace();
 			throw new IllegalArgumentException("Error occured while encrypting.");
 		}
-	}
-
-	
-	/**
-	 * Sets i to value of last block because doFinal needs to be called, insted
-	 * of update.
-	 * @param source source file to encrypt
-	 * @return index of last block
-	 */
-	private static int numberOfLastBlock(Path source) {
-		int i = 0;
-		
-		try {
-			InputStream inputCheck = new BufferedInputStream(Files.newInputStream(source), 4000);
-			
-	        byte[] inputBytes = new byte[4000];
-
-			// this loop sets i to value when doFinal need to be called
-			for(int read = inputCheck.read(inputBytes); read != -1; read = inputCheck.read(inputBytes)) {
-				i++;
-			}
-
-			inputCheck.close();
-			
-		} catch (IOException e) {
-			throw new IllegalArgumentException("Error while reading source file.");
-		}
-		
-		return i;
 	}
 	
 	private static String getIniVector(Scanner scanner) {

@@ -1,11 +1,18 @@
 package hr.fer.zemris.java.hw06.crypto;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.Buffer;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
@@ -31,6 +38,8 @@ public class Crypto {
 	private static final String CHECK_SHA = "checksha";
 	private static final String ENCRYPT = "encrypt";
 	private static final String DECRYPT = "decrypt";
+	
+	private static final String PATH_TO_FOLDER = "src/main/java/hr/fer/zemris/java/hw06/crypto/";
 	
 	/**
 	 * This method is executed when program is run.
@@ -87,8 +96,29 @@ public class Crypto {
 			Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
 			cipher.init(Cipher.ENCRYPT_MODE, keySpec, paramSpec);
 			
-			
-			
+			Path source = Paths.get(PATH_TO_FOLDER + fileName);
+			InputStream in = new BufferedInputStream(Files.newInputStream(source),
+		            4000);
+
+			String newFileName = getNewFileName(fileName);		
+			File destinationFile = new File(PATH_TO_FOLDER + newFileName);
+			destinationFile.mkdirs();
+			destinationFile.createNewFile();
+			FileOutputStream destinationFileStream = new FileOutputStream(destinationFile, false); 
+			Path destination = Paths.get(PATH_TO_FOLDER + newFileName);
+            OutputStream out = new BufferedOutputStream(Files.newOutputStream(
+            		destination), 4000);
+            
+            int i = 0;
+            while(i<5) {
+            	i++;
+            	byte[] b  = cipher.update(in.readNBytes(4000));
+            	out.write(b);
+            }
+            out.write(cipher.doFinal());
+            
+            return "";
+            
 			//return executeEncrypt(fileName);
 		/*
 		case DECRYPT:
@@ -99,6 +129,18 @@ public class Crypto {
 		}
 	}
 
+	
+	private static String getNewFileName(String fileName) {
+		StringBuilder newFileName = new StringBuilder();
+		int index = fileName.indexOf('.');
+		
+		for(int i = 0; i < index; i++) {
+			newFileName.append(fileName.charAt(i));
+		}
+		
+		newFileName.append(".crypted.pdf");
+		return newFileName.toString();
+	}
 	
 	private static String getIniVector(Scanner scanner) {
 		String message = "initialization vector as hex-encoded text (32 hex-digits):";
@@ -164,7 +206,7 @@ public class Crypto {
 	 */
 	private static String getDigest(String fileName) throws Exception {
 		byte[] byteArray = 
-				createDigest("src/main/java/hr/fer/zemris/java/hw06/crypto/" + fileName);
+				createDigest(PATH_TO_FOLDER + fileName);
 		
 		String result = Util.bytetohex(byteArray);
 		

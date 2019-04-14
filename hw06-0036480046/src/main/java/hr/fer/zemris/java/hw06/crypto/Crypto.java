@@ -48,14 +48,19 @@ public class Crypto {
 	 */
 	public static void main(String[] args) throws Exception {
 		
-		if(args.length != 2) {
+		if(args.length != 2  && args.length != 3) {
 			throw new IllegalArgumentException("Please enter operation and file name");
 		}
 		
 		String operation = args[0];
 		String fileName = args[1];
 		
-		String result = executeOperation(operation, fileName);
+		String newFileName = "";
+		if(args.length == 3) {
+			newFileName = args[2];
+		}
+		
+		String result = executeOperation(operation, fileName, newFileName);
 		System.out.println(result);
 	}
 
@@ -66,7 +71,8 @@ public class Crypto {
 	 * @return String that represents result message to user.
 	 * @throws Exception throws exception if error occurs.
 	 */
-	private static String executeOperation(String operation, String fileName) throws Exception {
+	private static String executeOperation(String operation, String fileName,
+			String newFileName) throws Exception {
 
 		Scanner scanner = new Scanner(System.in);
 		String message;
@@ -90,8 +96,7 @@ public class Crypto {
 			ivText = getIniVector(scanner);
 			scanner.close();
 			
-			String newFileName = getNewFileName(fileName);
-			executeEncrypt(keyText, ivText, fileName, newFileName);
+			executeEncrypt(keyText, ivText, fileName, newFileName, Cipher.ENCRYPT_MODE);
 			
  	       	return "Encryption completed. Generated file " + newFileName +
  	       			" based on file " + fileName + ".";
@@ -101,7 +106,10 @@ public class Crypto {
 			ivText = getIniVector(scanner);
 			scanner.close();
 			
-			//return executeDecrypt(fileName);
+			executeEncrypt(keyText, ivText, fileName, newFileName, Cipher.DECRYPT_MODE);
+			
+ 	       	return "Decryption completed. Generated file " + newFileName +
+ 	       			" based on file " + fileName + ".";
 		
 		default:
 			throw new IllegalArgumentException("Entered operation is invalid.");
@@ -109,13 +117,14 @@ public class Crypto {
 	}
 	
 	private static void executeEncrypt(String keyText, String ivText,
-			String fileName, String newFileName) {
+			String fileName, String newFileName, int mode) {
+		
 		SecretKeySpec keySpec = new SecretKeySpec(Util.hextobyte(keyText), "AES");
 		AlgorithmParameterSpec paramSpec = new IvParameterSpec(Util.hextobyte(ivText));
 		
 		try {
 			Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-			cipher.init(Cipher.ENCRYPT_MODE, keySpec, paramSpec);
+			cipher.init(mode, keySpec, paramSpec);
 			
 			Path source = Paths.get(PATH_TO_FOLDER + fileName);
 			InputStream in = new BufferedInputStream(Files.newInputStream(source),
@@ -133,37 +142,22 @@ public class Crypto {
 				
 				// last block to copy, call doFinal
 				if(k == indexOfLastBlock) {
-					out.write(cipher.doFinal(inputBytes), 0, read);
+					out.write(cipher.doFinal(inputBytes));
 					break;
 				}
 				
-				out.write(cipher.update(inputBytes), 0, read);
+				out.write(cipher.update(inputBytes));
 			}
 			
 	        out.close();
 		    in.close();
 			
 		} catch (Exception e) {
-			System.out.println("Error occured while encrypting.");
+			e.printStackTrace();
+			throw new IllegalArgumentException("Error occured while encrypting.");
 		}
 	}
 
-	/**
-	 * Makes string for encrypted file
-	 * @param fileName base file to encrypt
-	 * @return name of encrypted file
-	 */
-	private static String getNewFileName(String fileName) {
-		StringBuilder newFileName = new StringBuilder();
-		int index = fileName.indexOf('.');
-		
-		for(int i = 0; i < index; i++) {
-			newFileName.append(fileName.charAt(i));
-		}
-		
-		newFileName.append(".crypted.pdf");
-		return newFileName.toString();
-	}
 	
 	/**
 	 * Sets i to value of last block because doFinal needs to be called, insted

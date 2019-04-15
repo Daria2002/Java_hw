@@ -13,16 +13,17 @@ import hr.fer.zemris.java.hw06.shell.ShellStatus;
  */
 public class SymbolCommand implements ShellCommand {
 
+	final static String SYMBOL_COMMAND = "symbol";
+	
 	@Override
 	public ShellStatus executeCommand(Environment env, String arguments) {
 		// TODO Auto-generated method stub
-		return null;
+		return ShellStatus.CONTINUE;
 	}
 
 	@Override
 	public String getCommandName() {
-		// TODO Auto-generated method stub
-		return null;
+		return SYMBOL_COMMAND;
 	}
 
 	@Override

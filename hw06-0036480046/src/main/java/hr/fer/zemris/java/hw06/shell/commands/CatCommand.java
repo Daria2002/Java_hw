@@ -14,16 +14,17 @@ import hr.fer.zemris.java.hw06.shell.ShellStatus;
  */
 public class CatCommand implements ShellCommand {
 
+	static final String CAT_COMMAND = "cat";
+	
 	@Override
 	public ShellStatus executeCommand(Environment env, String arguments) {
 		// TODO Auto-generated method stub
-		return null;
+		return ShellStatus.CONTINUE;
 	}
 
 	@Override
 	public String getCommandName() {
-		// TODO Auto-generated method stub
-		return null;
+		return CAT_COMMAND;
 	}
 
 	@Override
@@ -31,5 +32,4 @@ public class CatCommand implements ShellCommand {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 }

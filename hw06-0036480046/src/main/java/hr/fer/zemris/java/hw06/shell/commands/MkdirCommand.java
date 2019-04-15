@@ -13,16 +13,17 @@ import hr.fer.zemris.java.hw06.shell.ShellStatus;
  */
 public class MkdirCommand implements ShellCommand {
 
+	final static String MKDIR_COMMAND = "mkdir";
+	
 	@Override
 	public ShellStatus executeCommand(Environment env, String arguments) {
 		// TODO Auto-generated method stub
-		return null;
+		return ShellStatus.CONTINUE;
 	}
 
 	@Override
 	public String getCommandName() {
-		// TODO Auto-generated method stub
-		return null;
+		return MKDIR_COMMAND;
 	}
 
 	@Override

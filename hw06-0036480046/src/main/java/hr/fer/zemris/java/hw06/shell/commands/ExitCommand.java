@@ -13,16 +13,16 @@ import hr.fer.zemris.java.hw06.shell.ShellStatus;
  */
 public class ExitCommand implements ShellCommand {
 
+	final static String EXIT_COMMAND = "exit";
+	
 	@Override
 	public ShellStatus executeCommand(Environment env, String arguments) {
-		// TODO Auto-generated method stub
-		return null;
+		return ShellStatus.TERMINATE;
 	}
 
 	@Override
 	public String getCommandName() {
-		// TODO Auto-generated method stub
-		return null;
+		return EXIT_COMMAND;
 	}
 
 	@Override
@@ -30,5 +30,4 @@ public class ExitCommand implements ShellCommand {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 }

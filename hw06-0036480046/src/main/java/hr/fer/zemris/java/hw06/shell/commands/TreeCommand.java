@@ -13,16 +13,17 @@ import hr.fer.zemris.java.hw06.shell.ShellStatus;
  */
 public class TreeCommand implements ShellCommand {
 
+	final static String TREE_COMMAND = "tree";
+	
 	@Override
 	public ShellStatus executeCommand(Environment env, String arguments) {
 		// TODO Auto-generated method stub
-		return null;
+		return ShellStatus.CONTINUE;
 	}
 
 	@Override
 	public String getCommandName() {
-		// TODO Auto-generated method stub
-		return null;
+		return TREE_COMMAND;
 	}
 
 	@Override

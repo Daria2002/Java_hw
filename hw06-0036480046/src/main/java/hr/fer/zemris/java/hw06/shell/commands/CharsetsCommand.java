@@ -14,16 +14,17 @@ import hr.fer.zemris.java.hw06.shell.ShellStatus;
  */
 public class CharsetsCommand implements ShellCommand{
 
+	final static String CHARSETS_COMMAND = "charsets";
+	
 	@Override
 	public ShellStatus executeCommand(Environment env, String arguments) {
 		// TODO Auto-generated method stub
-		return null;
+		return ShellStatus.CONTINUE;
 	}
 
 	@Override
 	public String getCommandName() {
-		// TODO Auto-generated method stub
-		return null;
+		return CHARSETS_COMMAND;
 	}
 
 	@Override

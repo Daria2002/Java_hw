@@ -1,12 +1,12 @@
 package hr.fer.zemris.java.hw06.shell;
 
-import java.util.Collection;
-import java.util.Comparator;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
+import java.util.Scanner;
 import java.util.SortedMap;
 import java.util.TreeMap;
-
 import hr.fer.zemris.java.hw06.shell.commands.CatCommand;
 import hr.fer.zemris.java.hw06.shell.commands.CharsetsCommand;
 import hr.fer.zemris.java.hw06.shell.commands.CopyCommand;
@@ -25,20 +25,139 @@ import hr.fer.zemris.java.hw06.shell.commands.TreeCommand;
  *
  */
 public class MyShell {
+	
+	/** unmodifiable map, where key is command name and value command object **/
+	private static SortedMap<String, ShellCommand> commands = new TreeMap<String, ShellCommand>();
+	
+	/** symbol at the end of previous line when command continues in next line. **/
+	private static char morelinesSymbol = '\\';
+	/** prompt symbol **/
+	private static char promptSymbol = '>';
+	/** symbol at beginning of line that is part of command started in previous line **/
+	private static char multilineSymbol = '|';
+	
+	/**
+	 * This class is used for communication with user. It implements Environment
+	 * interface so it can read user input and write response.
+	 * @author Daria Matković
+	 *
+	 */
+	private static class ShellEnviroment implements Environment {
 
+		@Override
+		public String readLine() throws ShellIOException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void write(String text) throws ShellIOException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void writeln(String text) throws ShellIOException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public SortedMap<String, ShellCommand> commands() {
+			return Collections.unmodifiableSortedMap(commands);
+		}
+
+		@Override
+		public Character getMultilineSymbol() {
+			return multilineSymbol;
+		}
+
+		@Override
+		public void setMultilineSymbol(Character symbol) {
+			multilineSymbol = symbol;
+		}
+
+		@Override
+		public Character getPromptSymbol() {
+			return promptSymbol;
+		}
+
+		@Override
+		public void setPromptSymbol(Character symbol) {
+			promptSymbol = symbol;
+		}
+
+		@Override
+		public Character getMorelinesSymbol() {
+			return morelinesSymbol;
+		}
+
+		@Override
+		public void setMorelinesSymbol(Character symbol) {
+			morelinesSymbol = symbol;
+		}
+		
+	}
+	
 	/**
 	 * This method is executed when program is run. It starts shell, where 
 	 * user writes commands and program execute them.
-	 * @param args
+	 * @param args no arguments
 	 */
 	public static void main(String[] args) {
 		
-		Map<String, ShellCommand> commands = new TreeMap<String, ShellCommand>();
-
 		buildMap(commands);
+		ShellEnviroment env = new ShellEnviroment();
 		
+		ShellStatus status;
+		ShellCommand command;
+		String[] l = new String[3];
+		
+		Scanner commandScanner = new Scanner(System.in);
+		
+		System.out.println("Welcome to MyShell v 1.0");
+		
+		do {
+			System.out.print(promptSymbol);
+			
+			// returns String array without morelines, multilines and prompt symbol
+			l = readLineOrLines(commandScanner);
+			
+			String commandName = l[0];
+			String arguments = String.join(" ", Arrays.copyOfRange(l, 1, l.length));
+			
+			command = commands.get(commandName);
+			status = command.executeCommand(env, arguments);
+					
+		} while (status != ShellStatus.TERMINATE);
+		
+		commandScanner.close();
 	}
 
+	/**
+	 * Gets command without morelines, multilines and prompt symbols.
+	 * @return String array with command name and command arguments
+	 */
+	private static String[] readLineOrLines(Scanner commandScanner) {
+
+		String[] lines = new String[3];
+		String command = commandScanner.nextLine();
+		
+		while(command.indexOf(morelinesSymbol) == command.length()-1) {
+			
+		}
+		
+		
+		
+		
+		return lines;
+	}
+
+	/**
+	 * This method adds all commands in map, so map key is command name and map
+	 * value is new Command object
+	 * @param commands map that needs to be filled with commands
+	 */
 	private static void buildMap(Map<String, ShellCommand> commands) {
 		
 		commands.put(CharsetsCommand.CHARSETS_COMMAND, new CharsetsCommand());

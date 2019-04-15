@@ -13,7 +13,8 @@ public interface ShellCommand {
 	 * Method execute given command
 	 * @param env object used for communication with user (read and write)
 	 * @param arguments everything user entered after the command name
-	 * @return
+	 * @return ShellStatus. If command is exit returns ShellStatus.TERMINATE, 
+	 * otherwise ShellStatus.CONTINUE
 	 */
 	ShellStatus executeCommand(Environment env, String arguments);
 	

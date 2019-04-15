@@ -19,6 +19,7 @@ import hr.fer.zemris.java.hw06.shell.ShellStatus;
  */
 public class LsCommand implements ShellCommand {
 
+	/** ls command name **/
 	public final static String LS_COMMAND = "ls";
 	
 	@Override

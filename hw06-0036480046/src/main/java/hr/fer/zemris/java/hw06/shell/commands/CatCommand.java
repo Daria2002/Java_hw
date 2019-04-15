@@ -1,8 +1,11 @@
 package hr.fer.zemris.java.hw06.shell.commands;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Scanner;
 
 import hr.fer.zemris.java.hw06.shell.Environment;
 import hr.fer.zemris.java.hw06.shell.ShellCommand;
@@ -16,11 +19,28 @@ import hr.fer.zemris.java.hw06.shell.ShellStatus;
  */
 public class CatCommand implements ShellCommand {
 
+	/** cat command name **/
 	public static final String CAT_COMMAND = "cat";
 	
 	@Override
 	public ShellStatus executeCommand(Environment env, String arguments) {
-		// TODO Auto-generated method stub
+
+		String fileName = "bok";
+		File file = new File(fileName);
+		
+		try {
+			Scanner input = new Scanner(file);
+			
+			while (input.hasNextLine()) {
+				env.writeln((input.nextLine()));
+			}
+
+			input.close();
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		
 		return ShellStatus.CONTINUE;
 	}
 

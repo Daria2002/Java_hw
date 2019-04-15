@@ -15,6 +15,7 @@ import hr.fer.zemris.java.hw06.shell.ShellStatus;
  */
 public class HexdumpCommand implements ShellCommand {
 
+	/** hexdump command name **/
 	public final static String HEXDUMP_COMMAND = "hexdump";
 	
 	@Override

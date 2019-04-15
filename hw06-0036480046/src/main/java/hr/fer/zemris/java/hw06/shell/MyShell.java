@@ -2,7 +2,6 @@ package hr.fer.zemris.java.hw06.shell;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.SortedMap;
@@ -118,17 +117,19 @@ public class MyShell {
 		System.out.println("Welcome to MyShell v 1.0");
 		
 		do {
-			System.out.print(promptSymbol);
-			
 			// returns String array without morelines, multilines and prompt symbol
 			l = readLineOrLines(commandScanner);
 			
 			String commandName = l[0];
-			String arguments = String.join(" ", Arrays.copyOfRange(l, 1, l.length));
+			
+			String arguments = null;
+			if(l.length > 1) {
+				arguments = String.join(" ", Arrays.copyOfRange(l, 1, l.length));
+			}
 			
 			command = commands.get(commandName);
 			status = command.executeCommand(env, arguments);
-					
+			
 		} while (status != ShellStatus.TERMINATE);
 		
 		commandScanner.close();
@@ -141,14 +142,17 @@ public class MyShell {
 	private static String[] readLineOrLines(Scanner commandScanner) {
 
 		String[] lines = new String[3];
-		String command = commandScanner.nextLine();
+		String command;
+
 		
-		while(command.indexOf(morelinesSymbol) == command.length()-1) {
+		int i = 0;
+		do {	
+			System.out.print(i > 0 ? multilineSymbol : promptSymbol);
 			
-		}
-		
-		
-		
+			command = commandScanner.nextLine().trim();
+			lines[i++] = command.replace(String.valueOf(morelinesSymbol), "");
+			
+		} while (command.indexOf(morelinesSymbol) == command.length()-1);
 		
 		return lines;
 	}

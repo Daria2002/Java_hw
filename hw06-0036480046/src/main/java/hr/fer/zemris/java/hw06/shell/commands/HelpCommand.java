@@ -16,6 +16,7 @@ import hr.fer.zemris.java.hw06.shell.ShellStatus;
  */
 public class HelpCommand implements ShellCommand {
 
+	/** help command name **/
 	public final static String HELP_COMMAND = "help";
 	
 	@Override

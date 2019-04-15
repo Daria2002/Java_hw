@@ -15,6 +15,7 @@ import hr.fer.zemris.java.hw06.shell.ShellStatus;
  */
 public class MkdirCommand implements ShellCommand {
 
+	/** mkdir command name **/
 	public final static String MKDIR_COMMAND = "mkdir";
 	
 	@Override

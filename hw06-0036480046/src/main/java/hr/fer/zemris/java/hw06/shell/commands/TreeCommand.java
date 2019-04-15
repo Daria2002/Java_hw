@@ -15,6 +15,7 @@ import hr.fer.zemris.java.hw06.shell.ShellStatus;
  */
 public class TreeCommand implements ShellCommand {
 
+	/** tree command name **/
 	public final static String TREE_COMMAND = "tree";
 	
 	@Override

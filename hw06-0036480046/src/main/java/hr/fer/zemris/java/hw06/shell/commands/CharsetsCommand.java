@@ -1,8 +1,10 @@
 package hr.fer.zemris.java.hw06.shell.commands;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.SortedMap;
 
 import hr.fer.zemris.java.hw06.shell.Environment;
 import hr.fer.zemris.java.hw06.shell.ShellCommand;
@@ -16,11 +18,21 @@ import hr.fer.zemris.java.hw06.shell.ShellStatus;
  */
 public class CharsetsCommand implements ShellCommand{
 
+	/** charsets command name **/
 	public final static String CHARSETS_COMMAND = "charsets";
 	
 	@Override
 	public ShellStatus executeCommand(Environment env, String arguments) {
-		// TODO Auto-generated method stub
+		
+		// charsets take no argument
+		if(arguments == null) {
+			return null;
+		}
+		
+		for (String str : Charset.availableCharsets().keySet()) {
+		      System.out.println(str);
+		}
+		
 		return ShellStatus.CONTINUE;
 	}
 

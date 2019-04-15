@@ -15,7 +15,8 @@ import hr.fer.zemris.java.hw06.shell.ShellStatus;
  *
  */
 public class CopyCommand implements ShellCommand {
-
+	
+	/** copy command name **/
 	public final static String COPY_COMMAND = "copy";
 	
 	@Override

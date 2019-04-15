@@ -1,5 +1,7 @@
 package hr.fer.zemris.java.hw06.shell.commands;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import hr.fer.zemris.java.hw06.shell.Environment;
@@ -29,7 +31,14 @@ public class CatCommand implements ShellCommand {
 
 	@Override
 	public List<String> getCommandDescription() {
-		// TODO Auto-generated method stub
-		return null;
+		List list = new ArrayList();
+		
+		list.add("Command cat takes one or two arguments.");
+		list.add("The first argument is path to some file and is mandatory.");
+		list.add("The second argument is charset name used to interpret chars from bytes.");
+		list.add("If not provided, a default platform charset should be used.");
+		list.add("This command opens given file and writes its content to console.");
+		
+        return Collections.unmodifiableList(list);
 	}
 }

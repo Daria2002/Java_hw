@@ -1,5 +1,7 @@
 package hr.fer.zemris.java.hw06.shell.commands;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import hr.fer.zemris.java.hw06.shell.Environment;
@@ -27,7 +29,10 @@ public class ExitCommand implements ShellCommand {
 
 	@Override
 	public List<String> getCommandDescription() {
-		// TODO Auto-generated method stub
-		return null;
+		List list = new ArrayList();
+		
+		list.add("Shell terminates when user gives exit command.");
+		
+        return Collections.unmodifiableList(list);
 	}
 }

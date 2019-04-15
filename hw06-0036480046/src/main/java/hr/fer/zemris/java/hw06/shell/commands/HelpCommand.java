@@ -1,5 +1,7 @@
 package hr.fer.zemris.java.hw06.shell.commands;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import hr.fer.zemris.java.hw06.shell.Environment;
@@ -29,8 +31,11 @@ public class HelpCommand implements ShellCommand {
 
 	@Override
 	public List<String> getCommandDescription() {
-		// TODO Auto-generated method stub
-		return null;
+		List list = new ArrayList();
+		
+		list.add("If there are no arguments, it lists names of supported commands.");
+		list.add("If there is one argument, it prints name and the description of selected command");
+		
+        return Collections.unmodifiableList(list);
 	}
-
 }

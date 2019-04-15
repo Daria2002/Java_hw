@@ -1,5 +1,7 @@
 package hr.fer.zemris.java.hw06.shell.commands;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import hr.fer.zemris.java.hw06.shell.Environment;
@@ -28,8 +30,11 @@ public class TreeCommand implements ShellCommand {
 
 	@Override
 	public List<String> getCommandDescription() {
-		// TODO Auto-generated method stub
-		return null;
+		List list = new ArrayList();
+		
+		list.add("The tree command expects a single argument: directory name.");
+		list.add("Command prints a tree (each dir level shifts output two spaces to the right).");
+		
+        return Collections.unmodifiableList(list);
 	}
-
 }

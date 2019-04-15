@@ -1,5 +1,7 @@
 package hr.fer.zemris.java.hw06.shell.commands;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import hr.fer.zemris.java.hw06.shell.Environment;
@@ -28,8 +30,13 @@ public class HexdumpCommand implements ShellCommand {
 
 	@Override
 	public List<String> getCommandDescription() {
-		// TODO Auto-generated method stub
-		return null;
+		List list = new ArrayList();
+		
+		list.add("Takes one argument: file name, and produces hex-output.");
+		list.add("Bytes whose value is less than 32 or greater than 127 are printed."); 
+		list.add(" otherwise '.' is printed instead of char.");
+		list.add("Printed message says what current symbol value is.");
+		
+        return Collections.unmodifiableList(list);
 	}
-
 }

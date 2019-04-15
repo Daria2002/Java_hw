@@ -1,5 +1,7 @@
 package hr.fer.zemris.java.hw06.shell.commands;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import hr.fer.zemris.java.hw06.shell.Environment;
@@ -29,8 +31,13 @@ public class CopyCommand implements ShellCommand {
 
 	@Override
 	public List<String> getCommandDescription() {
-		// TODO Auto-generated method stub
-		return null;
+		List list = new ArrayList();
+		
+		list.add("The copy command expects two arguments: source file and destination file.");
+		list.add("Is destination file exists, you should ask user is it allowed to overwrite it.");
+		list.add("Copy command works only with files.");
+		list.add("If 2nd arg is dir, copies orig file into that dir using the orig file name.");
+		
+        return Collections.unmodifiableList(list);
 	}
-
 }

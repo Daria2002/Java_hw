@@ -28,6 +28,8 @@ public class MyShell {
 	/** unmodifiable map, where key is command name and value command object **/
 	private static SortedMap<String, ShellCommand> commands = new TreeMap<String, ShellCommand>();
 	
+	private static Scanner commandScanner;
+	
 	/** symbol at the end of previous line when command continues in next line. **/
 	private static char morelinesSymbol = '\\';
 	/** prompt symbol **/
@@ -45,20 +47,20 @@ public class MyShell {
 
 		@Override
 		public String readLine() throws ShellIOException {
-			// TODO Auto-generated method stub
+			if(commandScanner.hasNext()) {
+				return commandScanner.nextLine();
+			}
 			return null;
 		}
 
 		@Override
 		public void write(String text) throws ShellIOException {
-			// TODO Auto-generated method stub
-			
+			System.out.print(text);
 		}
 
 		@Override
 		public void writeln(String text) throws ShellIOException {
-			// TODO Auto-generated method stub
-			
+			System.out.println(text);
 		}
 
 		@Override
@@ -111,46 +113,77 @@ public class MyShell {
 		ShellStatus status;
 		ShellCommand command;
 		String[] l = new String[3];
+		int nullIndex = 0;
 		
-		Scanner commandScanner = new Scanner(System.in);
+		commandScanner = new Scanner(System.in);
 		
 		System.out.println("Welcome to MyShell v 1.0");
 		
 		do {
 			// returns String array without morelines, multilines and prompt symbol
-			l = readLineOrLines(commandScanner);
+			l = readLineOrLines(commandScanner, env);
+			
+			// null values are not saved as arguments
+			nullIndex = getNullIndex(l);
 			
 			String commandName = l[0];
-			
 			String arguments = null;
+			
 			if(l.length > 1) {
-				arguments = String.join(" ", Arrays.copyOfRange(l, 1, l.length));
+				// save everything, but null values and command name
+				arguments = String.join(" ", Arrays.copyOfRange(l, 1, nullIndex));
 			}
 			
 			command = commands.get(commandName);
-			status = command.executeCommand(env, arguments);
+			
+			if(command != null) {
+				status = command.executeCommand(env, arguments);
+			} else {
+				status = ShellStatus.CONTINUE;
+			}
+			
 			
 		} while (status != ShellStatus.TERMINATE);
 		
 		commandScanner.close();
 	}
 
+	private static int getNullIndex(String[] l) {
+		for(int i = 0; i < l.length; i++) {
+			if(l[i] == null) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
 	/**
 	 * Gets command without morelines, multilines and prompt symbols.
 	 * @return String array with command name and command arguments
 	 */
-	private static String[] readLineOrLines(Scanner commandScanner) {
+	private static String[] readLineOrLines(Scanner commandScanner, 
+			Environment env) {
 
 		String[] lines = new String[3];
 		String command;
-
+		String[] commandArray = new String[3];
 		
 		int i = 0;
 		do {	
 			System.out.print(i > 0 ? multilineSymbol : promptSymbol);
 			
-			command = commandScanner.nextLine().trim();
-			lines[i++] = command.replace(String.valueOf(morelinesSymbol), "");
+			command = env.readLine().trim();
+			commandArray = command.split(" ");
+			
+			for(int k = 0; k < commandArray.length; k++) {
+				
+				if(commandArray[k] == null || commandArray[k].isBlank()
+						|| String.valueOf(morelinesSymbol).equals(commandArray[k])) {
+					break;
+				}
+				
+				lines[i++] = commandArray[k];
+			}
 			
 		} while (command.indexOf(morelinesSymbol) == command.length()-1);
 		

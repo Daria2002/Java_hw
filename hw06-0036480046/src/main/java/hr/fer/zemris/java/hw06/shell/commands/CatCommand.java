@@ -1,7 +1,10 @@
 package hr.fer.zemris.java.hw06.shell.commands;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -24,23 +27,24 @@ public class CatCommand implements ShellCommand {
 	
 	@Override
 	public ShellStatus executeCommand(Environment env, String arguments) {
-
-		String fileName = "bok";
-		File file = new File(fileName);
+		File file = new File(arguments);
+		FileInputStream fstream;
 		
 		try {
-			Scanner input = new Scanner(file);
+			fstream = new FileInputStream(file);
+			BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+			String strLine;
 			
-			while (input.hasNextLine()) {
-				env.writeln((input.nextLine()));
+			while ((strLine = br.readLine()) != null) {
+				env.writeln(strLine);
 			}
-
-			input.close();
 			
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			fstream.close();
+			
+		} catch (Exception e) {
+			System.out.println("Can't open file.");
+			System.exit(0);
 		}
-		
 		return ShellStatus.CONTINUE;
 	}
 

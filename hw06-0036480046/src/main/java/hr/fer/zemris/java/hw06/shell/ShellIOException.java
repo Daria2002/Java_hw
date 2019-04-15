@@ -1,7 +1,9 @@
 package hr.fer.zemris.java.hw06.shell;
 
 /**
- * Exception that happens when error in shell operations occurs 
+ * Exception that happens when no communication is possible with the user.
+ * This exception throws only if reading and writing using Environment.write(), 
+ * Environment.writeln() or Environment.readLine() is not possible.
  * @author Daria Matković
  *
  */

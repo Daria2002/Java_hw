@@ -15,7 +15,7 @@ import hr.fer.zemris.java.hw06.shell.ShellStatus;
  */
 public class ExitCommand implements ShellCommand {
 
-	final static String EXIT_COMMAND = "exit";
+	public final static String EXIT_COMMAND = "exit";
 	
 	@Override
 	public ShellStatus executeCommand(Environment env, String arguments) {

@@ -16,7 +16,7 @@ import hr.fer.zemris.java.hw06.shell.ShellStatus;
  */
 public class CatCommand implements ShellCommand {
 
-	static final String CAT_COMMAND = "cat";
+	public static final String CAT_COMMAND = "cat";
 	
 	@Override
 	public ShellStatus executeCommand(Environment env, String arguments) {

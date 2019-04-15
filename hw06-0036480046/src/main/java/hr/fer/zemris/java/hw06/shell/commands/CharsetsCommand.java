@@ -16,7 +16,7 @@ import hr.fer.zemris.java.hw06.shell.ShellStatus;
  */
 public class CharsetsCommand implements ShellCommand{
 
-	final static String CHARSETS_COMMAND = "charsets";
+	public final static String CHARSETS_COMMAND = "charsets";
 	
 	@Override
 	public ShellStatus executeCommand(Environment env, String arguments) {

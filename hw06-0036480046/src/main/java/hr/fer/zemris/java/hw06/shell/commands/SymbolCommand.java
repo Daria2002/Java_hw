@@ -15,7 +15,7 @@ import hr.fer.zemris.java.hw06.shell.ShellStatus;
  */
 public class SymbolCommand implements ShellCommand {
 
-	final static String SYMBOL_COMMAND = "symbol";
+	public final static String SYMBOL_COMMAND = "symbol";
 	
 	@Override
 	public ShellStatus executeCommand(Environment env, String arguments) {

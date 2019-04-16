@@ -165,12 +165,15 @@ public class MyShell {
 		String command;
 		
 		int i = 0;
+		
+		// this loop reads lines while morelinesSymbol is printed
 		do {	
 			System.out.print(i > 0 ? multilineSymbol : promptSymbol);
 			
 			command = env.readLine().trim();
 			String[] commandArray = command.split(" ");
 			
+			// this loop adds every word of command lines like new lines element
 			for(int k = 0; k < commandArray.length; k++) {
 				
 				if(commandArray[k] == null || commandArray[k].isBlank()
@@ -185,6 +188,7 @@ public class MyShell {
 		
 		String[] linesArray = new String[lines.size()];
 		
+		// returns linesArray
 		return lines.toArray(linesArray);
 	}
 

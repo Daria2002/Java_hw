@@ -21,7 +21,26 @@ public class HelpCommand implements ShellCommand {
 	
 	@Override
 	public ShellStatus executeCommand(Environment env, String arguments) {
-		// TODO Auto-generated method stub
+		
+		if(arguments == null) {
+			for (String key : env.commands().keySet()) {
+				env.writeln(env.commands().get(key).getCommandName());
+			}
+			
+			return ShellStatus.CONTINUE;
+		} 
+		
+		try {
+			List<String> list = env.commands().get(arguments).getCommandDescription();
+			
+			for(int i = 0; i < list.size(); i++) {
+				env.writeln(list.get(i));
+			}
+			
+		} catch (Exception e) {
+			env.writeln("Command \"" + arguments + "\" doesn't exists.");
+		}
+
 		return ShellStatus.CONTINUE;
 	}
 

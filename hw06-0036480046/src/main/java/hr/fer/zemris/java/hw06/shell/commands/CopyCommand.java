@@ -1,18 +1,21 @@
 package hr.fer.zemris.java.hw06.shell.commands;
 
-import java.io.BufferedReader;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.CharBuffer;
-import java.nio.charset.Charset;
+import java.io.OutputStreamWriter;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import javax.crypto.Cipher;
 
 import hr.fer.zemris.java.hw06.shell.Environment;
 import hr.fer.zemris.java.hw06.shell.ShellCommand;
@@ -39,14 +42,11 @@ public class CopyCommand implements ShellCommand {
 		}
 		
 		String sourceFilePath = argsArray[0];
-		String[] helpArray = argsArray[0].split("/");
-		String sourceFileName = helpArray[helpArray.length-1];
-		
 		String destinationFilePath = argsArray[1];
 		
 		// if second arg is dir copy first file to dir
 		if(new File(destinationFilePath).isDirectory()) {
-			copyFileToDir(sourceFilePath, destinationFilePath, helpArray);
+			copyFileToDir(sourceFilePath, destinationFilePath);
 			
 		} else {
 			copyFileToFile(sourceFilePath, destinationFilePath);
@@ -55,6 +55,11 @@ public class CopyCommand implements ShellCommand {
 		return ShellStatus.CONTINUE;
 	}
 
+	/**
+	 * This method copies source file content to destination file content
+	 * @param sourceFilePath source file path
+	 * @param destinationFilePath destination file path
+	 */
 	private void copyFileToFile(String sourceFilePath, String destinationFilePath) {
 		
 		FileInputStream inputStream;
@@ -78,10 +83,50 @@ public class CopyCommand implements ShellCommand {
     		return;
     	}
 	}
-
-	private void copyFileToDir(String sourceFilePath, String destinationFilePath, String[] helpArray) {
-		// TODO Auto-generated method stub
+	
+	/**
+	 * This method creates new file named as source file to destination folder
+	 * @param sourceFilePath that needs to be copied in destination folder
+	 * @param destinationFolderPath folder where source file needs to be copied
+	 */
+	private void copyFileToDir(String sourceFilePath, String destinationFolderPath) {
 		
+		String[] helpArray = sourceFilePath.split("/");
+		String sourceFileName = helpArray[helpArray.length-1];
+		
+		String destinationFile = destinationFolderPath + "/" + sourceFileName;
+		File file = new File(destinationFile);
+
+        // If file doesn't exists, then create it
+        if (!file.exists()) {
+            try {
+				file.createNewFile();
+			} catch (IOException e) {
+				return;
+			}
+        }
+		
+        try {
+			Path source = Paths.get(sourceFilePath);
+			BufferedInputStream in = new BufferedInputStream(Files.newInputStream(source),
+					1000);
+
+			BufferedOutputStream out = new BufferedOutputStream(Files.newOutputStream(
+					Paths.get(destinationFile)), 1000);
+
+	        byte[] inputBytes = new byte[1000];
+	        
+	        // read is number of read elements
+			for(int read = in.read(inputBytes); read >= 0; read = in.read(inputBytes)) {
+				out.write(inputBytes, 0, read);
+			}
+			
+	        out.close();
+		    in.close();
+			
+		} catch (Exception e) {
+			return;
+		}
 	}
 
 	@Override

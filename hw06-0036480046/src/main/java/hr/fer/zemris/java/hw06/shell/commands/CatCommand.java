@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
+import java.nio.CharBuffer;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -27,7 +29,17 @@ public class CatCommand implements ShellCommand {
 	
 	@Override
 	public ShellStatus executeCommand(Environment env, String arguments) {
-		File file = new File(arguments);
+		
+		String[] argsArray = arguments.split(" ");
+		
+		if(argsArray.length != 2) {
+			return ShellStatus.CONTINUE;
+		}
+		
+		String fileName = argsArray[0];
+		String charset = argsArray[1];
+		
+		File file = new File(fileName);
 		FileInputStream fstream;
 		
 		try {
@@ -36,6 +48,8 @@ public class CatCommand implements ShellCommand {
 			String strLine;
 			
 			while ((strLine = br.readLine()) != null) {
+				byte[] bytes = Charset.forName(charset).encode(CharBuffer.wrap(strLine)).array();
+				strLine = new String(bytes, charset);
 				env.writeln(strLine);
 			}
 			
@@ -52,7 +66,7 @@ public class CatCommand implements ShellCommand {
 	public String getCommandName() {
 		return CAT_COMMAND;
 	}
-
+	
 	@Override
 	public List<String> getCommandDescription() {
 		List list = new ArrayList();

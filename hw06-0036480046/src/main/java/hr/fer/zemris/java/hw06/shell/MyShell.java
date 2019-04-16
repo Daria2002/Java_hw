@@ -124,7 +124,7 @@ public class MyShell {
 			l = readLineOrLines(commandScanner, env);
 			
 			// null values are not saved as arguments
-			nullIndex = getNullIndex(l);
+			nullIndex = getNullIndex(l) == -1 ? l.length : getNullIndex(l);
 			
 			String commandName = l[0];
 			String arguments = null;

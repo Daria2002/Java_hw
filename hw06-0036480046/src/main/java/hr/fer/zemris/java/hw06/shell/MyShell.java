@@ -111,7 +111,7 @@ public class MyShell {
 		buildMap(commands);
 		ShellEnviroment env = new ShellEnviroment();
 		
-		ShellStatus status;
+		ShellStatus status = null;
 		ShellCommand command;
 		String[] l = new String[3];
 		int nullIndex = 0;
@@ -123,6 +123,11 @@ public class MyShell {
 		do {
 			// returns String array without morelines, multilines and prompt symbol
 			l = readLineOrLines(commandScanner, env);
+			
+			if(l == null) {
+				System.out.println("Something is wrong with command.");
+				continue;
+			}
 			
 			// null values are not saved as arguments
 			nullIndex = getNullIndex(l) == -1 ? l.length : getNullIndex(l);
@@ -171,9 +176,15 @@ public class MyShell {
 			System.out.print(i > 0 ? multilineSymbol : promptSymbol);
 			
 			command = env.readLine().trim();
+			
+			if(command.contains("\"")) {
+				lines = putInLines(command);
+				break;
+			}
+			
 			String[] commandArray = command.split(" ");
 			
-			// this loop adds every word of command lines like new lines element
+			// this loop adds every word of command lines like new element of lines
 			for(int k = 0; k < commandArray.length; k++) {
 				
 				if(commandArray[k] == null || commandArray[k].isBlank()
@@ -192,6 +203,52 @@ public class MyShell {
 		return lines.toArray(linesArray);
 	}
 
+	
+	private static ArrayList<String> putInLines(String command) {
+		// array where commands are splited with ", it means that every other
+		// element is in quotes
+		String[] commandArray = command.split("\"");
+		ArrayList<String> lines = new ArrayList<String>();
+		
+		ArrayList<String> quoteList = new ArrayList<String>();
+		// adding quoted elements
+		for(int i = 1; i < commandArray.length; i = i + 2) {
+			quoteList.add(commandArray[i]);
+		}
+		
+		String stringToAdd;
+		// adding unquoted and quoted elements in array
+		for(int i = 0; i < commandArray.length; i++) {
+			
+			// adding quoted elements
+			if(i%2 != 0 && quoteList.size() > i/2) {
+				stringToAdd = quoteList.get(i/2);
+				
+				if(stringToAdd.isBlank() || stringToAdd.isEmpty()) {
+					continue;
+				}
+				
+				lines.add(quoteList.get(i/2));
+				continue;
+			}
+			
+			// unquoted elements need to be split with " "
+			String[] splited = commandArray[i].split(" ");
+			
+			for(int m = 0; m < splited.length; m++) {
+				stringToAdd = splited[m];
+				
+				if(stringToAdd.isBlank() || stringToAdd.isEmpty()) {
+					continue;
+				}
+				
+				lines.add(splited[m]);
+			}
+		}
+		
+		return lines;
+	}
+	
 	/**
 	 * This method adds all commands in map, so map key is command name and map
 	 * value is new Command object

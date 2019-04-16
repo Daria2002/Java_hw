@@ -14,6 +14,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Scanner;
 
 import javax.crypto.Cipher;
 
@@ -44,8 +45,18 @@ public class CopyCommand implements ShellCommand {
 		String sourceFilePath = argsArray[0];
 		String destinationFilePath = argsArray[1];
 		
+		File destFile = new File(destinationFilePath);
+		
+		if(destFile.exists()) {
+			System.out.println("Do you want to overwrite destination file? y/n");
+			
+			if("n".equals(env.readLine())) {
+				return ShellStatus.CONTINUE;
+			}
+		}
+		
 		// if second arg is dir copy first file to dir
-		if(new File(destinationFilePath).isDirectory()) {
+		if(destFile.isDirectory()) {
 			copyFileToDir(sourceFilePath, destinationFilePath);
 			
 		} else {

@@ -1,5 +1,6 @@
 package hr.fer.zemris.java.hw06.shell;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
@@ -136,12 +137,8 @@ public class MyShell {
 			
 			command = commands.get(commandName);
 			
-			if(command != null) {
-				status = command.executeCommand(env, arguments);
-			} else {
-				status = ShellStatus.CONTINUE;
-			}
-			
+			status = command != null ? command.executeCommand(env, arguments) : 
+				ShellStatus.CONTINUE;
 			
 		} while (status != ShellStatus.TERMINATE);
 		
@@ -164,16 +161,15 @@ public class MyShell {
 	private static String[] readLineOrLines(Scanner commandScanner, 
 			Environment env) {
 
-		String[] lines = new String[3];
+		ArrayList<String> lines = new ArrayList<String>();
 		String command;
-		String[] commandArray = new String[3];
 		
 		int i = 0;
 		do {	
 			System.out.print(i > 0 ? multilineSymbol : promptSymbol);
 			
 			command = env.readLine().trim();
-			commandArray = command.split(" ");
+			String[] commandArray = command.split(" ");
 			
 			for(int k = 0; k < commandArray.length; k++) {
 				
@@ -182,12 +178,14 @@ public class MyShell {
 					break;
 				}
 				
-				lines[i++] = commandArray[k];
+				lines.add(i++, commandArray[k]);
 			}
 			
 		} while (command.indexOf(morelinesSymbol) == command.length()-1);
 		
-		return lines;
+		String[] linesArray = new String[lines.size()];
+		
+		return lines.toArray(linesArray);
 	}
 
 	/**

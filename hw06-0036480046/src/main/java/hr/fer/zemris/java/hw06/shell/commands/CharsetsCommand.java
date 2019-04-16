@@ -25,7 +25,7 @@ public class CharsetsCommand implements ShellCommand{
 	public ShellStatus executeCommand(Environment env, String arguments) {
 		
 		// charsets take no argument
-		if(arguments == null) {
+		if(arguments != null) {
 			return null;
 		}
 		

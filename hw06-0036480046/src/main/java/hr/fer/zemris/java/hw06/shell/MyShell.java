@@ -178,7 +178,14 @@ public class MyShell {
 			command = env.readLine().trim();
 			
 			if(command.contains("\"")) {
-				lines = putInLines(command);
+				ArrayList<String> help = new ArrayList<String>();
+				help = putInLines(command);
+				lines.addAll(help);
+				
+				if(String.valueOf(morelinesSymbol).equals(help.get(help.size()-1))) {
+					continue;
+				}
+				
 				break;
 			}
 			
@@ -192,8 +199,10 @@ public class MyShell {
 					break;
 				}
 				
-				lines.add(i++, commandArray[k]);
+				lines.add(commandArray[k]);
 			}
+			
+			i++;
 			
 		} while (command.indexOf(morelinesSymbol) == command.length()-1);
 		
@@ -213,7 +222,7 @@ public class MyShell {
 		ArrayList<String> quoteList = new ArrayList<String>();
 		// adding quoted elements
 		for(int i = 1; i < commandArray.length; i = i + 2) {
-			quoteList.add(commandArray[i]);
+			quoteList.add("\"" + commandArray[i] + "\"");
 		}
 		
 		String stringToAdd;

@@ -149,6 +149,7 @@ public class MyShell {
 		} while (status != ShellStatus.TERMINATE);
 		
 		commandScanner.close();
+		System.exit(0);
 	}
 
 	private static int getNullIndex(String[] l) {
@@ -174,7 +175,7 @@ public class MyShell {
 		
 		// this loop reads lines while morelinesSymbol is printed
 		do {	
-			System.out.print(i++ > 0 ? multilineSymbol : promptSymbol);
+			System.out.print((i++ > 0 ? multilineSymbol : promptSymbol) + " ");
 			
 			command = env.readLine().trim();
 			

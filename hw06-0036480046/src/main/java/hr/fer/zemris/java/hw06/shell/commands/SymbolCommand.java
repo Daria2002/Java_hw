@@ -33,7 +33,7 @@ public class SymbolCommand implements ShellCommand {
 			} else if("MORELINES".equals(args[0])) {
 				currentValue = String.valueOf(env.getMorelinesSymbol());
 				
-			} else if("MULTILINES".equals(args[0])) {
+			} else if("MULTILINE".equals(args[0])) {
 				currentValue = String.valueOf(env.getMultilineSymbol());
 				
 			} else {
@@ -44,19 +44,19 @@ public class SymbolCommand implements ShellCommand {
 			
 		} else if(args.length == 2) {
 			if("PROMPT".equals(args[0])) {
-				System.out.println("Symbol for " + env.getPromptSymbol().toString() +
+				System.out.println("Symbol for " + args[0] +
 						" changed from '" + env.getPromptSymbol().toString()  + "' to '" + args[1] + "'");
 				env.setPromptSymbol(args[1].charAt(0)); 
 				  
 			} else if("MORELINES".equals(args[0])) {
-				System.out.println("Symbol for " + env.getMorelinesSymbol().toString() +
+				System.out.println("Symbol for " + args[0] +
 						" changed from '" + env.getMorelinesSymbol().toString()  + "' to '" + args[1] + "'");
-				env.setPromptSymbol(args[1].charAt(0)); 
+				env.setMorelinesSymbol(args[1].charAt(0)); 
 				
 			} else if("MULTILINE".equals(args[0])) {
-				System.out.println("Symbol for " + env.getMultilineSymbol().toString() +
+				System.out.println("Symbol for " + args[0] +
 						" changed from '" + env.getMultilineSymbol().toString()  + "' to '" + args[1] + "'");
-				env.setPromptSymbol(args[1].charAt(0)); 
+				env.setMultilineSymbol(args[1].charAt(0)); 
 				
 			} else {
 				System.out.println("Symbol " + args[0] + " doesn't exists.");

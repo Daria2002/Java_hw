@@ -1,5 +1,10 @@
 package hr.fer.zemris.java.hw06.shell.commands;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.attribute.FileAttribute;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -20,7 +25,34 @@ public class MkdirCommand implements ShellCommand {
 	
 	@Override
 	public ShellStatus executeCommand(Environment env, String arguments) {
-		// TODO Auto-generated method stub
+		
+		// check if arguments is quoted
+		String[] argsArray;
+		if(arguments.trim().contains("\"")) {
+			argsArray = arguments.split("\"");
+			
+			if(argsArray.length != 2 || (!argsArray[0].isBlank() && !argsArray[0].isEmpty())) {
+				
+				for(int i = 0; i < argsArray.length; i++) {
+					System.out.println(argsArray[i]);
+				}
+				
+				System.out.println("Insert only one argument");
+				return ShellStatus.CONTINUE;
+			}
+			
+			arguments = argsArray[1];
+		}
+
+		File newFolder = new File(arguments);
+	    if(!newFolder.exists()) {
+	    	try {
+				Files.createDirectory(Paths.get(newFolder.toString()));
+			} catch (IOException e) {
+				System.out.println("Error occured, so directory is not created.");
+			}
+	    }
+
 		return ShellStatus.CONTINUE;
 	}
 

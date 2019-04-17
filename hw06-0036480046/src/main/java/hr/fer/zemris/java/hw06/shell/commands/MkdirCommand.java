@@ -26,22 +26,11 @@ public class MkdirCommand implements ShellCommand {
 	@Override
 	public ShellStatus executeCommand(Environment env, String arguments) {
 		
-		// check if arguments is quoted
-		String[] argsArray;
-		if(arguments.trim().contains("\"")) {
-			argsArray = arguments.split("\"");
-			
-			if(argsArray.length != 2 || (!argsArray[0].isBlank() && !argsArray[0].isEmpty())) {
-				
-				for(int i = 0; i < argsArray.length; i++) {
-					System.out.println(argsArray[i]);
-				}
-				
-				System.out.println("Insert only one argument");
-				return ShellStatus.CONTINUE;
-			}
-			
-			arguments = argsArray[1];
+		arguments = CommandUtilityClass.checkOneArgument(arguments);
+		
+		if(arguments == null) {
+			System.out.println("Insert only one argument");
+			return ShellStatus.CONTINUE;
 		}
 
 		File newFolder = new File(arguments);

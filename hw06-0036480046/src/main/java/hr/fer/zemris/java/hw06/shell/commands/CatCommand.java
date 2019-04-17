@@ -29,12 +29,6 @@ public class CatCommand implements ShellCommand {
 	
 	@Override
 	public ShellStatus executeCommand(Environment env, String arguments) {
-		/*
-		String[] argsArray = arguments.split(" ");
-		
-		if(argsArray.length != 2) {
-			return ShellStatus.CONTINUE;
-		}*/
 		
 		String[] argsArray = CommandUtilityClass.checkTwoArguments(arguments);
 		

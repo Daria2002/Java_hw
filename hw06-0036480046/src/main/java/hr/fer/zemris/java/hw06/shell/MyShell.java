@@ -121,30 +121,35 @@ public class MyShell {
 		System.out.println("Welcome to MyShell v 1.0");
 		
 		do {
-			// returns String array without morelines, multilines and prompt symbol
-			l = readLineOrLines(commandScanner, env);
-			
-			if(l == null) {
-				System.out.println("Something is wrong with command.");
-				continue;
+			try {
+				// returns String array without morelines, multilines and prompt symbol
+				l = readLineOrLines(commandScanner, env);
+				
+				if(l == null) {
+					System.out.println("Something is wrong with command.");
+					continue;
+				}
+				
+				// null values are not saved as arguments
+				nullIndex = getNullIndex(l) == -1 ? l.length : getNullIndex(l);
+				
+				String commandName = l[0];
+				String arguments = null;
+				
+				if(l.length > 1) {
+					// save everything, but null values and command name
+					arguments = String.join(" ", Arrays.copyOfRange(l, 1, nullIndex));
+				}
+				
+				command = commands.get(commandName);
+				
+				status = command != null ? command.executeCommand(env, arguments) : 
+					ShellStatus.CONTINUE;
+				
+			} catch (Exception e) {
+				status = ShellStatus.CONTINUE;
 			}
-			
-			// null values are not saved as arguments
-			nullIndex = getNullIndex(l) == -1 ? l.length : getNullIndex(l);
-			
-			String commandName = l[0];
-			String arguments = null;
-			
-			if(l.length > 1) {
-				// save everything, but null values and command name
-				arguments = String.join(" ", Arrays.copyOfRange(l, 1, nullIndex));
-			}
-			
-			command = commands.get(commandName);
-			
-			status = command != null ? command.executeCommand(env, arguments) : 
-				ShellStatus.CONTINUE;
-			
+	
 		} while (status != ShellStatus.TERMINATE);
 		
 		commandScanner.close();

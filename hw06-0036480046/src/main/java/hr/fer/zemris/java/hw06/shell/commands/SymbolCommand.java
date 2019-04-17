@@ -20,8 +20,58 @@ public class SymbolCommand implements ShellCommand {
 	
 	@Override
 	public ShellStatus executeCommand(Environment env, String arguments) {
-		// TODO Auto-generated method stub
+		
+		String[] args = arguments.split(" ");
+		
+		
+		String currentValue = "";
+		// print info message
+		if(args.length == 1) {
+			if("PROMPT".equals(args[0])) {
+				currentValue = env.getPromptSymbol().toString();
+				
+			} else if("MORELINES".equals(args[0])) {
+				currentValue = env.getMorelinesSymbol().toString();
+				
+			} else if("MULTILINES".equals(args[0])) {
+				currentValue = env.getMultilineSymbol().toString();
+				
+			} else {
+				System.out.println("Symbol " + args[0] + " doesn't exists.");
+				return ShellStatus.CONTINUE;
+			}
+			currentValue = getValue(args[0]);
+			System.out.println("Symbol for " + args[0] + " is '" + currentValue + "'");
+			
+		} else if(args.length == 2) {
+			if("PROMPT".equals(args[0])) {
+				System.out.println("Symbol for " + env.getPromptSymbol().toString() +
+						" changed from '" + env.getPromptSymbol().toString()  + "' to '" + args[1] + "'");
+				env.setPromptSymbol(args[1].charAt(0)); 
+				  
+			} else if("MORELINES".equals(args[0])) {
+				System.out.println("Symbol for " + env.getMorelinesSymbol().toString() +
+						" changed from '" + env.getMorelinesSymbol().toString()  + "' to '" + args[1] + "'");
+				env.setPromptSymbol(args[1].charAt(0)); 
+				
+			} else if("MULTILINE".equals(args[0])) {
+				System.out.println("Symbol for " + env.getMultilineSymbol().toString() +
+						" changed from '" + env.getMultilineSymbol().toString()  + "' to '" + args[1] + "'");
+				env.setPromptSymbol(args[1].charAt(0)); 
+				
+			} else {
+				System.out.println("Symbol " + args[0] + " doesn't exists.");
+				return ShellStatus.CONTINUE;
+			}
+		}
+		
+		
 		return ShellStatus.CONTINUE;
+	}
+
+	private String getValue(String string) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override

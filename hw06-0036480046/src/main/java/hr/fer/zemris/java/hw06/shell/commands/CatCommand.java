@@ -29,15 +29,22 @@ public class CatCommand implements ShellCommand {
 	
 	@Override
 	public ShellStatus executeCommand(Environment env, String arguments) {
-		
+		/*
 		String[] argsArray = arguments.split(" ");
 		
 		if(argsArray.length != 2) {
 			return ShellStatus.CONTINUE;
+		}*/
+		
+		String[] argsArray = CommandUtilityClass.checkTwoArguments(arguments);
+		
+		if(argsArray == null) {
+			System.out.println("Input not ok.");
+			return ShellStatus.CONTINUE;
 		}
 		
-		String fileName = argsArray[0];
-		String charset = argsArray[1];
+		String fileName = argsArray[0].trim();
+		String charset = argsArray[1].trim();
 		
 		File file = new File(fileName);
 		FileInputStream fstream;

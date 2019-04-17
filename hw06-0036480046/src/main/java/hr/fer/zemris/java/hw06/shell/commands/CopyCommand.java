@@ -35,28 +35,11 @@ public class CopyCommand implements ShellCommand {
 	
 	@Override
 	public ShellStatus executeCommand(Environment env, String arguments) {
-
-		String[] argsArray;
 		
-		if(arguments.contains("\"")) {
-			argsArray = arguments.split("\"");
-		} else {
-			argsArray = arguments.split(" ");
-		}
+		String[] data = CommandUtilityClass.checkTwoArguments(arguments);
 		
-		String[] data = new String[2];
-		int index = 0;
-		
-		for(int i = 0; i < argsArray.length; i++) {
-			if(argsArray[i].isBlank() || argsArray[i].isEmpty()) {
-				continue;
-			}
-			
-			if(index >= 2) {
-				return ShellStatus.CONTINUE;
-			}
-			
-			data[index++] = argsArray[i];
+		if(data == null) {
+			return ShellStatus.CONTINUE;
 		}
 		
 		String sourceFilePath = data[0].trim();

@@ -36,7 +36,6 @@ public class LsCommand implements ShellCommand {
 	@Override
 	public ShellStatus executeCommand(Environment env, String arguments) {
 		
-		
 		String[] argsArray;
 		if(arguments.trim().contains("\"")) {
 			argsArray = arguments.split("\"");

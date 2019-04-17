@@ -24,23 +24,22 @@ public class SymbolCommand implements ShellCommand {
 		String[] args = arguments.split(" ");
 		
 		
-		String currentValue = "";
+		String currentValue;
 		// print info message
 		if(args.length == 1) {
 			if("PROMPT".equals(args[0])) {
-				currentValue = env.getPromptSymbol().toString();
+				currentValue = String.valueOf(env.getPromptSymbol());
 				
 			} else if("MORELINES".equals(args[0])) {
-				currentValue = env.getMorelinesSymbol().toString();
+				currentValue = String.valueOf(env.getMorelinesSymbol());
 				
 			} else if("MULTILINES".equals(args[0])) {
-				currentValue = env.getMultilineSymbol().toString();
+				currentValue = String.valueOf(env.getMultilineSymbol());
 				
 			} else {
 				System.out.println("Symbol " + args[0] + " doesn't exists.");
 				return ShellStatus.CONTINUE;
 			}
-			currentValue = getValue(args[0]);
 			System.out.println("Symbol for " + args[0] + " is '" + currentValue + "'");
 			
 		} else if(args.length == 2) {

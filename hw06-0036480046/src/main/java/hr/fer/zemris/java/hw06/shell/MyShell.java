@@ -3,7 +3,6 @@ package hr.fer.zemris.java.hw06.shell;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.SortedMap;
@@ -181,7 +180,7 @@ public class MyShell {
 			
 			if(command.contains("\"")) {
 				ArrayList<String> help = new ArrayList<String>();
-				help = putInLines(command);
+				help = readQuoted(command);
 				
 				for(int l = 0; l < help.size(); l++) {
 					lines.add(help.get(l));
@@ -223,10 +222,14 @@ public class MyShell {
 		// returns linesArray
 		return helpArray;
 	}
-
 	
-	private static ArrayList<String> putInLines(String command) {
-		// array where commands are splited with ", it means that every other
+	/**
+	 * This method reads line where quoted path occurred
+	 * @param command line with quoted path
+	 * @return ArrayList with quoted and unquoted elements in command with quotes
+	 */
+	private static ArrayList<String> readQuoted(String command) {
+		// array where commands are split with ", it means that every other
 		// element is in quotes
 		String[] commandArray = command.split("\"");
 		ArrayList<String> lines = new ArrayList<String>();

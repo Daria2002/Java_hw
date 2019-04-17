@@ -3,15 +3,12 @@ package hr.fer.zemris.java.hw06.shell.commands;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Scanner;
-
 import hr.fer.zemris.java.hw06.shell.Environment;
 import hr.fer.zemris.java.hw06.shell.ShellCommand;
 import hr.fer.zemris.java.hw06.shell.ShellStatus;
@@ -38,7 +35,14 @@ public class CatCommand implements ShellCommand {
 		}
 		
 		String fileName = argsArray[0].trim();
-		String charset = argsArray[1].trim();
+		
+		String charset;
+		
+		if(argsArray != null && (argsArray[0] == null || argsArray[1] == null)) {
+			charset = Charset.defaultCharset().toString();
+		} else {
+			charset = argsArray[1].trim();
+		}
 		
 		File file = new File(fileName);
 		FileInputStream fstream;

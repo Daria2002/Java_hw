@@ -97,7 +97,8 @@ public class LsCommand implements ShellCommand {
 	public List<String> getCommandDescription() {
 		List list = new ArrayList();
 		
-		list.add("Command ls takes a single argument – directory.");
+		list.add("Command ls takes one argument – directory.");
+		list.add("Command prints all files and folders in directory with details.");
 		
         return Collections.unmodifiableList(list);
 	}

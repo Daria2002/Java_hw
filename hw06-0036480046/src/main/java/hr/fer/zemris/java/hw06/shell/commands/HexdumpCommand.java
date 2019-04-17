@@ -1,13 +1,10 @@
 package hr.fer.zemris.java.hw06.shell.commands;
 
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import hr.fer.zemris.java.hw06.shell.Environment;
 import hr.fer.zemris.java.hw06.shell.ShellCommand;
 import hr.fer.zemris.java.hw06.shell.ShellStatus;
@@ -52,14 +49,17 @@ public class HexdumpCommand implements ShellCommand {
     	    	
     	    	
     	    	for(int i = 0; i < length; i++) {
-    	    		
+    	    		// special case when adding values next to first |
+    	    		// no space between 7th hex value and | on the right
     	    		if(i == 7) {
     	    			System.out.printf(" %02x", buffer[i]);
     	    			System.out.print("|");
-    	    			
+    	    		
+    	    		// no space between 8th hex value and | on the left
     	    		} else if(i == 8) {
     	    			System.out.printf("%02x ", buffer[i]);
-    	    			
+    	    		
+    	    		// adding rest of elements, there is space on left and right
     	    		} else {
         	    		System.out.printf(" %02x ", buffer[i]);
     	    		}
@@ -73,11 +73,18 @@ public class HexdumpCommand implements ShellCommand {
     	    		
     	    	}
     	    	
-    	    	
+    	    	// adding spaces if whole row is not filled with hex values
     	    	for(int i = 0; i < 16 - length; i++) {
+    	    		// if filled before first |
+    	    		if(length <= 8 && i == 15-length) {
+    	    			System.out.print("   ");
+    	    			break;
+    	    		}
+    	    		
     	    		System.out.print("    ");
     	    	}
     	    	
+    	    	// print text on right
     	    	for(int i = 0; i < fixedText.length; i++) {
     	    		if(fixedText[i] == null) {
     	    			break;
@@ -93,8 +100,6 @@ public class HexdumpCommand implements ShellCommand {
     	    	System.out.println();
     	    	
     	    	buffer = new byte[16];
-    	    	//hexdump /home/daria/Desktop/test2/filetest
-    	    	
     	    	index += 16;
     	    }
 
@@ -108,9 +113,13 @@ public class HexdumpCommand implements ShellCommand {
 		return ShellStatus.CONTINUE;
 	}
 
+	/**
+	 * This method calculate hex value of given decimal number
+	 * @param dec decimal number to convert
+	 * @return hexadecimal value
+	 */
 	private String makeHex(int dec) {
-		String x = Integer.toHexString(dec);
-		return x;
+		return Integer.toHexString(dec);
 	}
 
 	@Override

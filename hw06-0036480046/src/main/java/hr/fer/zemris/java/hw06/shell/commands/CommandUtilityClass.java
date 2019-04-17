@@ -1,10 +1,8 @@
 package hr.fer.zemris.java.hw06.shell.commands;
 
-import hr.fer.zemris.java.hw06.shell.ShellStatus;
-
 /**
  * This class contains methods that are common in more command classes
- * @author Dariia Matković
+ * @author Daria Matković
  *
  */
 public class CommandUtilityClass {

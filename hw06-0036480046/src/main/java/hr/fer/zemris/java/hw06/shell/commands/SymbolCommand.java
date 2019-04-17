@@ -22,9 +22,8 @@ public class SymbolCommand implements ShellCommand {
 	public ShellStatus executeCommand(Environment env, String arguments) {
 		
 		String[] args = arguments.split(" ");
-		
-		
 		String currentValue;
+		
 		// print info message
 		if(args.length == 1) {
 			if("PROMPT".equals(args[0])) {
@@ -64,15 +63,9 @@ public class SymbolCommand implements ShellCommand {
 			}
 		}
 		
-		
 		return ShellStatus.CONTINUE;
 	}
-
-	private String getValue(String string) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	
 	@Override
 	public String getCommandName() {
 		return SYMBOL_COMMAND;
@@ -82,7 +75,7 @@ public class SymbolCommand implements ShellCommand {
 	public List<String> getCommandDescription() {
 		List list = new ArrayList();
 		
-		list.add("Command copy takes one or two arguments.");
+		list.add("Command symbol takes one or two arguments.");
 		list.add("First argument is symbol name and this argument is mandatory.");
 		list.add("Second argument is char and symbol value should be set to this value");
 		list.add("Second argument is optional and if there is only one argument message prints.");
@@ -90,5 +83,4 @@ public class SymbolCommand implements ShellCommand {
 		
         return Collections.unmodifiableList(list);
 	}
-
 }

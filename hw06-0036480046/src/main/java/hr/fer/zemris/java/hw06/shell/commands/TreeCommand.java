@@ -2,16 +2,9 @@ package hr.fer.zemris.java.hw06.shell.commands;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import hr.fer.zemris.java.hw06.shell.Environment;
 import hr.fer.zemris.java.hw06.shell.ShellCommand;
 import hr.fer.zemris.java.hw06.shell.ShellStatus;
@@ -25,7 +18,6 @@ public class TreeCommand implements ShellCommand {
 
 	/** tree command name **/
 	public final static String TREE_COMMAND = "tree";
-	public final static int START_INDENT = 0;
 	
 	@Override
 	public ShellStatus executeCommand(Environment env, String arguments) {
@@ -35,8 +27,9 @@ public class TreeCommand implements ShellCommand {
 			return ShellStatus.CONTINUE;
 		}
 		
+		int startIndent = 0;
 		try {
-			listStructure(START_INDENT, directory);
+			listStructure(startIndent, directory);
 		} catch (IOException e) {
 			System.out.println("Error occured, so command didn't execute.");
 		}
@@ -44,12 +37,22 @@ public class TreeCommand implements ShellCommand {
 		return ShellStatus.CONTINUE;
 	}
 	
+	/**
+	 * This method lists structure of given path, structure prints with given indent
+	 * @param indent given indent
+	 * @param file file whose structure needs to be printed
+	 * @throws IOException throws exception if error occurs
+	 */
 	static void listStructure(int indent, File file) throws IOException {
-	    for (int i = 0; i < indent; i++)
-	      System.out.print(' ');
+		// add indent
+	    for (int i = 0; i < indent; i++) {
+		      System.out.print(' ');
+	    }
 	    
+	    // current directory name 
 	    System.out.println(file.getName());
 	    
+	    // if current element is directory list structure of directory, otherwise continue
 	    if (file.isDirectory()) {
 	      File[] files = file.listFiles();
 	      
@@ -57,10 +60,7 @@ public class TreeCommand implements ShellCommand {
 	        listStructure(indent + 2, files[i]);
 	    }
     }
-
 	
-	
-
 	@Override
 	public String getCommandName() {
 		return TREE_COMMAND;

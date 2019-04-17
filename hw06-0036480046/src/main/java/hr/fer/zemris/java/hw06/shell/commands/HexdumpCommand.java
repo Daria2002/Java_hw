@@ -20,7 +20,9 @@ public class HexdumpCommand implements ShellCommand {
 	
 	@Override
 	public ShellStatus executeCommand(Environment env, String arguments) {
-		// TODO Auto-generated method stub
+		
+		
+		
 		return ShellStatus.CONTINUE;
 	}
 

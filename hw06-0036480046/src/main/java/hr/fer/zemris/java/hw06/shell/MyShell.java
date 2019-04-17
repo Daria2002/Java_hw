@@ -3,6 +3,7 @@ package hr.fer.zemris.java.hw06.shell;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.SortedMap;
@@ -173,14 +174,17 @@ public class MyShell {
 		
 		// this loop reads lines while morelinesSymbol is printed
 		do {	
-			System.out.print(i > 0 ? multilineSymbol : promptSymbol);
+			System.out.print(i++ > 0 ? multilineSymbol : promptSymbol);
 			
 			command = env.readLine().trim();
 			
 			if(command.contains("\"")) {
 				ArrayList<String> help = new ArrayList<String>();
 				help = putInLines(command);
-				lines.addAll(help);
+				
+				for(int l = 0; l < help.size(); l++) {
+					lines.add(help.get(l));
+				}
 				
 				if(String.valueOf(morelinesSymbol).equals(help.get(help.size()-1))) {
 					continue;
@@ -199,17 +203,24 @@ public class MyShell {
 					break;
 				}
 				
-				lines.add(commandArray[k]);
+				lines.add(commandArray[k].toString());
 			}
-			
-			i++;
 			
 		} while (command.indexOf(morelinesSymbol) == command.length()-1);
 		
-		String[] linesArray = new String[lines.size()];
+		String[] helpArray = new String[lines.size()];
+		
+		int index = 0;
+		for(int n = 0; n < lines.size(); n++) {
+			if(String.valueOf(morelinesSymbol).equals(lines.get(n)) || 
+					lines.get(n) == null) {
+				continue;
+			}
+			helpArray[index++] = lines.get(n);
+		}
 		
 		// returns linesArray
-		return lines.toArray(linesArray);
+		return helpArray;
 	}
 
 	
@@ -247,7 +258,7 @@ public class MyShell {
 			for(int m = 0; m < splited.length; m++) {
 				stringToAdd = splited[m];
 				
-				if(stringToAdd.isBlank() || stringToAdd.isEmpty()) {
+				if(stringToAdd.isBlank() || stringToAdd.isEmpty() || stringToAdd == null) {
 					continue;
 				}
 				

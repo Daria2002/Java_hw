@@ -31,25 +31,43 @@ public class LsCommand implements ShellCommand {
 
 	/** ls command name **/
 	public final static String LS_COMMAND = "ls";
+	public final static int SIZE_IN_BYTES = 10;
 	
 	@Override
 	public ShellStatus executeCommand(Environment env, String arguments) {
 		
+		
+		String[] argsArray;
+		if(arguments.trim().contains("\"")) {
+			argsArray = arguments.split("\"");
+			
+			if(argsArray.length != 2 || (!argsArray[0].isBlank() && !argsArray[0].isEmpty())) {
+				
+				for(int i = 0; i < argsArray.length; i++) {
+					System.out.println(argsArray[i]);
+				}
+				
+				System.out.println("Insert only one argument");
+				return ShellStatus.CONTINUE;
+			}
+			
+			arguments = argsArray[1];
+		}
+		
+
 		File dir = new File(arguments);
 		File[] filesInDir = dir.listFiles();
 		
 		// given argument should be dir
 		if(dir.isFile() || filesInDir == null) {
+			System.out.println("Given argument should be dir");
 			return ShellStatus.CONTINUE;
 		}
 		
 		for(File file : filesInDir) {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			
-			System.out.println(file.toString());
-			
 			Path path = Paths.get(file.toString());
-			
 			
 			BasicFileAttributeView faView = Files.getFileAttributeView(
 			path, BasicFileAttributeView.class, LinkOption.NOFOLLOW_LINKS
@@ -60,16 +78,25 @@ public class LsCommand implements ShellCommand {
 				attributes = faView.readAttributes();
 				FileTime fileTime = attributes.creationTime();
 				String formattedDateTime = sdf.format(new Date(fileTime.toMillis()));
-				System.out.println(formattedDateTime);
+				
+				boolean isDir = file.isDirectory();
+				boolean isRead = file.canRead();
+				boolean isWrite = file.canWrite();
+				boolean isExe = file.canExecute();
+				
+				System.out.print((isDir ? "d" : "-") + (isRead ? "r" : "-") + (isWrite ? "w" : "-") + (isExe ? "x" : "-") + " ");
+				
+				System.out.print(String.format("%1$" + SIZE_IN_BYTES + "s", Files.size(path) + " "));
+				
+				System.out.print(formattedDateTime + " ");
+
+				System.out.println(file.getName());
 				
 			} catch (IOException e) {
 				System.out.println("Error occured");
 			}
 		}
 		
-		
-		
-
 		return ShellStatus.CONTINUE;
 	}
 

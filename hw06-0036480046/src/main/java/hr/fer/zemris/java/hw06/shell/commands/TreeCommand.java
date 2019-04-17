@@ -25,6 +25,7 @@ public class TreeCommand implements ShellCommand {
 
 	/** tree command name **/
 	public final static String TREE_COMMAND = "tree";
+	public final static int START_INDENT = 0;
 	
 	@Override
 	public ShellStatus executeCommand(Environment env, String arguments) {
@@ -34,43 +35,32 @@ public class TreeCommand implements ShellCommand {
 			return ShellStatus.CONTINUE;
 		}
 		
-        try {
-
-    		Path startPath = Paths.get(arguments);
-    		
-            Files.walkFileTree(startPath, new SimpleFileVisitor<Path>() {
-            	int n = 2;
-                @Override
-                public FileVisitResult preVisitDirectory(Path dir,
-                        BasicFileAttributes attrs) {
-                    System.out.println(dir.toString());
-                    n = n + 2;
-                    return FileVisitResult.CONTINUE;
-                }
-
-                @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-                    String s = String.format("%1$" + n + "s", "");
-                    System.out.println(s + file.toString());    
-                    return FileVisitResult.CONTINUE;
-                }
-
-                @Override
-                public FileVisitResult visitFileFailed(Path file, IOException e) {
-                    return FileVisitResult.CONTINUE;
-                }
-            });
-			
+		try {
+			listStructure(START_INDENT, directory);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("Error occured, so command didn't execute.");
 		}
 		
 		return ShellStatus.CONTINUE;
 	}
+	
+	static void listStructure(int indent, File file) throws IOException {
+	    for (int i = 0; i < indent; i++)
+	      System.out.print(' ');
+	    
+	    System.out.println(file.getName());
+	    
+	    if (file.isDirectory()) {
+	      File[] files = file.listFiles();
+	      
+	      for (int i = 0; i < files.length; i++)
+	        listStructure(indent + 2, files[i]);
+	    }
+    }
 
 	
 	
+
 	@Override
 	public String getCommandName() {
 		return TREE_COMMAND;

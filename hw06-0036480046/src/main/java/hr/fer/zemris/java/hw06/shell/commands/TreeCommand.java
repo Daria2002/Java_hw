@@ -1,5 +1,13 @@
 package hr.fer.zemris.java.hw06.shell.commands;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -20,10 +28,49 @@ public class TreeCommand implements ShellCommand {
 	
 	@Override
 	public ShellStatus executeCommand(Environment env, String arguments) {
-		// TODO Auto-generated method stub
+		
+		File directory = new File(arguments);
+		if(directory.isFile()) {
+			return ShellStatus.CONTINUE;
+		}
+		
+        try {
+
+    		Path startPath = Paths.get(arguments);
+    		
+            Files.walkFileTree(startPath, new SimpleFileVisitor<Path>() {
+            	int n = 2;
+                @Override
+                public FileVisitResult preVisitDirectory(Path dir,
+                        BasicFileAttributes attrs) {
+                    System.out.println(dir.toString());
+                    n = n + 2;
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+                    String s = String.format("%1$" + n + "s", "");
+                    System.out.println(s + file.toString());    
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFileFailed(Path file, IOException e) {
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		return ShellStatus.CONTINUE;
 	}
 
+	
+	
 	@Override
 	public String getCommandName() {
 		return TREE_COMMAND;

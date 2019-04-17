@@ -124,7 +124,6 @@ public class Crypto {
 		
 		try {
 			Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-			//Cipher cipher = Cipher.getInstance("AES/CBC/NoPadding");
 			cipher.init(mode, keySpec, paramSpec);
 			
 			Path source = Paths.get(PATH_TO_FOLDER + fileName);
@@ -221,11 +220,5 @@ public class Crypto {
 		String result = Util.bytetohex(byteArray);
 		
 	    return result;
-	}
-
-	private static byte[] executeDecrypt(String fileName) throws NoSuchAlgorithmException {
-		MessageDigest sha = MessageDigest.getInstance("SHA-256");
-		byte[] digest = sha.digest();
-		return digest;
 	}
 }

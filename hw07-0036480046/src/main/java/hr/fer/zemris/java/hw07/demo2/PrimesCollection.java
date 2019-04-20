@@ -4,7 +4,7 @@ import java.util.Iterator;
 
 public class PrimesCollection implements Iterable<Integer> {
 
-	private static int numberOfElements;
+	private int numberOfElements;
 	private static final int FIRST_START = 1;
 	
 	public PrimesCollection(int n) {
@@ -33,10 +33,9 @@ public class PrimesCollection implements Iterable<Integer> {
 
 		@Override
 		public Integer next() {
-			Integer number = primeAtIndex(lastPrime + 1);
-			lastPrime = number;
+			lastPrime = primeAtIndex(lastPrime + 1);
 			numberOfReturned++;
-			return number;
+			return lastPrime;
 		}
 		
 		private Integer primeAtIndex(int start) {

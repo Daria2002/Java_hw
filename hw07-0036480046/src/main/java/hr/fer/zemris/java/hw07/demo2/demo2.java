@@ -8,6 +8,13 @@ public class demo2 {
 		for(Integer prime : primesCollection) {
 			System.out.println("Got prime: " + prime);
 		}
+		
+		System.out.println("8 prime numbers :");
+		
+		PrimesCollection primesCollection2 = new PrimesCollection(8); // 5: how many of them
+		for(Integer prime : primesCollection2) {
+			System.out.println("Got prime: " + prime);
+		}
 	}
 	
 }

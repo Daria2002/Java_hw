@@ -1,4 +1,4 @@
-package hr.fer.zemris.java.hw07.observer1;
+package hr.fer.zemris.java.hw07.observer2;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,8 +47,12 @@ public class IntegerStorage {
 					observers.remove(observer);
 				}
 				
+				IntegerStorageChange integerStorageChange = new IntegerStorageChange(
+						this, getValue(), value);
+				
+				
 				for(IntegerStorageObserver observer : observers) {
-					observer.valueChanged(this);
+					observer.valueChanged(integerStorageChange);
 				}
 			}
 		}

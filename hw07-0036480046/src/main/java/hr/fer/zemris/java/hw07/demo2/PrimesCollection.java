@@ -1,43 +1,64 @@
 package hr.fer.zemris.java.hw07.demo2;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 public class PrimesCollection implements Iterable<Integer> {
 
-	private final List<Integer> primeList;
+	private static int numberOfElements;
 	
-	public PrimesCollection(int number) {
-		primeList = setPrimeList(number);
+	public PrimesCollection(int n) {
+		this.numberOfElements = n;
 	}
 	
-	private List<Integer> setPrimeList(int n) {
-		List<Integer> primeList = new ArrayList<Integer>();
-	
-		int numberOfAddedElem = 0;
-		int i = 0;
-		
-		while(numberOfAddedElem < n) {
-			int counter = 0;
+	private class PrimesNestedClass implements Iterator<Integer> {
 
-			for(int num = i; num >= 1; num--) {
-				if(i % num==0) {
-					counter = counter + 1;
-				}
-			}
-	         
-			if (counter == 2) {
-				numberOfAddedElem++;
-				primeList.add(i);
-			}
-			i++;
+		private int totalNumber;
+		private int n = 0;
+		
+		public PrimesNestedClass(int totalNumber) {
+			this.totalNumber = totalNumber;
 		}
-		return primeList;
+		
+		@Override
+		public boolean hasNext() {
+			if(n < totalNumber) {
+				return true;
+			}
+			return false;
+		}
+
+		@Override
+		public Integer next() {
+			n++;
+			return primeAtIndex(n-1);
+		}
+		
+		private Integer primeAtIndex(int n) {
+			int numberOfAddedElem = 0;
+			int i = 1;
+			
+			while(true) {
+				int counter = 0;
+
+				for(int num = i; num >= 1; num--) {
+					if(i % num == 0) {
+						counter = counter + 1;
+					}
+				}
+		         
+				if (counter == 2) {
+					if(numberOfAddedElem == n) {
+						return i;
+					}
+					numberOfAddedElem++;
+				}
+				i++;
+			}
+		}
 	}
 
 	@Override
 	public Iterator<Integer> iterator() {
-		return primeList.iterator();
+		return new PrimesNestedClass(numberOfElements);
 	}
 }

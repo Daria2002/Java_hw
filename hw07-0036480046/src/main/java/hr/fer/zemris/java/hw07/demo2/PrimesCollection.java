@@ -5,6 +5,7 @@ import java.util.Iterator;
 public class PrimesCollection implements Iterable<Integer> {
 
 	private static int numberOfElements;
+	private static final int FIRST_START = 1;
 	
 	public PrimesCollection(int n) {
 		this.numberOfElements = n;
@@ -13,15 +14,18 @@ public class PrimesCollection implements Iterable<Integer> {
 	private class PrimesNestedClass implements Iterator<Integer> {
 
 		private int totalNumber;
-		private int n = 0;
+		private int lastPrime;
+		private int numberOfReturned;
 		
 		public PrimesNestedClass(int totalNumber) {
 			this.totalNumber = totalNumber;
+			this.lastPrime = FIRST_START;
+			this.numberOfReturned = 0;
 		}
 		
 		@Override
 		public boolean hasNext() {
-			if(n < totalNumber) {
+			if(numberOfReturned < totalNumber) {
 				return true;
 			}
 			return false;
@@ -29,13 +33,14 @@ public class PrimesCollection implements Iterable<Integer> {
 
 		@Override
 		public Integer next() {
-			n++;
-			return primeAtIndex(n-1);
+			Integer number = primeAtIndex(lastPrime + 1);
+			lastPrime = number;
+			numberOfReturned++;
+			return number;
 		}
 		
-		private Integer primeAtIndex(int n) {
-			int numberOfAddedElem = 0;
-			int i = 1;
+		private Integer primeAtIndex(int start) {
+			int i = start;
 			
 			while(true) {
 				int counter = 0;
@@ -47,10 +52,7 @@ public class PrimesCollection implements Iterable<Integer> {
 				}
 		         
 				if (counter == 2) {
-					if(numberOfAddedElem == n) {
-						return i;
-					}
-					numberOfAddedElem++;
+					return i;
 				}
 				i++;
 			}

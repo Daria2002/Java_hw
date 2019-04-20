@@ -5,7 +5,7 @@ public class ChangeCounter implements IntegerStorageObserver {
 	private int counter;
 	
 	public ChangeCounter() {
-		counter = 0;
+		this.counter = 0;
 	}
 	
 	@Override

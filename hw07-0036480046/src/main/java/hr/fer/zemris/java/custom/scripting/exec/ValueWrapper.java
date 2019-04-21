@@ -36,8 +36,8 @@ public class ValueWrapper {
 		return testString.length() - testString.replace(".", "").length();
 	}
 	
-	private boolean isDouble(Object incValue) {
-		String stringValue = (String) incValue;
+	private boolean isDouble(Object testValue) {
+		String stringValue = (String) testValue;
 		
 		if(stringValue.contains("E") && countOccurencesOf(stringValue, "E") == 1 
 				|| stringValue.contains(".") && countOccurencesOf(stringValue, ".") == 1) {
@@ -54,10 +54,20 @@ public class ValueWrapper {
 		if(incValue1.getClass().equals(Integer.class) && value1.getClass().equals(Integer.class)) {
 			int result = (int)incValue1 + (int)value1;
 			this.value = Integer.valueOf(result);
+			
+		} else if(incValue1.getClass().equals(Double.class) && value1.getClass().equals(Integer.class)) {
+			double result = (double)incValue1 + (int)value1;
+			this.value = Double.valueOf(result);
+			
+		} else if(incValue1.getClass().equals(Double.class) && value1.getClass().equals(Double.class)) {
+			double result = (double)incValue1 + (double)value1;
+			this.value = Double.valueOf(result);
+			
+		} else if(incValue1.getClass().equals(Integer.class) && value1.getClass().equals(Double.class)) {
+			double result = (int)incValue1 + (double)value1;
+			this.value = Double.valueOf(result);
+			
 		}
-		
-		double result = (double)incValue1 + (double)value1;
-		this.value = Double.valueOf(result);
 	}
 	
 	public void subtract(Object decValue) {

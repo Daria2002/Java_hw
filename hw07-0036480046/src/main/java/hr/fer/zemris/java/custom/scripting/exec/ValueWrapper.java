@@ -19,8 +19,7 @@ public class ValueWrapper {
 				Integer number = Integer.parseInt((String) testValue);
 				return number;
 			} catch (Exception e) {
-				throw new RuntimeException("Given value is not valid argument "
-						+ "for arithmetic operations.");
+				throw new RuntimeException("Given value is not valid argument");
 			}
 			
 		} else if(testValue.getClass().equals(Integer.class) || 
@@ -28,8 +27,7 @@ public class ValueWrapper {
 			return testValue;
 		}
 
-		throw new RuntimeException("Given value is not valid argument "
-				+ "for arithmetic operations.");
+		throw new RuntimeException("Given value is not valid argument");
 	}
 	
 	private int countOccurencesOf(String testString, String element) {
@@ -47,41 +45,58 @@ public class ValueWrapper {
 		return false;
 	}
 
-	private Object doOperation(int operation, Object incValue1, Object value1) {
-		if(incValue1.getClass().equals(Integer.class) && value1.getClass().equals(Integer.class)) {
-			int result = (int) getResult(operation, incValue1, value1);
-			return Integer.valueOf(result);
-		}
-		
-		double result = (double) getResult(operation, incValue1, value1);
-		return Double.valueOf(result);
-	}
-	
 	/**
 	 * 
 	 * @param operation 1 for add, 2 for subtract, 3 for multiply, 4 for divide 
 	 * @param incValue1
 	 * @param value1
 	 */
-	private Object getResult(int operation, Object incValue1, Object value1) {
+	private Object getResult(int operation, Object value1, Object givenValue) {
 		switch (operation) {
 		case 1:
-			return addOperation(incValue1, value1);
-/*
+			return addOperation(value1, givenValue);
+
 		case 2:
-			return subtractOperation(incValue1, value1);
+			return subtractOperation(value1, givenValue);
 			
 		case 3:
-			return multiplyOperation(incValue1, value1);
-			*/
+			return multiplyOperation(value1, givenValue);
+			
 		default:
-			//return divideOperation(incValue1, value1);
-			return null;
+			return divideOperation(value1, givenValue);
 		}
 		
 	}
 	
-	private Object addOperation(Object incValue1, Object value1) {
+	private Object divideOperation(Object value1, Object divValue) {
+		if(divValue.getClass().equals(Integer.class) && value1.getClass().equals(Integer.class)) {
+			return (int)value1 / (int)divValue;
+			
+		} else if(divValue.getClass().equals(Double.class) && value1.getClass().equals(Integer.class)) {
+			return (int)value1 / (double)divValue;
+			
+		} else if(divValue.getClass().equals(Double.class) && value1.getClass().equals(Double.class)) {
+			return (double)value1 / (double)divValue;
+			
+		}
+		return (double)value1 / (int)divValue;
+	}
+
+	private Object multiplyOperation(Object value1, Object mulValue) {
+		if(mulValue.getClass().equals(Integer.class) && value1.getClass().equals(Integer.class)) {
+			return (int)mulValue * (int)value1;
+			
+		} else if(mulValue.getClass().equals(Double.class) && value1.getClass().equals(Integer.class)) {
+			return (double)mulValue * (int)value1;
+			
+		} else if(mulValue.getClass().equals(Double.class) && value1.getClass().equals(Double.class)) {
+			return (double)mulValue * (double)value1;
+			
+		}
+		return (int)mulValue * (double)value1;
+	}
+
+	private Object addOperation(Object value1, Object incValue1) {
 		if(incValue1.getClass().equals(Integer.class) && value1.getClass().equals(Integer.class)) {
 			return (int)incValue1 + (int)value1;
 			
@@ -91,34 +106,82 @@ public class ValueWrapper {
 		} else if(incValue1.getClass().equals(Double.class) && value1.getClass().equals(Double.class)) {
 			return (double)incValue1 + (double)value1;
 			
-		} else if(incValue1.getClass().equals(Integer.class) && value1.getClass().equals(Double.class)) {
-			return (int)incValue1 + (double)value1;
-			
 		}
-		return null;
+		return (int)incValue1 + (double)value1;
+	}
+	
+	private Object subtractOperation(Object value1, Object decValue1) {
+		if(decValue1.getClass().equals(Integer.class) && value1.getClass().equals(Integer.class)) {
+			return (int)value1 - (int)decValue1;
+			
+		} else if(decValue1.getClass().equals(Double.class) && value1.getClass().equals(Integer.class)) {
+			return (int)value1 - (double)decValue1;
+			
+		} else if(decValue1.getClass().equals(Double.class) && value1.getClass().equals(Double.class)) {
+			return (double)value1 - (double)decValue1;
+			
+		} 
+		return (double)value1 - (int)decValue1;
 	}
 
+	private Object CheckValue(Object checkValue) {
+		if(checkValue == null) {
+			return Integer.valueOf(0);
+		}
+		return checkValue;
+	}
+	
 	public void add(Object incValue) {
-		Object incValue1 = getValue(incValue);
-		Object value1 = getValue(value);
+		incValue = CheckValue(incValue);
+		value = CheckValue(value);
 		
-		this.value = doOperation(1, incValue1, value1);
+		this.value = getResult(1, getValue(value), getValue(incValue));
 	}
 	
 	public void subtract(Object decValue) {
+		decValue = CheckValue(decValue);
+		value = CheckValue(value);
 		
+		this.value = getResult(2, getValue(value), getValue(decValue));
 	}
 	
 	public void multiply(Object mulValue) {
+		mulValue = CheckValue(mulValue);
+		value = CheckValue(value);
 		
+		this.value = getResult(3, getValue(value), getValue(mulValue));
 	}
 	
 	public void divide(Object divValue) {
+		divValue = CheckValue(divValue);
+		value = CheckValue(value);
 		
+		this.value = getResult(4, getValue(value), getValue(divValue));
 	}
 	
 	public int numCompare(Object withValue) {
-		return 1;
+		if(this.value == null && withValue == null) {
+			return 0;
+		}
+		withValue = CheckValue(withValue);
+		
+		Object result = getResult(2, getValue(value), getValue(withValue));
+		
+		if(result.getClass().equals(Double.class)) {
+			if((double)result > 0) {
+				return 1;
+			} else if((double)result < 0) {
+				return -1;
+			}
+			
+		} else if(result.getClass().equals(Integer.class)) {
+			if((int)result > 0) {
+				return 1;
+			} else if((double)result < 0) {
+				return -1;
+			}
+		} 
+		return 0;
 	}
 	
 	public Object getValue() {

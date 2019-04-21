@@ -47,27 +47,62 @@ public class ValueWrapper {
 		return false;
 	}
 
+	private Object doOperation(int operation, Object incValue1, Object value1) {
+		if(incValue1.getClass().equals(Integer.class) && value1.getClass().equals(Integer.class)) {
+			int result = (int) getResult(operation, incValue1, value1);
+			return Integer.valueOf(result);
+		}
+		
+		double result = (double) getResult(operation, incValue1, value1);
+		return Double.valueOf(result);
+	}
+	
+	/**
+	 * 
+	 * @param operation 1 for add, 2 for subtract, 3 for multiply, 4 for divide 
+	 * @param incValue1
+	 * @param value1
+	 */
+	private Object getResult(int operation, Object incValue1, Object value1) {
+		switch (operation) {
+		case 1:
+			return addOperation(incValue1, value1);
+/*
+		case 2:
+			return subtractOperation(incValue1, value1);
+			
+		case 3:
+			return multiplyOperation(incValue1, value1);
+			*/
+		default:
+			//return divideOperation(incValue1, value1);
+			return null;
+		}
+		
+	}
+	
+	private Object addOperation(Object incValue1, Object value1) {
+		if(incValue1.getClass().equals(Integer.class) && value1.getClass().equals(Integer.class)) {
+			return (int)incValue1 + (int)value1;
+			
+		} else if(incValue1.getClass().equals(Double.class) && value1.getClass().equals(Integer.class)) {
+			return (double)incValue1 + (int)value1;
+			
+		} else if(incValue1.getClass().equals(Double.class) && value1.getClass().equals(Double.class)) {
+			return (double)incValue1 + (double)value1;
+			
+		} else if(incValue1.getClass().equals(Integer.class) && value1.getClass().equals(Double.class)) {
+			return (int)incValue1 + (double)value1;
+			
+		}
+		return null;
+	}
+
 	public void add(Object incValue) {
 		Object incValue1 = getValue(incValue);
 		Object value1 = getValue(value);
 		
-		if(incValue1.getClass().equals(Integer.class) && value1.getClass().equals(Integer.class)) {
-			int result = (int)incValue1 + (int)value1;
-			this.value = Integer.valueOf(result);
-			
-		} else if(incValue1.getClass().equals(Double.class) && value1.getClass().equals(Integer.class)) {
-			double result = (double)incValue1 + (int)value1;
-			this.value = Double.valueOf(result);
-			
-		} else if(incValue1.getClass().equals(Double.class) && value1.getClass().equals(Double.class)) {
-			double result = (double)incValue1 + (double)value1;
-			this.value = Double.valueOf(result);
-			
-		} else if(incValue1.getClass().equals(Integer.class) && value1.getClass().equals(Double.class)) {
-			double result = (int)incValue1 + (double)value1;
-			this.value = Double.valueOf(result);
-			
-		}
+		this.value = doOperation(1, incValue1, value1);
 	}
 	
 	public void subtract(Object decValue) {

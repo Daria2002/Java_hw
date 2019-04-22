@@ -18,7 +18,10 @@ public class ValueWrapper {
 				return Integer.parseInt((String) testValue);
 			} catch (Exception e) {
 				try {
-					return Double.parseDouble((String) testValue);
+					if((((String) testValue).contains(".") || ((String) testValue).contains("E"))
+							&& !((String) testValue).contains("e")) {
+						return Double.parseDouble((String) testValue);
+					}
 				} catch (Exception e2) {
 					throw new RuntimeException("Given value is not valid argument");
 				}
@@ -46,7 +49,6 @@ public class ValueWrapper {
 		if(value1.getClass().equals(Integer.class) && givenValue.getClass().equals(Integer.class)) {
 			return operation.apply(arg1, arg2).intValue();
 		}
-		
 		return operation.apply(arg1, arg2);
 	}
 
@@ -70,7 +72,12 @@ public class ValueWrapper {
 	}
 	
 	public void divide(Object divValue) {
-		this.value = getResult(getValue(value), getValue(divValue), (value1, value2) -> {return (value1 / value2);});
+		this.value = getResult(getValue(value), getValue(divValue), (value1, value2) -> {
+			if(Math.abs(value1) > 0.0000001 && Math.abs(value2) < 0.0000001) {
+				throw new RuntimeException("Division by zero.");
+			}
+			return (value1 / value2);
+		});
 	}
 	
 	public int numCompare(Object withValue) {

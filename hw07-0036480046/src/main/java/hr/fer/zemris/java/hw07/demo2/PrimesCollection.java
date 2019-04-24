@@ -2,21 +2,43 @@ package hr.fer.zemris.java.hw07.demo2;
 
 import java.util.Iterator;
 
+/**
+ * This class represents collection of prime numbers.
+ * @author Daria Matković
+ *
+ */
 public class PrimesCollection implements Iterable<Integer> {
 
+	/** number of prime numbers in collection **/
 	private int numberOfElements;
+	/** constant that represents first value to check **/
 	private static final int FIRST_START = 1;
 	
+	/**
+	 * Constructor that sets number of elements in collection
+	 * @param n number of elements in collection
+	 */
 	public PrimesCollection(int n) {
 		this.numberOfElements = n;
 	}
 	
+	/**
+	 * Nested class that represents iterator
+	 * @author Daria Matković
+	 *
+	 */
 	private class PrimesNestedClass implements Iterator<Integer> {
-
+		/** number of elements in collection **/
 		private int totalNumber;
+		/** prime number that was last returned **/
 		private int lastPrime;
+		/** number of already iterated prime numbers**/
 		private int numberOfReturned;
 		
+		/**
+		 * Constructor that sets number of elements
+		 * @param totalNumber
+		 */
 		public PrimesNestedClass(int totalNumber) {
 			this.totalNumber = totalNumber;
 			this.lastPrime = FIRST_START;
@@ -38,6 +60,11 @@ public class PrimesCollection implements Iterable<Integer> {
 			return lastPrime;
 		}
 		
+		/**
+		 * Returns first prime number that occurs after number start
+		 * @param start
+		 * @return
+		 */
 		private Integer primeAtIndex(int start) {
 			int i = start;
 			

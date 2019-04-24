@@ -1,41 +1,63 @@
 package hr.fer.zemris.java.hw07.observer2;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 public class IntegerStorage {
 
+	/** value **/
 	private int value;
+	/** list of added observers **/
 	private List<IntegerStorageObserver> observers;
+	/** list of observers to remove **/
 	private List<IntegerStorageObserver> removeList;
 	
+	/**
+	 * Constructor that sets value and initialize observers list and list for
+	 * observers to remove
+	 * @param initialValue initial value
+	 */
 	public IntegerStorage(int initialValue) {
 		this.value = initialValue;
 		this.observers = new ArrayList<>();
 		this.removeList = new ArrayList<>();
 	}
 	
-	// add the observer in observers if not already there ...
+	/**
+	 * Add the observer in observers if not already there
+	 * @param observer observer to add
+	 */
 	public void addObserver(IntegerStorageObserver observer) {
 		observers.add(observer);
 	}
 
-	// remove the observer from observers if present ...
+	/**
+	 * Remove the observer from observers if present
+	 * @param observer observer to remove
+	 */
 	public void removeObserver(IntegerStorageObserver observer) {
 		removeList.add(observer);
 	}
 	
-	// remove all observers from observers list ...
+	/**
+	 * Remove all observers from observers list
+	 */
 	public void clearObservers() {
 		observers.clear();
 	}
 	
+	/**
+	 * Returns observer value
+	 * @return observer's value
+	 */
 	public int getValue() {
 		return value;
 	}
 	
+	/**
+	 * Sets observer value
+	 * @param value value
+	 */
 	public void setValue(int value) {
 		// Only if new value is different than the current value:
 		if(this.value != value) {

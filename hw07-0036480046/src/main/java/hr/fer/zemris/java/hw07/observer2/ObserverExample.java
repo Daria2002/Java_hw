@@ -15,9 +15,14 @@ public class ObserverExample {
 		
 		IntegerStorage istorage = new IntegerStorage(20);
 
+		SquareValue sv = new SquareValue();
+
 		istorage.addObserver(new ChangeCounter());
 		istorage.addObserver(new SquareValue());
 		istorage.addObserver(new DoubleValue(3));
+
+		istorage.addObserver(sv);
+		//istorage.addObserver(sv); checks if exception occurs 
 
 		istorage.setValue(5);
 		istorage.setValue(2);

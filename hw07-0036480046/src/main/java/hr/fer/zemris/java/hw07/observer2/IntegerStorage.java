@@ -2,6 +2,7 @@ package hr.fer.zemris.java.hw07.observer2;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class IntegerStorage {
 
@@ -28,6 +29,12 @@ public class IntegerStorage {
 	 * @param observer observer to add
 	 */
 	public void addObserver(IntegerStorageObserver observer) {
+		Objects.requireNonNull(observer);
+		for(IntegerStorageObserver ob : observers) {
+			if(ob.equals(observer)) {
+				throw new IllegalArgumentException("Observer already in list.");
+			}
+		}
 		observers.add(observer);
 	}
 
@@ -36,14 +43,23 @@ public class IntegerStorage {
 	 * @param observer observer to remove
 	 */
 	public void removeObserver(IntegerStorageObserver observer) {
-		removeList.add(observer);
+		Objects.requireNonNull(observer);
+		for(IntegerStorageObserver ob : observers) {
+			if(ob.equals(observer)) {
+				removeList.add(observer);
+			}
+		}
 	}
 	
 	/**
 	 * Remove all observers from observers list
 	 */
 	public void clearObservers() {
-		observers.clear();
+		if(observers != null) {
+			for(IntegerStorageObserver ob : observers) {
+				removeList.add(ob);
+			}
+		}
 	}
 	
 	/**
@@ -65,13 +81,14 @@ public class IntegerStorage {
 			this.value = value;
 			// Notify all registered observers
 			if(observers!=null) {
-				for(IntegerStorageObserver observer : removeList) {
-					observers.remove(observer);
+				if(removeList != null) {
+					for(IntegerStorageObserver observer : removeList) {
+						observers.remove(observer);
+					}
 				}
 				
 				IntegerStorageChange integerStorageChange = new IntegerStorageChange(
 						this, getValue(), value);
-				
 				
 				for(IntegerStorageObserver observer : observers) {
 					observer.valueChanged(integerStorageChange);

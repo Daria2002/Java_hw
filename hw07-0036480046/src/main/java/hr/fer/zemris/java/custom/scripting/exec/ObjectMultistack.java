@@ -24,7 +24,8 @@ public class ObjectMultistack {
 	 * @param valueWrapper value to push on stack with key keyName
 	 */
 	public void push(String keyName, ValueWrapper valueWrapper) {
-		Objects.requireNonNull(keyName);
+		Objects.requireNonNull(keyName, "key can't be null");
+		Objects.requireNonNull(valueWrapper, "value can't be null");
 		
 		if(isEmpty(keyName)) {
 			collection.put(keyName, new MultistackEntry(valueWrapper, null));
@@ -44,6 +45,7 @@ public class ObjectMultistack {
 	 * @return last saved element on stack, that element also need to be deleted
 	 */
 	public ValueWrapper pop(String keyName) {
+		Objects.requireNonNull(keyName, "key can't be null");
 		if(isEmpty(keyName)) {
 			throw new IllegalArgumentException("Stack for given keyName is empty");
 		}
@@ -63,6 +65,7 @@ public class ObjectMultistack {
 	 * @return last saved element on stack with key keyName
 	 */
 	public ValueWrapper peek(String keyName) {
+		Objects.requireNonNull(keyName, "key can't be null");
 		if(isEmpty(keyName)) {
 			throw new IllegalArgumentException("Stack for given keyName is empty");
 		}

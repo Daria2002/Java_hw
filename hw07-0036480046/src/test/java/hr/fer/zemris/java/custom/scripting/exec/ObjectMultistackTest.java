@@ -85,6 +85,8 @@ class ObjectMultistackTest {
 		assertEquals(3.7, objectMultiStack.pop("tri").getValue());
 		assertEquals(true, objectMultiStack.isEmpty("tri"));
 		assertEquals(true, objectMultiStack.isEmpty("dva"));
+		assertEquals(true, objectMultiStack.isEmpty("test"));
+		assertEquals(true, objectMultiStack.isEmpty("null"));
 	}
 	
 	@Test

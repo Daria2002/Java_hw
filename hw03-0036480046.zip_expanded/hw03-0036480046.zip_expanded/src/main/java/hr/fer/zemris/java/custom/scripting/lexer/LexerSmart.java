@@ -115,31 +115,78 @@ public class LexerSmart {
 					return new TokenSmart(TokenSmartType.TAG_ELEMENT, tokenValue);
 				}
 				
+				// if value is function
+				if(currentIndex < data.length && data[currentIndex] == '@') {
+					return getFunction();
+				}
+				
+				// if token is operator
+				if(currentIndex < data.length && data[currentIndex] == '*' ||
+						data[currentIndex] == '^' || data[currentIndex] == '/' ||
+						data[currentIndex] == '-' || data[currentIndex] == '+') {
+					currentIndex++;
+					return new TokenSmart(TokenSmartType.TAG_ELEMENT, data[currentIndex - 1]);
+				}
+				
 				// if value is not under quotes, check if token is variable name
 				if(currentIndex < data.length && Character.isAlphabetic(data[currentIndex])) {
+					return getWordTagElement();
 					
-					// build token value while current char is not operator, whitespace or quote
-					while(!Character.isWhitespace(data[currentIndex]) &&
-							data[currentIndex] != '\"' && data[currentIndex] != '-' &&
-							data[currentIndex] != '+' && data[currentIndex] != '/' &&
-							data[currentIndex] != '*' && data[currentIndex] != '^' && 
-							currentIndex < data.length) {
-						
-						tokenValue.append(data[currentIndex++]);
-						
-						// if TAG_CLOSE occurs
-						if(data[currentIndex] == '$' && currentIndex + 1 < data.length &&
-							data[currentIndex + 1] == '}') {
-							break;
-						}
-					}
-					
-					return new TokenSmart(TokenSmartType.TAG_ELEMENT, tokenValue);
+				} else if(currentIndex < data.length && (Character.isDigit(data[currentIndex]) ||
+						data[currentIndex] == '-')) {
+					return getNumberTagElement();
 				}
 			}
 		}
 		
 		return null;
+	}
+
+	private TokenSmart getFunction() {
+		StringBuilder tokenValue = new StringBuilder();
+		
+		while(data[currentIndex] != ' ') {
+			tokenValue.append(data[currentIndex++]);
+		}
+		
+		return new TokenSmart(TokenSmartType.TAG_ELEMENT, tokenValue);
+	}
+
+	private TokenSmart getNumberTagElement() {
+		StringBuilder tokenValue = new StringBuilder();
+		
+		if(currentIndex + 1 >= data.length) {
+			throw new IllegalArgumentException("Illegal argument");
+		}
+		
+		tokenValue.append(data[currentIndex++]);
+		while(data[currentIndex] != ' ' && !Character.isDigit(data[currentIndex])) {
+			tokenValue.append(data[currentIndex++]);
+		}
+		
+		return new TokenSmart(TokenSmartType.TAG_ELEMENT, tokenValue);
+	}
+
+	private TokenSmart getWordTagElement() {
+		StringBuilder tokenValue = new StringBuilder();
+		
+		// build token value while current char is not operator, whitespace or quote
+		while(!Character.isWhitespace(data[currentIndex]) &&
+				data[currentIndex] != '\"' && data[currentIndex] != '-' &&
+				data[currentIndex] != '+' && data[currentIndex] != '/' &&
+				data[currentIndex] != '*' && data[currentIndex] != '^' && 
+				currentIndex < data.length) {
+			
+			tokenValue.append(data[currentIndex++]);
+			
+			// if TAG_CLOSE occurs
+			if(data[currentIndex] == '$' && currentIndex + 1 < data.length &&
+				data[currentIndex + 1] == '}') {
+				break;
+			}
+		}
+		
+		return new TokenSmart(TokenSmartType.TAG_ELEMENT, tokenValue);
 	}
 
 	/**
@@ -151,6 +198,11 @@ public class LexerSmart {
 		
 		while(Character.isWhitespace(data[currentIndex])) {
 			currentIndex++;
+		}
+		
+		if(data[currentIndex] == '=') {
+			currentIndex++;
+			return "=";
 		}
 		
 		while(!Character.isWhitespace(data[currentIndex])) {

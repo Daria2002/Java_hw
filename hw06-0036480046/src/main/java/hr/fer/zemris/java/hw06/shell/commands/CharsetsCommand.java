@@ -26,11 +26,12 @@ public class CharsetsCommand implements ShellCommand{
 		
 		// charsets take no argument
 		if(arguments != null) {
+			env.writeln("Charsets command doesn't take arguments");
 			return null;
 		}
 		
 		for (String str : Charset.availableCharsets().keySet()) {
-		      System.out.println(str);
+		      env.writeln(str);
 		}
 		
 		return ShellStatus.CONTINUE;
@@ -43,7 +44,7 @@ public class CharsetsCommand implements ShellCommand{
 
 	@Override
 	public List<String> getCommandDescription() {
-		List list = new ArrayList();
+		List<String> list = new ArrayList<String>();
 		
 		list.add("Command charsets takes no arguments and lists names of supported charsets.");
 		list.add("A single charset name is written per line.");

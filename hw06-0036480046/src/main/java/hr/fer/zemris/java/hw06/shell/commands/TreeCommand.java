@@ -25,12 +25,13 @@ public class TreeCommand implements ShellCommand {
 		arguments = CommandUtilityClass.checkOneArgument(arguments);
 		
 		if(arguments == null) {
-			System.out.println("Insert only one argument");
+			env.writeln("Insert only one argument");
 			return ShellStatus.CONTINUE;
 		}
 		
 		File directory = new File(arguments);
-		if(directory.isFile()) {
+		if(!directory.isDirectory()) {
+			env.writeln("Please enter one argument - path to dir");
 			return ShellStatus.CONTINUE;
 		}
 		
@@ -38,7 +39,7 @@ public class TreeCommand implements ShellCommand {
 		try {
 			listStructure(startIndent, directory);
 		} catch (IOException e) {
-			System.out.println("Error occured, so command didn't execute.");
+			env.writeln("Error occured, so command didn't execute.");
 		}
 		
 		return ShellStatus.CONTINUE;
@@ -75,7 +76,7 @@ public class TreeCommand implements ShellCommand {
 
 	@Override
 	public List<String> getCommandDescription() {
-		List list = new ArrayList();
+		List<String> list = new ArrayList<String>();
 		
 		list.add("The tree command expects a single argument: directory name.");
 		list.add("Command prints a tree (each dir level shifts output two spaces to the right).");

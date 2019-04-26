@@ -28,15 +28,7 @@ public class MyShell {
 	
 	/** unmodifiable map, where key is command name and value command object **/
 	private static SortedMap<String, ShellCommand> commands = new TreeMap<String, ShellCommand>();
-	
 	private static Scanner commandScanner;
-	
-	/** symbol at the end of previous line when command continues in next line. **/
-	private static char morelinesSymbol = '\\';
-	/** prompt symbol **/
-	private static char promptSymbol = '>';
-	/** symbol at beginning of line that is part of command started in previous line **/
-	private static char multilineSymbol = '|';
 	
 	/**
 	 * This class is used for communication with user. It implements Environment
@@ -46,6 +38,13 @@ public class MyShell {
 	 */
 	private static class ShellEnviroment implements Environment {
 
+		/** symbol at the end of previous line when command continues in next line. **/
+		private static char morelinesSymbol = '\\';
+		/** prompt symbol **/
+		private static char promptSymbol = '>';
+		/** symbol at beginning of line that is part of command started in previous line **/
+		private static char multilineSymbol = '|';
+		
 		@Override
 		public String readLine() throws ShellIOException {
 			if(commandScanner.hasNext()) {
@@ -56,7 +55,7 @@ public class MyShell {
 
 		@Override
 		public void write(String text) throws ShellIOException {
-			System.out.print(text);
+			System.out.printf(text);
 		}
 
 		@Override
@@ -146,6 +145,10 @@ public class MyShell {
 				status = command != null ? command.executeCommand(env, arguments) : 
 					ShellStatus.CONTINUE;
 				
+				if(command == null) {
+					System.out.println("Command " + commandName + " doesn't exists.");
+				}
+				
 			} catch (Exception e) {
 				status = ShellStatus.CONTINUE;
 			}
@@ -179,7 +182,8 @@ public class MyShell {
 		
 		// this loop reads lines while morelinesSymbol is printed
 		do {	
-			System.out.print((i++ > 0 ? multilineSymbol : promptSymbol) + " ");
+			System.out.print((i++ > 0 ? ShellEnviroment.multilineSymbol : 
+				ShellEnviroment.promptSymbol) + " ");
 			
 			command = env.readLine().trim();
 			
@@ -191,7 +195,7 @@ public class MyShell {
 					lines.add(help.get(l));
 				}
 				
-				if(String.valueOf(morelinesSymbol).equals(help.get(help.size()-1))) {
+				if(String.valueOf(ShellEnviroment.morelinesSymbol).equals(help.get(help.size()-1))) {
 					continue;
 				}
 				
@@ -204,20 +208,20 @@ public class MyShell {
 			for(int k = 0; k < commandArray.length; k++) {
 				
 				if(commandArray[k] == null || commandArray[k].isBlank()
-						|| String.valueOf(morelinesSymbol).equals(commandArray[k])) {
+						|| String.valueOf(ShellEnviroment.morelinesSymbol).equals(commandArray[k])) {
 					break;
 				}
 				
 				lines.add(commandArray[k].toString());
 			}
 			
-		} while (command.indexOf(morelinesSymbol) == command.length()-1);
+		} while (command.indexOf(ShellEnviroment.morelinesSymbol) == command.length()-1);
 		
 		String[] helpArray = new String[lines.size()];
 		
 		int index = 0;
 		for(int n = 0; n < lines.size(); n++) {
-			if(String.valueOf(morelinesSymbol).equals(lines.get(n)) || 
+			if(String.valueOf(ShellEnviroment.morelinesSymbol).equals(lines.get(n)) || 
 					lines.get(n) == null) {
 				continue;
 			}

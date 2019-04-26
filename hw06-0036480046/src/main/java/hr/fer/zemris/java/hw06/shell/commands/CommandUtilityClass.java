@@ -20,11 +20,6 @@ public class CommandUtilityClass {
 			argsArray = arguments.split("\"");
 			
 			if(argsArray.length != 2 || (!argsArray[0].isBlank() && !argsArray[0].isEmpty())) {
-				
-				for(int i = 0; i < argsArray.length; i++) {
-					System.out.println(argsArray[i]);
-				}
-				
 				return null;
 			}
 			
@@ -35,12 +30,13 @@ public class CommandUtilityClass {
 	}
 	
 	/**
-	 * Method checks argument for command where need to be two arguments. It checks if arguments are 
+	  * Method checks argument for command where need to be two arguments. It checks if arguments are 
 	 * quoted and returns string array of unquoted arguments
 	 * @param arguments string with arguments
+	 * @param numberOfArgs max number of arguments needed for command
 	 * @return string array with arguments if input is ok, otherwise null
 	 */
-	public static String[] checkTwoArguments(String arguments) {
+	public static String[] checkTwoArguments(String arguments, int numberOfArgs) {
 		String[] argsArray;
 		
 		if(arguments.contains("\"")) {
@@ -49,15 +45,16 @@ public class CommandUtilityClass {
 			argsArray = arguments.split(" ");
 		}
 		
-		String[] data = new String[2];
+		String[] data = new String[numberOfArgs];
 		int index = 0;
 		
 		for(int i = 0; i < argsArray.length; i++) {
-			if(argsArray[i].isBlank() || argsArray[i].isEmpty()) {
+			if(argsArray[i].isBlank() || argsArray[i].isEmpty() || argsArray[i] == null) {
 				continue;
 			}
 			
-			if(index >= 2) {
+			if(index >= numberOfArgs) {
+				System.out.println("Number of arguments command takes: " + numberOfArgs);
 				return null;
 			}
 			

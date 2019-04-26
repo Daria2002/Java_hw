@@ -25,7 +25,7 @@ public class HexdumpCommand implements ShellCommand {
 		arguments = CommandUtilityClass.checkOneArgument(arguments);
 		
 		if(arguments == null) {
-			System.out.println("Insert only one argument");
+			env.writeln("Insert only one argument");
 			return ShellStatus.CONTINUE;
 		}
 		
@@ -42,7 +42,7 @@ public class HexdumpCommand implements ShellCommand {
     	    while ((length = inputStream.read(buffer)) > 0){
     	    	
     	    	String hex = makeHex(index);
-    	    	System.out.print(("00000000" + hex + ":").substring(hex.length()));
+    	    	env.write(("00000000" + hex + ":").substring(hex.length()));
     	    	
     	    	// array contains elements that whose bytes value is range from 32 to 127
     	    	String[] fixedText = new String[16];
@@ -52,16 +52,16 @@ public class HexdumpCommand implements ShellCommand {
     	    		// special case when adding values next to first |
     	    		// no space between 7th hex value and | on the right
     	    		if(i == 7) {
-    	    			System.out.printf(" %02x", buffer[i]);
-    	    			System.out.print("|");
+    	    			env.write(String.format(" %02x", buffer[i]));
+    	    			env.write("|");
     	    		
     	    		// no space between 8th hex value and | on the left
     	    		} else if(i == 8) {
-    	    			System.out.printf("%02x ", buffer[i]);
+    	    			env.write(String.format("%02x ", buffer[i]));
     	    		
     	    		// adding rest of elements, there is space on left and right
     	    		} else {
-        	    		System.out.printf(" %02x ", buffer[i]);
+        	    		env.write(String.format(" %02x ", buffer[i]));
     	    		}
     	    		
     	    		
@@ -77,11 +77,11 @@ public class HexdumpCommand implements ShellCommand {
     	    	for(int i = 0; i < 16 - length; i++) {
     	    		// if filled before first |
     	    		if(length <= 8 && i == 15-length) {
-    	    			System.out.print("   ");
+    	    			env.write("   ");
     	    			break;
     	    		}
     	    		
-    	    		System.out.print("    ");
+    	    		env.write("    ");
     	    	}
     	    	
     	    	// print text on right
@@ -91,13 +91,13 @@ public class HexdumpCommand implements ShellCommand {
     	    		}
     	    		
     	    		if(i == 0) {
-    	    			System.out.print("|");
+    	    			env.write("|");
     	    		}
     	    		
-    	    		System.out.printf(" " + fixedText[i] + " ");
+    	    		env.write(fixedText[i]);
     	    	}
     	    	
-    	    	System.out.println();
+    	    	env.writeln("");
     	    	
     	    	buffer = new byte[16];
     	    	index += 16;
@@ -106,7 +106,7 @@ public class HexdumpCommand implements ShellCommand {
     	    inputStream.close();
  
     	}catch(IOException ioe){
-    		System.out.println("Error occurred while executing hexdump command.");
+    		env.writeln("Error occurred while executing hexdump command.");
     	}
 		
 		
@@ -129,7 +129,7 @@ public class HexdumpCommand implements ShellCommand {
 
 	@Override
 	public List<String> getCommandDescription() {
-		List list = new ArrayList();
+		List<String> list = new ArrayList<String>();
 		
 		list.add("Takes one argument: file name, and produces hex-output.");
 		list.add("Bytes whose value is less than 32 or greater than 127 are printed."); 

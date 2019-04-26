@@ -1,8 +1,10 @@
 package hr.fer.zemris.java.hw06.shell.commands;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Stack;
 
 import hr.fer.zemris.java.hw06.shell.Environment;
 import hr.fer.zemris.java.hw06.shell.ShellCommand;
@@ -17,15 +19,26 @@ public class SymbolCommand implements ShellCommand {
 
 	/** symbol command name **/
 	public final static String SYMBOL_COMMAND = "symbol";
+	/** array of symbol names **/
+	private String[] symbolArray = new String[3];
 	
 	@Override
 	public ShellStatus executeCommand(Environment env, String arguments) {
+		/** initialize symbolArray for checking given symbol name **/
+		symbolArray[0] = "PROMPT";
+		symbolArray[1] = "MORELINES";
+		symbolArray[2] = "MULTILINE";
 		
 		String[] args = arguments.split(" ");
-		String currentValue;
+		String currentValue = null;
+		
+		// check symbol name
+		if(!Arrays.asList(symbolArray).contains(args[0])) {
+			env.writeln("Symbol " + args[0] + " doesn't exists.");
+		}
 		
 		// print info message
-		if(args.length == 1) {
+		else if(args.length == 1) {
 			if("PROMPT".equals(args[0])) {
 				currentValue = String.valueOf(env.getPromptSymbol());
 				
@@ -34,38 +47,40 @@ public class SymbolCommand implements ShellCommand {
 				
 			} else if("MULTILINE".equals(args[0])) {
 				currentValue = String.valueOf(env.getMultilineSymbol());
-				
-			} else {
-				System.out.println("Symbol " + args[0] + " doesn't exists.");
-				return ShellStatus.CONTINUE;
 			}
-			System.out.println("Symbol for " + args[0] + " is '" + currentValue + "'");
+			
+			if(currentValue != null) {
+				env.writeln("Symbol for " + args[0] + " is '" + currentValue + "'");
+			}
 			
 		} else if(args.length == 2) {
-			if("PROMPT".equals(args[0])) {
-				System.out.println("Symbol for " + args[0] +
-						" changed from '" + env.getPromptSymbol().toString()  + "' to '" + args[1] + "'");
+			if(args[1].length() > 1) {
+				env.writeln("New value for symbol " + args[0] + " must have length 1");
+			}
+			
+			else if("PROMPT".equals(args[0])) {
+				changeSymbolMessage(env, args[0], args[1], env.getPromptSymbol().toString());
 				env.setPromptSymbol(args[1].charAt(0)); 
 				  
 			} else if("MORELINES".equals(args[0])) {
-				System.out.println("Symbol for " + args[0] +
-						" changed from '" + env.getMorelinesSymbol().toString()  + "' to '" + args[1] + "'");
+				changeSymbolMessage(env, args[0], args[1], env.getMorelinesSymbol().toString());
 				env.setMorelinesSymbol(args[1].charAt(0)); 
 				
 			} else if("MULTILINE".equals(args[0])) {
-				System.out.println("Symbol for " + args[0] +
-						" changed from '" + env.getMultilineSymbol().toString()  + "' to '" + args[1] + "'");
+				changeSymbolMessage(env, args[0], args[1], env.getMultilineSymbol().toString());
 				env.setMultilineSymbol(args[1].charAt(0)); 
-				
-			} else {
-				System.out.println("Symbol " + args[0] + " doesn't exists.");
-				return ShellStatus.CONTINUE;
 			}
 		}
 		
 		return ShellStatus.CONTINUE;
 	}
 	
+	private void changeSymbolMessage(Environment env, String symbolName, String newSymbol, 
+			String oldSymbol) {
+		env.writeln("Symbol for " + symbolName + " changed from '" + oldSymbol +
+				"' to '" + newSymbol + "'");
+	}
+
 	@Override
 	public String getCommandName() {
 		return SYMBOL_COMMAND;
@@ -73,7 +88,7 @@ public class SymbolCommand implements ShellCommand {
 
 	@Override
 	public List<String> getCommandDescription() {
-		List list = new ArrayList();
+		List<String> list = new ArrayList<String>();
 		
 		list.add("Command symbol takes one or two arguments.");
 		list.add("First argument is symbol name and this argument is mandatory.");

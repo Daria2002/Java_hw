@@ -38,7 +38,8 @@ public class HelpCommand implements ShellCommand {
 			}
 			
 		} catch (Exception e) {
-			env.writeln("Command \"" + arguments + "\" doesn't exists.");
+			env.writeln("Command help takes one argument - command name. "
+					+ "Command name \"" + arguments + "\" doesn't exists.");
 		}
 
 		return ShellStatus.CONTINUE;
@@ -51,7 +52,7 @@ public class HelpCommand implements ShellCommand {
 
 	@Override
 	public List<String> getCommandDescription() {
-		List list = new ArrayList();
+		List<String> list = new ArrayList<String>();
 		
 		list.add("If there are no arguments, it lists names of supported commands.");
 		list.add("If there is one argument, it prints name and the description of selected command");

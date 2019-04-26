@@ -30,32 +30,51 @@ public class CopyCommand implements ShellCommand {
 	@Override
 	public ShellStatus executeCommand(Environment env, String arguments) {
 		
-		String[] data = CommandUtilityClass.checkTwoArguments(arguments);
+		if(arguments == null) {
+			env.writeln("Copy command takes two arguments (dest and src path)."
+					+ " Src path must be file and dest can be file or dir");
+			return ShellStatus.CONTINUE;
+		}
 		
-		if(data == null) {
+		String[] data = CommandUtilityClass.checkTwoArguments(arguments, 2);
+		
+		if(data.length != 2) {
+			env.writeln("Copy command takes two arguments.");
 			return ShellStatus.CONTINUE;
 		}
 		
 		String sourceFilePath = data[0].trim();
+		
+		// check if source path is path of existing path
+		if(!new File(sourceFilePath).exists() || !new File(sourceFilePath).isFile()) {
+			env.writeln("Source path need to be path to existing file.");
+			return ShellStatus.CONTINUE;
+		}
+		
 		String destinationFilePath = data[1].trim();
-		
 		File destFile = new File(destinationFilePath);
+		Path dir = Paths.get(destinationFilePath);
 		
+		// build destination file's name if given path to destination is path to dir
+		if(destFile.isDirectory()) {
+			String[] helpArray = sourceFilePath.split("/");
+			String sourceFileName = helpArray[helpArray.length-1];
+			
+			dir = dir.resolve(sourceFileName);
+			destFile = new File(dir.toString());
+		}
+		
+		// overwriting occurs only when destination path is file and it already exists or
+		// when dest path is path to dir and file named as source exists in dest folder
 		if(destFile.exists()) {
-			System.out.println("Do you want to overwrite destination file? y/n");
+			env.writeln("Do you want to overwrite destination file? y/n");
 			
 			if("n".equals(env.readLine())) {
 				return ShellStatus.CONTINUE;
 			}
 		}
 		
-		// if second arg is dir copy first file to dir
-		if(destFile.isDirectory()) {
-			copyFileToDir(sourceFilePath, destinationFilePath);
-			
-		} else {
-			copyFileToFile(sourceFilePath, destinationFilePath);
-		}
+		copyFileToFile(sourceFilePath, destFile.toString());
 		
 		return ShellStatus.CONTINUE;
 	}
@@ -85,55 +104,12 @@ public class CopyCommand implements ShellCommand {
     	    outputStream.close();
  
     	}catch(IOException ioe){
+    		System.out.println(destinationFilePath);
+    		System.out.println("Copy not possible");
     		return;
     	}
 	}
 	
-	/**
-	 * This method creates new file named as source file to destination folder
-	 * @param sourceFilePath that needs to be copied in destination folder
-	 * @param destinationFolderPath folder where source file needs to be copied
-	 */
-	private void copyFileToDir(String sourceFilePath, String destinationFolderPath) {
-		
-		String[] helpArray = sourceFilePath.split("/");
-		String sourceFileName = helpArray[helpArray.length-1];
-		
-		String destinationFile = destinationFolderPath + "/" + sourceFileName;
-		File file = new File(destinationFile);
-
-        // If file doesn't exists, then create it
-        if (!file.exists()) {
-            try {
-				file.createNewFile();
-			} catch (IOException e) {
-				return;
-			}
-        }
-		
-        try {
-			Path source = Paths.get(sourceFilePath);
-			BufferedInputStream in = new BufferedInputStream(Files.newInputStream(source),
-					1000);
-
-			BufferedOutputStream out = new BufferedOutputStream(Files.newOutputStream(
-					Paths.get(destinationFile)), 1000);
-
-	        byte[] inputBytes = new byte[1000];
-	        
-	        // read is number of read elements
-			for(int read = in.read(inputBytes); read >= 0; read = in.read(inputBytes)) {
-				out.write(inputBytes, 0, read);
-			}
-			
-	        out.close();
-		    in.close();
-			
-		} catch (Exception e) {
-			return;
-		}
-	}
-
 	@Override
 	public String getCommandName() {
 		return COPY_COMMAND;
@@ -141,7 +117,7 @@ public class CopyCommand implements ShellCommand {
 
 	@Override
 	public List<String> getCommandDescription() {
-		List list = new ArrayList();
+		List<String> list = new ArrayList<String>();
 		
 		list.add("The copy command expects two arguments: source file and destination file.");
 		list.add("If destination file exists, you should ask user is it allowed to overwrite it.");

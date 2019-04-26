@@ -27,15 +27,14 @@ public class CatCommand implements ShellCommand {
 	@Override
 	public ShellStatus executeCommand(Environment env, String arguments) {
 		
-		String[] argsArray = CommandUtilityClass.checkTwoArguments(arguments);
+		String[] argsArray = CommandUtilityClass.checkTwoArguments(arguments, 2);
 		
 		if(argsArray == null) {
-			System.out.println("Input not ok.");
+			env.writeln("Input not ok.");
 			return ShellStatus.CONTINUE;
 		}
 		
 		String fileName = argsArray[0].trim();
-		
 		String charset;
 		
 		if(argsArray != null && (argsArray[0] == null || argsArray[1] == null)) {
@@ -43,7 +42,7 @@ public class CatCommand implements ShellCommand {
 		} else {
 			charset = argsArray[1].trim();
 		}
-		
+
 		File file = new File(fileName);
 		FileInputStream fstream;
 		
@@ -53,7 +52,15 @@ public class CatCommand implements ShellCommand {
 			String strLine;
 			
 			while ((strLine = br.readLine()) != null) {
-				byte[] bytes = Charset.forName(charset).encode(CharBuffer.wrap(strLine)).array();
+				byte[] bytes = null;
+				
+				try {
+					bytes = Charset.forName(charset).encode(CharBuffer.wrap(strLine)).array();
+				} catch (Exception e) {
+					System.out.println("Please enter valid charset name");
+					break;
+				}
+				
 				strLine = new String(bytes, charset);
 				env.writeln(strLine);
 			}
@@ -61,9 +68,9 @@ public class CatCommand implements ShellCommand {
 			fstream.close();
 			
 		} catch (Exception e) {
-			System.out.println("Can't open file.");
-			System.exit(0);
+			env.writeln("Please enter valid file path");
 		}
+		
 		return ShellStatus.CONTINUE;
 	}
 
@@ -74,7 +81,7 @@ public class CatCommand implements ShellCommand {
 	
 	@Override
 	public List<String> getCommandDescription() {
-		List list = new ArrayList();
+		List<String> list = new ArrayList<String>();
 		
 		list.add("Command cat takes one or two arguments.");
 		list.add("The first argument is path to some file and is mandatory.");

@@ -20,6 +20,13 @@ public class ExitCommand implements ShellCommand {
 	
 	@Override
 	public ShellStatus executeCommand(Environment env, String arguments) {
+		
+		if(arguments != null) {
+			env.writeln("Exit command takes no arguments");
+			return ShellStatus.CONTINUE;
+		}
+		
+		env.writeln("Goodbye");
 		return ShellStatus.TERMINATE;
 	}
 
@@ -30,7 +37,7 @@ public class ExitCommand implements ShellCommand {
 
 	@Override
 	public List<String> getCommandDescription() {
-		List list = new ArrayList();
+		List<String> list = new ArrayList<String>();
 		
 		list.add("Shell terminates when user gives exit command.");
 		

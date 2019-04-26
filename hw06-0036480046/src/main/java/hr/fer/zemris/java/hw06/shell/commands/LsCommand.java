@@ -39,7 +39,7 @@ public class LsCommand implements ShellCommand {
 		arguments = CommandUtilityClass.checkOneArgument(arguments);
 		
 		if(arguments == null) {
-			System.out.println("Insert only one argument");
+			env.writeln("Insert only one argument");
 			return ShellStatus.CONTINUE;
 		}
 
@@ -48,7 +48,7 @@ public class LsCommand implements ShellCommand {
 		
 		// given argument should be dir
 		if(dir.isFile() || filesInDir == null) {
-			System.out.println("Given argument should be dir");
+			env.writeln("Command ls takes one argument - path to dir.");
 			return ShellStatus.CONTINUE;
 		}
 		
@@ -67,21 +67,17 @@ public class LsCommand implements ShellCommand {
 				FileTime fileTime = attributes.creationTime();
 				String formattedDateTime = sdf.format(new Date(fileTime.toMillis()));
 				
-				boolean isDir = file.isDirectory();
-				boolean isRead = file.canRead();
-				boolean isWrite = file.canWrite();
-				boolean isExe = file.canExecute();
+				env.write((file.isDirectory() ? "d" : "-") + (file.canRead() ? "r" : "-")
+						+ (file.canWrite() ? "w" : "-") + (file.canExecute() ? "x" : "-") + " ");
 				
-				System.out.print((isDir ? "d" : "-") + (isRead ? "r" : "-") + (isWrite ? "w" : "-") + (isExe ? "x" : "-") + " ");
+				env.write(String.format("%1$" + SIZE_IN_BYTES + "s", Files.size(path) + " "));
 				
-				System.out.print(String.format("%1$" + SIZE_IN_BYTES + "s", Files.size(path) + " "));
-				
-				System.out.print(formattedDateTime + " ");
+				env.write(formattedDateTime + " ");
 
-				System.out.println(file.getName());
+				env.writeln(file.getName());
 				
 			} catch (IOException e) {
-				System.out.println("Error occured");
+				env.writeln("Error occured");
 			}
 		}
 		
@@ -95,7 +91,7 @@ public class LsCommand implements ShellCommand {
 
 	@Override
 	public List<String> getCommandDescription() {
-		List list = new ArrayList();
+		List<String> list = new ArrayList<String>();
 		
 		list.add("Command ls takes one argument – directory.");
 		list.add("Command prints all files and folders in directory with details.");

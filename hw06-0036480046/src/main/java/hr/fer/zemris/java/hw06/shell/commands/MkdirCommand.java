@@ -27,7 +27,7 @@ public class MkdirCommand implements ShellCommand {
 		arguments = CommandUtilityClass.checkOneArgument(arguments);
 		
 		if(arguments == null) {
-			System.out.println("Insert only one argument");
+			env.writeln("Insert only one argument");
 			return ShellStatus.CONTINUE;
 		}
 
@@ -36,8 +36,10 @@ public class MkdirCommand implements ShellCommand {
 	    	try {
 				Files.createDirectory(Paths.get(newFolder.toString()));
 			} catch (IOException e) {
-				System.out.println("Error occured, so directory is not created.");
+				env.writeln("Error occured, so directory is not created.");
 			}
+	    } else {
+	    	env.writeln("Folder already exists.");
 	    }
 
 		return ShellStatus.CONTINUE;
@@ -50,7 +52,7 @@ public class MkdirCommand implements ShellCommand {
 
 	@Override
 	public List<String> getCommandDescription() {
-		List list = new ArrayList();
+		List<String> list = new ArrayList<String>();
 		
 		list.add("The mkdir command takes a single argument: directory name.");
 		list.add("Command creates the appropriate directory structure.");

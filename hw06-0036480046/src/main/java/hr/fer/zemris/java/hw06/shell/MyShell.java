@@ -3,6 +3,7 @@ package hr.fer.zemris.java.hw06.shell;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.SortedMap;
@@ -112,8 +113,7 @@ public class MyShell {
 		
 		ShellStatus status = null;
 		ShellCommand command;
-		String[] l = new String[3];
-		int nullIndex = 0;
+		ArrayList<String> l = new ArrayList<String>();
 		
 		commandScanner = new Scanner(System.in);
 		
@@ -129,15 +129,12 @@ public class MyShell {
 					continue;
 				}
 				
-				// null values are not saved as arguments
-				nullIndex = getNullIndex(l) == -1 ? l.length : getNullIndex(l);
-				
-				String commandName = l[0];
+				String commandName = l.get(0);
 				String arguments = null;
 				
-				if(l.length > 1) {
-					// save everything, but null values and command name
-					arguments = String.join(" ", Arrays.copyOfRange(l, 1, nullIndex));
+				if(l.size() > 1) {
+					// save everything, but command name
+					arguments = String.join(" ", Arrays.copyOfRange(l.toArray(new String[l.size()]), 1, l.size()));
 				}
 				
 				command = commands.get(commandName);
@@ -159,20 +156,11 @@ public class MyShell {
 		System.exit(0);
 	}
 
-	private static int getNullIndex(String[] l) {
-		for(int i = 0; i < l.length; i++) {
-			if(l[i] == null) {
-				return i;
-			}
-		}
-		return -1;
-	}
-
 	/**
 	 * Gets command without morelines, multilines and prompt symbols.
 	 * @return String array with command name and command arguments
 	 */
-	private static String[] readLineOrLines(Scanner commandScanner, 
+	private static ArrayList<String> readLineOrLines(Scanner commandScanner, 
 			Environment env) {
 
 		ArrayList<String> lines = new ArrayList<String>();
@@ -217,15 +205,16 @@ public class MyShell {
 			
 		} while (command.indexOf(ShellEnviroment.morelinesSymbol) == command.length()-1);
 		
-		String[] helpArray = new String[lines.size()];
-		
+		//String[] helpArray = new String[lines.size()];
+		ArrayList<String> helpArray = new ArrayList<String>();
 		int index = 0;
 		for(int n = 0; n < lines.size(); n++) {
 			if(String.valueOf(ShellEnviroment.morelinesSymbol).equals(lines.get(n)) || 
 					lines.get(n) == null) {
 				continue;
 			}
-			helpArray[index++] = lines.get(n);
+			
+			helpArray.add(lines.get(n));
 		}
 		
 		// returns linesArray

@@ -16,6 +16,7 @@ public class CommandUtilityClass {
 	public static String checkOneArgument(String arguments) {
 		String[] argsArray;
 		
+		// remove " 
 		if(arguments.trim().contains("\"")) {
 			argsArray = arguments.split("\"");
 			
@@ -24,6 +25,13 @@ public class CommandUtilityClass {
 			}
 			
 			arguments = argsArray[1];
+		// check if only one argument is given
+		} else {
+			argsArray = arguments.split(" ");
+			
+			if(argsArray.length != 1) {
+				return null;
+			}
 		}
 		
 		return arguments;

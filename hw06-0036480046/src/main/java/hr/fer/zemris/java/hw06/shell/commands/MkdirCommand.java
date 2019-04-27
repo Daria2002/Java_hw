@@ -27,7 +27,7 @@ public class MkdirCommand implements ShellCommand {
 		arguments = CommandUtilityClass.checkOneArgument(arguments);
 		
 		if(arguments == null) {
-			env.writeln("Insert only one argument");
+			env.writeln("Insert one argument - path to dir you want to create.");
 			return ShellStatus.CONTINUE;
 		}
 

@@ -1,6 +1,8 @@
 package hr.fer.zemris.java.hw06.shell.commands;
 
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 
 import hr.fer.zemris.java.hw06.shell.Environment;
 
@@ -42,7 +44,11 @@ public class CommandUtilityClass {
 	}
 	
 	public static String resolvePath(String path, Environment env) {
-		return env.getCurrentDirectory().resolve(Paths.get(path)).toString();
+		if(env.getCurrentDirectory() != null) {
+			return Paths.get(env.getCurrentDirectory().toString()).
+					resolve(Paths.get(path)).toString();
+		}
+		return Paths.get(path).toString();
 	}
 	
 	/**
@@ -78,5 +84,31 @@ public class CommandUtilityClass {
 		}
 		
 		return data;
+	}
+	
+	public static ArrayList<String> escape(String command) {
+/*
+		int i = 0;
+		char[] commandCharArray = command.toCharArray();
+		boolean stringSequence = false;
+		boolean escapeSequence = false;
+		ArrayList<String> commandElements = new ArrayList<String>();
+		
+		do {
+			// string sequence starts when string sequence is false and " occurs
+			if(commandCharArray[i] == '"' && !stringSequence && !escapeSequence) {
+				stringSequence = true;
+			
+			// if escapeSequence occurs outside of string sequence return null	
+				
+			// string sequence stops if " occurs when escape sequence is false
+			// and string sequence is false
+			} else if(stringSequence && !escapeSequence && com) {
+				commandElements.add();
+			}
+			
+		} while(i++ < commandCharArray.length);
+	}*/
+		return null;
 	}
 }

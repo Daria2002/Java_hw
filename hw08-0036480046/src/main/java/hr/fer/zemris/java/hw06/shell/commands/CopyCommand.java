@@ -41,7 +41,7 @@ public class CopyCommand implements ShellCommand {
 		}
 		
 		String sourceFilePath = CommandUtilityClass.resolvePath(data[0].trim(), env);
-		
+
 		// check if source path is path of existing path
 		if(!new File(sourceFilePath).exists() || !new File(sourceFilePath).isFile()) {
 			env.writeln("Source path need to be path to existing file.");
@@ -72,6 +72,9 @@ public class CopyCommand implements ShellCommand {
 		}
 		
 		copyFileToFile(sourceFilePath, destFile.toString());
+		
+		System.out.println(sourceFilePath.toString());
+		System.out.println(destFile.toString());
 		
 		return ShellStatus.CONTINUE;
 	}

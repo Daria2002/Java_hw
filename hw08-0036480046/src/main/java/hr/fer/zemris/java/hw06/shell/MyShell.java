@@ -107,7 +107,10 @@ public class MyShell {
 
 		@Override
 		public Path getCurrentDirectory() {
-			return Paths.get(currentDirectory.toString()).toAbsolutePath().normalize();
+			if(currentDirectory != null) {
+				return Paths.get(currentDirectory.toString()).toAbsolutePath().normalize();
+			}
+			return null;
 		}
 
 		@Override
@@ -200,30 +203,15 @@ public class MyShell {
 			env.write((i++ > 0 ? ShellEnviroment.multilineSymbol : 
 				ShellEnviroment.promptSymbol) + " ");
 			
-			command = env.readLine().trim();
-			
-			if(command.contains("\"")) {
-				ArrayList<String> help = new ArrayList<String>();
-				help = readQuoted(command);
-				
-				for(int l = 0; l < help.size(); l++) {
-					lines.add(help.get(l));
-				}
-				
-				if(String.valueOf(ShellEnviroment.morelinesSymbol).equals(help.get(help.size()-1))) {
-					continue;
-				}
-				
-				break;
-			}
-			
+			command = env.readLine().trim().replaceAll("\\s+", " ");
 			String[] commandArray = command.split(" ");
 			
 			// this loop adds every word of command lines like new element of lines
 			for(int k = 0; k < commandArray.length; k++) {
 				
 				if(commandArray[k] == null || commandArray[k].isBlank() || 
-						String.valueOf(ShellEnviroment.morelinesSymbol).equals(commandArray[k])) {
+						(String.valueOf(ShellEnviroment.morelinesSymbol).equals(commandArray[k])
+								&& commandArray.length-1 == k)) {
 					break;
 				}
 				
@@ -232,20 +220,7 @@ public class MyShell {
 			
 		} while (command.indexOf(ShellEnviroment.morelinesSymbol) == command.length()-1);
 		
-		//String[] helpArray = new String[lines.size()];
-		ArrayList<String> helpArray = new ArrayList<String>();
-		
-		for(int n = 0; n < lines.size(); n++) {
-			if(String.valueOf(ShellEnviroment.morelinesSymbol).equals(lines.get(n)) || 
-					lines.get(n) == null) {
-				continue;
-			}
-			
-			helpArray.add(lines.get(n));
-		}
-		
-		// returns linesArray
-		return helpArray;
+		return lines;
 	}
 	
 	/**

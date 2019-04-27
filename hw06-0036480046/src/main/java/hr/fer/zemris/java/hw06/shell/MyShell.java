@@ -112,12 +112,11 @@ public class MyShell {
 		ShellEnviroment env = new ShellEnviroment();
 		
 		ShellStatus status = null;
-		ShellCommand command;
 		ArrayList<String> l = new ArrayList<String>();
 		
 		commandScanner = new Scanner(System.in);
 		
-		System.out.println("Welcome to MyShell v 1.0");
+		env.writeln("Welcome to MyShell v 1.0");
 		
 		do {
 			try {
@@ -137,8 +136,7 @@ public class MyShell {
 					arguments = String.join(" ", Arrays.copyOfRange(l.toArray(new String[l.size()]), 1, l.size()));
 				}
 				
-				command = commands.get(commandName);
-				
+				ShellCommand command = commands.get(commandName);
 				status = command != null ? command.executeCommand(env, arguments) : 
 					ShellStatus.CONTINUE;
 				
@@ -170,7 +168,7 @@ public class MyShell {
 		
 		// this loop reads lines while morelinesSymbol is printed
 		do {	
-			System.out.print((i++ > 0 ? ShellEnviroment.multilineSymbol : 
+			env.write((i++ > 0 ? ShellEnviroment.multilineSymbol : 
 				ShellEnviroment.promptSymbol) + " ");
 			
 			command = env.readLine().trim();
@@ -195,8 +193,8 @@ public class MyShell {
 			// this loop adds every word of command lines like new element of lines
 			for(int k = 0; k < commandArray.length; k++) {
 				
-				if(commandArray[k] == null || commandArray[k].isBlank()
-						|| String.valueOf(ShellEnviroment.morelinesSymbol).equals(commandArray[k])) {
+				if(commandArray[k] == null || commandArray[k].isBlank() || 
+						String.valueOf(ShellEnviroment.morelinesSymbol).equals(commandArray[k])) {
 					break;
 				}
 				
@@ -207,7 +205,7 @@ public class MyShell {
 		
 		//String[] helpArray = new String[lines.size()];
 		ArrayList<String> helpArray = new ArrayList<String>();
-		int index = 0;
+		
 		for(int n = 0; n < lines.size(); n++) {
 			if(String.valueOf(ShellEnviroment.morelinesSymbol).equals(lines.get(n)) || 
 					lines.get(n) == null) {
@@ -243,7 +241,7 @@ public class MyShell {
 		for(int i = 0; i < commandArray.length; i++) {
 			
 			// adding quoted elements
-			if(i%2 != 0 && quoteList.size() > i/2) {
+			if(i % 2 != 0 && quoteList.size() > i/2) {
 				stringToAdd = quoteList.get(i/2);
 				
 				if(stringToAdd.isBlank() || stringToAdd.isEmpty()) {

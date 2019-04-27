@@ -31,7 +31,7 @@ public class MkdirCommand implements ShellCommand {
 			return ShellStatus.CONTINUE;
 		}
 
-		File newFolder = new File(arguments);
+		File newFolder = new File(CommandUtilityClass.resolvePath(arguments, env));
 	    if(!newFolder.exists()) {
 	    	try {
 				Files.createDirectory(Paths.get(newFolder.toString()));

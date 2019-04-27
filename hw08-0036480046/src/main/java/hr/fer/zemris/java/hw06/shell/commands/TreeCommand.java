@@ -29,7 +29,7 @@ public class TreeCommand implements ShellCommand {
 			return ShellStatus.CONTINUE;
 		}
 		
-		File directory = new File(arguments);
+		File directory = new File(CommandUtilityClass.resolvePath(arguments, env));
 		if(!directory.isDirectory()) {
 			env.writeln("Please enter one argument - path to dir");
 			return ShellStatus.CONTINUE;

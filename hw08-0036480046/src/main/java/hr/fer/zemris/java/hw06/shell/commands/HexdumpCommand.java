@@ -32,7 +32,7 @@ public class HexdumpCommand implements ShellCommand {
 		FileInputStream inputStream;
 		
 		try{
-    	    inputStream = new FileInputStream(arguments);
+    	    inputStream = new FileInputStream(CommandUtilityClass.resolvePath(arguments, env));
  
     	    byte[] buffer = new byte[16];
  

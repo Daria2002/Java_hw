@@ -27,7 +27,7 @@ public class CdCommand implements ShellCommand {
 		
 		String newCurrentDirectory = CommandUtilityClass.checkOneArgument(arguments);
 		if(newCurrentDirectory != null) {
-			env.setCurrentDirectory(env.getCurrentDirectory().resolve(Paths.get(newCurrentDirectory)));
+			env.setCurrentDirectory(Paths.get(CommandUtilityClass.resolvePath(newCurrentDirectory, env)));
 		}
 		
 		return ShellStatus.CONTINUE;
@@ -42,8 +42,8 @@ public class CdCommand implements ShellCommand {
 	public List<String> getCommandDescription() {
 		List<String> list = new ArrayList<String>();
 		
-		list.add("Command pwd takes no arguments.");
-		list.add("Prints absolute path to current directory.");
+		list.add("Command cd takes one argument that represents new current dir.");
+		list.add("Cd command sets given dir as new current dir.");
 		
         return Collections.unmodifiableList(list);
 	}

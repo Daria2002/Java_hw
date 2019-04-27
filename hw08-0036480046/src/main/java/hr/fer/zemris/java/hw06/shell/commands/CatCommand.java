@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -42,8 +43,8 @@ public class CatCommand implements ShellCommand {
 		} else {
 			charset = argsArray[1].trim();
 		}
-
-		File file = new File(fileName);
+		
+		File file = new File(CommandUtilityClass.resolvePath(fileName, env));
 		FileInputStream fstream;
 		
 		try {

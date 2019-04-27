@@ -43,7 +43,7 @@ public class LsCommand implements ShellCommand {
 			return ShellStatus.CONTINUE;
 		}
 
-		File dir = new File(arguments);
+		File dir = new File(CommandUtilityClass.resolvePath(arguments, env));
 		File[] filesInDir = dir.listFiles();
 		
 		// given argument should be dir

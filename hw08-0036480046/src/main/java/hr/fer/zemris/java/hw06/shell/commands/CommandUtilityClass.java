@@ -1,5 +1,9 @@
 package hr.fer.zemris.java.hw06.shell.commands;
 
+import java.nio.file.Paths;
+
+import hr.fer.zemris.java.hw06.shell.Environment;
+
 /**
  * This class contains methods that are common in more command classes
  * @author Daria Matković
@@ -35,6 +39,10 @@ public class CommandUtilityClass {
 		}
 		
 		return arguments;
+	}
+	
+	public static String resolvePath(String path, Environment env) {
+		return env.getCurrentDirectory().resolve(Paths.get(path)).toString();
 	}
 	
 	/**

@@ -40,7 +40,7 @@ public class CopyCommand implements ShellCommand {
 			return ShellStatus.CONTINUE;
 		}
 		
-		String sourceFilePath = data[0].trim();
+		String sourceFilePath = CommandUtilityClass.resolvePath(data[0].trim(), env);
 		
 		// check if source path is path of existing path
 		if(!new File(sourceFilePath).exists() || !new File(sourceFilePath).isFile()) {
@@ -49,7 +49,7 @@ public class CopyCommand implements ShellCommand {
 		}
 		
 		String destinationFilePath = data[1].trim();
-		File destFile = new File(destinationFilePath);
+		File destFile = new File(CommandUtilityClass.resolvePath(destinationFilePath, env));
 		Path dir = Paths.get(destinationFilePath);
 		
 		// build destination file's name if given path to destination is path to dir

@@ -25,9 +25,13 @@ public class CdCommand implements ShellCommand {
 			return ShellStatus.CONTINUE;
 		}
 		
-		String newCurrentDirectory = CommandUtilityClass.checkOneArgument(arguments);
-		if(newCurrentDirectory != null) {
+		String[] args = CommandUtilityClass.checkArguments(arguments, 1);
+		
+		if(args != null && args.length != 1) {
+			String newCurrentDirectory = args.toString();
 			env.setCurrentDirectory(Paths.get(CommandUtilityClass.resolvePath(newCurrentDirectory, env)));
+		} else {
+			env.writeln("Arguments are not valid.");
 		}
 		
 		return ShellStatus.CONTINUE;

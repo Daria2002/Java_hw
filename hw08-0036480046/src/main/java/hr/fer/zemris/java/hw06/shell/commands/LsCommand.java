@@ -36,12 +36,19 @@ public class LsCommand implements ShellCommand {
 	@Override
 	public ShellStatus executeCommand(Environment env, String arguments) {
 		
-		arguments = CommandUtilityClass.checkOneArgument(arguments);
-		
 		if(arguments == null) {
 			env.writeln("Insert only one argument");
 			return ShellStatus.CONTINUE;
 		}
+		
+		String[] args = CommandUtilityClass.checkArguments(arguments, 1);
+		
+		if(args.length != 1) {
+			env.writeln("Arguments are not valid");
+			return ShellStatus.CONTINUE;
+		}
+		
+		arguments = args.toString();
 
 		File dir = new File(CommandUtilityClass.resolvePath(arguments, env));
 		File[] filesInDir = dir.listFiles();

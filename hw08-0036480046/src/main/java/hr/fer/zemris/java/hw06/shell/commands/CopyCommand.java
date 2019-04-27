@@ -33,7 +33,7 @@ public class CopyCommand implements ShellCommand {
 			return ShellStatus.CONTINUE;
 		}
 		
-		String[] data = CommandUtilityClass.checkTwoArguments(arguments, 2);
+		String[] data = CommandUtilityClass.checkArguments(arguments, 2);
 		
 		if(data.length != 2) {
 			env.writeln("Copy command takes two arguments.");
@@ -72,9 +72,6 @@ public class CopyCommand implements ShellCommand {
 		}
 		
 		copyFileToFile(sourceFilePath, destFile.toString());
-		
-		System.out.println(sourceFilePath.toString());
-		System.out.println(destFile.toString());
 		
 		return ShellStatus.CONTINUE;
 	}

@@ -12,36 +12,6 @@ import hr.fer.zemris.java.hw06.shell.Environment;
  *
  */
 public class CommandUtilityClass {
-
-	/**
-	 * This class checks argument for commands where need to be only one argument. It checks if
-	 * argument is quoted, and if it is returns argument without quotes.
-	 * @param arguments argument to check
-	 * @return argument without quotes if input is ok, otherwise null
-	 */
-	public static String checkOneArgument(String arguments) {
-		String[] argsArray;
-		
-		// remove " 
-		if(arguments.trim().contains("\"")) {
-			argsArray = arguments.split("\"");
-			
-			if(argsArray.length != 2 || (!argsArray[0].isBlank() && !argsArray[0].isEmpty())) {
-				return null;
-			}
-			
-			arguments = argsArray[1];
-		// check if only one argument is given
-		} else {
-			argsArray = arguments.split(" ");
-			
-			if(argsArray.length != 1) {
-				return null;
-			}
-		}
-		
-		return arguments;
-	}
 	
 	public static String resolvePath(String path, Environment env) {
 		if(env.getCurrentDirectory() != null) {
@@ -58,57 +28,93 @@ public class CommandUtilityClass {
 	 * @param numberOfArgs max number of arguments needed for command
 	 * @return string array with arguments if input is ok, otherwise null
 	 */
-	public static String[] checkTwoArguments(String arguments, int numberOfArgs) {
-		String[] argsArray;
+	public static String[] checkArguments(String arguments, int numberOfArgs) {
+		ArrayList<String> argumentList = parseWithEscape(arguments);
 		
-		if(arguments.contains("\"")) {
-			argsArray = arguments.split("\"");
-		} else {
-			argsArray = arguments.split(" ");
+		if(argumentList == null || numberOfArgs != argumentList.size()) {
+			return null;
 		}
 		
-		String[] data = new String[numberOfArgs];
-		int index = 0;
+		return argumentList.toArray(new String[argumentList.size()]);
+	}
+	
+	/**
+	 * This method parse command with escaping in quotes
+	 * @param arguments command without command name
+	 * @return ArrayList<String> that represents where each, null if error occurred
+	 */
+	public static ArrayList<String> parseWithEscape(String arguments) {
+		int i = 0;
+		char[] commandCharArray = arguments.trim().replace("\\s+", " ").toCharArray();
 		
-		for(int i = 0; i < argsArray.length; i++) {
-			if(argsArray[i].isBlank() || argsArray[i].isEmpty() || argsArray[i] == null) {
-				continue;
+		boolean stringSequence = false;
+		boolean escapeSequence = false;
+		
+		ArrayList<String> argumentsElements = new ArrayList<String>();
+		StringBuilder buildArgument = new StringBuilder();
+		
+		do {
+			// escape if escaping is correct
+			if(escapeSequence && stringSequence && (commandCharArray[i] == '\\' || 
+					commandCharArray[i] == '"')) {
+				escapeSequence = false;
+				buildArgument.append(commandCharArray[i]);
 			}
 			
-			if(index >= numberOfArgs) {
-				System.out.println("Number of arguments command takes: " + numberOfArgs);
+			// return null if escape sequence is incorrect
+			else if(escapeSequence && (commandCharArray[i] != '\\' || commandCharArray[i] != '"')) {
 				return null;
 			}
 			
-			data[index++] = argsArray[i];
-		}
-		
-		return data;
-	}
-	
-	public static ArrayList<String> escape(String command) {
-/*
-		int i = 0;
-		char[] commandCharArray = command.toCharArray();
-		boolean stringSequence = false;
-		boolean escapeSequence = false;
-		ArrayList<String> commandElements = new ArrayList<String>();
-		
-		do {
 			// string sequence starts when string sequence is false and " occurs
-			if(commandCharArray[i] == '"' && !stringSequence && !escapeSequence) {
+			else if(commandCharArray[i] == '"' && !stringSequence && !escapeSequence) {
 				stringSequence = true;
-			
-			// if escapeSequence occurs outside of string sequence return null	
 				
-			// string sequence stops if " occurs when escape sequence is false
-			// and string sequence is false
-			} else if(stringSequence && !escapeSequence && com) {
-				commandElements.add();
+				// everything before " add as argument if there was something before "
+				if(buildArgument.length() != 0 && buildArgument.toString() != " ") {
+					argumentsElements.add(buildArgument.toString());
+					buildArgument = new StringBuilder();
+				}
 			}
 			
-		} while(i++ < commandCharArray.length);
-	}*/
-		return null;
+			// if escapeSequence occurs outside of string sequence return null	
+			else if(commandCharArray[i] == '\\' && !stringSequence) {
+				return null;
+			}
+			
+			// escapeSequence starts if \ occurred in quotes and escapeSequence was false
+			else if(commandCharArray[i] == '\\' && stringSequence && !escapeSequence) {
+				escapeSequence = true;
+			}
+			
+			// string sequence stops if " occurs in quotes when escape sequence is false
+			else if(stringSequence && !escapeSequence && commandCharArray[i] == '"') {
+				stringSequence = false;
+				
+				if(buildArgument.length() != 0 && buildArgument.toString() != " ") {
+					argumentsElements.add(buildArgument.toString());
+					buildArgument = new StringBuilder();
+				}
+			}
+			
+			// if ' ' occurs outside of string sequence add built argument
+			else if(commandCharArray[i] == ' ' && !stringSequence) {
+				if(buildArgument.length() != 0 && buildArgument.toString() != " ") {
+					argumentsElements.add(buildArgument.toString());
+					buildArgument = new StringBuilder();
+				}
+			}
+			
+			else {
+				buildArgument.append(commandCharArray[i]);
+			}
+			
+		} while(i++ < commandCharArray.length-1);
+		
+		if(buildArgument.length() != 0 && buildArgument.toString() != " ") {
+			argumentsElements.add(buildArgument.toString());
+		}
+		
+		return argumentsElements;
 	}
 }

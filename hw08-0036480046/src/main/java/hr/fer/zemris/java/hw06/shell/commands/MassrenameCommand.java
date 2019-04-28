@@ -9,6 +9,9 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import hr.fer.zemris.java.hw06.shell.Environment;
 import hr.fer.zemris.java.hw06.shell.ShellCommand;
 import hr.fer.zemris.java.hw06.shell.ShellStatus;
@@ -19,62 +22,83 @@ import hr.fer.zemris.java.hw06.shell.ShellStatus;
  * @author Daria Matković
  *
  */
-public class CopyCommand implements ShellCommand {
+public class MassrenameCommand implements ShellCommand {
 	
 	/** copy command name **/
-	public final static String COPY_COMMAND = "copy";
+	public final static String MASSRENAME_COMMAND = "massrename";
 	
 	@Override
 	public ShellStatus executeCommand(Environment env, String arguments) {
 		
 		if(arguments == null) {
-			env.writeln("Copy command takes two arguments (dest and src path)."
-					+ " Src path must be file and dest can be file or dir");
+			env.writeln("Please enter arguments");
 			return ShellStatus.CONTINUE;
 		}
 		
-		String[] data = CommandUtilityClass.checkArguments(arguments, 2);
-		
-		if(data.length != 2) {
-			env.writeln("Copy command takes two arguments.");
-			return ShellStatus.CONTINUE;
-		}
-		
-		String sourceFilePath = CommandUtilityClass.resolvePath(data[0].trim(), env);
-
-		// check if source path is path of existing path
-		if(!new File(sourceFilePath).exists() || !new File(sourceFilePath).isFile()) {
-			env.writeln("Source path need to be path to existing file.");
-			return ShellStatus.CONTINUE;
-		}
-		
-		String destinationFilePath = data[1].trim();
-		File destFile = new File(CommandUtilityClass.resolvePath(destinationFilePath, env));
-		Path dir = Paths.get(destinationFilePath);
-		
-		// build destination file's name if given path to destination is path to dir
-		if(destFile.isDirectory()) {
-			String[] helpArray = sourceFilePath.split("/");
-			String sourceFileName = helpArray[helpArray.length-1];
+		String[] data;
+		// if cmd is filter, there should be 4 arguments
+		if(arguments.contains("filter")) {
+			data = CommandUtilityClass.checkArguments(arguments, 4);
 			
-			dir = dir.resolve(sourceFileName);
-			destFile = new File(dir.toString());
-		}
+			if(data != null) {
+				return filterCommand(data, env);
+			}
 		
-		// overwriting occurs only when destination path is file and it already exists or
-		// when dest path is path to dir and file named as source exists in dest folder
-		if(destFile.exists()) {
-			env.writeln("Do you want to overwrite destination file? y/n");
+		// if cmd is groups, there should be 4 arguments
+		} else if(arguments.contains("groups")) {
+			data = CommandUtilityClass.checkArguments(arguments, 4);
 			
-			if("n".equals(env.readLine())) {
-				return ShellStatus.CONTINUE;
+			if(data != null) {
+				
+			}
+			
+		// if cmd is show there should be 5 arguments
+		} else if(arguments.contains("show")) {
+			data = CommandUtilityClass.checkArguments(arguments, 5);
+			
+			if(data != null) {
+				
 			}
 		}
 		
-		copyFileToFile(sourceFilePath, destFile.toString());
-			
+		env.writeln("Arguments are not valid.");
 		return ShellStatus.CONTINUE;
 	}
+
+	/**
+	 * Filter command prints all files from dir1 selected with mask 
+	 * @param data all arguments, each argument represents one element array
+	 * @param env environment
+	 * @return shellstatus
+	 */
+	private ShellStatus filterCommand(String[] data, Environment env) {
+		String sourceFilePath = CommandUtilityClass.resolvePath(data[0].trim(), env);
+
+		// check if source path is path of existing path
+		if(!new File(sourceFilePath).exists() || !new File(sourceFilePath).isDirectory()) {
+			env.writeln("Source path need to be path to existing dir.");
+			return ShellStatus.CONTINUE;
+		}
+		
+		File sourceDir = new File(sourceFilePath);
+		File[] filesInSourceDir = sourceDir.listFiles();
+		
+		Pattern pattern = Pattern.compile(data[4]);
+		
+		if(filesInSourceDir != null) {
+			for(File file : filesInSourceDir) {
+				Matcher m = pattern.matcher(file.toString());
+				
+				if(m.find()) {
+					env.writeln(file.toString());
+				}
+			}
+		}
+		
+		return ShellStatus.CONTINUE;
+	}
+
+
 
 	/**
 	 * This method copies source file content to destination file content
@@ -109,7 +133,7 @@ public class CopyCommand implements ShellCommand {
 	
 	@Override
 	public String getCommandName() {
-		return COPY_COMMAND;
+		return MASSRENAME_COMMAND;
 	}
 
 	@Override

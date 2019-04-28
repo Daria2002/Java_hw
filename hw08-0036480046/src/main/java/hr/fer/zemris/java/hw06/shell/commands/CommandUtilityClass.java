@@ -54,16 +54,18 @@ public class CommandUtilityClass {
 		StringBuilder buildArgument = new StringBuilder();
 		
 		do {
-			// escape if escaping is correct
+			// escape if escaping sequence occurs
 			if(escapeSequence && stringSequence && (commandCharArray[i] == '\\' || 
 					commandCharArray[i] == '"')) {
 				escapeSequence = false;
 				buildArgument.append(commandCharArray[i]);
 			}
 			
-			// return null if escape sequence is incorrect
+			// write two chars if not escape sequence
 			else if(escapeSequence && (commandCharArray[i] != '\\' || commandCharArray[i] != '"')) {
-				return null;
+				buildArgument.append('\\');
+				buildArgument.append(commandCharArray[i]);
+				escapeSequence = false;
 			}
 			
 			// string sequence starts when string sequence is false and " occurs

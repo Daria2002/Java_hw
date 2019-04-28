@@ -69,7 +69,7 @@ public class MassrenameCommand implements ShellCommand {
 	 * Filter command prints all files from dir1 selected with mask 
 	 * @param data all arguments, each argument represents one element array
 	 * @param env environment
-	 * @return shellstatus
+	 * @return shellstatus 
 	 */
 	private ShellStatus filterCommand(String[] data, Environment env) {
 		String sourceFilePath = CommandUtilityClass.resolvePath(data[0].trim(), env);

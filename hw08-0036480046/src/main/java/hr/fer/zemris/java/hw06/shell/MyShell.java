@@ -13,11 +13,17 @@ import java.util.TreeMap;
 import hr.fer.zemris.java.hw06.shell.commands.CatCommand;
 import hr.fer.zemris.java.hw06.shell.commands.CharsetsCommand;
 import hr.fer.zemris.java.hw06.shell.commands.CopyCommand;
+import hr.fer.zemris.java.hw06.shell.commands.DropdCommand;
 import hr.fer.zemris.java.hw06.shell.commands.ExitCommand;
 import hr.fer.zemris.java.hw06.shell.commands.HelpCommand;
 import hr.fer.zemris.java.hw06.shell.commands.HexdumpCommand;
+import hr.fer.zemris.java.hw06.shell.commands.ListdCommand;
 import hr.fer.zemris.java.hw06.shell.commands.LsCommand;
+import hr.fer.zemris.java.hw06.shell.commands.MassrenameCommand;
 import hr.fer.zemris.java.hw06.shell.commands.MkdirCommand;
+import hr.fer.zemris.java.hw06.shell.commands.PopdCommand;
+import hr.fer.zemris.java.hw06.shell.commands.PushdCommand;
+import hr.fer.zemris.java.hw06.shell.commands.PwdCommand;
 import hr.fer.zemris.java.hw06.shell.commands.SymbolCommand;
 import hr.fer.zemris.java.hw06.shell.commands.TreeCommand;
 
@@ -290,5 +296,11 @@ public class MyShell {
 		commands.put(SymbolCommand.SYMBOL_COMMAND, new SymbolCommand());
 		commands.put(HelpCommand.HELP_COMMAND, new HelpCommand());
 		commands.put(ExitCommand.EXIT_COMMAND, new ExitCommand());
+		commands.put(PopdCommand.POPD_COMMAND, new PopdCommand());
+		commands.put(DropdCommand.DROPD_COMMAND, new DropdCommand());
+		commands.put(PushdCommand.PUSHD_COMMAND, new PushdCommand());
+		commands.put(PwdCommand.PWD_COMMAND, new PwdCommand());
+		commands.put(ListdCommand.LISTD_COMMAND, new ListdCommand());
+		commands.put(MassrenameCommand.MASSRENAME_COMMAND, new MassrenameCommand());
 	}
 }

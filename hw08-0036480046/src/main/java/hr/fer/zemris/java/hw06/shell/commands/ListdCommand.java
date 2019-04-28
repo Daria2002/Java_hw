@@ -17,7 +17,7 @@ import hr.fer.zemris.java.hw06.shell.ShellStatus;
 public class ListdCommand implements ShellCommand {
 
 	/** cat command name **/
-	public static final String PUSHD_COMMAND = "pushd";
+	public static final String LISTD_COMMAND = "pushd";
 	/** key for stack in shared data **/
 	public static final String STACK_KEY = "cdstack";
 	
@@ -48,7 +48,7 @@ public class ListdCommand implements ShellCommand {
 
 	@Override
 	public String getCommandName() {
-		return PUSHD_COMMAND;
+		return LISTD_COMMAND;
 	}
 	
 	@Override

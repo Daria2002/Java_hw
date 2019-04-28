@@ -66,9 +66,112 @@ public class NameBuilderParser {
 	}
 
 	private List<NameBuilder> makeNameBuilders(String expression) {
+		int i = 0;
+		char[] commandCharArray = expression.trim().toCharArray();
 		
+		boolean stringSequence = false;
+		boolean escapeSequence = false;
 		
+		if(commandCharArray[0] == '"' && commandCharArray[commandCharArray.length] == '"') {
+			stringSequence = true;
+		}
 		
-		return null;
+		List<NameBuilder> nameBuilderList = new ArrayList<NameBuilder>();
+		StringBuilder buildArgument = new StringBuilder();
+		
+		do {
+			// escape if escaping sequence occurs
+			if(escapeSequence && stringSequence && (commandCharArray[i] == '\\' || 
+					commandCharArray[i] == '"')) {
+				escapeSequence = false;
+				buildArgument.append(commandCharArray[i]);
+			}
+			
+			// write two chars if not escape sequence
+			else if(escapeSequence && (commandCharArray[i] != '\\' || commandCharArray[i] != '"')) {
+				buildArgument.append('\\');
+				
+				if(commandCharArray[i] == '$' && commandCharArray[i+1] == '{') {
+					// if group sequence occurs, save built text
+					nameBuilderList.add(text(buildArgument.toString()));
+					buildArgument = new StringBuilder();
+					
+					IndexAndNameBuilder helpResult = addGroup(i, commandCharArray);
+					nameBuilderList.add(helpResult.nameBuilder);
+					i = helpResult.index;
+					
+					buildArgument = new StringBuilder();
+					
+				} else {
+					buildArgument.append(commandCharArray[i]);
+				}
+				escapeSequence = false;
+			}
+			
+			// if escapeSequence occurs outside of string sequence return null	
+			else if(commandCharArray[i] == '\\' && !stringSequence) {
+				return null;
+			}
+			
+			// escapeSequence starts if \ occurred in quotes and escapeSequence was false
+			else if(commandCharArray[i] == '\\' && stringSequence && !escapeSequence) {
+				escapeSequence = true;
+			}
+			
+			else {
+				if(commandCharArray[i] == '$' && commandCharArray[i+1] == '{') {
+					// if group sequence occurs, save built text
+					nameBuilderList.add(text(buildArgument.toString()));
+					buildArgument = new StringBuilder();
+					
+					IndexAndNameBuilder helpResult = addGroup(i, commandCharArray);
+					nameBuilderList.add(helpResult.nameBuilder);
+					i = helpResult.index;
+					
+				} else {
+					buildArgument.append(commandCharArray[i]);
+				}
+			}
+			
+		} while(i++ < commandCharArray.length-1);
+
+		nameBuilderList.add(text(buildArgument.toString()));
+		
+		return nameBuilderList;
+	}
+	
+	private static class IndexAndNameBuilder {
+		int index;
+		NameBuilder nameBuilder;
+	}
+	
+	private IndexAndNameBuilder addGroup(int i, char[] commandCharArray) {
+		
+		IndexAndNameBuilder result = new IndexAndNameBuilder();
+		
+		StringBuilder buildArgument = new StringBuilder();
+		// take group sequence
+		i += 2;
+		while(commandCharArray[i] != '}') {
+			buildArgument.append(commandCharArray[i++]);
+		}
+		
+		if(buildArgument.toString().contains(",")) {
+			String help = buildArgument.toString().replace("\\s+", "");
+			
+			String[] helpArray = help.split(",");
+			
+			result.index = i;
+			result.nameBuilder = group(Integer.valueOf(helpArray[0]), helpArray[1].charAt(0),
+					Integer.valueOf(helpArray[1].substring(1, helpArray[1].length())));
+			
+			return result;
+			
+		} else {
+			result.index = i;
+			result.nameBuilder = group(Integer.valueOf(buildArgument.toString()));
+			
+			return result;
+		}
 	}
 }

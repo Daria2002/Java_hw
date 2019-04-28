@@ -1,9 +1,8 @@
 package hr.fer.zemris.java.hw06.shell.commands;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -17,8 +16,7 @@ import hr.fer.zemris.java.hw06.shell.ShellCommand;
 import hr.fer.zemris.java.hw06.shell.ShellStatus;
 
 /**
- * This class represents copy command and implements ShellCommand interface.
- * Copy command copies source file to destination file.
+ * This class represents massrename command.
  * @author Daria Matković
  *
  */
@@ -36,12 +34,21 @@ public class MassrenameCommand implements ShellCommand {
 		}
 		
 		String[] data;
-		// if cmd is filter, there should be 4 arguments
+		List<FilterResult> files = new ArrayList<FilterResult>();
+		
+		// if cmd is filter or groups, there should be 4 arguments
 		if(arguments.contains("filter")) {
 			data = CommandUtilityClass.checkArguments(arguments, 4);
 			
 			if(data != null) {
-				return filterCommand(data, env);
+				files = filter(Paths.get(data[0]), data[3]);
+				
+				for(FilterResult dir : files) {
+					env.writeln(dir.toString());
+				}
+			} else {
+				env.writeln("Arguments are not valid.");
+				return ShellStatus.CONTINUE;
 			}
 		
 		// if cmd is groups, there should be 4 arguments
@@ -49,7 +56,20 @@ public class MassrenameCommand implements ShellCommand {
 			data = CommandUtilityClass.checkArguments(arguments, 4);
 			
 			if(data != null) {
+				files = filter(Paths.get(data[0]), data[3]);
 				
+				for(FilterResult file : files) {
+					env.write(file.toString() + " ");
+					
+					for(int i = 0; i < file.numberOfGroups(); i++) {
+						env.write(i + ":" + file.group(i) + " ");
+					}
+					
+					env.writeln("");
+				}
+			} else {
+				env.writeln("Arguments are not valid.");
+				return ShellStatus.CONTINUE;
 			}
 			
 		// if cmd is show there should be 5 arguments
@@ -57,78 +77,103 @@ public class MassrenameCommand implements ShellCommand {
 			data = CommandUtilityClass.checkArguments(arguments, 5);
 			
 			if(data != null) {
+				files = filter(Paths.get(data[0]), data[3]);
 				
+				NameBuilderParser parser = new NameBuilderParser(data[4]);
+				NameBuilder builder = parser.getNameBuilder();
+				
+				for(FilterResult file : files) {
+					StringBuilder sb = new StringBuilder();
+					builder.execute(file, sb);
+					String novoIme = sb.toString();
+					
+					env.write(file.toString() + " => " + novoIme);
+					
+					env.writeln("");
+				}
+			} else {
+				env.writeln("Arguments are not valid.");
+				return ShellStatus.CONTINUE;
 			}
-		}
 		
-		env.writeln("Arguments are not valid.");
-		return ShellStatus.CONTINUE;
-	}
+		} else if(arguments.contains("execute")) {
+			data = CommandUtilityClass.checkArguments(arguments, 5);
+			
+			if(data != null) {
+				files = filter(Paths.get(data[0]), data[3]);
+				
+				NameBuilderParser parser = new NameBuilderParser(data[4]);
+				NameBuilder builder = parser.getNameBuilder();
+				
+				for(FilterResult file : files) {
+					StringBuilder sb = new StringBuilder();
+					builder.execute(file, sb);
+					String novoIme = sb.toString();
+					String oldName = file.toString();
 
-	/**
-	 * Filter command prints all files from dir1 selected with mask 
-	 * @param data all arguments, each argument represents one element array
-	 * @param env environment
-	 * @return shellstatus 
-	 */
-	private ShellStatus filterCommand(String[] data, Environment env) {
-		String sourceFilePath = CommandUtilityClass.resolvePath(data[0].trim(), env);
-
-		// check if source path is path of existing path
-		if(!new File(sourceFilePath).exists() || !new File(sourceFilePath).isDirectory()) {
-			env.writeln("Source path need to be path to existing dir.");
+					// move and rename file in destination dir
+					execute(data[0], data[1], oldName, novoIme);
+				}
+				
+			} else {
+				env.writeln("Arguments are not valid.");
+				return ShellStatus.CONTINUE;
+			}
+			
+		} else {
+			env.writeln("Arguments are not valid.");
 			return ShellStatus.CONTINUE;
 		}
 		
-		File sourceDir = new File(sourceFilePath);
-		File[] filesInSourceDir = sourceDir.listFiles();
 		
-		Pattern pattern = Pattern.compile(data[4]);
+		return ShellStatus.CONTINUE;
+	} 
+
+	private void execute(String sourceDir, String destDir, String oldName,
+			String newName) {
+		// rename files
+		if(sourceDir.equals(destDir)) {
+			renameFile(Paths.get(sourceDir, oldName).toString(),
+					Paths.get(sourceDir, newName).toString());
+			return;
+		}
+	
+		// copy file
+		Path source = Paths.get(sourceDir, oldName);
+		Path newdir = Paths.get(destDir, newName);
+		try {
+			Files.move(source, newdir.resolve(source.getFileName()));
+		} catch (IOException e) {
+			return;
+		}
+	}
+
+
+	private void renameFile(String oldName, String newName) {
+        boolean success = new File(oldName).renameTo(new File(newName));
+        if (!success) {
+            System.out.println("Error trying to rename file");
+        }
+	}
+	
+	private List<FilterResult> filter(Path dir, String pattern) {
+		File[] filesInSourceDir = new File(dir.toString()).listFiles();
+		
+		Pattern p = Pattern.compile(pattern);
+	
+		List<FilterResult> result = new ArrayList<FilterResult>();
 		
 		if(filesInSourceDir != null) {
 			for(File file : filesInSourceDir) {
-				Matcher m = pattern.matcher(file.toString());
+				Matcher m = p.matcher(file.toString());
 				
 				if(m.find()) {
-					env.writeln(file.toString());
+					result.add(new FilterResult(file.toString(), m));
 				}
 			}
 		}
 		
-		return ShellStatus.CONTINUE;
-	}
-
-
-
-	/**
-	 * This method copies source file content to destination file content
-	 * @param sourceFilePath source file path
-	 * @param destinationFilePath destination file path
-	 */
-	private void copyFileToFile(String sourceFilePath, String destinationFilePath) {
-		
-		FileInputStream inputStream;
-		FileOutputStream outputStream;
-		
-		try{
-    	    inputStream = new FileInputStream(sourceFilePath);
-    	    outputStream = new FileOutputStream(destinationFilePath);
- 
-    	    byte[] buffer = new byte[1024];
- 
-    	    int length;
-    	    while ((length = inputStream.read(buffer)) > 0){
-    	    	outputStream.write(buffer, 0, length);
-    	    }
-
-    	    inputStream.close();
-    	    outputStream.close();
- 
-    	}catch(IOException ioe){
-    		System.out.println(destinationFilePath);
-    		System.out.println("Copy not possible");
-    		return;
-    	}
+		return result;
 	}
 	
 	@Override
@@ -140,10 +185,8 @@ public class MassrenameCommand implements ShellCommand {
 	public List<String> getCommandDescription() {
 		List<String> list = new ArrayList<String>();
 		
-		list.add("The copy command expects two arguments: source file and destination file.");
-		list.add("If destination file exists, you should ask user is it allowed to overwrite it.");
-		list.add("Copy command works only with files.");
-		list.add("If 2nd arg is dir, copies orig file into that dir using the orig file name.");
+		list.add("Massrename command takes 4 or 5 arguments, depending on cmd value.");
+		list.add("This is format of calling massrename function: massrename DIR1 DIR2 CMD MASKA ostalo");
 		
         return Collections.unmodifiableList(list);
 	}

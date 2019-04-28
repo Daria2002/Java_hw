@@ -25,8 +25,8 @@ public class NameBuilderParser {
 	}
 	
 	static NameBuilder group(int index, char padding, int minWidth) {
-		return (result, sb) -> {sb.append(String.format("%" + minWidth + "s", 
-				result.group(index).replace(' ', padding)));};
+		return (result, sb) -> {sb.append(String.format("%" + minWidth + "s",
+				result.group(index)).replaceAll("\\s", String.valueOf(padding)));};
 	}
 	
 	private String expression;
@@ -72,7 +72,7 @@ public class NameBuilderParser {
 		boolean stringSequence = false;
 		boolean escapeSequence = false;
 		
-		if(commandCharArray[0] == '"' && commandCharArray[commandCharArray.length] == '"') {
+		if(commandCharArray[0] == '"' && commandCharArray[commandCharArray.length-1] == '"') {
 			stringSequence = true;
 		}
 		
@@ -109,9 +109,9 @@ public class NameBuilderParser {
 			}
 			
 			// if escapeSequence occurs outside of string sequence return null	
-			else if(commandCharArray[i] == '\\' && !stringSequence) {
+			/*else if(commandCharArray[i] == '\\' && !stringSequence) {
 				return null;
-			}
+			}*/
 			
 			// escapeSequence starts if \ occurred in quotes and escapeSequence was false
 			else if(commandCharArray[i] == '\\' && stringSequence && !escapeSequence) {

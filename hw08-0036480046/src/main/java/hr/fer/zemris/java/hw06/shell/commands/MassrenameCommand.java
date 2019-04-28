@@ -159,6 +159,10 @@ public class MassrenameCommand implements ShellCommand {
 	private List<FilterResult> filter(Path dir, String pattern) {
 		File[] filesInSourceDir = new File(dir.toString()).listFiles();
 		
+		if(pattern.indexOf('"') == 0) {
+			pattern = pattern.substring(1, pattern.length()-1);
+		}
+		
 		Pattern p = Pattern.compile(pattern);
 	
 		List<FilterResult> result = new ArrayList<FilterResult>();
@@ -168,7 +172,7 @@ public class MassrenameCommand implements ShellCommand {
 				Matcher m = p.matcher(file.toString());
 				
 				if(m.find()) {
-					result.add(new FilterResult(file.toString(), m));
+					result.add(new FilterResult(file.getName(), m));
 				}
 			}
 		}

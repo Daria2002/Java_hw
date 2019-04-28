@@ -77,12 +77,13 @@ public class CommandUtilityClass {
 					argumentsElements.add(buildArgument.toString());
 					buildArgument = new StringBuilder();
 				}
+				buildArgument.append(commandCharArray[i]);
 			}
 			
 			// if escapeSequence occurs outside of string sequence return null	
-			else if(commandCharArray[i] == '\\' && !stringSequence) {
+			/*else if(commandCharArray[i] == '\\' && !stringSequence) {
 				return null;
-			}
+			}*/
 			
 			// escapeSequence starts if \ occurred in quotes and escapeSequence was false
 			else if(commandCharArray[i] == '\\' && stringSequence && !escapeSequence) {
@@ -94,6 +95,7 @@ public class CommandUtilityClass {
 				stringSequence = false;
 				
 				if(buildArgument.length() != 0 && buildArgument.toString() != " ") {
+					buildArgument.append(commandCharArray[i]);
 					argumentsElements.add(buildArgument.toString());
 					buildArgument = new StringBuilder();
 				}

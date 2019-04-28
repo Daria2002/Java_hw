@@ -183,6 +183,7 @@ public class MyShell {
 				}
 				
 			} catch (Exception e) {
+				env.writeln("Entered expression is not valid.");
 				status = ShellStatus.CONTINUE;
 			}
 	

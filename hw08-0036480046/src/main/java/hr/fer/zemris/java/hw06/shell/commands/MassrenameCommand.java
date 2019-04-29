@@ -33,54 +33,48 @@ public class MassrenameCommand implements ShellCommand {
 			return ShellStatus.CONTINUE;
 		}
 		
-		String[] data;
-		List<FilterResult> files = new ArrayList<FilterResult>();
-		
 		// if cmd is filter or groups, there should be 4 arguments
 		if(arguments.contains("filter")) {
-			data = CommandUtilityClass.checkArguments(arguments, 4);
+			String[] data = CommandUtilityClass.checkArguments(arguments, 4);
 			
 			if(data != null) {
-				data[0] = removeQuotes(data[0]);
-				data[1] = removeQuotes(data[1]);
-				
-				files = filter(Paths.get(data[0]), data[3]);
+				List<FilterResult> files = filter(Paths.get(data[0]), data[3]);
 				
 				for(FilterResult dir : files) {
 					env.writeln(dir.toString());
 				}
+				
 			} else {
 				env.writeln("Arguments are not valid.");
-				return ShellStatus.CONTINUE;
 			}
 		
 		// if cmd is groups, there should be 4 arguments
 		} else if(arguments.contains("groups")) {
-			data = CommandUtilityClass.checkArguments(arguments, 4);
+			String[] data = CommandUtilityClass.checkArguments(arguments, 4);
 			
 			if(data != null) {
-				files = filter(Paths.get(data[0]), data[3]);
+				List<FilterResult> files = filter(Paths.get(data[0]), data[3]);
 				
 				for(FilterResult file : files) {
 					env.write(file.toString() + " ");
 					
-					for(int i = 0; i < file.numberOfGroups(); i++) {
-						env.write(i + ":" + file.group(i) + " ");
+					// number of groups + 1 because 0 group is not counted
+					for(int i = 0; i < file.numberOfGroups() + 1; i++) {
+						env.write(i + ": " + file.group(i) + " ");
 					}
 					
 					env.writeln("");
 				}
 			} else {
 				env.writeln("Arguments are not valid.");
-				return ShellStatus.CONTINUE;
 			}
 			
 		// if cmd is show there should be 5 arguments
 		} else if(arguments.contains("show")) {
-			data = CommandUtilityClass.checkArguments(arguments, 5);
+			String[] data = CommandUtilityClass.checkArguments(arguments, 5);
 			
 			if(data != null) {
-				files = filter(Paths.get(data[0]), data[3]);
+				List<FilterResult> files = filter(Paths.get(data[0]), data[3]);
 				
 				NameBuilderParser parser = new NameBuilderParser(data[4]);
 				NameBuilder builder = parser.getNameBuilder();
@@ -96,17 +90,26 @@ public class MassrenameCommand implements ShellCommand {
 				}
 			} else {
 				env.writeln("Arguments are not valid.");
-				return ShellStatus.CONTINUE;
 			}
 		
 		} else if(arguments.contains("execute")) {
-			data = CommandUtilityClass.checkArguments(arguments, 5);
+			String[] data = CommandUtilityClass.checkArguments(arguments, 5);
 			
 			if(data != null) {
-				files = filter(Paths.get(data[0]), data[3]);
+				List<FilterResult> files = filter(Paths.get(data[0]), data[3]);
 				
 				NameBuilderParser parser = new NameBuilderParser(data[4]);
 				NameBuilder builder = parser.getNameBuilder();
+				
+				for(FilterResult file : files) {
+					StringBuilder sb = new StringBuilder();
+					builder.execute(file, sb);
+					String novoIme = sb.toString();
+					
+					env.write(file.toString() + " => " + novoIme);
+					
+					env.writeln("");
+				}
 				
 				for(FilterResult file : files) {
 					StringBuilder sb = new StringBuilder();
@@ -120,24 +123,15 @@ public class MassrenameCommand implements ShellCommand {
 				
 			} else {
 				env.writeln("Arguments are not valid.");
-				return ShellStatus.CONTINUE;
 			}
 			
 		} else {
 			env.writeln("Arguments are not valid.");
-			return ShellStatus.CONTINUE;
 		}
 		
 		
 		return ShellStatus.CONTINUE;
 	} 
-
-	private String removeQuotes(String string) {
-		if(string.charAt(0) == '"' && string.charAt(string.length()-1) == '"') {
-			return string.substring(1, string.length()-1);
-		}
-		return string;
-	}
 
 	private void execute(String sourceDir, String destDir, String oldName,
 			String newName) {
@@ -151,8 +145,9 @@ public class MassrenameCommand implements ShellCommand {
 		// copy file
 		Path source = Paths.get(sourceDir, oldName);
 		Path newdir = Paths.get(destDir, newName);
+		
 		try {
-			Files.move(source, newdir.resolve(source.getFileName()));
+			Files.move(source, Paths.get(destDir).resolve(Paths.get(destDir, newName)));
 		} catch (IOException e) {
 			return;
 		}
@@ -162,7 +157,7 @@ public class MassrenameCommand implements ShellCommand {
 	private void renameFile(String oldName, String newName) {
         boolean success = new File(oldName).renameTo(new File(newName));
         if (!success) {
-            System.out.println("Error trying to rename file");
+            System.out.println("Error while trying to rename file");
         }
 	}
 	
@@ -179,7 +174,11 @@ public class MassrenameCommand implements ShellCommand {
 		
 		if(filesInSourceDir != null) {
 			for(File file : filesInSourceDir) {
-				Matcher m = p.matcher(file.toString());
+				if(file.isDirectory()) {
+					continue;
+				}
+				
+				Matcher m = p.matcher(file.getName());
 				
 				if(m.find()) {
 					result.add(new FilterResult(file.getName(), m));

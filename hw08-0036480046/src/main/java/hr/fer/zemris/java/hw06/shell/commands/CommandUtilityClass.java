@@ -3,6 +3,7 @@ package hr.fer.zemris.java.hw06.shell.commands;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Stack;
 
 import hr.fer.zemris.java.hw06.shell.Environment;
 
@@ -35,7 +36,25 @@ public class CommandUtilityClass {
 			return null;
 		}
 		
-		return argumentList.toArray(new String[argumentList.size()]);
+		String[] data = argumentList.toArray(new String[argumentList.size()]);
+		if(data != null) {
+			data[0] = removeQuotes(data[0]);
+			data[1] = removeQuotes(data[1]);
+		}
+		
+		return data;
+	}
+	
+	/**
+	 * This method remove quotes if given string is quoted
+	 * @param string string to check
+	 * @return string without quotes if string is quoted, otherwise given string
+	 */
+	private static String removeQuotes(String string) {
+		if(string.charAt(0) == '"' && string.charAt(string.length()-1) == '"') {
+			return string.substring(1, string.length()-1);
+		}
+		return string;
 	}
 	
 	/**

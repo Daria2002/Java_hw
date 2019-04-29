@@ -39,10 +39,7 @@ public class PushdCommand implements ShellCommand {
 			return ShellStatus.CONTINUE;
 		}
 		
-		arguments = args[0].toString();
-		
-		Path newCurrentDir = Paths.get(CommandUtilityClass.resolvePath(arguments, env));
-		
+		Path newCurrentDir = Paths.get(CommandUtilityClass.resolvePath(args[0].toString(), env));
 		File file = new File(newCurrentDir.toString());
 		
 		// is given path is not existing dir, nothing changes

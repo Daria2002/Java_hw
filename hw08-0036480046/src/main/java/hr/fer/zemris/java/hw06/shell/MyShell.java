@@ -11,6 +11,7 @@ import java.util.Scanner;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import hr.fer.zemris.java.hw06.shell.commands.CatCommand;
+import hr.fer.zemris.java.hw06.shell.commands.CdCommand;
 import hr.fer.zemris.java.hw06.shell.commands.CharsetsCommand;
 import hr.fer.zemris.java.hw06.shell.commands.CopyCommand;
 import hr.fer.zemris.java.hw06.shell.commands.DropdCommand;
@@ -253,5 +254,6 @@ public class MyShell {
 		commands.put(PwdCommand.PWD_COMMAND, new PwdCommand());
 		commands.put(ListdCommand.LISTD_COMMAND, new ListdCommand());
 		commands.put(MassrenameCommand.MASSRENAME_COMMAND, new MassrenameCommand());
+		commands.put(CdCommand.CD_COMMAND, new CdCommand());
 	}
 }

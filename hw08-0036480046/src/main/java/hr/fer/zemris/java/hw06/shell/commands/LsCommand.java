@@ -47,9 +47,9 @@ public class LsCommand implements ShellCommand {
 			env.writeln("Arguments are not valid");
 			return ShellStatus.CONTINUE;
 		}
-		
-		arguments = args.toString();
 
+		arguments = args[0].toString();
+		
 		File dir = new File(CommandUtilityClass.resolvePath(arguments, env));
 		File[] filesInDir = dir.listFiles();
 		

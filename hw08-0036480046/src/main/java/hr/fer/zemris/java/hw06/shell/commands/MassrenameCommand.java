@@ -41,6 +41,9 @@ public class MassrenameCommand implements ShellCommand {
 			data = CommandUtilityClass.checkArguments(arguments, 4);
 			
 			if(data != null) {
+				data[0] = removeQuotes(data[0]);
+				data[1] = removeQuotes(data[1]);
+				
 				files = filter(Paths.get(data[0]), data[3]);
 				
 				for(FilterResult dir : files) {
@@ -128,6 +131,13 @@ public class MassrenameCommand implements ShellCommand {
 		
 		return ShellStatus.CONTINUE;
 	} 
+
+	private String removeQuotes(String string) {
+		if(string.charAt(0) == '"' && string.charAt(string.length()-1) == '"') {
+			return string.substring(1, string.length()-1);
+		}
+		return string;
+	}
 
 	private void execute(String sourceDir, String destDir, String oldName,
 			String newName) {

@@ -231,56 +231,6 @@ public class MyShell {
 	}
 	
 	/**
-	 * This method reads line where quoted path occurred
-	 * @param command line with quoted path
-	 * @return ArrayList with quoted and unquoted elements in command with quotes
-	 */
-	private static ArrayList<String> readQuoted(String command) {
-		// array where commands are split with ", it means that every other
-		// element is in quotes
-		String[] commandArray = command.split("\"");
-		ArrayList<String> lines = new ArrayList<String>();
-		
-		ArrayList<String> quoteList = new ArrayList<String>();
-		// adding quoted elements
-		for(int i = 1; i < commandArray.length; i = i + 2) {
-			quoteList.add("\"" + commandArray[i] + "\"");
-		}
-		
-		String stringToAdd;
-		// adding unquoted and quoted elements in array
-		for(int i = 0; i < commandArray.length; i++) {
-			
-			// adding quoted elements
-			if(i % 2 != 0 && quoteList.size() > i/2) {
-				stringToAdd = quoteList.get(i/2);
-				
-				if(stringToAdd.isBlank() || stringToAdd.isEmpty()) {
-					continue;
-				}
-				
-				lines.add(quoteList.get(i/2));
-				continue;
-			}
-			
-			// unquoted elements need to be split with " "
-			String[] splited = commandArray[i].split(" ");
-			
-			for(int m = 0; m < splited.length; m++) {
-				stringToAdd = splited[m];
-				
-				if(stringToAdd.isBlank() || stringToAdd.isEmpty() || stringToAdd == null) {
-					continue;
-				}
-				
-				lines.add(splited[m]);
-			}
-		}
-		
-		return lines;
-	}
-	
-	/**
 	 * This method adds all commands in map, so map key is command name and map
 	 * value is new Command object
 	 * @param commands map that needs to be filled with commands

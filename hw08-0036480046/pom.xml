@@ -37,6 +37,20 @@
       <version>${junit.jupiter.version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+	    <groupId>marcupic.opjj.statespace</groupId>
+	    <artifactId>coloring-framework</artifactId>
+	    <version>1.0</version>
+	    <scope>system</scope>
+	    <systemPath>${project.basedir}/coloring-framework-1.0.jar</systemPath>
+	</dependency>
+	<dependency>
+	    <groupId>marcupic.opjj.statespace</groupId>
+	    <artifactId>slagalica-gui</artifactId>
+	    <version>1.0</version>
+	    <scope>system</scope>
+	    <systemPath>${project.basedir}/slagalica-gui-1.0.jar</systemPath>
+	</dependency>
   </dependencies>
 
   <build>

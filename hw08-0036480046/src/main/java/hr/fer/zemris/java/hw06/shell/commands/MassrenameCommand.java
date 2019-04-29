@@ -16,12 +16,17 @@ import hr.fer.zemris.java.hw06.shell.ShellCommand;
 import hr.fer.zemris.java.hw06.shell.ShellStatus;
 
 /**
- * This class represents massrename command.
+ * This class represents massrename command. "Massrename command takes 4 or 5 arguments, 
+ * depending on cmd value. Cmd value repsents actions: execute, show, filter and groups.
+ * This is format of calling massrename function: massrename DIR1 DIR2 CMD MASKA ostalo.
+ * This command has three commands show, filter, execute and groups.
+ * Filter prints filtered files. Show prints filtered elements and new names.
+ * Execute moves and renames files from source to destination folder. 
+ * Prints groups and values for each group.
  * @author Daria Matković
  *
  */
 public class MassrenameCommand implements ShellCommand {
-	
 	/** copy command name **/
 	public final static String MASSRENAME_COMMAND = "massrename";
 	
@@ -74,20 +79,9 @@ public class MassrenameCommand implements ShellCommand {
 			String[] data = CommandUtilityClass.checkArguments(arguments, 5);
 			
 			if(data != null) {
-				List<FilterResult> files = filter(Paths.get(data[0]), data[3]);
+				printNewAndOldName(filter(Paths.get(data[0]), data[3]), env,
+						new NameBuilderParser(data[4]).getNameBuilder());
 				
-				NameBuilderParser parser = new NameBuilderParser(data[4]);
-				NameBuilder builder = parser.getNameBuilder();
-				
-				for(FilterResult file : files) {
-					StringBuilder sb = new StringBuilder();
-					builder.execute(file, sb);
-					String novoIme = sb.toString();
-					
-					env.write(file.toString() + " => " + novoIme);
-					
-					env.writeln("");
-				}
 			} else {
 				env.writeln("Arguments are not valid.");
 			}
@@ -97,19 +91,9 @@ public class MassrenameCommand implements ShellCommand {
 			
 			if(data != null) {
 				List<FilterResult> files = filter(Paths.get(data[0]), data[3]);
+				NameBuilder builder = new NameBuilderParser(data[4]).getNameBuilder();
 				
-				NameBuilderParser parser = new NameBuilderParser(data[4]);
-				NameBuilder builder = parser.getNameBuilder();
-				
-				for(FilterResult file : files) {
-					StringBuilder sb = new StringBuilder();
-					builder.execute(file, sb);
-					String novoIme = sb.toString();
-					
-					env.write(file.toString() + " => " + novoIme);
-					
-					env.writeln("");
-				}
+				printNewAndOldName(files, env, builder);
 				
 				for(FilterResult file : files) {
 					StringBuilder sb = new StringBuilder();
@@ -118,7 +102,7 @@ public class MassrenameCommand implements ShellCommand {
 					String oldName = file.toString();
 
 					// move and rename file in destination dir
-					execute(data[0], data[1], oldName, novoIme);
+					execute(data[0], data[1], oldName, novoIme, env);
 				}
 				
 			} else {
@@ -129,47 +113,51 @@ public class MassrenameCommand implements ShellCommand {
 			env.writeln("Arguments are not valid.");
 		}
 		
-		
 		return ShellStatus.CONTINUE;
 	} 
 
-	private void execute(String sourceDir, String destDir, String oldName,
-			String newName) {
-		// rename files
-		if(sourceDir.equals(destDir)) {
-			renameFile(Paths.get(sourceDir, oldName).toString(),
-					Paths.get(sourceDir, newName).toString());
-			return;
+	/**
+	 * This method iterates through files, prints old name, calls method for
+	 * generating new name and prints new name.
+	 * @param files list of FilterResult objects, where FilterResult represents file
+	 * @param env Environment
+	 * @param builder NameBuilder
+	 */
+	private void printNewAndOldName(List<FilterResult> files, Environment env, NameBuilder builder) {
+		for(FilterResult file : files) {
+			StringBuilder sb = new StringBuilder();
+			builder.execute(file, sb);
+			
+			env.write(file.toString() + " => " + sb.toString());
+			env.writeln("");
 		}
-	
-		// copy file
-		Path source = Paths.get(sourceDir, oldName);
-		Path newdir = Paths.get(destDir, newName);
-		
+	}
+
+	/**
+	 * This method renames and moves filtered files from source to destination folder
+	 * @param source source dir
+	 * @param dest destination dir
+	 * @param oldName old file name
+	 * @param newName new file name
+	 * @param env Environment
+	 */
+	private void execute(String source, String dest, String oldName, String newName, Environment env) {
 		try {
-			Files.move(source, Paths.get(destDir).resolve(Paths.get(destDir, newName)));
+			Files.move(Paths.get(source, oldName), Paths.get(dest).resolve(Paths.get(dest, newName)));
 		} catch (IOException e) {
+			env.writeln("Error during moving files");
 			return;
 		}
 	}
-
-
-	private void renameFile(String oldName, String newName) {
-        boolean success = new File(oldName).renameTo(new File(newName));
-        if (!success) {
-            System.out.println("Error while trying to rename file");
-        }
-	}
 	
+	/**
+	 * This method filters files in source dir, depending on pattern
+	 * @param dir source dir
+	 * @param pattern string pattern
+	 * @return list of filtered files 
+	 */
 	private List<FilterResult> filter(Path dir, String pattern) {
 		File[] filesInSourceDir = new File(dir.toString()).listFiles();
-		
-		if(pattern.indexOf('"') == 0) {
-			pattern = pattern.substring(1, pattern.length()-1);
-		}
-		
-		Pattern p = Pattern.compile(pattern);
-	
 		List<FilterResult> result = new ArrayList<FilterResult>();
 		
 		if(filesInSourceDir != null) {
@@ -178,14 +166,13 @@ public class MassrenameCommand implements ShellCommand {
 					continue;
 				}
 				
-				Matcher m = p.matcher(file.getName());
+				Matcher m = Pattern.compile(pattern).matcher(file.getName());
 				
 				if(m.find()) {
 					result.add(new FilterResult(file.getName(), m));
 				}
 			}
 		}
-		
 		return result;
 	}
 	
@@ -200,6 +187,11 @@ public class MassrenameCommand implements ShellCommand {
 		
 		list.add("Massrename command takes 4 or 5 arguments, depending on cmd value.");
 		list.add("This is format of calling massrename function: massrename DIR1 DIR2 CMD MASKA ostalo");
+		list.add("This command has three commands show, filter, execute and groups.");
+		list.add("Filter prints filtered files.");
+		list.add("Show prints filtered elements and new names.");
+		list.add("Execute moves and renames files from source to destination folder.");
+		list.add("Prints groups and values for each group.");
 		
         return Collections.unmodifiableList(list);
 	}

@@ -54,6 +54,7 @@ public class PushdCommand implements ShellCommand {
 		if(sharedStack == null) {
 			sharedStack = new Stack();
 			env.setSharedData(STACK_KEY, sharedStack);
+			
 		}
 		
 		sharedStack.add(env.getCurrentDirectory());

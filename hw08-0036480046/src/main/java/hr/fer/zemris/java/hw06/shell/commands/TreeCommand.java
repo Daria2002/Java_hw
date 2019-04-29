@@ -34,7 +34,7 @@ public class TreeCommand implements ShellCommand {
 			return ShellStatus.CONTINUE;
 		}
 		
-		arguments = args.toString();
+		arguments = args[0].toString();
 		
 		if(arguments == null) {
 			env.writeln("Insert only one argument");

@@ -55,7 +55,7 @@ public class MyShell {
 		/** symbol at beginning of line that is part of command started in previous line **/
 		private static char multilineSymbol = '|';
 		/** current directory **/
-		private Path currentDirectory;
+		private Path currentDirectory = Paths.get(System.getProperty("user.dir"));
 		/** map to save shared data **/
 		Map<String, Object> sharedDataMap = new HashMap<String, Object>();
 		

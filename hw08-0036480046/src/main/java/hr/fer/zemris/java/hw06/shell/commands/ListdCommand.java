@@ -39,8 +39,13 @@ public class ListdCommand implements ShellCommand {
 		
 		Iterator stackValues = sharedStack.iterator();
 		
+		List<String> stackValuesList = new ArrayList<String>();
 		while(stackValues.hasNext()) {
-			env.writeln(stackValues.next().toString());
+			stackValuesList.add(stackValues.next().toString());
+		}
+		
+		for(int i = stackValuesList.size() - 1; i >= 0; i--) {
+			env.writeln(stackValuesList.get(i));
 		}
 		
 		return ShellStatus.CONTINUE;

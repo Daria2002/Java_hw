@@ -1,10 +1,7 @@
 package hr.fer.zemris.java.hw06.shell.commands;
 
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Stack;
-
 import hr.fer.zemris.java.hw06.shell.Environment;
 
 /**
@@ -17,7 +14,7 @@ public class CommandUtilityClass {
 	public static String resolvePath(String path, Environment env) {
 		if(env.getCurrentDirectory() != null) {
 			return Paths.get(env.getCurrentDirectory().toString()).
-					resolve(Paths.get(path)).toString();
+					resolve(Paths.get(path).getFileName()).toString();
 		}
 		return Paths.get(path).toString();
 	}
@@ -38,8 +35,10 @@ public class CommandUtilityClass {
 		
 		String[] data = argumentList.toArray(new String[argumentList.size()]);
 		if(data != null) {
-			data[0] = removeQuotes(data[0]);
-			data[1] = removeQuotes(data[1]);
+			
+			for(int i = 0; i < data.length; i++) {
+				data[i] = removeQuotes(data[i]);
+			}
 		}
 		
 		return data;
@@ -98,12 +97,7 @@ public class CommandUtilityClass {
 				}
 				buildArgument.append(commandCharArray[i]);
 			}
-			
-			// if escapeSequence occurs outside of string sequence return null	
-			/*else if(commandCharArray[i] == '\\' && !stringSequence) {
-				return null;
-			}*/
-			
+
 			// escapeSequence starts if \ occurred in quotes and escapeSequence was false
 			else if(commandCharArray[i] == '\\' && stringSequence && !escapeSequence) {
 				escapeSequence = true;

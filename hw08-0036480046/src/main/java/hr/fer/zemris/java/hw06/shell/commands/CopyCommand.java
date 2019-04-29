@@ -48,9 +48,8 @@ public class CopyCommand implements ShellCommand {
 			return ShellStatus.CONTINUE;
 		}
 		
-		String destinationFilePath = data[1].trim();
-		File destFile = new File(CommandUtilityClass.resolvePath(destinationFilePath, env));
-		Path dir = Paths.get(destinationFilePath);
+		File destFile = new File(CommandUtilityClass.resolvePath(data[1].trim(), env));
+		Path dir = Paths.get(destFile.toString());
 		
 		// build destination file's name if given path to destination is path to dir
 		if(destFile.isDirectory()) {

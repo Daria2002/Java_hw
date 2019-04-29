@@ -17,7 +17,7 @@ import hr.fer.zemris.java.hw06.shell.ShellStatus;
 public class ListdCommand implements ShellCommand {
 
 	/** cat command name **/
-	public static final String LISTD_COMMAND = "pushd";
+	public static final String LISTD_COMMAND = "listd";
 	/** key for stack in shared data **/
 	public static final String STACK_KEY = "cdstack";
 	
@@ -25,7 +25,7 @@ public class ListdCommand implements ShellCommand {
 	public ShellStatus executeCommand(Environment env, String arguments) {
 		
 		if(arguments != null) {
-			env.writeln("Command popd doesn't take any arguments");
+			env.writeln("Command listd doesn't take any arguments");
 			return ShellStatus.CONTINUE;
 		}
 		

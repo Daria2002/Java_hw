@@ -1,6 +1,5 @@
 package hr.fer.zemris.java.hw06.shell.commands;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -20,7 +19,6 @@ import hr.fer.zemris.java.hw06.shell.ShellStatus;
  *
  */
 public class PushdCommand implements ShellCommand {
-
 	/** cat command name **/
 	public static final String PUSHD_COMMAND = "pushd";
 	/** key for stack in shared data **/
@@ -30,7 +28,7 @@ public class PushdCommand implements ShellCommand {
 	public ShellStatus executeCommand(Environment env, String arguments) {
 		
 		if(arguments == null) {
-			env.writeln("Insert only one argument");
+			env.writeln("Insert one argument");
 			return ShellStatus.CONTINUE;
 		}
 		
@@ -41,7 +39,7 @@ public class PushdCommand implements ShellCommand {
 			return ShellStatus.CONTINUE;
 		}
 		
-		arguments = args.toString();
+		arguments = args[0].toString();
 		
 		Path newCurrentDir = Paths.get(CommandUtilityClass.resolvePath(arguments, env));
 		
@@ -57,8 +55,8 @@ public class PushdCommand implements ShellCommand {
 		
 		// create stack if it doesn't exists
 		if(sharedStack == null) {
-			Stack stack = new Stack();
-			env.setSharedData(STACK_KEY, stack);
+			sharedStack = new Stack();
+			env.setSharedData(STACK_KEY, sharedStack);
 		}
 		
 		sharedStack.add(env.getCurrentDirectory());

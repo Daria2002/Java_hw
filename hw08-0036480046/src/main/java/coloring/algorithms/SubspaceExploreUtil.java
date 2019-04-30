@@ -1,7 +1,9 @@
 package coloring.algorithms;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -38,9 +40,58 @@ public class SubspaceExploreUtil {
 			}
 			
 			process.accept(si);
-			for(S el : succ.apply(si)) {
-				toExplore.add(el);
+			toExplore.addAll(succ.apply(si));
+		}
+	}
+	
+	public static <S> void dfs(Supplier<S> s0, Consumer<S> process,
+			Function<S,List<S>> succ, Predicate<S> acceptable) {
+		
+		List<S> toExplore = new LinkedList<S>();
+		toExplore.add(s0.get());
+		
+		while(toExplore.size() > 0) {
+			S si = toExplore.get(0);
+			toExplore.remove(0);
+			
+			if(!acceptable.test(si)) {
+				continue;
 			}
+			
+			process.accept(si);
+			toExplore.addAll(0, succ.apply(si));
+		}
+	}
+	
+	public static <S> void bfsv(Supplier<S> s0, Consumer<S> process,
+			Function<S,List<S>> succ, Predicate<S> acceptable) {
+		
+		List<S> toExplore = new LinkedList<S>();
+		toExplore.add(s0.get());
+		
+		Set<S> visited = new HashSet<S>();
+		visited.add(s0.get());
+		
+		while(toExplore.size() > 0) {
+			S si = toExplore.get(0);
+			toExplore.remove(0);
+			
+			if(!acceptable.test(si)) {
+				continue;
+			}
+			
+			process.accept(si);
+			
+			List<S> neighbors = succ.apply(si);
+			
+			for(S neighbor : neighbors) {
+				// remove visited neighbors
+				if(!visited.contains(neighbor)) {
+					toExplore.add(neighbor);
+				}
+			}
+			
+			visited.addAll(toExplore);
 		}
 	}
 }

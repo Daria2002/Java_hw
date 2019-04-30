@@ -80,6 +80,12 @@ Predicate<Pixel>, Supplier<Pixel> {
 		return neigbors;
 	}
 
+	/**
+	 * This method checks if coordinates of neighbors are valid
+	 * @param i x coordinate
+	 * @param j y coordinate
+	 * @return true if coordinate is pixel in picture, otherwise false
+	 */
 	private boolean checkCoordinate(int i, int j) {
 		if(i >= 0 && j >= 0 && i <= picture.getWidth() - 1 && j <= picture.getHeight() - 1) {
 			return true;

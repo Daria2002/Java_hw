@@ -25,7 +25,7 @@ Predicate<Pixel>, Supplier<Pixel> {
 	/** old color of first pixel **/
 	private static int refColor;
 	/** number of next positions **/
-	private static final int numberOfNeighbours = 4;
+	private static final int NUMBER_OF_NEIGHBORS = 4;
 	
 	/**
 	 * This method represents constructor that initialize first pixel, picture, 
@@ -59,19 +59,19 @@ Predicate<Pixel>, Supplier<Pixel> {
 	public List<Pixel> apply(Pixel t) {
 		List<Pixel> neigbors = new ArrayList<Pixel>();
 		
-		int[] newXValues = new int[numberOfNeighbours];
+		int[] newXValues = new int[NUMBER_OF_NEIGHBORS];
 		newXValues[0] = t.x + 1;
 		newXValues[1] = t.x - 1;
 		newXValues[2] = t.x;
 		newXValues[3] = t.x;
 		
-		int[] newYValues = new int[numberOfNeighbours];
+		int[] newYValues = new int[NUMBER_OF_NEIGHBORS];
 		newYValues[0] = t.y;
 		newYValues[1] = t.y;
 		newYValues[2] = t.y + 1;
 		newYValues[3] = t.y - 1;
 		
-		for(int i = 0; i < numberOfNeighbours; i++) {
+		for(int i = 0; i < NUMBER_OF_NEIGHBORS; i++) {
 			if(checkCoordinate(newXValues[i], newYValues[i])) {
 				neigbors.add(new Pixel(newXValues[i], newYValues[i]));
 			}

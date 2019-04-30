@@ -1,10 +1,21 @@
 package coloring.algorithms;
 
+/**
+ * This class represents one Pixel of picture.
+ * @author Daria Matković
+ *
+ */
 public class Pixel {
-	
+	/** x position of pixel **/
 	public int x;
+	/** y position of pixel **/
 	public int y;
 	
+	/**
+	 * Constructor that initialize x and y.
+	 * @param x x position of pixel
+	 * @param y y position of pixel
+	 */
 	public Pixel(int x, int y) {
 		this.x = x;
 		this.y = y;

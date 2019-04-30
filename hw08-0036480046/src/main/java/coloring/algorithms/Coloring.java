@@ -1,9 +1,7 @@
 package coloring.algorithms;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -26,6 +24,8 @@ Predicate<Pixel>, Supplier<Pixel> {
 	private static int fillColor;
 	/** old color of first pixel **/
 	private static int refColor;
+	/** number of next positions **/
+	private static final int numberOfNeighbours = 4;
 	
 	/**
 	 * This method represents constructor that initialize first pixel, picture, 
@@ -59,16 +59,37 @@ Predicate<Pixel>, Supplier<Pixel> {
 	public List<Pixel> apply(Pixel t) {
 		List<Pixel> neigbors = new ArrayList<Pixel>();
 		
-		neigbors.add(new Pixel(t.x + 1, t.y));
-		neigbors.add(new Pixel(t.x - 1, t.y));
-		neigbors.add(new Pixel(t.x, t.y + 1));
-		neigbors.add(new Pixel(t.x, t.y - 1));
+		int[] newXValues = new int[numberOfNeighbours];
+		newXValues[0] = t.x + 1;
+		newXValues[1] = t.x - 1;
+		newXValues[2] = t.x;
+		newXValues[3] = t.x;
+		
+		int[] newYValues = new int[numberOfNeighbours];
+		newYValues[0] = t.y;
+		newYValues[1] = t.y;
+		newYValues[2] = t.y + 1;
+		newYValues[3] = t.y - 1;
+		
+		for(int i = 0; i < numberOfNeighbours; i++) {
+			if(checkCoordinate(newXValues[i], newYValues[i])) {
+				neigbors.add(new Pixel(newXValues[i], newYValues[i]));
+			}
+		}
 		
 		return neigbors;
 	}
 
+	private boolean checkCoordinate(int i, int j) {
+		if(i >= 0 && j >= 0 && i <= picture.getWidth() - 1 && j <= picture.getHeight() - 1) {
+			return true;
+		}
+		
+		return false;
+	}
+
 	@Override
 	public void accept(Pixel t) {
-		picture.setPixelColor(fillColor, t.x, t.y);
+		picture.setPixelColor(t.x, t.y, fillColor);
 	}
 }

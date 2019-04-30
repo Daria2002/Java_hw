@@ -20,11 +20,11 @@ public class Bojanje2 {
 		public String getAlgorithmTitle() {
 			return "Moj bfs!";
 		}
+		
 		@Override
 		public void fill(int x, int y, int color, Picture picture) {
 			Coloring col = new Coloring(new Pixel(x,y), picture, color);
 			SubspaceExploreUtil.bfs(col, col, col, col);
 		}
 	};
-
 }

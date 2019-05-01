@@ -34,6 +34,12 @@ public class KonfiguracijaSlagalice {
 	 * @return index of space
 	 */
 	public int indexOfSpace() {
-		return Arrays.asList(configuration).indexOf(SPACE);
+		//return Arrays.asList(configuration).indexOf(SPACE);
+		for(int i = 0; i < configuration.length; i++) {
+			if(configuration[i] == SPACE) {
+				return i;
+			}
+		}
+		return -1;
 	}
 }

@@ -26,7 +26,8 @@ public class KonfiguracijaSlagalice {
 	 * @return configuration
 	 */
 	public int[] getPolje() {
-		return Arrays.copyOf(configuration, configuration.length);
+		int[] x = Arrays.copyOf(configuration, configuration.length);
+		return x;
 	}
 	
 	/**

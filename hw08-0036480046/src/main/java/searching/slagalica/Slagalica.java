@@ -21,7 +21,7 @@ Predicate<KonfiguracijaSlagalice> {
 	@Override
 	public boolean test(KonfiguracijaSlagalice t) {
 		for(int i = 0; i < t.getPolje().length; i++) {
-			if(t.getPolje()[i] != i) {
+			if(t.getPolje()[i] != i + 1) {
 				return false;
 			}
 		}
@@ -46,93 +46,136 @@ Predicate<KonfiguracijaSlagalice> {
 		
 		switch (starIndex) {
 		case 0:
-			list.add(new Transition<KonfiguracijaSlagalice>(
-					new KonfiguracijaSlagalice(swap(polje, 0, 1)), 1));
+			if(polje[1] == 1) {
+				list.add(new Transition<KonfiguracijaSlagalice>(
+						new KonfiguracijaSlagalice(swap(polje, 0, 1)), 1));
+				
+			} else if(polje[3] == 1) {
+				list.add(new Transition<KonfiguracijaSlagalice>(
+						new KonfiguracijaSlagalice(swap(polje, 0, 3)), 1));
+			}
 			
-			list.add(new Transition<KonfiguracijaSlagalice>(
-					new KonfiguracijaSlagalice(swap(polje, 0, 3)), 1));
 			break;
 
 		case 1:
-			list.add(new Transition<KonfiguracijaSlagalice>(
-					new KonfiguracijaSlagalice(swap(polje, 1, 0)), 1));
+			if(polje[0] == 2) {
+				list.add(new Transition<KonfiguracijaSlagalice>(
+						new KonfiguracijaSlagalice(swap(polje, 1, 0)), 1));
+				
+			} else if(polje[2] == 2) {
+				list.add(new Transition<KonfiguracijaSlagalice>(
+						new KonfiguracijaSlagalice(swap(polje, 1, 2)), 1));
 			
-			list.add(new Transition<KonfiguracijaSlagalice>(
-					new KonfiguracijaSlagalice(swap(polje, 1, 2)), 1));
+			} else if(polje[4] == 2) {
+				list.add(new Transition<KonfiguracijaSlagalice>(
+						new KonfiguracijaSlagalice(swap(polje, 1, 4)), 1));
+			}
 			
-			list.add(new Transition<KonfiguracijaSlagalice>(
-					new KonfiguracijaSlagalice(swap(polje, 1, 4)), 1));
 			break;
 			
 		case 2:
-			list.add(new Transition<KonfiguracijaSlagalice>(
-					new KonfiguracijaSlagalice(swap(polje, 2, 1)), 1));
+			if(polje[1] == 3) {
+				list.add(new Transition<KonfiguracijaSlagalice>(
+						new KonfiguracijaSlagalice(swap(polje, 2, 1)), 1));
 			
-			list.add(new Transition<KonfiguracijaSlagalice>(
-					new KonfiguracijaSlagalice(swap(polje, 2, 5)), 1));
+			} else if(polje[5] == 3) {
+				list.add(new Transition<KonfiguracijaSlagalice>(
+						new KonfiguracijaSlagalice(swap(polje, 2, 5)), 1));
+			}
+			
 			break;	
 		
 		case 3:
-			list.add(new Transition<KonfiguracijaSlagalice>(
-					new KonfiguracijaSlagalice(swap(polje, 3, 0)), 1));
+			if(polje[0] == 4) {
+				list.add(new Transition<KonfiguracijaSlagalice>(
+						new KonfiguracijaSlagalice(swap(polje, 3, 0)), 1));
 			
-			list.add(new Transition<KonfiguracijaSlagalice>(
-					new KonfiguracijaSlagalice(swap(polje, 3, 4)), 1));
+			} else if(polje[4] == 4) {
+				list.add(new Transition<KonfiguracijaSlagalice>(
+						new KonfiguracijaSlagalice(swap(polje, 3, 4)), 1));
+				
+			} else if(polje[6] == 4) {
+				list.add(new Transition<KonfiguracijaSlagalice>(
+						new KonfiguracijaSlagalice(swap(polje, 3, 6)), 1));
+			}
 			
-			list.add(new Transition<KonfiguracijaSlagalice>(
-					new KonfiguracijaSlagalice(swap(polje, 3, 6)), 1));
 			break;	
 		
 		case 4:
-			list.add(new Transition<KonfiguracijaSlagalice>(
-					new KonfiguracijaSlagalice(swap(polje, 4, 1)), 1));
+			if(polje[1] == 5) {
+				list.add(new Transition<KonfiguracijaSlagalice>(
+						new KonfiguracijaSlagalice(swap(polje, 4, 1)), 1));
 			
-			list.add(new Transition<KonfiguracijaSlagalice>(
-					new KonfiguracijaSlagalice(swap(polje, 4, 3)), 1));
+			} else if(polje[3] == 5) {
+				list.add(new Transition<KonfiguracijaSlagalice>(
+						new KonfiguracijaSlagalice(swap(polje, 4, 3)), 1));
 			
-			list.add(new Transition<KonfiguracijaSlagalice>(
-					new KonfiguracijaSlagalice(swap(polje, 4, 5)), 1));
+			} else if(polje[5] == 5) {
+				list.add(new Transition<KonfiguracijaSlagalice>(
+						new KonfiguracijaSlagalice(swap(polje, 4, 5)), 1));
 			
-			list.add(new Transition<KonfiguracijaSlagalice>(
-					new KonfiguracijaSlagalice(swap(polje, 4, 7)), 1));
+			} else if(polje[7] == 5) {
+				list.add(new Transition<KonfiguracijaSlagalice>(
+						new KonfiguracijaSlagalice(swap(polje, 4, 7)), 1));
+			}
+			
 			break;
 
 		case 5:
-			list.add(new Transition<KonfiguracijaSlagalice>(
-					new KonfiguracijaSlagalice(swap(polje, 5, 2)), 1));
+			if(polje[2] == 6) {
+				list.add(new Transition<KonfiguracijaSlagalice>(
+						new KonfiguracijaSlagalice(swap(polje, 5, 2)), 1));
 			
-			list.add(new Transition<KonfiguracijaSlagalice>(
-					new KonfiguracijaSlagalice(swap(polje, 5, 4)), 1));
+			} else if(polje[4] == 6) {
+				list.add(new Transition<KonfiguracijaSlagalice>(
+						new KonfiguracijaSlagalice(swap(polje, 5, 4)), 1));
 			
-			list.add(new Transition<KonfiguracijaSlagalice>(
-					new KonfiguracijaSlagalice(swap(polje, 5, 8)), 1));
+			} else if(polje[8] == 6) {
+				list.add(new Transition<KonfiguracijaSlagalice>(
+						new KonfiguracijaSlagalice(swap(polje, 5, 8)), 1));
+			}
+			
 			break;
 			
 		case 6:
-			list.add(new Transition<KonfiguracijaSlagalice>(
-					new KonfiguracijaSlagalice(swap(polje, 6, 3)), 1));
+			if(polje[3] == 7) {
+				list.add(new Transition<KonfiguracijaSlagalice>(
+						new KonfiguracijaSlagalice(swap(polje, 6, 3)), 1));
 			
-			list.add(new Transition<KonfiguracijaSlagalice>(
-					new KonfiguracijaSlagalice(swap(polje, 6, 7)), 1));
+			} else if(polje[7] == 7) {
+				list.add(new Transition<KonfiguracijaSlagalice>(
+						new KonfiguracijaSlagalice(swap(polje, 6, 7)), 1));
+			}
+			
 			break;	
 		
 		case 7:
-			list.add(new Transition<KonfiguracijaSlagalice>(
-					new KonfiguracijaSlagalice(swap(polje, 7, 4)), 1));
+			if(polje[4] == 8) {
+				list.add(new Transition<KonfiguracijaSlagalice>(
+						new KonfiguracijaSlagalice(swap(polje, 7, 4)), 1));
 			
-			list.add(new Transition<KonfiguracijaSlagalice>(
-					new KonfiguracijaSlagalice(swap(polje, 7, 6)), 1));
+			} else if(polje[6] == 8) {
+				list.add(new Transition<KonfiguracijaSlagalice>(
+						new KonfiguracijaSlagalice(swap(polje, 7, 6)), 1));
 			
-			list.add(new Transition<KonfiguracijaSlagalice>(
-					new KonfiguracijaSlagalice(swap(polje, 7, 8)), 1));
+			} else if(polje[8] == 8) {
+				list.add(new Transition<KonfiguracijaSlagalice>(
+						new KonfiguracijaSlagalice(swap(polje, 7, 8)), 1));
+			
+			}
+			
 			break;
 		
 		case 8:
-			list.add(new Transition<KonfiguracijaSlagalice>(
-					new KonfiguracijaSlagalice(swap(polje, 8, 5)), 1));
+			if(polje[5] == 9) {
+				list.add(new Transition<KonfiguracijaSlagalice>(
+						new KonfiguracijaSlagalice(swap(polje, 8, 5)), 1));
 			
-			list.add(new Transition<KonfiguracijaSlagalice>(
-					new KonfiguracijaSlagalice(swap(polje, 8, 7)), 1));
+			} else if(polje[7] == 9) {
+				list.add(new Transition<KonfiguracijaSlagalice>(
+						new KonfiguracijaSlagalice(swap(polje, 8, 7)), 1));
+			}
+			
 			break;
 		
 		default:

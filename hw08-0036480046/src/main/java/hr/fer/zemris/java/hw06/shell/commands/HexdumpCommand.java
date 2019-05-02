@@ -34,13 +34,13 @@ public class HexdumpCommand implements ShellCommand {
 			return ShellStatus.CONTINUE;
 		}
 		
-		arguments = args.toString();
+		arguments = args[0].toString();
 		
 		FileInputStream inputStream;
 		
 		try{
     	    inputStream = new FileInputStream(CommandUtilityClass.resolvePath(arguments, env));
- 
+    	    
     	    byte[] buffer = new byte[16];
  
     	    int index = 0;

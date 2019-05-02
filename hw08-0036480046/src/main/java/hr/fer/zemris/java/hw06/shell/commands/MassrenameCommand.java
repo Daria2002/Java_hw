@@ -43,7 +43,8 @@ public class MassrenameCommand implements ShellCommand {
 			String[] data = CommandUtilityClass.checkArguments(arguments, 4);
 			
 			if(data != null) {
-				List<FilterResult> files = filter(Paths.get(data[0]), data[3]);
+				List<FilterResult> files = filter(
+						Paths.get(CommandUtilityClass.resolvePath(data[0], env)), data[3]);
 				
 				for(FilterResult dir : files) {
 					env.writeln(dir.toString());
@@ -58,7 +59,8 @@ public class MassrenameCommand implements ShellCommand {
 			String[] data = CommandUtilityClass.checkArguments(arguments, 4);
 			
 			if(data != null) {
-				List<FilterResult> files = filter(Paths.get(data[0]), data[3]);
+				List<FilterResult> files = filter(
+						Paths.get(CommandUtilityClass.resolvePath(data[0], env)), data[3]);
 				
 				for(FilterResult file : files) {
 					env.write(file.toString() + " ");
@@ -79,8 +81,9 @@ public class MassrenameCommand implements ShellCommand {
 			String[] data = CommandUtilityClass.checkArguments(arguments, 5);
 			
 			if(data != null) {
-				printNewAndOldName(filter(Paths.get(data[0]), data[3]), env,
-						new NameBuilderParser(data[4]).getNameBuilder());
+				printNewAndOldName(
+						filter(Paths.get(CommandUtilityClass.resolvePath(data[0], env)), data[3]),
+						env, new NameBuilderParser(data[4]).getNameBuilder());
 				
 			} else {
 				env.writeln("Arguments are not valid.");
@@ -90,7 +93,8 @@ public class MassrenameCommand implements ShellCommand {
 			String[] data = CommandUtilityClass.checkArguments(arguments, 5);
 			
 			if(data != null) {
-				List<FilterResult> files = filter(Paths.get(data[0]), data[3]);
+				List<FilterResult> files = filter(
+						Paths.get(CommandUtilityClass.resolvePath(data[0], env)), data[3]);
 				NameBuilder builder = new NameBuilderParser(data[4]).getNameBuilder();
 				
 				printNewAndOldName(files, env, builder);

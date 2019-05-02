@@ -1,7 +1,6 @@
 package hr.fer.zemris.java.hw06.shell.commands;
 
 import java.io.File;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import hr.fer.zemris.java.hw06.shell.Environment;
@@ -15,11 +14,11 @@ public class CommandUtilityClass {
 	
 	public static String resolvePath(String path, Environment env) {
 		String help = Paths.get(env.getCurrentDirectory().toString()).
-				resolve(Paths.get(path).getFileName()).toString();
-		
+				resolve(Paths.get(path)).toString();
 		if(!new File(path).exists() || new File(help).exists()) {
 			return help;
 		}
+		
 		return Paths.get(path).toString();
 	}
 	

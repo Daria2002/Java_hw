@@ -1,6 +1,5 @@
 package hr.fer.zemris.java.hw06.shell.commands;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

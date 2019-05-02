@@ -1,5 +1,8 @@
 package hr.fer.zemris.java.hw06.shell;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -122,6 +125,10 @@ public class MyShell {
 
 		@Override
 		public void setCurrentDirectory(Path path) {
+			if(!Files.exists(Paths.get(Paths.get(this.getCurrentDirectory().toString()).
+				resolve(path).toString()))) {
+				throw new InvalidPathException("Given path doesn't exists", "");
+			}
 			currentDirectory = Paths.get(path.toString());
 		}
 
@@ -182,6 +189,9 @@ public class MyShell {
 				if(command == null) {
 					System.out.println("Command " + commandName + " doesn't exists.");
 				}
+				
+			} catch (InvalidPathException e) {
+				System.out.println("Given path is not valid.");
 				
 			} catch (Exception e) {
 				env.writeln("Entered expression is not valid.");

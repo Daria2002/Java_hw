@@ -4,8 +4,6 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.SortedMap;
-
 import hr.fer.zemris.java.hw06.shell.Environment;
 import hr.fer.zemris.java.hw06.shell.ShellCommand;
 import hr.fer.zemris.java.hw06.shell.ShellStatus;

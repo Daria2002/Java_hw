@@ -85,7 +85,6 @@ public class SearchUtil {
 						ni.getCost() + transition.getCost()));
 				visitedSet.add(transition.getState());
 			}
-			
 		}
 		
 		return ni;

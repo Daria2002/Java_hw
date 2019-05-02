@@ -12,6 +12,5 @@ public class MyDemo {
 		System.out.println(path.resolve(Paths.get("/home/daria/Desktop/test2")));
 		System.out.println(Paths.get(path.toString()));
 	}
-	
 }
 

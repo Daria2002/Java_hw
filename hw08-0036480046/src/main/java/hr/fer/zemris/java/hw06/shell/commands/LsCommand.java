@@ -37,7 +37,8 @@ public class LsCommand implements ShellCommand {
 	public ShellStatus executeCommand(Environment env, String arguments) {
 		
 		if(arguments == null) {
-			env.writeln("Insert only one argument");
+			env.writeln("Insert one argument that represents dir, from which you want"
+					+ " to list files and dirs. For current dir type . as argument");
 			return ShellStatus.CONTINUE;
 		}
 		

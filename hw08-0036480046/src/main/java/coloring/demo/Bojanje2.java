@@ -21,9 +21,7 @@ public class Bojanje2 {
 	 * @param args takes no arguments
 	 */
 	public static void main(String[] args) {
-		//FillApp.run(FillApp.OWL, Arrays.asList(bfs));
-		//FillApp.run(FillApp.OWL, Arrays.asList(dfs));
-		FillApp.run(FillApp.OWL, Arrays.asList(bfsv));
+		FillApp.run(FillApp.OWL, Arrays.asList(bfsv, bfs, dfs));
 	}
 	
 	private static final FillAlgorithm bfs = new FillAlgorithm() {

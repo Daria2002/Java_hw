@@ -8,8 +8,17 @@ import searching.algorithms.SearchUtil;
 import searching.slagalica.KonfiguracijaSlagalice;
 import searching.slagalica.Slagalica;
 
+/**
+ * Demo program for bfs algoritham for solvving puzzle.
+ * @author Daria Matković
+ *
+ */
 public class SlagalicaDemo {
 	
+	/**
+	 * This method is executed when program is run
+	 * @param args takes no arguments
+	 */
 	public static void main(String[] args) {
 		Slagalica slagalica = new Slagalica(
 				new KonfiguracijaSlagalice(new int[] {2,3,0,1,4,6,7,5,8})

@@ -43,4 +43,25 @@ public class KonfiguracijaSlagalice {
 		}
 		return -1;
 	}
+	
+	@Override
+	public String toString() {
+		StringBuilder result = new StringBuilder();
+		
+		for(int i = 0; i < configuration.length; i++) {
+			// if space, print *
+			if(configuration[i] == 0) {
+				result.append("* ");
+				
+			} else {
+				result.append(configuration[i] + " ");
+			}
+			
+			if(i % 3 == 2 && i != configuration.length - 1) {
+				result.append("\n");
+			}
+		}
+		
+		return result.toString();
+	}
 }

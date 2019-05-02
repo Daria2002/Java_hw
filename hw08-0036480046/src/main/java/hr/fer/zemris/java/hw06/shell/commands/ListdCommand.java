@@ -33,7 +33,7 @@ public class ListdCommand implements ShellCommand {
 		
 		// is stack doesn't exist or stack is empty
 		if(sharedStack == null || sharedStack.isEmpty()) {
-			env.writeln("There is no path on stack");
+			env.writeln("Nema pohranjenih direktorija");
 			return ShellStatus.CONTINUE;
 		}
 		

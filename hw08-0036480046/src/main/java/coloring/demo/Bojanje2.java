@@ -24,6 +24,9 @@ public class Bojanje2 {
 		FillApp.run(FillApp.OWL, Arrays.asList(bfsv, bfs, dfs));
 	}
 	
+	/**
+	 * Bfs represents Breadth-First Search algorithm for solving puzzle.
+	 */
 	private static final FillAlgorithm bfs = new FillAlgorithm() {
 		@Override
 		public String getAlgorithmTitle() {
@@ -37,6 +40,9 @@ public class Bojanje2 {
 		}
 	};
 	
+	/**
+	 * Dfs represents Depth-First Search algorithm for solving puzzle
+	 */
 	private static final FillAlgorithm dfs = new FillAlgorithm() {
 		@Override
 		public String getAlgorithmTitle() {
@@ -50,6 +56,9 @@ public class Bojanje2 {
 		}
 	};
 	
+	/**
+	 * Bfsv represents optimal bfs algorithm for solving puzzle.
+	 */
 	private static final FillAlgorithm bfsv = new FillAlgorithm() {
 		@Override
 		public String getAlgorithmTitle() {

@@ -1,6 +1,5 @@
 package hr.fer.zemris.java.hw06.shell;
 
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
@@ -127,7 +126,7 @@ public class MyShell {
 		public void setCurrentDirectory(Path path) {
 			if(!Files.exists(Paths.get(Paths.get(this.getCurrentDirectory().toString()).
 				resolve(path).toString()))) {
-				throw new InvalidPathException("Given path doesn't exists", "");
+				throw new InvalidPathException("Path that should be set as current dir doesn't exist", "");
 			}
 			currentDirectory = Paths.get(path.toString());
 		}

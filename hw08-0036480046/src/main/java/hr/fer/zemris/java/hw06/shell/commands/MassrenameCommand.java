@@ -106,7 +106,9 @@ public class MassrenameCommand implements ShellCommand {
 					String oldName = file.toString();
 
 					// move and rename file in destination dir
-					execute(data[0], data[1], oldName, novoIme, env);
+					execute(CommandUtilityClass.resolvePath(data[0], env),
+							CommandUtilityClass.resolvePath(data[1], env),
+							oldName, novoIme, env);
 				}
 				
 			} else {

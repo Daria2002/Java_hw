@@ -56,8 +56,7 @@ public class PopdCommand implements ShellCommand {
 		list.add("It takes path from the top of stack, if path doesn't exist anymore current dir doesn't change.");
 		list.add("If path exists, current dir changes to that value.");
 		list.add("If stack is empty, command writes message and doesn't change stack or current dir path.");
-		
-		
+			
         return Collections.unmodifiableList(list);
 	}
 }

@@ -56,7 +56,6 @@ public class DropdCommand implements ShellCommand {
 		list.add("Dropd command takes dir path from top of stack and removes it.");
 		list.add("Current dir doesn't change.");
 		
-		
         return Collections.unmodifiableList(list);
 	}
 }

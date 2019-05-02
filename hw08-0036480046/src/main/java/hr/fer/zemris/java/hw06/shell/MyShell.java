@@ -124,10 +124,18 @@ public class MyShell {
 
 		@Override
 		public void setCurrentDirectory(Path path) {
+			// check if path exists
 			if(!Files.exists(Paths.get(Paths.get(this.getCurrentDirectory().toString()).
 				resolve(path).toString()))) {
 				throw new InvalidPathException("Path that should be set as current dir doesn't exist", "");
 			}
+			
+			// check if given path is dir
+			if(!Files.isDirectory(Paths.get(Paths.get(this.getCurrentDirectory().toString()).
+					resolve(path).toString()))) {
+				throw new IllegalArgumentException("Given path is not directory");
+			}
+			
 			currentDirectory = Paths.get(path.toString());
 		}
 

@@ -8,11 +8,11 @@ package hr.fer.zemris.math;
 public class Vector3 {
 
 	/** x component **/
-	private double x;
+	private final double x;
 	/** y component **/
-	private double y;
+	private final double y;
 	/** z component **/
-	private double z;
+	private final double z;
 	
 	/**
 	 * This method represents constructor that initialize x, y and z component

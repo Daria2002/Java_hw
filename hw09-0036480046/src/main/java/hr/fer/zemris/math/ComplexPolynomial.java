@@ -17,7 +17,8 @@ public class ComplexPolynomial {
 	 * @param factors coefficients z0...zn
 	 */
 	public ComplexPolynomial(Complex[] factors) {
-		factors = Arrays.copyOf(factors, factors.length);
+		this.factors = new Complex[factors.length];
+		this.factors = Arrays.copyOf(factors, factors.length);
 	}
 	
 	/**
@@ -58,6 +59,9 @@ public class ComplexPolynomial {
 		Complex[] resultFactors = new Complex[this.order() - 1];
 		
 		for(int i = 1; i < this.order(); i++) {
+			if(this.factors[i] == null) {
+				continue;
+			}
 			resultFactors[i-1] = new Complex(this.factors[i].getRe() * i, 
 					this.factors[i].getIm() * i);
 		}
@@ -84,8 +88,11 @@ public class ComplexPolynomial {
 	public String toString() {
 		StringBuilder result = new StringBuilder();
 		
-		for(int i = factors.length-1; i >= 0; i--) {
-			result.append(factors[i]);
+		for(int i = this.factors.length-1; i >= 0; i--) {
+			if(this.factors[i] == null) {
+				continue;
+			}
+			result.append(this.factors[i]);
 			if(i != 0) {
 				result.append("*" + "z^" + i + "+");
 			}

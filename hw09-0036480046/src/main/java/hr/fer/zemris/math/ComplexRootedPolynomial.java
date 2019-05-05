@@ -49,30 +49,30 @@ public class ComplexRootedPolynomial {
 	public ComplexPolynomial toComplexPolynom() {
 		Complex[] factors = new Complex[(int) Math.pow(2, (roots.length + 1 - 1))];
 		
-		for(int i = 0; i < factors.length; i++) {
-			factors[i] = null;
-		}
-		
 		// multiply with z0
-		factors[1] = roots[0];
-		factors[0] = roots[0].multiply(roots[1]);
+		factors[1] = z0;
+		factors[0] = z0.multiply(roots[0].negate());
 		
-		Complex[] tempArray = Arrays.copyOf(roots, roots.length);
+		Complex[] tempArray = Arrays.copyOf(factors, factors.length);
 		for(int i = 1; i < roots.length; i++) {
 			
 			tempArray = Arrays.copyOf(factors, factors.length);
 			// increase degree because first element of bracket is z
-			for(int j = i; j >= 0 ; j--) {
+			for(int j = tempArray.length-1; j >= 0 ; j--) {
 				if(tempArray[j] != null) {
 					tempArray[j+1] = tempArray[j];
+					tempArray[j] = null;
 				}
 			}
 			
 			// to increased values add product of next root multiplied with every
 			// element of result
 			for(int j = 0; j < factors.length ; j++) {
-				if(tempArray[j] != null) {
-					tempArray[j].add(roots[i+1].multiply(factors[j]));
+				if(factors[j] != null) {
+					if(tempArray[j] == null) {
+						tempArray[j] = new Complex();
+					}
+					tempArray[j] = tempArray[j].add(roots[i].negate().multiply(factors[j]));
 				}
 			}
 			

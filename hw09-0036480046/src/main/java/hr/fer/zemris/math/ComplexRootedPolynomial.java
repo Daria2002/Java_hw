@@ -2,6 +2,8 @@ package hr.fer.zemris.math;
 
 import java.util.Arrays;
 
+import javax.print.attribute.standard.Copies;
+
 /**
  * This class represents polynomial f(z) = z0*(z-z1)*(z-z2)*...*(z-zn). z0 is 
  * constant and z1...zn are zero points 
@@ -34,7 +36,7 @@ public class ComplexRootedPolynomial {
 		Complex result = new Complex(z0.getRe(), z0.getIm());
 		
 		for(Complex complexNumber : roots) {
-			result = result.add(z.sub(complexNumber));
+			result = result.multiply(z.sub(complexNumber));
 		}
 		
 		return result;
@@ -42,15 +44,55 @@ public class ComplexRootedPolynomial {
 	
 	/**
 	 * Converts this to ComplexPolynom
-	 * @return
+	 * @return polynomial of complex number
 	 */
 	public ComplexPolynomial toComplexPolynom() {
+		Complex[] factors = new Complex[(int) Math.pow(2, (roots.length + 1 - 1))];
 		
+		for(int i = 0; i < factors.length; i++) {
+			factors[i] = null;
+		}
+		
+		// multiply with z0
+		factors[1] = roots[0];
+		factors[0] = roots[0].multiply(roots[1]);
+		
+		Complex[] tempArray = Arrays.copyOf(roots, roots.length);
+		for(int i = 1; i < roots.length; i++) {
+			
+			tempArray = Arrays.copyOf(factors, factors.length);
+			// increase degree because first element of bracket is z
+			for(int j = i; j >= 0 ; j--) {
+				if(tempArray[j] != null) {
+					tempArray[j+1] = tempArray[j];
+				}
+			}
+			
+			// to increased values add product of next root multiplied with every
+			// element of result
+			for(int j = 0; j < factors.length ; j++) {
+				if(tempArray[j] != null) {
+					tempArray[j].add(roots[i+1].multiply(factors[j]));
+				}
+			}
+			
+			factors = Arrays.copyOf(tempArray, tempArray.length);
+		}
+		
+		return new ComplexPolynomial(factors);
 	}
 	
 	@Override
 	public String toString() {
+		StringBuilder result = new StringBuilder();
+		result.append(z0);
+	
+		for(Complex root : roots) {
+			result.append("*");
+			result.append("(z-" + root + ")");
+		}
 		
+		return result.toString();
 	}
 	
 	/**

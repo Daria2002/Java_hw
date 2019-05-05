@@ -180,10 +180,10 @@ public class Complex {
 	
 	@Override
 	public String toString() {
-		String realString = String.format("%.3f", re);
-		String imaginaryString = String.format("%.3f", im);
+		String realString = String.format("%.1f", re);
+		String imaginaryString = String.format("%.1f", Math.abs(im));
 		
-		return realString + (im >= 0 ? "+" : "") + imaginaryString + "i";
+		return "(" + realString + (im >= 0 ? "+" : "-") + "i" + imaginaryString + ")";
 	}
 
 	/**

@@ -28,26 +28,70 @@ public class ComplexPolynomial {
 		return (short) (factors.length-1);
 	}
 	
-	// computes a new polynomial this*p
+	/**
+	 * Computes a new polynomial this*p
+	 * @param p polynomial to multiply with this
+	 * @return result of multiply operation
+	 */
 	public ComplexPolynomial multiply(ComplexPolynomial p) {
+		Complex[] resultFactors = new Complex[p.order() + this.order()];
 		
-	}
-	
-	// computes first derivative of this polynomial; for example, for
-	// (7+2i)z^3+2z^2+5z+1 returns (21+6i)z^2+4z+5
-	public ComplexPolynomial derive() {
-		
-	}
-	
-	// computes polynomial value at given point z
-	public Complex apply(Complex z) {
-		for(Complex el : factors) {
-			
+		for(int i = 0; i < resultFactors.length; i++) {
+			resultFactors[i] = new Complex();
 		}
+		
+		for(int i = 0; i < this.order(); i++) {
+			for(int j = 0; j < p.order(); j++) {
+				resultFactors[i + j].add(this.factors[i].multiply(p.factors[j]));
+			}
+		}
+		
+		return new ComplexPolynomial(resultFactors);
 	}
+	
+	/**
+	 * Computes first derivative of this polynomial
+	 * @return first derivative of this polynomial
+	 */
+	public ComplexPolynomial derive() {
+		// no more zn
+		Complex[] resultFactors = new Complex[this.order() - 1];
+		
+		for(int i = 1; i < this.order(); i++) {
+			resultFactors[i-1] = new Complex(this.factors[i].getRe() * i, 
+					this.factors[i].getIm() * i);
+		}
+		
+		return new ComplexPolynomial(resultFactors);
+	}
+	
+	/**
+	 * This method computes polynomial value at given point z
+	 * @param z given point
+	 * @return polynomial value at given point
+	 */
+	public Complex apply(Complex z) {
+		Complex result = new Complex();
+		
+		for(int i = 0; i < factors.length; i++) {
+			result = result.add(factors[i].multiply(z.power(i)));
+		}
+
+		return result;
+	}
+	
 	@Override
 	public String toString() {
+		StringBuilder result = new StringBuilder();
 		
+		for(int i = factors.length-1; i >= 0; i--) {
+			result.append(factors[i]);
+			if(i != 0) {
+				result.append("*" + "z^" + i + "+");
+			}
+		}
+		
+		return result.toString();
 	}
 	
 }

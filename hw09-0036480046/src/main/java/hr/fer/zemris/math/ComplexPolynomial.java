@@ -76,8 +76,11 @@ public class ComplexPolynomial {
 	 */
 	public Complex apply(Complex z) {
 		Complex result = new Complex();
-		
-		for(int i = 0; i < factors.length; i++) {
+	
+		for(int i = 0; i < order(); i++) {
+			if(factors[i] == null) {
+				continue;
+			}
 			result = result.add(factors[i].multiply(z.power(i)));
 		}
 

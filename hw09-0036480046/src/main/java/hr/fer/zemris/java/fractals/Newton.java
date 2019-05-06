@@ -208,6 +208,15 @@ public class Newton {
 		}
 	}
 	
+	private static double getIm(String root, char operator) {
+		// +1+1 to skip + and i
+		if(root.indexOf('i') == root.length() - 1) {
+			return Double.valueOf(1);
+		} else {
+			return Double.valueOf(root.substring(root.indexOf(operator) + 1 + 1));
+		}
+	}
+	
 	private static Complex parseComplexNumber(String root) {
 		Complex complexNumber = new Complex();
 		
@@ -216,23 +225,25 @@ public class Newton {
 		}
 		
 		if(root.contains("+") && root.indexOf("+") != 0) {
+			double im = getIm(root, '+');
+			
 			complexNumber = new Complex(
-					Double.valueOf(root.substring(0, root.indexOf('+'))), 
-					// +1+1 to skip + and i
-					Double.valueOf(root.substring(root.indexOf('+') + 1 + 1)));
+					Double.valueOf(root.substring(0, root.indexOf('+'))), im);
+					
 			
 					//str.indexOf("is", str.indexOf("is") + 1);
 		} else if(root.contains("-") && root.indexOf("-") != 0) {
+			double im = getIm(root, '-');
+			
 			complexNumber = new Complex(
-					Double.valueOf(root.substring(0, root.indexOf('-'))), 
-					Double.valueOf(root.substring(root.indexOf('-') + 1 + 1)));		
+					Double.valueOf(root.substring(0, root.indexOf('-'))), im);		
 		
 		} else if(root.indexOf("-") == 0) {
+			double im = getIm(root, '-');
+			
 			complexNumber = new Complex(
 					Double.valueOf(root.substring(0,
-							root.indexOf('-', root.indexOf('-') + 1))), 
-					Double.valueOf(root.substring(
-							root.indexOf('-', root.indexOf('-') + 1 + 1))));
+							root.indexOf('-', root.indexOf('-') + 1))), im);
 			
 		} else if(root.equals("0")) {
 			complexNumber = new Complex(0, 0);

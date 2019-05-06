@@ -106,7 +106,7 @@ public class ComplexRootedPolynomial {
 		int index = 0;
 		
 		for(Complex el : roots) {
-			if(threshold <= (z.sub(el)).module()) {
+			if(threshold >= (z.sub(el)).module()) {
 				return index;
 			}
 			

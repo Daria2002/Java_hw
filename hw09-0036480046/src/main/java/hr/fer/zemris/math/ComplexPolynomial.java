@@ -26,7 +26,14 @@ public class ComplexPolynomial {
 	 * @return order
 	 */
 	public short order() {
-		return (short) (factors.length-1);
+		int counter = 0;
+		for(Complex el : factors) {
+			if(el == null) {
+				continue;
+			}
+			counter++;
+		}
+		return (short) counter;
 	}
 	
 	/**
@@ -58,7 +65,7 @@ public class ComplexPolynomial {
 		// no more zn
 		Complex[] resultFactors = new Complex[this.order() - 1];
 		
-		for(int i = 1; i < this.order(); i++) {
+		for(int i = 1; i < this.factors.length; i++) {
 			if(this.factors[i] == null) {
 				continue;
 			}
@@ -77,7 +84,7 @@ public class ComplexPolynomial {
 	public Complex apply(Complex z) {
 		Complex result = new Complex();
 	
-		for(int i = 0; i < order(); i++) {
+		for(int i = 0; i < factors.length; i++) {
 			if(factors[i] == null) {
 				continue;
 			}

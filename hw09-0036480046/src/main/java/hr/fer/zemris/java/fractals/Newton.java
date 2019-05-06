@@ -67,11 +67,8 @@ public class Newton {
 		
 		ComplexRootedPolynomial crp = new ComplexRootedPolynomial(new Complex(1, 0),
 				complexNumbers.toArray(new Complex[complexNumbers.size()])); 
-		System.out.println(crp);
+
 		Producer producer = new Producer(crp);
-		
-		System.out.println(crp.toComplexPolynom());
-		System.out.println(crp.toComplexPolynom().derive());
 		
 		FractalViewer.show(producer);
 	}
@@ -106,7 +103,7 @@ public class Newton {
 			this.reMax = reMax;
 			this.height = height;
 			this.crp = crp;
-			this.data = Arrays.copyOf(data, data.length);
+			this.data = data;
 		}
 		
 		@Override
@@ -116,7 +113,7 @@ public class Newton {
 			
 				for(int l = 1; l <= width; l++) {
 					
-					offset = k * width + l;
+					offset = k * width + l - 1;
 					
 					double newRe = l * (reMax - reMin) / (width - 1) + reMin;
 					double newIm = (height - 1 - k) * (imMax - imMin) / (height - 1) + imMin;
@@ -138,7 +135,7 @@ public class Newton {
 			    		  zn = znold;
 			    		  iter++;
 			
-			    	} while(iter < 1000 && module > 1E-3);
+			    	} while(iter < 100000 && module > 1E-3);
 
 			    	int index = crp.indexOfClosestRootFor(zn, 0.002);
 			    	
@@ -190,16 +187,21 @@ public class Newton {
 					yMax = (height-1);
 				}
 				
-				futureObjects.add(executor.submit(new Work(yMin, yMax, width, height, polynomial, derived, 
+				futureObjects.add(executor.submit(new Work(yMin, yMax, width,
+						height, polynomial, derived, 
 						reMin, reMax, imMax, imMin, crp, data)));
 			}
 			
 			for(Future<Void> obj : futureObjects) {
-				try {
-					obj.get();
-				} catch (InterruptedException | ExecutionException e) {
-					e.printStackTrace();
+				while(true) {
+					try {
+						obj.get();
+						break;
+					} catch (InterruptedException | ExecutionException e) {
+						continue;
+					}
 				}
+				
 			}
 			
 			observer.acceptResult(data, (short) (polynomial.order() + 1), requestNo);

@@ -4,6 +4,7 @@ import hr.fer.zemris.java.raytracer.model.GraphicalObject;
 import hr.fer.zemris.java.raytracer.model.Point3D;
 import hr.fer.zemris.java.raytracer.model.Ray;
 import hr.fer.zemris.java.raytracer.model.RayIntersection;
+import hr.fer.zemris.math.Vector3;
 
 /**
  * This class represents sphere that can exist in scene.
@@ -61,13 +62,41 @@ public class Sphere extends GraphicalObject {
 	public RayIntersection findClosestRayIntersection(Ray ray) {
 		RayIntersection rayIntersection = new RayIntersection(center, kdb, false) {
 			
-			@Override
-			public Point3D getNormal() {
-				Point3D pointOnSurface = new Point3D();
+			/**
+			 * This method calculates intersection point between ray and sphere
+			 * @return intersection point dot(ray.direction, ray.direction);
+			 */
+			private Point3D getPointOnSurface() {
+				Point3D oc = ray.direction.sub(center);
 				
-				return pointOnSurface.sub(center);
+			    double x = ray.direction.scalarProduct(ray.direction);
+			    double y = 2.0 * oc.scalarProduct(ray.direction);
+			    double z = oc.scalarProduct(oc) - radius*radius;
+			    double discriminant = y*y - 4*x*z;
+			    
+			    // two points
+			    if(discriminant > 0) {
+			    	return new Point3D(x, y, z);
+			    }
+			    
+			    // doesn't touch the sphere
+			    if(discriminant < 0){
+			        return null;
+			    }
+			    
+			    // touch sphere in one point
+			    else{
+			        return new Point3D(x, y, z);
+			    }
 			}
 			
+			@Override
+			public Point3D getNormal() {
+				Point3D pointOnSurface = getPointOnSurface();
+				
+				return Ray.fromPoints(center, pointOnSurface).direction;
+			}
+
 			@Override
 			public double getKrr() {
 				return krr;

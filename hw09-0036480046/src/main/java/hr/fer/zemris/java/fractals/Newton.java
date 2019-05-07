@@ -1,9 +1,6 @@
 package hr.fer.zemris.java.fractals;
 
-import java.awt.Dimension;
-import java.security.Policy;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.Callable;
@@ -12,7 +9,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
-
 import hr.fer.zemris.java.fractals.viewer.FractalViewer;
 import hr.fer.zemris.java.fractals.viewer.IFractalProducer;
 import hr.fer.zemris.java.fractals.viewer.IFractalResultObserver;
@@ -20,8 +16,18 @@ import hr.fer.zemris.math.Complex;
 import hr.fer.zemris.math.ComplexPolynomial;
 import hr.fer.zemris.math.ComplexRootedPolynomial;
 
+/**
+ * This class generate fractals derived from Newton-Raphson iteration.  
+ * @author Daria Matković
+ *
+ */
 public class Newton {
 
+	/**
+	 * This method is executed when program is run. It takes roots entered via 
+	 * command line and generate function for generating fractals.
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		System.out.println("Welcome to Newton-Raphson iteration-based fractal viewer.\n" + 
 				"Please enter at least two roots, one root per line. Enter 'done' when done.");
@@ -73,22 +79,54 @@ public class Newton {
 		FractalViewer.show(producer);
 	}
 	
+	/**
+	 * Nested class that implements Callable and represents job.
+	 * @author Daria Matković
+	 *
+	 */
 	private static class Work implements Callable<Void> {
-		
+		/** y minimum **/
 		int yMin;
+		/** y maximum **/
 		int yMax;
+		/** width **/
 		int width;
+		/** polynomial **/
 		ComplexPolynomial polynomial;
+		/** derived **/
 		ComplexPolynomial derived;
+		/** minimum real value **/
 		double reMin;
+		/** maximum real value **/
 		double reMax;
+		/** maximum imaginary value **/
 		double imMax;
+		/** minimum imaginary value **/
 		double imMin;
+		/** complex rooted polynomial **/
 		ComplexRootedPolynomial crp;
+		/** data **/
 		short[] data;
+		/** height **/
 		int height;
+		/** offset that represents data array index **/
 		int offset = 0;
 		
+		/**
+		 * Constructor that initialize local variables.
+		 * @param yMin y minimum
+		 * @param yMax y maximum
+		 * @param width width 
+		 * @param height height
+		 * @param polynomial polynomial
+		 * @param derived derived polynomial
+		 * @param reMin minimum real value
+		 * @param reMax maximum real value
+		 * @param imMax maximum imaginary value 
+		 * @param imMin minimum imaginary value
+		 * @param crp complex rooted polynomial
+		 * @param data array of indexes
+		 */
 		public Work(int yMin, int yMax, int width, int height, ComplexPolynomial polynomial,
 				ComplexPolynomial derived, double reMin, double reMax, double imMax,
 				double imMin, ComplexRootedPolynomial crp, short[] data) {
@@ -148,13 +186,28 @@ public class Newton {
 		}
 	}
 	
+	/**
+	 * This class produce data for visualization of fractals. It implements 
+	 * interface IFractalProducer that has method produce.
+	 * @author Daria Matković
+	 *
+	 */
 	private static class Producer implements IFractalProducer {
+		/** executor **/
 		ExecutorService executor;
+		/** number of jobs **/
 		int size = 8 * Runtime.getRuntime().availableProcessors();
+		/** polynomial **/
 		ComplexPolynomial polynomial;
+		/** derived polynomial **/
 		ComplexPolynomial derived;
+		/** polynomial represented with roots **/
 		ComplexRootedPolynomial crp;
 		
+		/**
+		 * Constructor that initialize local variables
+		 * @param crp complex rooted polynomial
+		 */
 		public Producer(ComplexRootedPolynomial crp) {
 			this.crp = crp;
 			polynomial = crp.toComplexPolynom();
@@ -208,6 +261,12 @@ public class Newton {
 		}
 	}
 	
+	/**
+	 * This method returns imaginary value
+	 * @param root string to parse
+	 * @param operator separator between real and imaginary value
+	 * @return imaginary value
+	 */
 	private static double getIm(String root, char operator) {
 		// +1+1 to skip + and i
 		if(root.indexOf('i') == root.length() - 1) {
@@ -217,6 +276,11 @@ public class Newton {
 		}
 	}
 	
+	/**
+	 * This method parse entered string to Complex number.
+	 * @param root string that user entered
+	 * @return complex number
+	 */
 	private static Complex parseComplexNumber(String root) {
 		Complex complexNumber = new Complex();
 		
@@ -233,13 +297,15 @@ public class Newton {
 			
 					//str.indexOf("is", str.indexOf("is") + 1);
 		} else if(root.contains("-") && root.indexOf("-") != 0) {
-			double im = getIm(root, '-');
+			// multiply with -1 because sign before i is -
+			double im = getIm(root, '-') * (-1);
 			
 			complexNumber = new Complex(
 					Double.valueOf(root.substring(0, root.indexOf('-'))), im);		
 		
 		} else if(root.indexOf("-") == 0) {
-			double im = getIm(root, '-');
+			// multiply with -1 because sign before i is -
+			double im = getIm(root, '-') * (-1);
 			
 			complexNumber = new Complex(
 					Double.valueOf(root.substring(0,

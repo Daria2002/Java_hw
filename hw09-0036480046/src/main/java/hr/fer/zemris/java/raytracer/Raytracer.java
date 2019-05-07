@@ -60,30 +60,19 @@ public class Raytracer {
 								.sub(yAxis.scalarMultiply(y*vertical/(height-1)));
 	
 						Ray ray = Ray.fromPoints(eye, screenPoint);
-						/*
-						rgb[0] = 0;
-						rgb[1] = 0;
-						rgb[2] = 0;
-						*/
-						tracer(scene, ray, rgb);
 						
 						
-							red[offset] = rgb[0] > 255 ? 255 : rgb[0];
-							green[offset] = rgb[1] > 255 ? 255 : rgb[1];
-							blue[offset] = rgb[2] > 255 ? 255 : rgb[2];
-							
-							red[offset] = 0;
-							green[offset] = 0;
-							blue[offset] = 0;
 						
-						/*short[] colors = determineColorFor(, scene, ray);
-						if(colors == null) {
-							continue;
+						rgb = tracer(scene, ray);
+						
+						if(rgb == null) {
+							rgb = new short[] {0, 0, 0};
 						}
-						red[offset] = colors[0];
-						green[offset] = colors[1];
-						blue[offset] = colors[2];
-						*/
+						
+						red[offset] = rgb[0] > 255 ? 255 : rgb[0];
+						green[offset] = rgb[1] > 255 ? 255 : rgb[1];
+						blue[offset] = rgb[2] > 255 ? 255 : rgb[2];
+						
 						offset++;
 					}
 				}
@@ -99,15 +88,15 @@ public class Raytracer {
 			 * @param ray ray 
 			 * @param rgb color
 			 */
-			private void tracer(Scene scene, Ray ray, short[] rgb) {
+			private short[] tracer(Scene scene, Ray ray) {
 				
 				RayIntersection closestEl = getClosestRayIntersection(scene.getObjects(), ray);
 				
 				if(closestEl == null) {
-					return;
+					return null;
 				}
 				
-				rgb = determineColorFor(closestEl, scene, ray);
+				return determineColorFor(closestEl, scene, ray);
 			}
 			
 			private RayIntersection getClosestRayIntersection(List<GraphicalObject> objects, 
@@ -145,7 +134,7 @@ public class Raytracer {
 				}
 			}
 			
-			private static PhongParams calculatePhongParams(RayIntersection s, 
+			private PhongParams calculatePhongParams(RayIntersection s, 
 					LightSource light, Ray ray) {
 				
 				Point3D l = ray.fromPoints(s.getPoint(), light.getPoint()).direction;
@@ -180,20 +169,20 @@ public class Raytracer {
 					
 					PhongParams phongParams = calculatePhongParams(s, light, ray);
 					
-					color[0] += scene.getObjects().get(0)
-							.findClosestRayIntersection(ray).getKdr();
-					color[0] += scene.getObjects().get(0)
-							.findClosestRayIntersection(ray).getKrr();
+					// diffuse component to illumination
+					double diffuseComponent = Math.max(0, phongParams.n.scalarProduct(phongParams.l));
+					double reflectionComponent = phongParams.r.scalarProduct(phongParams.v);
 					
-					color[1] += scene.getObjects().get(0)
-							.findClosestRayIntersection(ray).getKdb();
-					color[1] += scene.getObjects().get(0)
-							.findClosestRayIntersection(ray).getKrb();
+					if(reflectionComponent < 0) {
+						reflectionComponent = 0;
+					}
 					
-					color[2] += scene.getObjects().get(0)
-							.findClosestRayIntersection(ray).getKdg();
-					color[2] += scene.getObjects().get(0)
-							.findClosestRayIntersection(ray).getKrg();
+					reflectionComponent = Math.pow(reflectionComponent, s.getKrn());
+					
+					color[0] += (reflectionComponent * s.getKrr() + diffuseComponent * s.getKdr()) * light.getR();
+					color[1] += (reflectionComponent * s.getKrg() + diffuseComponent * s.getKdg()) * light.getG();
+					color[2] += (reflectionComponent * s.getKrb() + diffuseComponent * s.getKdb()) * light.getB();
+					
 				}
 				
 				return color;

@@ -57,44 +57,94 @@ public class Sphere extends GraphicalObject {
 		this.krb = krb;
 		this.krn = krn;
 	}
+	/**
+	 * Calculates intersection point
+	 * @param ray ray that intersects sphere
+	 * @return intersection point
+	 */
+	private IntersectionStruct getPointOnSurface(Ray ray) {
+		Point3D oc = ray.start.sub(center);
+		
+	    double a = ray.direction.scalarProduct(ray.direction);
+	    double b = 2.0 * oc.scalarProduct(ray.direction);
+	    double c = oc.scalarProduct(oc) - radius*radius;
+	    double discriminant = b*b - 4*a*c;
+	    
+	    // doesn't touch the sphere
+	    if(discriminant < 0){
+	        return null;
+	    }
+	    
+	    double t0 = (-b - Math.sqrt(discriminant))/(2*a);
+	    
+	    // touch sphere in one point, discriminant = 0
+	    if(discriminant == 0) {
+	    	if(t0 < 0) {
+	    		return null;
+	    	}
+	    	
+	    	return new IntersectionStruct(
+	    			ray.direction.scalarMultiply(t0).add(ray.start),
+	    			t0, true);
+	    }
+	    
+	    // two points 
+	    
+    	double t1 = (-b + Math.sqrt(discriminant))/(2*a);
+    	
+    	if(t0 < t1 && t0 > 0) {
+    		return new IntersectionStruct(
+	    			ray.direction.scalarMultiply(t0).add(ray.start),
+	    			t0, true);
+    		
+    	} else if(t1 < t0 && t1 > 0) {
+    		return new IntersectionStruct(
+	    			ray.direction.scalarMultiply(t1).add(ray.start),
+	    			t1, true);
+    		
+    	} else if(t1 > 0) {
+    		return new IntersectionStruct(
+	    			ray.direction.scalarMultiply(t1).add(ray.start),
+	    			t1, false);
+    		
+    	} else if(t0 > 0) {
+    		return new IntersectionStruct(
+	    			ray.direction.scalarMultiply(t0).add(ray.start),
+	    			t0, false);
+    	}
+    	
+    	return null;
+	}
+	
+	private static class IntersectionStruct {
+		
+		private Point3D intersectionPoint;
+		private boolean outer;
+		private double distance;
+		
+		public IntersectionStruct(Point3D intersectionPoint, 
+				double distance, boolean outer) {
+			this.intersectionPoint = intersectionPoint;
+			this.outer = outer;
+			this.distance = distance;
+		}
+	}
 	
 	@Override
 	public RayIntersection findClosestRayIntersection(Ray ray) {
-		RayIntersection rayIntersection = new RayIntersection(center, kdb, false) {
-			
-			/**
-			 * This method calculates intersection point between ray and sphere
-			 * @return intersection point dot(ray.direction, ray.direction);
-			 */
-			private Point3D getPointOnSurface() {
-				Point3D oc = ray.direction.sub(center);
-				
-			    double x = ray.direction.scalarProduct(ray.direction);
-			    double y = 2.0 * oc.scalarProduct(ray.direction);
-			    double z = oc.scalarProduct(oc) - radius*radius;
-			    double discriminant = y*y - 4*x*z;
-			    
-			    // two points
-			    if(discriminant > 0) {
-			    	return new Point3D(x, y, z);
-			    }
-			    
-			    // doesn't touch the sphere
-			    if(discriminant < 0){
-			        return null;
-			    }
-			    
-			    // touch sphere in one point
-			    else{
-			        return new Point3D(x, y, z);
-			    }
-			}
+		IntersectionStruct intersection = getPointOnSurface(ray);
+		
+		if(intersection == null) {
+			return null;
+		}
+		
+		RayIntersection rayIntersection = new RayIntersection(
+				intersection.intersectionPoint, intersection.distance,
+				intersection.outer) {
 			
 			@Override
 			public Point3D getNormal() {
-				Point3D pointOnSurface = getPointOnSurface();
-				
-				return Ray.fromPoints(center, pointOnSurface).direction;
+				return Ray.fromPoints(center, intersection.intersectionPoint).direction;
 			}
 
 			@Override
@@ -133,6 +183,6 @@ public class Sphere extends GraphicalObject {
 			}
 		};
 		
-		return null;
+		return rayIntersection;
 	}
 }

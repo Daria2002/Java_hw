@@ -1,6 +1,7 @@
 package hr.fer.zemris.java.raytracer;
 
 import java.util.List;
+import java.util.concurrent.RecursiveAction;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import hr.fer.zemris.java.raytracer.model.GraphicalObject;
@@ -13,8 +14,14 @@ import hr.fer.zemris.java.raytracer.model.RayIntersection;
 import hr.fer.zemris.java.raytracer.model.Scene;
 import hr.fer.zemris.java.raytracer.viewer.RayTracerViewer;
 
-public class Raytracer {
-
+/**
+ * This class represents parallelized calculation using Fork-Join framework and
+ * RecursiveAction. RecursiveAction is ForkJoinTask's subclass for tasks that
+ * don't return values.
+ * @author Daria Matković
+ *
+ */
+public class RayCasterParallel extends RecursiveAction {
 	/**
 	 * This method is executed when program is run.
 	 * @param args takes no arguments
@@ -196,5 +203,11 @@ public class Raytracer {
 				return color;
 			}
 		};
+	}
+
+	@Override
+	protected void compute() {
+		// TODO Auto-generated method stub
+		
 	}
 }

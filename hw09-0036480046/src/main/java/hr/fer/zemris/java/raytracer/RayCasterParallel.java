@@ -55,7 +55,6 @@ public class RayCasterParallel extends RecursiveAction {
 				
 				Scene scene = RayTracerViewer.createPredefinedScene();
 				
-				short[] rgb = new short[3];
 				int offset = 0;
 				
 				// iterate through all pixels in screen
@@ -68,11 +67,8 @@ public class RayCasterParallel extends RecursiveAction {
 	
 						Ray ray = Ray.fromPoints(eye, screenPoint);
 						
-						rgb = tracer(scene, ray);
-						
-						if(rgb == null) {
-							rgb = new short[] {0, 0, 0};
-						}
+						short[] rgb = new short[3];
+						tracer(scene, ray, rgb);
 						
 						red[offset] = rgb[0] > 255 ? 255 : rgb[0];
 						green[offset] = rgb[1] > 255 ? 255 : rgb[1];
@@ -93,15 +89,16 @@ public class RayCasterParallel extends RecursiveAction {
 			 * @param ray ray 
 			 * @param rgb color
 			 */
-			private short[] tracer(Scene scene, Ray ray) {
+			private void tracer(Scene scene, Ray ray, short[] rgb) {
 				
 				RayIntersection closestEl = getClosestRayIntersection(scene.getObjects(), ray);
 				
 				if(closestEl == null) {
-					return null;
+					rgb = null;
+					return;
 				}
 				
-				return determineColorFor(closestEl, scene, ray);
+				rgb = determineColorFor(closestEl, scene, ray, rgb);
 			}
 			/*	
 				short[] rgb = new short[] {0, 0, 0};
@@ -167,8 +164,10 @@ public class RayCasterParallel extends RecursiveAction {
 				return new PhongParams(l, n, r, v);
 			}
 			
-			private short[] determineColorFor(RayIntersection s, Scene scene, Ray ray) {
-				short[] color = new short[]{15, 15, 15};
+			private short[] determineColorFor(RayIntersection s, Scene scene, Ray ray, short[] color) {
+				/*short[] */color[0] = 15;
+				color[1] = 15;
+				color[2] = 15;
 				
 				for (LightSource light : scene.getLights()) {
 					

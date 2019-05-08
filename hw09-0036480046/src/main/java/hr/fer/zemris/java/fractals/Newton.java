@@ -38,7 +38,7 @@ public class Newton {
 		List<Complex> complexNumbers = new ArrayList<>();
 		
 		while (true) {
-			System.out.printf("Root %d>", i);
+			System.out.printf("Root %d> ", i);
 			
 			String root = getRoot.nextLine();
 			root = root.strip().replaceAll("\\s+", "");
@@ -56,8 +56,6 @@ public class Newton {
 			}
 			
 			Complex number = parseComplexNumber(root);
-			
-			System.out.println(number);
 			
 			if(number == null) {
 				System.out.println("Write valid complex number");

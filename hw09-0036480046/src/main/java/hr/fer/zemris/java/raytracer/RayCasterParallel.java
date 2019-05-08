@@ -31,6 +31,10 @@ public class RayCasterParallel {
 				new Point3D(0,0,0), new Point3D(0,0,10), 20, 20);
 	}
 	
+	/**
+	 * This method represents ray tracer producer.
+	 * @return ray tracer producer
+	 */
 	private static IRayTracerProducer getIRayTracerProducer() {
 		return new IRayTracerProducer() {
 
@@ -64,6 +68,7 @@ public class RayCasterParallel {
 						offset, view, height);
 				
 				pool.invoke(task);
+				pool.shutdown();
 				
 				System.out.println("Izračuni gotovi...");
 				observer.acceptResult(red, green, blue, requestNo);
@@ -71,28 +76,70 @@ public class RayCasterParallel {
 				
 			}
 			
+			/**
+			 * This class represents task that implements RecursiveAction. 
+			 * The task will call itself recursively until a given threshold is 
+			 * reached 
+			 * @author Daria Matković
+			 *
+			 */
 			class Task extends RecursiveAction {
-
+				/** screen corner **/
 				Point3D screenCorner;
+				/** x axis **/
 				Point3D xAxis;
+				/** y axis **/
 				Point3D yAxis;
+				/** horizontal size **/
 				double horizontal;
+				/** vertical size **/
 				double vertical;
+				/** y max **/
 				int yMax;
+				/** x max **/
 				int xMax;
+				/** y min **/
 				int yMin;
+				/** scene **/
 				Scene scene;
+				/** rgb array **/
 				short[] rgb;
+				/** red array **/
 				short[] red;
+				/** green array **/
 				short[] green;
+				/** blue array **/
 				short[] blue;
+				/** observer point **/
 				Point3D eye;
+				/** offset **/
 				int offset;
+				/** view point **/
 				Point3D view;
+				/** height **/
 				int height;
-				
+				/** threshold for creating new objects **/
 				static final int THRESHOLD = 3;
 				
+				/**
+				 * Constructor that initializes local variables 
+				 * @param screenCorner screen corner
+				 * @param xAxis x axis
+				 * @param yAxis y axis
+				 * @param horizontal horizontal size
+				 * @param vertical vertical size
+				 * @param yMax maximum value of y 
+				 * @param xMax maximum value of x
+				 * @param yMin minimum value of y
+				 * @param scene scene
+				 * @param red red array
+				 * @param green green array
+				 * @param blue blue array
+				 * @param eye observer point
+				 * @param offset offset for colors array
+				 * @param view view point
+				 * @param height height
+				 */
 				public Task(Point3D screenCorner, Point3D xAxis, Point3D yAxis,
 						double horizontal, double vertical, int yMax, int xMax, int yMin,
 						Scene scene, short[] red, short[] green, short[] blue, Point3D eye,
@@ -116,6 +163,13 @@ public class RayCasterParallel {
 					this.height = height;
 				}
 				
+				/**
+				 * This class represents tracer for given ray in given scene
+				 * @param scene scene
+				 * @param ray ray
+				 * @param rgb rgb array
+				 * @return array of short that represents new rgb array
+				 */
 				private short[] tracer(Scene scene, Ray ray, short[] rgb) {
 					
 					RayIntersection closestEl = getClosestRayIntersection(scene.getObjects(), ray);
@@ -130,6 +184,14 @@ public class RayCasterParallel {
 					return rgb;
 				}
 
+				/**
+				 * Determine color for given ray intersection, in given scene, for given ray
+				 * @param s ray intersection 
+				 * @param scene scene
+				 * @param ray ray
+				 * @param color color array
+				 * @return new color array
+				 */
 				private short[] determineColorFor(RayIntersection s, Scene scene, Ray ray, short[] color) {
 					color[0] = 15;
 					color[1] = 15;
@@ -168,6 +230,12 @@ public class RayCasterParallel {
 					return color;
 				}
 				
+				/**
+				 * Gets closest ray intersection
+				 * @param objects list of objects
+				 * @param ray ray 
+				 * @return closest ray intersection
+				 */
 				private RayIntersection getClosestRayIntersection(List<GraphicalObject> objects, 
 						Ray ray) {
 
@@ -188,13 +256,28 @@ public class RayCasterParallel {
 					return closestEl;
 				}
 				
+				/**
+				 * This class represents phong parameters
+				 * @author Daria Matković
+				 *
+				 */
 				class PhongParams {
-					
+					/** direction vector from the point on the surface toward each light source **/
 					Point3D l;
+					/** normal at this point on the surface **/
 					Point3D n;
+					/**  direction that a perfectly reflected ray of light would take from this point on the surface **/
 					Point3D r;
+					/** direction pointing towards the viewer **/
 					Point3D v;
 					
+					/**
+					 * Constructor that initialize phong params
+					 * @param l direction vector from the point on the surface toward each light source
+					 * @param n normal at this point on the surface
+					 * @param r direction that a perfectly reflected ray of light would take from this point on the surface
+					 * @param v direction pointing towards the viewer
+					 */
 					public PhongParams(Point3D l, Point3D n, Point3D r, Point3D v) {
 						this.l = l;
 						this.n = n;
@@ -203,6 +286,13 @@ public class RayCasterParallel {
 					}
 				}
 				
+				/**
+				 * This method calculates phong params
+				 * @param s given ray intersection
+				 * @param light light source
+				 * @param ray ray
+				 * @return phong params
+				 */
 				private PhongParams calculatePhongParams(RayIntersection s, 
 						LightSource light, Ray ray) {
 					
@@ -215,13 +305,17 @@ public class RayCasterParallel {
 					return new PhongParams(l, n, r, v);
 				}
 				
+				/**
+				 * This method calculates phong params
+				 * @param s given ray intersection
+				 * @param light light source
+				 * @param ray ray
+				 * @return phong params
+				 */
 				private void doTask(Point3D screenCorner, Point3D xAxis, Point3D yAxis,
 						double horizontal, double vertical, int yMax, int xMax, int yMin,
 						Scene scene, short[] red, short[] green, short[] blue,
 						Point3D eye, int offset, Point3D view, int height) {
-					
-					System.out.println("yMIn: "+yMin);
-					System.out.println("yMIn: "+yMax);
 					
 					// iterate through all pixels in screen
 					for(int y = yMin; y < yMax; y++) {
@@ -234,8 +328,7 @@ public class RayCasterParallel {
 
 							Ray ray = Ray.fromPoints(eye, screenPoint);
 							
-							//rgb = new short[] {0, 0, 0};
-							
+							rgb = new short[] {0, 0, 0};
 							rgb = tracer(scene, ray, rgb);
 							
 							if(rgb == null) {

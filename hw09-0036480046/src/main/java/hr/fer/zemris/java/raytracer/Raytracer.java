@@ -13,6 +13,11 @@ import hr.fer.zemris.java.raytracer.model.RayIntersection;
 import hr.fer.zemris.java.raytracer.model.Scene;
 import hr.fer.zemris.java.raytracer.viewer.RayTracerViewer;
 
+/**
+ * This class represents demonstration program for raytracing objects.
+ * @author Daria Matković
+ *
+ */
 public class Raytracer {
 
 	/**
@@ -24,6 +29,10 @@ public class Raytracer {
 				new Point3D(0,0,0), new Point3D(0,0,10), 20, 20);
 	}
 	
+	/**
+	 * This method represents ray tracer animator
+	 * @return ray tracer animator
+	 */
 	private static IRayTracerProducer getIRayTracerProducer() {
 		return new IRayTracerProducer() {
 
@@ -81,10 +90,11 @@ public class Raytracer {
 			}
 
 			/**
-			 * 
+			 * This class represents tracer for given ray in given scene
 			 * @param scene scene
-			 * @param ray ray 
-			 * @param rgb color
+			 * @param ray ray
+			 * @param rgb rgb array
+			 * @return array of short that represents new rgb array
 			 */
 			private short[] tracer(Scene scene, Ray ray) {
 				
@@ -96,23 +106,13 @@ public class Raytracer {
 				
 				return determineColorFor(closestEl, scene, ray);
 			}
-			/*	
-				short[] rgb = new short[] {0, 0, 0};
-				rgb[0] = 0;
-				rgb[1] = 0;
-				rgb[2] = 0;
-				RayIntersection closest = getClosestRayIntersection(scene.getObjects(), ray);
-				
-				if(closest==null) {
-					return null;
-				}
-				
-				rgb[0] = 255;
-				rgb[1] = 255;
-				rgb[2] = 255;
-				return rgb;
-			}
-			*/
+		
+			/**
+			 * Gets closest ray intersection
+			 * @param objects list of objects
+			 * @param ray ray 
+			 * @return closest ray intersection
+			 */
 			private RayIntersection getClosestRayIntersection(List<GraphicalObject> objects, 
 					Ray ray) {
 
@@ -133,13 +133,28 @@ public class Raytracer {
 				return closestEl;
 			}
 			
+			/**
+			 * This class represents phong parameters
+			 * @author Daria Matković
+			 *
+			 */
 			class PhongParams {
-				
+				/** direction vector from the point on the surface toward each light source **/
 				Point3D l;
+				/** normal at this point on the surface **/
 				Point3D n;
+				/**  direction that a perfectly reflected ray of light would take from this point on the surface **/
 				Point3D r;
+				/** direction pointing towards the viewer **/
 				Point3D v;
 				
+				/**
+				 * Constructor that initialize phong params
+				 * @param l direction vector from the point on the surface toward each light source
+				 * @param n normal at this point on the surface
+				 * @param r direction that a perfectly reflected ray of light would take from this point on the surface
+				 * @param v direction pointing towards the viewer
+				 */
 				public PhongParams(Point3D l, Point3D n, Point3D r, Point3D v) {
 					this.l = l;
 					this.n = n;
@@ -148,18 +163,33 @@ public class Raytracer {
 				}
 			}
 			
+			/**
+			 * This method calculates phong params
+			 * @param s given ray intersection
+			 * @param light light source
+			 * @param ray ray
+			 * @return phong params
+			 */
 			private PhongParams calculatePhongParams(RayIntersection s, 
 					LightSource light, Ray ray) {
 				
-				Point3D l = ray.fromPoints(s.getPoint(), light.getPoint()).direction;
+				Point3D l = Ray.fromPoints(s.getPoint(), light.getPoint()).direction;
 				Point3D n = s.getNormal();
 				Point3D d = l.negate();
 				Point3D r = d.sub(n.scalarMultiply(d.scalarProduct(n) * 2));
-				Point3D v = ray.fromPoints(s.getPoint(), ray.start).direction;
+				Point3D v = Ray.fromPoints(s.getPoint(), ray.start).direction;
 				
 				return new PhongParams(l, n, r, v);
 			}
-			
+
+			/**
+			 * Determine color for given ray intersection, in given scene, for given ray
+			 * @param s ray intersection 
+			 * @param scene scene
+			 * @param ray ray
+			 * @param color color array
+			 * @return new color array
+			 */
 			private short[] determineColorFor(RayIntersection s, Scene scene, Ray ray) {
 				short[] color = new short[]{15, 15, 15};
 				

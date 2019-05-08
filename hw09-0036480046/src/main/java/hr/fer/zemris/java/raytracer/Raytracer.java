@@ -61,8 +61,6 @@ public class Raytracer {
 	
 						Ray ray = Ray.fromPoints(eye, screenPoint);
 						
-						
-						
 						rgb = tracer(scene, ray);
 						
 						if(rgb == null) {
@@ -153,17 +151,11 @@ public class Raytracer {
 					
 					Ray rHelp = Ray.fromPoints(light.getPoint(), s.getPoint());
 					
-					RayIntersection getRayIntersection = getClosestRayIntersection(
+					RayIntersection sHelp = getClosestRayIntersection(
 							scene.getObjects(), rHelp);
 					
-					if(getRayIntersection == null) {
-						continue;
-					}
-					
-					Point3D sHelp = getRayIntersection.getPoint();
-					
-					if(sHelp != null && sHelp.sub(light.getPoint()).norm() 
-							< sHelp.sub(light.getPoint()).norm()) {
+					if(sHelp != null && Math.abs(sHelp.getPoint().sub(light.getPoint()).norm() 
+							- s.getPoint().sub(light.getPoint()).norm()) > 0.01) {
 						continue;
 					}
 					

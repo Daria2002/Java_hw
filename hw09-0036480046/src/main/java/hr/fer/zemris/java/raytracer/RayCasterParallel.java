@@ -57,13 +57,11 @@ public class RayCasterParallel {
 				
 				int offset = 0;
 				
-				
 				ForkJoinPool pool = new ForkJoinPool();
 				
 				Task task = new Task(screenCorner, xAxis, yAxis, horizontal,
 						vertical, height, width, 0, scene, red, green, blue, eye,
-						offset, height, view);
-						
+						offset, view, height);
 				
 				pool.invoke(task);
 				
@@ -72,31 +70,6 @@ public class RayCasterParallel {
 				System.out.println("Dojava gotova...");
 				
 			}
-
-			/**
-			 * 
-			 * @param scene scene
-			 * @param ray ray 
-			 * @param rgb color
-			 */
-			
-			/*	
-				short[] rgb = new short[] {0, 0, 0};
-				rgb[0] = 0;
-				rgb[1] = 0;
-				rgb[2] = 0;
-				RayIntersection closest = getClosestRayIntersection(scene.getObjects(), ray);
-				
-				if(closest==null) {
-					return null;
-				}
-				
-				rgb[0] = 255;
-				rgb[1] = 255;
-				rgb[2] = 255;
-				return rgb;
-			}
-			*/
 			
 			class Task extends RecursiveAction {
 
@@ -115,15 +88,15 @@ public class RayCasterParallel {
 				short[] blue;
 				Point3D eye;
 				int offset;
-				int height;
 				Point3D view;
+				int height;
 				
 				static final int THRESHOLD = 3;
 				
 				public Task(Point3D screenCorner, Point3D xAxis, Point3D yAxis,
 						double horizontal, double vertical, int yMax, int xMax, int yMin,
 						Scene scene, short[] red, short[] green, short[] blue, Point3D eye,
-						int offset, int height, Point3D view) {
+						int offset, Point3D view, int height) {
 					super();
 					this.screenCorner = screenCorner;
 					this.xAxis = xAxis;
@@ -139,8 +112,8 @@ public class RayCasterParallel {
 					this.blue = blue;
 					this.eye = eye;
 					this.offset = offset;
-					this.height = height;
 					this.view = view;
+					this.height = height;
 				}
 				
 				private short[] tracer(Scene scene, Ray ray, short[] rgb) {
@@ -245,15 +218,19 @@ public class RayCasterParallel {
 				private void doTask(Point3D screenCorner, Point3D xAxis, Point3D yAxis,
 						double horizontal, double vertical, int yMax, int xMax, int yMin,
 						Scene scene, short[] red, short[] green, short[] blue,
-						Point3D eye, int offset, int height, Point3D view) {
+						Point3D eye, int offset, Point3D view, int height) {
+					
+					System.out.println("yMIn: "+yMin);
+					System.out.println("yMIn: "+yMax);
 					
 					// iterate through all pixels in screen
 					for(int y = yMin; y < yMax; y++) {
+						offset = y * xMax;
 						for(int x = 0; x < xMax; x++) {
-						
+							
 							Point3D screenPoint = screenCorner.add(
 									xAxis.scalarMultiply(x * horizontal/(xMax-1)))
-									.sub(yAxis.scalarMultiply(y * vertical/(yMax-yMin-1)));
+									.sub(yAxis.scalarMultiply(y * vertical/(500-1)));
 
 							Ray ray = Ray.fromPoints(eye, screenPoint);
 							
@@ -277,22 +254,19 @@ public class RayCasterParallel {
 				@Override
 				protected void compute() {
 
-					if(yMax-yMin < 1000) {
-						doTask(screenCorner,  xAxis,  yAxis,  horizontal,
+					if(yMax-yMin < THRESHOLD) {
+						doTask(screenCorner, xAxis, yAxis, horizontal,
 								vertical, yMax, xMax, yMin, scene, red, green,
-								blue, eye, offset, height, view);
+								blue, eye, offset, view, height);
 						
 					} else {
-						Point3D screenCorner = view.sub(xAxis.scalarMultiply((yMax-yMin)/2))
-								.add(yAxis.scalarMultiply(vertical/2));
-						
 						Task first = new Task(screenCorner, xAxis, yAxis, horizontal, vertical,
 								(yMax-yMin)/2 + yMin, xMax, yMin, scene, red, green, blue, eye,
-								offset, height, view);
+								offset, view, height);
 						
 						Task second = new Task(screenCorner, xAxis, yAxis, horizontal, vertical,
 								yMax, xMax, (yMax-yMin)/2 + yMin, scene, red, green, blue, eye,
-								offset, height, view);
+								offset, view, height);
 						
 						invokeAll(first, second);
 						

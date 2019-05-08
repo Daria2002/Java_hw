@@ -46,9 +46,7 @@ public class Newton {
 			if("done".equalsIgnoreCase(root)) {
 				if(i < 3) {
 					System.out.println("Enter at least 2 roots.");
-					i = 0;
-					complexNumbers = new ArrayList<Complex>();
-					continue;
+					System.exit(0);
 				}
 				
 				getRoot.close();
@@ -256,7 +254,6 @@ public class Newton {
 						continue;
 					}
 				}
-				
 			}
 			
 			observer.acceptResult(data, (short) (polynomial.order() + 1), requestNo);

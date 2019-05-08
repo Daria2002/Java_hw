@@ -1,9 +1,9 @@
 package hr.fer.zemris.java.raytracer;
 
 import java.util.List;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
 import java.util.concurrent.atomic.AtomicBoolean;
-
 import hr.fer.zemris.java.raytracer.model.GraphicalObject;
 import hr.fer.zemris.java.raytracer.model.IRayTracerProducer;
 import hr.fer.zemris.java.raytracer.model.IRayTracerResultObserver;
@@ -21,7 +21,7 @@ import hr.fer.zemris.java.raytracer.viewer.RayTracerViewer;
  * @author Daria Matković
  *
  */
-public class RayCasterParallel extends RecursiveAction {
+public class RayCasterParallel {
 	/**
 	 * This method is executed when program is run.
 	 * @param args takes no arguments
@@ -57,26 +57,16 @@ public class RayCasterParallel extends RecursiveAction {
 				
 				int offset = 0;
 				
-				// iterate through all pixels in screen
-				for(int y = 0; y < height; y++) {
-					for(int x = 0; x < width; x++) {
-					
-						Point3D screenPoint = screenCorner.add(
-								xAxis.scalarMultiply(x * horizontal/(width-1)))
-								.sub(yAxis.scalarMultiply(y*vertical/(height-1)));
-	
-						Ray ray = Ray.fromPoints(eye, screenPoint);
+				
+				ForkJoinPool pool = new ForkJoinPool();
+				
+				Task task = new Task(screenCorner, xAxis, yAxis, horizontal,
+						vertical, height, width, 0, scene, red, green, blue, eye,
+						offset, height, view);
 						
-						short[] rgb = new short[3];
-						tracer(scene, ray, rgb);
-						
-						red[offset] = rgb[0] > 255 ? 255 : rgb[0];
-						green[offset] = rgb[1] > 255 ? 255 : rgb[1];
-						blue[offset] = rgb[2] > 255 ? 255 : rgb[2];
-						
-						offset++;
-					}
-				}
+				
+				pool.invoke(task);
+				
 				System.out.println("Izračuni gotovi...");
 				observer.acceptResult(red, green, blue, requestNo);
 				System.out.println("Dojava gotova...");
@@ -89,17 +79,7 @@ public class RayCasterParallel extends RecursiveAction {
 			 * @param ray ray 
 			 * @param rgb color
 			 */
-			private void tracer(Scene scene, Ray ray, short[] rgb) {
-				
-				RayIntersection closestEl = getClosestRayIntersection(scene.getObjects(), ray);
-				
-				if(closestEl == null) {
-					rgb = null;
-					return;
-				}
-				
-				rgb = determineColorFor(closestEl, scene, ray, rgb);
-			}
+			
 			/*	
 				short[] rgb = new short[] {0, 0, 0};
 				rgb[0] = 0;
@@ -117,96 +97,208 @@ public class RayCasterParallel extends RecursiveAction {
 				return rgb;
 			}
 			*/
-			private RayIntersection getClosestRayIntersection(List<GraphicalObject> objects, 
-					Ray ray) {
+			
+			class Task extends RecursiveAction {
 
-				RayIntersection closestEl = null;
+				Point3D screenCorner;
+				Point3D xAxis;
+				Point3D yAxis;
+				double horizontal;
+				double vertical;
+				int yMax;
+				int xMax;
+				int yMin;
+				Scene scene;
+				short[] rgb;
+				short[] red;
+				short[] green;
+				short[] blue;
+				Point3D eye;
+				int offset;
+				int height;
+				Point3D view;
+				
+				static final int THRESHOLD = 3;
+				
+				public Task(Point3D screenCorner, Point3D xAxis, Point3D yAxis,
+						double horizontal, double vertical, int yMax, int xMax, int yMin,
+						Scene scene, short[] red, short[] green, short[] blue, Point3D eye,
+						int offset, int height, Point3D view) {
+					super();
+					this.screenCorner = screenCorner;
+					this.xAxis = xAxis;
+					this.yAxis = yAxis;
+					this.horizontal = horizontal;
+					this.vertical = vertical;
+					this.yMax = yMax;
+					this.xMax = xMax;
+					this.yMin = yMin;
+					this.scene = scene;
+					this.red = red;
+					this.green = green;
+					this.blue = blue;
+					this.eye = eye;
+					this.offset = offset;
+					this.height = height;
+					this.view = view;
+				}
+				
+				private short[] tracer(Scene scene, Ray ray, short[] rgb) {
+					
+					RayIntersection closestEl = getClosestRayIntersection(scene.getObjects(), ray);
+					
+					if(closestEl == null) {
+						rgb = null;
+						return rgb;
+					}
+					
+					rgb = determineColorFor(closestEl, scene, ray, rgb);
+					
+					return rgb;
+				}
 
-				// searching for closest element
-				for(GraphicalObject obj : objects) {
+				private short[] determineColorFor(RayIntersection s, Scene scene, Ray ray, short[] color) {
+					color[0] = 15;
+					color[1] = 15;
+					color[2] = 15;
 					
-					RayIntersection testClosest = obj.findClosestRayIntersection(ray);
+					for (LightSource light : scene.getLights()) {
+						
+						Ray rHelp = Ray.fromPoints(light.getPoint(), s.getPoint());
+						
+						RayIntersection sHelp = getClosestRayIntersection(
+								scene.getObjects(), rHelp);
+						
+						if(sHelp != null && Math.abs(sHelp.getPoint().sub(light.getPoint()).norm() 
+								- s.getPoint().sub(light.getPoint()).norm()) > 0.01) {
+							continue;
+						}
+						
+						PhongParams phongParams = calculatePhongParams(s, light, ray);
+						
+						// diffuse component to illumination
+						double diffuseComponent = Math.max(0, phongParams.n.scalarProduct(phongParams.l));
+						double reflectionComponent = phongParams.r.scalarProduct(phongParams.v);
+						
+						if(reflectionComponent < 0) {
+							reflectionComponent = 0;
+						}
+						
+						reflectionComponent = Math.pow(reflectionComponent, s.getKrn());
+						
+						color[0] += (reflectionComponent * s.getKrr() + diffuseComponent * s.getKdr()) * light.getR();
+						color[1] += (reflectionComponent * s.getKrg() + diffuseComponent * s.getKdg()) * light.getG();
+						color[2] += (reflectionComponent * s.getKrb() + diffuseComponent * s.getKdb()) * light.getB();
+						
+					}
 					
-					if(testClosest != null) {
-						if(closestEl == null || testClosest.getDistance() > testClosest.getDistance()) {
-							closestEl = testClosest;
+					return color;
+				}
+				
+				private RayIntersection getClosestRayIntersection(List<GraphicalObject> objects, 
+						Ray ray) {
+
+					RayIntersection closestEl = null;
+
+					// searching for closest element
+					for(GraphicalObject obj : objects) {
+						
+						RayIntersection testClosest = obj.findClosestRayIntersection(ray);
+						
+						if(testClosest != null) {
+							if(closestEl == null || testClosest.getDistance() > testClosest.getDistance()) {
+								closestEl = testClosest;
+							}
+						}
+					}
+					
+					return closestEl;
+				}
+				
+				class PhongParams {
+					
+					Point3D l;
+					Point3D n;
+					Point3D r;
+					Point3D v;
+					
+					public PhongParams(Point3D l, Point3D n, Point3D r, Point3D v) {
+						this.l = l;
+						this.n = n;
+						this.r = r;
+						this.v = v;
+					}
+				}
+				
+				private PhongParams calculatePhongParams(RayIntersection s, 
+						LightSource light, Ray ray) {
+					
+					Point3D l = Ray.fromPoints(s.getPoint(), light.getPoint()).direction;
+					Point3D n = s.getNormal();
+					Point3D d = l.negate();
+					Point3D r = d.sub(n.scalarMultiply(d.scalarProduct(n) * 2));
+					Point3D v = Ray.fromPoints(s.getPoint(), ray.start).direction;
+					
+					return new PhongParams(l, n, r, v);
+				}
+				
+				private void doTask(Point3D screenCorner, Point3D xAxis, Point3D yAxis,
+						double horizontal, double vertical, int yMax, int xMax, int yMin,
+						Scene scene, short[] red, short[] green, short[] blue,
+						Point3D eye, int offset, int height, Point3D view) {
+					
+					// iterate through all pixels in screen
+					for(int y = yMin; y < yMax; y++) {
+						for(int x = 0; x < xMax; x++) {
+						
+							Point3D screenPoint = screenCorner.add(
+									xAxis.scalarMultiply(x * horizontal/(xMax-1)))
+									.sub(yAxis.scalarMultiply(y * vertical/(yMax-yMin-1)));
+
+							Ray ray = Ray.fromPoints(eye, screenPoint);
+							
+							//rgb = new short[] {0, 0, 0};
+							
+							rgb = tracer(scene, ray, rgb);
+							
+							if(rgb == null) {
+								rgb = new short[] {0, 0, 0};
+							}
+							
+							red[offset] = rgb[0] > 255 ? 255 : rgb[0];
+							green[offset] = rgb[1] > 255 ? 255 : rgb[1];
+							blue[offset] = rgb[2] > 255 ? 255 : rgb[2];
+							
+							offset++;
 						}
 					}
 				}
-				
-				return closestEl;
-			}
-			
-			class PhongParams {
-				
-				Point3D l;
-				Point3D n;
-				Point3D r;
-				Point3D v;
-				
-				public PhongParams(Point3D l, Point3D n, Point3D r, Point3D v) {
-					this.l = l;
-					this.n = n;
-					this.r = r;
-					this.v = v;
-				}
-			}
-			
-			private PhongParams calculatePhongParams(RayIntersection s, 
-					LightSource light, Ray ray) {
-				
-				Point3D l = ray.fromPoints(s.getPoint(), light.getPoint()).direction;
-				Point3D n = s.getNormal();
-				Point3D d = l.negate();
-				Point3D r = d.sub(n.scalarMultiply(d.scalarProduct(n) * 2));
-				Point3D v = ray.fromPoints(s.getPoint(), ray.start).direction;
-				
-				return new PhongParams(l, n, r, v);
-			}
-			
-			private short[] determineColorFor(RayIntersection s, Scene scene, Ray ray, short[] color) {
-				/*short[] */color[0] = 15;
-				color[1] = 15;
-				color[2] = 15;
-				
-				for (LightSource light : scene.getLights()) {
-					
-					Ray rHelp = Ray.fromPoints(light.getPoint(), s.getPoint());
-					
-					RayIntersection sHelp = getClosestRayIntersection(
-							scene.getObjects(), rHelp);
-					
-					if(sHelp != null && Math.abs(sHelp.getPoint().sub(light.getPoint()).norm() 
-							- s.getPoint().sub(light.getPoint()).norm()) > 0.01) {
-						continue;
-					}
-					
-					PhongParams phongParams = calculatePhongParams(s, light, ray);
-					
-					// diffuse component to illumination
-					double diffuseComponent = Math.max(0, phongParams.n.scalarProduct(phongParams.l));
-					double reflectionComponent = phongParams.r.scalarProduct(phongParams.v);
-					
-					if(reflectionComponent < 0) {
-						reflectionComponent = 0;
-					}
-					
-					reflectionComponent = Math.pow(reflectionComponent, s.getKrn());
-					
-					color[0] += (reflectionComponent * s.getKrr() + diffuseComponent * s.getKdr()) * light.getR();
-					color[1] += (reflectionComponent * s.getKrg() + diffuseComponent * s.getKdg()) * light.getG();
-					color[2] += (reflectionComponent * s.getKrb() + diffuseComponent * s.getKdb()) * light.getB();
-					
-				}
-				
-				return color;
+
+				@Override
+				protected void compute() {
+
+					if(yMax-yMin < 1000) {
+						doTask(screenCorner,  xAxis,  yAxis,  horizontal,
+								vertical, yMax, xMax, yMin, scene, red, green,
+								blue, eye, offset, height, view);
+						
+					} else {
+						Point3D screenCorner = view.sub(xAxis.scalarMultiply((yMax-yMin)/2))
+								.add(yAxis.scalarMultiply(vertical/2));
+						
+						Task first = new Task(screenCorner, xAxis, yAxis, horizontal, vertical,
+								(yMax-yMin)/2 + yMin, xMax, yMin, scene, red, green, blue, eye,
+								offset, height, view);
+						
+						Task second = new Task(screenCorner, xAxis, yAxis, horizontal, vertical,
+								yMax, xMax, (yMax-yMin)/2 + yMin, scene, red, green, blue, eye,
+								offset, height, view);
+						
+						invokeAll(first, second);
+						
+					}	
+				}	
 			}
 		};
-	}
-
-	@Override
-	protected void compute() {
-		// TODO Auto-generated method stub
-		
 	}
 }

@@ -54,8 +54,13 @@ public class Newton {
 				getRoot.close();
 				break;
 			}
-			
-			Complex number = parseComplexNumber(root);
+			Complex number;
+			try {
+				number = parseComplexNumber(root);
+			} catch (Exception e) {
+				System.out.println("Unable to parse given complex number");
+				continue;
+			}
 			
 			if(number == null) {
 				System.out.println("Write valid complex number");
@@ -171,16 +176,15 @@ public class Newton {
 			    		  zn = znold;
 			    		  iter++;
 			
-			    	} while(iter < 100000 && module > 1E-3);
+			    	} while(iter < 1000 && module > 0.001);
 
 			    	int index = crp.indexOfClosestRootFor(zn, 0.002);
 			    	
-			    	data[offset] = (short) (index + 1);
+			    	data[offset] = (short) (index+1);
 				}
 			}
 			
 			return null;
-			
 		}
 	}
 	

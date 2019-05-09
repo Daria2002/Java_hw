@@ -1,7 +1,8 @@
 package hr.fer.zemris.java.custom.scripting.parser;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-
 import hr.fer.zemris.java.custom.collections.ArrayIndexedCollection;
 import hr.fer.zemris.java.custom.collections.ObjectStack;
 import hr.fer.zemris.java.custom.scripting.elems.Element;
@@ -12,6 +13,7 @@ import hr.fer.zemris.java.custom.scripting.elems.ElementOperator;
 import hr.fer.zemris.java.custom.scripting.elems.ElementString;
 import hr.fer.zemris.java.custom.scripting.elems.ElementVariable;
 import hr.fer.zemris.java.custom.scripting.lexer.LexerSmart;
+import hr.fer.zemris.java.custom.scripting.lexer.LexerSmartState;
 import hr.fer.zemris.java.custom.scripting.lexer.TokenSmart;
 import hr.fer.zemris.java.custom.scripting.lexer.TokenSmartType;
 import hr.fer.zemris.java.custom.scripting.nodes.DocumentNode;
@@ -19,6 +21,7 @@ import hr.fer.zemris.java.custom.scripting.nodes.EchoNode;
 import hr.fer.zemris.java.custom.scripting.nodes.ForLoopNode;
 import hr.fer.zemris.java.custom.scripting.nodes.Node;
 import hr.fer.zemris.java.custom.scripting.nodes.TextNode;
+import hr.fer.zemris.java.hw03.prob1.Lexer;
 
 /**
  * Represents smart parser
@@ -33,6 +36,221 @@ public class SmartScriptParser {
 	/** Stack for nodes, so nesting is possible **/
 	private ObjectStack stack;
 	
+	LexerSmart lexer;
+	
+	enum ParserMode {
+		FOR_LOOP_TAG,
+		ECHO_TAG, 
+		END_TAG, 
+		TEXT
+	}
+	
+	
+	private void buildDocumentModel() {
+		
+		int elementCounter = 0;
+		lexer = new LexerSmart(documentBody);
+		TokenSmart token = lexer.nextToken();
+		ParserMode parserMode = ParserMode.TEXT;
+		
+		while(token.getType() != TokenSmartType.EOF) {
+
+			// next 4 if/else sets lexer state
+			if(lexer.getToken().getType() == TokenSmartType.TAG_OPEN && 
+					lexer.getLexerState() == LexerSmartState.BASIC) {
+				
+				lexer.setState(LexerSmartState.TAG);
+				
+			} else if(lexer.getToken().getType() == TokenSmartType.TAG_OPEN && 
+					lexer.getLexerState() != LexerSmartState.BASIC) {
+				
+				throw new IllegalArgumentException("Tag open occured before last "
+						+ "tag sequence didn't close.");
+				
+			} else if(lexer.getToken().getType() == TokenSmartType.TAG_CLOSE && 
+					lexer.getLexerState() == LexerSmartState.TAG) {
+				
+				elementCounter = 0;
+				lexer.setState(LexerSmartState.BASIC);
+				
+			} else if(lexer.getToken().getType() == TokenSmartType.TAG_CLOSE &&
+					lexer.getLexerState() != LexerSmartState.TAG) {
+				
+				throw new IllegalArgumentException("There is no tag open element, "
+						+ "but tag close occured");
+				
+			}
+			
+			// id token type is tag open, get tag name, and set parser mode
+			if(token.getType() == TokenSmartType.TAG_OPEN) {
+				token = lexer.nextToken();
+				
+				if(token.getType() != TokenSmartType.TAG_NAME) {
+					throw new IllegalArgumentException("After tag open token type tag name "
+							+ "should occur.");
+				}
+				
+				parserMode = setParserMode(token.getValue().toString());
+				
+				switch (parserMode) {
+				case END_TAG:
+					endTag();
+					
+					if(lexer.getToken().getType() != TokenSmartType.TAG_CLOSE) {
+						throw new IllegalArgumentException("In tags with END arguments "
+								+ "should not appear.");
+					}
+					
+					return;
+					
+				case FOR_LOOP_TAG:
+					// if there are not four arguments, that means that current token
+					// is token after for loop tag, so no need for getting argument
+					// once more
+					if(!forTag()) {
+						continue;
+					}
+					
+					return;
+
+				case ECHO_TAG:
+					echoTag();
+					return;
+					
+				default:
+					throw new IllegalArgumentException("Exception occured");
+				}
+				
+			} else if(token.getType() == TokenSmartType.TEXT) {
+				TextNode textNode = new TextNode(token.getValue().toString());
+				Node parent = (Node)stack.peek();
+				parent.addChildNode(textNode);
+			}
+			
+			
+			token = lexer.nextToken();	
+		}
+		
+	}
+
+	private void echoTag() {
+		List<Element> elementList = new ArrayList<Element>();
+		
+		while(lexer.nextToken().getType() != TokenSmartType.TAG_CLOSE) {
+			
+			String tokenValue = lexer.getToken().getValue().toString();
+			
+			if(tokenValue.charAt(0) == '@') {
+				elementList.add(new ElementFunction(tokenValue.substring(1)));
+			
+			} else if(isOperator(tokenValue)) {
+				elementList.add(new ElementOperator(tokenValue));
+				
+			} else {
+				elementList.add(getIntegerDoubleOrString(tokenValue));
+			}
+		}
+		
+		EchoNode echoNode = getEchoNode(elementList.toArray());
+		Node parent = (Node)stack.peek();
+		parent.addChildNode(echoNode);
+	}
+
+	private boolean isOperator(String str) {
+		if(str.equals("+") || str.equals("-") || str.equals("*") || str.equals("/")
+				|| str.equals("^")) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	private boolean isNumeric(String str) { 
+		try {  
+			Double.parseDouble(str);  
+			return true;
+			
+		} catch(NumberFormatException e){  
+			return false;  
+		}  
+	}
+	
+	private boolean forTag() {
+		if(isNumeric(lexer.nextToken().getValue().toString())) {
+			throw new SmartScriptParserException("Variable name can't be number");
+		}
+		
+		ElementVariable variable = new ElementVariable(lexer.getToken().toString());
+		Element startExpression = getIntegerDoubleOrString(lexer.nextToken().toString());
+		Element endExpression =  getIntegerDoubleOrString(lexer.nextToken().toString());
+		Element stepExpression = null;
+		
+		boolean fourArgs = false;
+		
+		if(lexer.nextToken().getType() == TokenSmartType.TAG_ELEMENT) {
+			stepExpression = getIntegerDoubleOrString(lexer.getToken().toString());
+			fourArgs = true;
+		}
+		
+		stack.push(new ForLoopNode(variable, startExpression, endExpression, stepExpression));
+		return fourArgs;
+	}
+
+	private void endTag() {
+		Node child = (Node)stack.pop();
+		Node parent = (Node)stack.peek();
+		parent.addChildNode(child);
+	}
+
+	private ParserMode setParserMode(String value) {
+		switch (value) {
+		case "END":
+			return ParserMode.END_TAG;
+			
+		case "FOR":
+			return ParserMode.FOR_LOOP_TAG;
+
+		case "=":
+			return ParserMode.ECHO_TAG;
+			
+		default:
+			throw new IllegalArgumentException("Tag name can be =, END, FOR");
+		}
+	}
+
+	/**
+	 * Checks type of value (string, double, int) and convert it to right element
+	 * @param value value to check
+	 * @return Element object from given value
+	 */
+	private Element getIntegerDoubleOrString(String value) {
+		// check if value if integer
+		try {
+			return new ElementConstantInteger(Integer.parseInt(value));
+			
+		} catch (Exception e) {
+			// exception occurs if given value is not int
+			// check if given value is double
+			try {
+				return new ElementConstantDouble(Double.parseDouble(value));
+				
+			} catch (Exception e2) {
+				//exception occurs if given value is not int and double
+				return new ElementString(value);
+			}
+		}
+	}
+	
+	/**
+	 * Returns document node
+	 * @return document node
+	 */
+	public DocumentNode getDocumentNode() {
+		return documentNode;
+	}
+	
+/////////////////////////////
+
 	/**
 	 * Sets document node
 	 */
@@ -61,7 +279,7 @@ public class SmartScriptParser {
 					// take elements
 					token = lexer.nextToken();
 					Object[] forLoopArguments = getForLoopArguments(token.getValue());
-					
+					/*
 					// make forLoopNode
 					ElementVariable variable = new ElementVariable(forLoopArguments[0].toString());
 					Element startExpression = initializeElement(forLoopArguments[1].toString());
@@ -76,7 +294,7 @@ public class SmartScriptParser {
 							startExpression, endExpression, stepExpression);
 					
 					stack.push(forLoopNode);
-					
+					*/
 				} else if("=".equalsIgnoreCase(lexer.getToken().getValue().toString())) {
 				// if tag name was =
 					// get arguments in = tag
@@ -404,34 +622,5 @@ public class SmartScriptParser {
 		return array;
 	}
 	
-	/**
-	 * Checks type of value (string, double, int) and convert it to righ element
-	 * @param value value to check
-	 * @return Element object from given value
-	 */
-	private Element initializeElement(String value) {
-		// check if value if integer
-		try {
-			return new ElementConstantInteger(Integer.parseInt(value));
-			
-		} catch (Exception e) {
-			// exception occurs if given value is not int
-			// check if given value is double
-			try {
-				return new ElementConstantDouble(Double.parseDouble(value));
-				
-			} catch (Exception e2) {
-				//exception occurs if given value is not int and double
-				return new ElementString(value);
-			}
-		}
-	}
 	
-	/**
-	 * Returns document node
-	 * @return document node
-	 */
-	public DocumentNode getDocumentNode() {
-		return documentNode;
-	}
 }

@@ -31,6 +31,10 @@ public class LexerSmart {
 		setState(LexerSmartState.BASIC);
 	} 
 	
+	public LexerSmartState getLexerState() {
+		return lexerState;
+	}
+	
 	/**
 	 * Generates and returns next token. Throws LexerException if error occurs.
 	 * 
@@ -41,6 +45,7 @@ public class LexerSmart {
 			token = getBasicToken();
 			return token;
 		}
+		
 		token = getTagToken();
 		return token;
 	}
@@ -52,8 +57,6 @@ public class LexerSmart {
 	 * @return
 	 */
 	private TokenSmart getTagToken() {
-		boolean inStrings = false;
-		boolean escapeSequence = false;
 		StringBuilder tokenValue = new StringBuilder();
 		
 		while (currentIndex < data.length) {
@@ -81,38 +84,7 @@ public class LexerSmart {
 				
 				// if there are quotes, get string under quotes
 				if(data[currentIndex] == '\"') {
-					currentIndex++;
-					// building token whose value is under string
-					while(currentIndex < data.length) {
-						// throw exception if escape sequence is on and invalid escaping occurs
-						if(data[currentIndex] != '\\' && data[currentIndex] != '\"' && escapeSequence) {
-							throw new IllegalArgumentException("Invalid escaping in quotes");
-						}
-						
-						// if valid escape
-						else if((data[currentIndex] == '\\' || data[currentIndex] == '\"') && escapeSequence) {
-							escapeSequence = false;
-							tokenValue.append(data[currentIndex++]);
-							continue;
-						}
-							
-						// if \ occurs, escape sequence is on
-						else if(data[currentIndex] == '\\' && !escapeSequence) {
-							escapeSequence = true;
-							currentIndex++;
-							continue;
-						}
-						
-						// quoted value ends
-						if(data[currentIndex] == '\"' && !escapeSequence) {
-							currentIndex++;
-							break;
-						}
-						
-						tokenValue.append(data[currentIndex++]);
-					}
-					
-					return new TokenSmart(TokenSmartType.TAG_ELEMENT, tokenValue);
+					return getTokenUnderQuotes();
 				}
 				
 				// if value is function
@@ -142,6 +114,45 @@ public class LexerSmart {
 		return null;
 	}
 
+	private TokenSmart getTokenUnderQuotes() {
+
+		boolean escapeSequence = false;
+		currentIndex++;
+		StringBuilder tokenValue = new StringBuilder();
+		
+		// building token whose value is under string
+		while(currentIndex < data.length) {
+			// throw exception if escape sequence is on and invalid escaping occurs
+			if(data[currentIndex] != '\\' && data[currentIndex] != '\"' && escapeSequence) {
+				throw new IllegalArgumentException("Invalid escaping in quotes");
+			}
+			
+			// if valid escape
+			else if((data[currentIndex] == '\\' || data[currentIndex] == '\"') && escapeSequence) {
+				escapeSequence = false;
+				tokenValue.append(data[currentIndex++]);
+				continue;
+			}
+				
+			// if \ occurs, escape sequence is on
+			else if(data[currentIndex] == '\\' && !escapeSequence) {
+				escapeSequence = true;
+				currentIndex++;
+				continue;
+			}
+			
+			// quoted value ends
+			if(data[currentIndex] == '\"' && !escapeSequence) {
+				currentIndex++;
+				break;
+			}
+			
+			tokenValue.append(data[currentIndex++]);
+		}
+		
+		return new TokenSmart(TokenSmartType.TAG_ELEMENT,  "\"" + tokenValue + "\"");
+	}
+	
 	private TokenSmart getFunction() {
 		StringBuilder tokenValue = new StringBuilder();
 		
@@ -160,7 +171,7 @@ public class LexerSmart {
 		}
 		
 		tokenValue.append(data[currentIndex++]);
-		while(data[currentIndex] != ' ' && !Character.isDigit(data[currentIndex])) {
+		while(data[currentIndex] != ' ' && Character.isDigit(data[currentIndex])) {
 			tokenValue.append(data[currentIndex++]);
 		}
 		

@@ -17,12 +17,11 @@ import hr.fer.zemris.math.ComplexPolynomial;
 import hr.fer.zemris.math.ComplexRootedPolynomial;
 
 /**
- * This class generate fractals derived from Newton-Raphson iteration.  
+ * This class represents Newton_Raphson iteration-based fractal.
  * @author Daria Matković
  *
  */
 public class Newton {
-
 	/**
 	 * This method is executed when program is run. It takes roots entered via 
 	 * command line and generate function for generating fractals.

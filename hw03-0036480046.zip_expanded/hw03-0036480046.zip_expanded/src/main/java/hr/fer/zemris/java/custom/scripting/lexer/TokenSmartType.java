@@ -19,5 +19,4 @@ public enum TokenSmartType {
 	TAG_NAME, 
 	/** elements in tag **/
 	TAG_ELEMENT
-	
 }

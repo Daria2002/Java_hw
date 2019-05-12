@@ -3,7 +3,9 @@ package hr.fer.zemris.java.gui.layouts;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Insets;
 import java.awt.LayoutManager2;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,6 +15,8 @@ public class CalcLayout implements LayoutManager2 {
 
 	private int spaceBetweenRowsAndColumns;
 	private Map<Component, RCPosition> components;
+	private static final int HEIGHT = 5;
+	private static final int WIDTH = 7;
 	
 	public CalcLayout() {
 		this(0);
@@ -37,31 +41,39 @@ public class CalcLayout implements LayoutManager2 {
 
 	@Override
 	public Dimension preferredLayoutSize(Container parent) {
-		return new Dimension(1, 2);
+		return new Dimension(500, 500);
 	}
 
 	@Override
 	public Dimension minimumLayoutSize(Container parent) {
-		return new Dimension(1, 2);
+		return new Dimension(500, 500);
+	}
+
+	@Override
+	public Dimension maximumLayoutSize(Container target) {
+		return new Dimension(500, 500);
 	}
 
 	@Override
 	public void layoutContainer(Container parent) {
-		Dimension d = preferredLayoutSize(parent);
-        parent.setSize(d);
-
-        int x = spaceBetweenRowsAndColumns;
-        int y = spaceBetweenRowsAndColumns;
+		int numberOfComponents = components.size();
 		
-		for(Component comp : components.keySet()) {
-
-	    	int componentSize = comp.getWidth()/7;
-	    	
-			RCPosition position = components.get(comp);
-			comp.setBounds(x, y, position.getColumn(), position.getRow());
-			
+		if (numberOfComponents == 0) {
+			return;
 		}
 		
+		int i = 0;
+		for(Component comp : components.keySet()) {
+			RCPosition position = components.get(comp);
+			if (position != null) {
+				int x = i*2;
+				int y = i*2;
+				int w = 100;
+				int h = 100;
+				comp.setBounds(x, y, w, h);
+			}
+			i++;
+		}
 	}
 
 	@Override
@@ -73,12 +85,6 @@ public class CalcLayout implements LayoutManager2 {
 		}
 		
 		components.put(comp, (RCPosition) constraints);
-	}
-
-	@Override
-	public Dimension maximumLayoutSize(Container target) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override

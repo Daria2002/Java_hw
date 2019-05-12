@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class CalcLayout implements LayoutManager2{
+public class CalcLayout implements LayoutManager2 {
 
 	private int spaceBetweenRowsAndColumns;
 	private Map<Component, RCPosition> components;
@@ -32,32 +32,42 @@ public class CalcLayout implements LayoutManager2{
 	@Override
 	public void removeLayoutComponent(Component comp) {
 		this.removeLayoutComponent(comp);
+		components.remove(comp);
 	}
 
 	@Override
 	public Dimension preferredLayoutSize(Container parent) {
-		return null;
+		return new Dimension(1, 2);
 	}
 
 	@Override
 	public Dimension minimumLayoutSize(Container parent) {
-		// TODO Auto-generated method stub
-		return null;
+		return new Dimension(1, 2);
 	}
 
 	@Override
 	public void layoutContainer(Container parent) {
-		for(Component comp : components.keySet()) {
-			
-			RCPosition position = components.get(comp);
+		Dimension d = preferredLayoutSize(parent);
+        parent.setSize(d);
 
-	        
+        int x = spaceBetweenRowsAndColumns;
+        int y = spaceBetweenRowsAndColumns;
+		
+		for(Component comp : components.keySet()) {
+
+	    	int componentSize = comp.getWidth()/7;
+	    	
+			RCPosition position = components.get(comp);
+			comp.setBounds(x, y, position.getColumn(), position.getRow());
+			
 		}
+		
 	}
 
 	@Override
 	public void addLayoutComponent(Component comp, Object constraints) {
-		if(constraints instanceof RCPosition) {
+		if(!(constraints instanceof RCPosition)) {
+			System.out.println(constraints.getClass());
 			throw new UnsupportedOperationException("Constraints must be "
 					+ "instance of RCPosition.");
 		}

@@ -66,9 +66,25 @@ public class CalcLayout implements LayoutManager2 {
 		for(Component comp : components.keySet()) {
 			RCPosition position = components.get(comp);
 			if (position != null) {
-				int x = i*2;
-				int y = i*2;
-				int w = 100;
+				
+				int x;
+				int y;
+				int w;
+				
+				if(position.getColumn() == 1 && position.getRow() == 1) {
+					x = (position.getColumn()-1) * parent.getWidth()/numberOfComponents * 5 + 
+							position.getColumn() * this.spaceBetweenRowsAndColumns;
+					y = (position.getRow()-1) * parent.getHeight()/numberOfComponents +
+							position.getRow() * this.spaceBetweenRowsAndColumns;
+					w = 100 * 4;
+					
+				} else {
+					x = (position.getColumn()-1) * parent.getWidth()/numberOfComponents;
+					y = (position.getRow()-1) * parent.getHeight()/numberOfComponents;
+					w = 100;
+				}
+				
+				
 				int h = 100;
 				comp.setBounds(x, y, w, h);
 			}
@@ -76,6 +92,30 @@ public class CalcLayout implements LayoutManager2 {
 		}
 	}
 
+	private int getMaximumWidth() {
+		int maxWidth = -1;
+		
+		for(Component comp : components.keySet()) {
+			if(comp.getX() > maxWidth) {
+				maxWidth = comp.getX();
+			}
+		}
+		
+		return maxWidth;
+	}
+	
+	private int getMaximumHeight() {
+		int maxHeight = -1;
+		
+		for(Component comp : components.keySet()) {
+			if(comp.getX() > maxHeight) {
+				maxHeight = comp.getY();
+			}
+		}
+		
+		return maxHeight;
+	}
+	
 	@Override
 	public void addLayoutComponent(Component comp, Object constraints) {
 		if(!(constraints instanceof RCPosition)) {

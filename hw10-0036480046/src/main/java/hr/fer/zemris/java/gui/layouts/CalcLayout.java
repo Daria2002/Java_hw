@@ -30,7 +30,6 @@ public class CalcLayout implements LayoutManager2 {
 	}
 	
 	public CalcLayout(int space) {
-		System.out.println("kons");
 		spaceBetweenRowsAndColumns = space;
 		components = new HashMap<Component, RCPosition>();
 		columnsWidth = new int[7];
@@ -51,7 +50,6 @@ public class CalcLayout implements LayoutManager2 {
 
 	@Override
 	public Dimension preferredLayoutSize(Container parent) {
-		System.out.println("preferredLayoutSize pozvano");
 		Dimension preferredDimension = new Dimension(0, 0);
 		
 		for(Component comp : components.keySet()) {
@@ -90,12 +88,6 @@ public class CalcLayout implements LayoutManager2 {
 			}
 		}
 		
-		System.out.println("width: " + preferredDimension.width * NUMBER_OF_COLUMNS +
-				(NUMBER_OF_COLUMNS - 1) * spaceBetweenRowsAndColumns);
-		
-		System.out.println("height: " + preferredDimension.height * NUMBER_OF_ROWS +
-				(NUMBER_OF_ROWS - 1) * spaceBetweenRowsAndColumns);
-		
 		return new Dimension(preferredDimension.width * NUMBER_OF_COLUMNS +
 				(NUMBER_OF_COLUMNS - 1) * spaceBetweenRowsAndColumns, 
 				preferredDimension.height * NUMBER_OF_ROWS +
@@ -107,21 +99,21 @@ public class CalcLayout implements LayoutManager2 {
 		if(components.get(comp).getColumn() == 1 &&
 				components.get(comp).getRow() == 1) {
 			
-			if((comp.getPreferredSize().width - 4 * spaceBetweenRowsAndColumns)/5 > maxDim.width) {
+			if((componentSize.width - 4 * spaceBetweenRowsAndColumns)/5 > maxDim.width) {
 				maxDim.width = (componentSize.width - 4 * spaceBetweenRowsAndColumns) / 5;
 				
-			} if(comp.getPreferredSize().height > maxDim.height) {
+			} if(componentSize.height > maxDim.height) {
 				maxDim.height = componentSize.height;
 			}
 			
 			return maxDim;
 		}
 		
-		if(maxDim.height > componentSize.height) {
+		if(maxDim.height < componentSize.height) {
 			maxDim.height = componentSize.height;
 		}
 		
-		if(maxDim.width > componentSize.width) {
+		if(maxDim.width < componentSize.width) {
 			maxDim.width = componentSize.width;
 		}
 		
@@ -231,7 +223,6 @@ public class CalcLayout implements LayoutManager2 {
 
 	@Override
 	public Dimension minimumLayoutSize(Container parent) {
-		System.out.println("min ly size");
 		Dimension minimumDimension = new Dimension(0, 0);
 		
 		for(Component comp : components.keySet()) {
@@ -252,7 +243,6 @@ public class CalcLayout implements LayoutManager2 {
 
 	@Override
 	public Dimension maximumLayoutSize(Container target) {
-		System.out.println("max ly sjwnd");
 		Dimension maximumDimension = new Dimension(0, 0);
 		
 		for(Component comp : components.keySet()) {
@@ -273,18 +263,7 @@ public class CalcLayout implements LayoutManager2 {
 
 	@Override
 	public void layoutContainer(Container parent) {
-		System.out.println("layout container");
-		
-		System.out.println("parent width: "+ parent.getWidth());
-		System.out.println("parent heigth: "+ parent.getHeight());
-		
-		int numberOfComponents = components.size();
-		
-		
-		
-
-		
-		if (numberOfComponents == 0) {
+		if (components.size() == 0) {
 			return;
 		}
 
@@ -305,7 +284,6 @@ public class CalcLayout implements LayoutManager2 {
 				y = 0;
 				w = 0;
 				h = 0;
-				
 				
 				if(position.getColumn() == 1 && position.getRow() == 1) {
 					w = 4 * spaceBetweenRowsAndColumns + columnsWidth[0] + 
@@ -335,7 +313,6 @@ public class CalcLayout implements LayoutManager2 {
 	@Override
 	public void addLayoutComponent(Component comp, Object constraints) {
 		if(!(constraints instanceof RCPosition)) {
-			System.out.println(constraints.getClass());
 			throw new UnsupportedOperationException("Constraints must be "
 					+ "instance of RCPosition.");
 		}
@@ -359,7 +336,6 @@ public class CalcLayout implements LayoutManager2 {
 
 	@Override
 	public void invalidateLayout(Container target) {
-		// TODO Auto-generated method stub
 		
 	}
 

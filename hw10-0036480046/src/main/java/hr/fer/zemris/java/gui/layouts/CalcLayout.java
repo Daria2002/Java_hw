@@ -51,14 +51,14 @@ public class CalcLayout implements LayoutManager2 {
 	@Override
 	public Dimension preferredLayoutSize(Container parent) {
 		if(parent.getWidth() != 0 && parent.getHeight() != 0) {
-			columnsWidth = calculateComponentSize(parent.getWidth(), NUMBER_OF_COLUMNS);
-			rowsHeight = calculateComponentSize(parent.getHeight(), NUMBER_OF_ROWS);
+			//columnsWidth = calculateComponentSize(parent.getWidth(), NUMBER_OF_COLUMNS);
+			//rowsHeight = calculateComponentSize(parent.getHeight(), NUMBER_OF_ROWS);
 			return new Dimension(parent.getWidth(), parent.getHeight());
 		}
 		
 		Dimension maxDim = getMaxDimensions();
-		Arrays.fill(columnsWidth, maxDim.width);
-		Arrays.fill(rowsHeight, maxDim.height);
+		//Arrays.fill(columnsWidth, maxDim.width);
+		//Arrays.fill(rowsHeight, maxDim.height);
 		
 		return new Dimension(maxDim.width * NUMBER_OF_COLUMNS + 
 				(NUMBER_OF_COLUMNS-1) * spaceBetweenRowsAndColumns, 
@@ -66,29 +66,37 @@ public class CalcLayout implements LayoutManager2 {
 	}
 	
 	private int[] calculateComponentSize(int size, int numberOfComponents) {
-		int[] componentsSize = new int[TOTAL_NUMBER_OF_COMPONENTS]; 
+		int[] componentsSize = new int[numberOfComponents]; 
 		
 		if(size % numberOfComponents != 0) {
 			// number of elements with smaller size
-			int smallerSize = size % numberOfComponents;
+			int smallerSize = roundUp(size, numberOfComponents) * numberOfComponents - 
+					size;
 			
 			for(int i = 0; i < numberOfComponents; i++) {
 				if(i % 2 == 0 && smallerSize > 0) {
-					componentsSize[i] = size/numberOfComponents - 1;
+					componentsSize[i] = roundUp(size, numberOfComponents) - 1;
 					smallerSize--;
 				} else {
-					componentsSize[i] = size/numberOfComponents;
+					componentsSize[i] = roundUp(size, numberOfComponents);
 				}
 			}
 		}
-		
-		Arrays.fill(componentsSize, size/numberOfComponents);
+		else {
+			Arrays.fill(componentsSize, size/numberOfComponents);
+		}
 		return componentsSize;
 	}
 
+	public static int roundUp(int num, int divisor) {
+	    int sign = (num > 0 ? 1 : -1) * (divisor > 0 ? 1 : -1);
+	    return sign * (Math.abs(num) + Math.abs(divisor) - 1) / Math.abs(divisor);
+	}
+	
 	private Dimension getMaxDimensions() {
 		int maxWidth = 0; 
 		int maxHeight = 0;
+		
 		
 		for(Component comp : components.keySet()) {
 			if(comp.getPreferredSize().getHeight() == 0) {
@@ -165,29 +173,41 @@ public class CalcLayout implements LayoutManager2 {
 	@Override
 	public void layoutContainer(Container parent) {
 		int numberOfComponents = components.size();
-		
+		/*
 		columnsWidth = calculateComponentSize(parent.getPreferredSize().width, 
 				NUMBER_OF_COLUMNS);
 		rowsHeight = calculateComponentSize(parent.getPreferredSize().height,
 				NUMBER_OF_ROWS);
 		
+		*/
+		if(parent.getWidth() != 0 && parent.getHeight() != 0) {
+			columnsWidth = calculateComponentSize(parent.getWidth(), NUMBER_OF_COLUMNS);
+			rowsHeight = calculateComponentSize(parent.getHeight(), NUMBER_OF_ROWS);
+		}
+		
+		Dimension maxDim = getMaxDimensions();
+		Arrays.fill(columnsWidth, maxDim.width);
+		Arrays.fill(rowsHeight, maxDim.height);
+		
 		if (numberOfComponents == 0) {
 			return;
 		}
+
+		int x = 0;
+		int y = 0;
+		int w = 0;
+		int h = 0;
 		
 		for(Component comp : components.keySet()) {
 			RCPosition position = components.get(comp);
 			if (position != null) {
 				
-				int x;
-				int y;
-				int w;
-				int h;
+				x = 0;
+				y = 0;
+				w = 0;
+				h = 0;
 				
 				if(position.getColumn() == 1 && position.getRow() == 1) {
-					x = 0;
-					y = 0;
-					
 					w = 4 * spaceBetweenRowsAndColumns + columnsWidth[0] + 
 							columnsWidth[1] + columnsWidth[2] + columnsWidth[3] + 
 							 + columnsWidth[4];
@@ -203,7 +223,7 @@ public class CalcLayout implements LayoutManager2 {
 						y += rowsHeight[i];
 					}
 					
-					w = columnsWidth[components.get(comp).getColumn()];
+					w = columnsWidth[position.getColumn()-1];
 				}
 				
 				h = rowsHeight[position.getRow()-1];

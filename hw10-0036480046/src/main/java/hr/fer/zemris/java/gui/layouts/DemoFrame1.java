@@ -20,8 +20,8 @@ public class DemoFrame1 extends JFrame {
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		setSize(500, 500);
 		initGUI();
-	}*/
-	
+	}
+	*/
 	private void initGUI() {
 		Container cp = getContentPane();
 		cp.setLayout(new CalcLayout(3));
@@ -31,6 +31,7 @@ public class DemoFrame1 extends JFrame {
 		cp.add(l("tekst kraći"), new RCPosition(4,2));
 		cp.add(l("tekst srednji"), new RCPosition(4,5));
 		cp.add(l("tekst"), new RCPosition(4,7));
+		cp.add(l("tekst test"), new RCPosition(5,6));
 	}
 	
 	private JLabel l(String text) {

@@ -61,8 +61,8 @@ public class CalcLayout implements LayoutManager2 {
 		Arrays.fill(rowsHeight, maxDim.height);
 		
 		return new Dimension(maxDim.width * NUMBER_OF_COMLUMNS + 
-				NUMBER_OF_COMLUMNS * spaceBetweenRowsAndColumns, 
-				maxDim.height * NUMBER_OF_ROWS + NUMBER_OF_ROWS * spaceBetweenRowsAndColumns);
+				(NUMBER_OF_COMLUMNS-1) * spaceBetweenRowsAndColumns, 
+				maxDim.height * NUMBER_OF_ROWS + (NUMBER_OF_ROWS-1) * spaceBetweenRowsAndColumns);
 	}
 	
 	private int[] calculateComponentSize(int size, int numberOfComponents) {
@@ -91,16 +91,16 @@ public class CalcLayout implements LayoutManager2 {
 		int maxHeight = 0;
 		
 		for(Component comp : components.keySet()) {
-			if(comp.getSize().height == 0) {
+			if(comp.getPreferredSize().getHeight() == 0) {
 				// calculate size so largest element can show all informations
 				return calculateSize();
 			}
 			
-			if(comp.getWidth() > maxWidth) {
-				maxWidth = comp.getWidth();
+			if(comp.getPreferredSize().width > maxWidth) {
+				maxWidth = comp.getPreferredSize().width;
 				
-			} if(comp.getHeight() > maxHeight) {
-				maxHeight = comp.getHeight();
+			} if(comp.getPreferredSize().height > maxHeight) {
+				maxHeight = comp.getPreferredSize().height;
 			}
 		}
 		

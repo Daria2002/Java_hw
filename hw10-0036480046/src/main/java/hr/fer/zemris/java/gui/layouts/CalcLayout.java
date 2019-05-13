@@ -158,7 +158,6 @@ public class CalcLayout implements LayoutManager2 {
 			return;
 		}
 		
-		int i = 0;
 		for(Component comp : components.keySet()) {
 			RCPosition position = components.get(comp);
 			if (position != null) {
@@ -168,15 +167,25 @@ public class CalcLayout implements LayoutManager2 {
 				int w;
 				
 				if(position.getColumn() == 1 && position.getRow() == 1) {
-					x = (position.getColumn()-1) * parent.getWidth()/numberOfComponents * 5 + 
-							position.getColumn() * this.spaceBetweenRowsAndColumns;
+					x = 0;
+					
 					y = (position.getRow()-1) * parent.getHeight()/numberOfComponents +
-							position.getRow() * this.spaceBetweenRowsAndColumns;
-					w = columnsWidth[0] * 4 + 3*spaceBetweenRowsAndColumns;
+							(position.getRow()-1) * this.spaceBetweenRowsAndColumns;
+					w = spaceBetweenRowsAndColumns + columnsWidth[0] + 
+							spaceBetweenRowsAndColumns + columnsWidth[1] + 
+							spaceBetweenRowsAndColumns + columnsWidth[2] +
+							spaceBetweenRowsAndColumns + columnsWidth[3] + 
+							spaceBetweenRowsAndColumns + columnsWidth[4];
 					
 				} else {
-					x = (position.getColumn()-1) * parent.getWidth()/numberOfComponents;
-					y = (position.getRow()-1) * parent.getHeight()/numberOfComponents;
+					x = 0;
+					for(int i = 0; i < position.getColumn()-1; i++) {
+						x += columnsWidth[i];
+					}
+					
+					x += position.getColumn() * spaceBetweenRowsAndColumns;
+					y = (position.getRow()-1) * parent.getHeight()/numberOfComponents +
+							(position.getRow() - 1) * spaceBetweenRowsAndColumns;
 					w = columnsWidth[position.getColumn()-1];
 				}
 				
@@ -184,7 +193,6 @@ public class CalcLayout implements LayoutManager2 {
 				int h = rowsHeight[position.getRow()-1];
 				comp.setBounds(x, y, w, h);
 			}
-			i++;
 		}
 	}
 	

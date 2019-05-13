@@ -96,6 +96,18 @@ public class CalcLayout implements LayoutManager2 {
 				return calculateSize();
 			}
 			
+			if(components.get(comp).getColumn() == 1 &&
+					components.get(comp).getRow() == 1) {
+				if(comp.getPreferredSize().width/5 > maxWidth) {
+					maxWidth = (comp.getPreferredSize().width -
+							4 * spaceBetweenRowsAndColumns) / 5;
+					
+				} if(comp.getPreferredSize().height > maxHeight) {
+					maxHeight = comp.getPreferredSize().height;
+				}
+				continue;
+			}
+			
 			if(comp.getPreferredSize().width > maxWidth) {
 				maxWidth = comp.getPreferredSize().width;
 				

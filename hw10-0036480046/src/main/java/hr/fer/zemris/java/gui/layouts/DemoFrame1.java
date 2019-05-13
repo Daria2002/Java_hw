@@ -9,12 +9,18 @@ import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
 public class DemoFrame1 extends JFrame {
-
+	
 	public DemoFrame1() {
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		initGUI();
 		pack();
 	}
+	/*
+	public DemoFrame1() {
+		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		setSize(500, 500);
+		initGUI();
+	}*/
 	
 	private void initGUI() {
 		Container cp = getContentPane();

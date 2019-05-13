@@ -20,7 +20,7 @@ public class CalcLayout implements LayoutManager2 {
 	private int spaceBetweenRowsAndColumns;
 	private Map<Component, RCPosition> components;
 	private static final int NUMBER_OF_ROWS = 5;
-	private static final int NUMBER_OF_COMLUMNS = 7;
+	private static final int NUMBER_OF_COLUMNS = 7;
 	private static final int TOTAL_NUMBER_OF_COMPONENTS = 31;
 	private int[] columnsWidth;
 	private int[] rowsHeight;
@@ -51,7 +51,7 @@ public class CalcLayout implements LayoutManager2 {
 	@Override
 	public Dimension preferredLayoutSize(Container parent) {
 		if(parent.getWidth() != 0 && parent.getHeight() != 0) {
-			columnsWidth = calculateComponentSize(parent.getWidth(), NUMBER_OF_COMLUMNS);
+			columnsWidth = calculateComponentSize(parent.getWidth(), NUMBER_OF_COLUMNS);
 			rowsHeight = calculateComponentSize(parent.getHeight(), NUMBER_OF_ROWS);
 			return new Dimension(parent.getWidth(), parent.getHeight());
 		}
@@ -60,8 +60,8 @@ public class CalcLayout implements LayoutManager2 {
 		Arrays.fill(columnsWidth, maxDim.width);
 		Arrays.fill(rowsHeight, maxDim.height);
 		
-		return new Dimension(maxDim.width * NUMBER_OF_COMLUMNS + 
-				(NUMBER_OF_COMLUMNS-1) * spaceBetweenRowsAndColumns, 
+		return new Dimension(maxDim.width * NUMBER_OF_COLUMNS + 
+				(NUMBER_OF_COLUMNS-1) * spaceBetweenRowsAndColumns, 
 				maxDim.height * NUMBER_OF_ROWS + (NUMBER_OF_ROWS-1) * spaceBetweenRowsAndColumns);
 	}
 	
@@ -153,7 +153,7 @@ public class CalcLayout implements LayoutManager2 {
 		
 		Dimension maxDim = getMaxDimensions();
 		
-		return new Dimension(maxDim.width * NUMBER_OF_COMLUMNS, 
+		return new Dimension(maxDim.width * NUMBER_OF_COLUMNS, 
 				maxDim.height * NUMBER_OF_ROWS);
 	}
 
@@ -166,6 +166,11 @@ public class CalcLayout implements LayoutManager2 {
 	public void layoutContainer(Container parent) {
 		int numberOfComponents = components.size();
 		
+		columnsWidth = calculateComponentSize(parent.getPreferredSize().width, 
+				NUMBER_OF_COLUMNS);
+		rowsHeight = calculateComponentSize(parent.getPreferredSize().height,
+				NUMBER_OF_ROWS);
+		
 		if (numberOfComponents == 0) {
 			return;
 		}
@@ -177,32 +182,31 @@ public class CalcLayout implements LayoutManager2 {
 				int x;
 				int y;
 				int w;
+				int h;
 				
 				if(position.getColumn() == 1 && position.getRow() == 1) {
 					x = 0;
+					y = 0;
 					
-					y = (position.getRow()-1) * parent.getHeight()/numberOfComponents +
-							(position.getRow()-1) * this.spaceBetweenRowsAndColumns;
-					w = spaceBetweenRowsAndColumns + columnsWidth[0] + 
-							spaceBetweenRowsAndColumns + columnsWidth[1] + 
-							spaceBetweenRowsAndColumns + columnsWidth[2] +
-							spaceBetweenRowsAndColumns + columnsWidth[3] + 
-							spaceBetweenRowsAndColumns + columnsWidth[4];
+					w = 4 * spaceBetweenRowsAndColumns + columnsWidth[0] + 
+							columnsWidth[1] + columnsWidth[2] + columnsWidth[3] + 
+							 + columnsWidth[4];
 					
 				} else {
-					x = 0;
+					x = spaceBetweenRowsAndColumns * (position.getColumn()-1);
 					for(int i = 0; i < position.getColumn()-1; i++) {
 						x += columnsWidth[i];
 					}
 					
-					x += position.getColumn() * spaceBetweenRowsAndColumns;
-					y = (position.getRow()-1) * parent.getHeight()/numberOfComponents +
-							(position.getRow() - 1) * spaceBetweenRowsAndColumns;
-					w = columnsWidth[position.getColumn()-1];
+					y = spaceBetweenRowsAndColumns * (position.getRow()-1);
+					for(int i = 0; i < position.getRow()-1; i++) {
+						y += rowsHeight[i];
+					}
+					
+					w = columnsWidth[components.get(comp).getColumn()];
 				}
 				
-				
-				int h = rowsHeight[position.getRow()-1];
+				h = rowsHeight[position.getRow()-1];
 				comp.setBounds(x, y, w, h);
 			}
 		}
@@ -214,6 +218,10 @@ public class CalcLayout implements LayoutManager2 {
 			System.out.println(constraints.getClass());
 			throw new UnsupportedOperationException("Constraints must be "
 					+ "instance of RCPosition.");
+		}
+		
+		if(constraints != null && components.get(constraints) != null) {
+			throw new UnsupportedOperationException("Given constraints already added.");
 		}
 		
 		components.put(comp, (RCPosition) constraints);

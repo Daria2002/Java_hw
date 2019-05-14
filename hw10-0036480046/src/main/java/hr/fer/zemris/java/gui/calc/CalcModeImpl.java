@@ -20,9 +20,9 @@ public class CalcModeImpl implements CalcModel {
 	boolean containsDot;
 
 	/** list of added observers **/
-	private List<CalcValueObserver> observers;
+	private List<CalcValueListener> observers;
 	/** list of observers to remove **/
-	private List<CalcValueObserver> removeList;
+	private List<CalcValueListener> removeList;
 	
 	public CalcModeImpl() {
 
@@ -33,8 +33,8 @@ public class CalcModeImpl implements CalcModel {
 		editableModel = true;
 		containsDot = false;
 		positiveNumber = true;
-		observers = new ArrayList<CalcValueObserver>();
-		removeList = new ArrayList<CalcValueObserver>();
+		observers = new ArrayList<CalcValueListener>();
+		removeList = new ArrayList<CalcValueListener>();
 		
 	}
 	
@@ -43,14 +43,14 @@ public class CalcModeImpl implements CalcModel {
 		Objects.requireNonNull(l);
 		
 		if(observers != null) {
-			for(CalcValueObserver ob:observers) {
+			for(CalcValueListener ob:observers) {
 				if(ob.equals(l)) {
 					throw new IllegalArgumentException("Already in list.");
 				}
 			}
 		}
 		
-		observers.add((CalcValueObserver) l);
+		observers.add(l);
 	}
 
 	@Override
@@ -58,7 +58,7 @@ public class CalcModeImpl implements CalcModel {
 		Objects.requireNonNull(l);
 		
 		if(observers != null) {
-			for(CalcValueObserver ob:observers) {
+			for(CalcValueListener ob:observers) {
 				if(ob.equals(l)) {
 					removeList.add((CalcValueObserver) l);
 				}
@@ -80,12 +80,12 @@ public class CalcModeImpl implements CalcModel {
 		
 		if(observers!=null) {
 			if(removeList != null) {
-				for(CalcValueObserver observer : removeList) {
+				for(CalcValueListener observer : removeList) {
 					observers.remove(observer);
 				}
 			}
 			
-			for(CalcValueObserver observer : observers) {
+			for(CalcValueListener observer : observers) {
 				observer.valueChanged(this);
 			}
 		}

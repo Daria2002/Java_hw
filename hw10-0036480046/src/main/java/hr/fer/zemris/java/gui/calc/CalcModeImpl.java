@@ -40,14 +40,30 @@ public class CalcModeImpl implements CalcModel {
 	
 	@Override
 	public void addCalcValueListener(CalcValueListener l) {
-		// TODO Auto-generated method stub
+		Objects.requireNonNull(l);
 		
+		if(observers != null) {
+			for(CalcValueObserver ob:observers) {
+				if(ob.equals(l)) {
+					throw new IllegalArgumentException("Already in list.");
+				}
+			}
+		}
+		
+		observers.add((CalcValueObserver) l);
 	}
 
 	@Override
 	public void removeCalcValueListener(CalcValueListener l) {
-		// TODO Auto-generated method stub
+		Objects.requireNonNull(l);
 		
+		if(observers != null) {
+			for(CalcValueObserver ob:observers) {
+				if(ob.equals(l)) {
+					removeList.add((CalcValueObserver) l);
+				}
+			}
+		}
 	}
 
 	@Override
@@ -71,51 +87,6 @@ public class CalcModeImpl implements CalcModel {
 			
 			for(CalcValueObserver observer : observers) {
 				observer.valueChanged(this);
-			}
-		}
-	}
-	
-	/**
-	 * Add the observer in observers if not already there
-	 * @param observer observer to add
-	 */
-	public void addObserver(CalcValueObserver observer) {
-		Objects.requireNonNull(observer);
-		
-		if(observers != null) {
-			for(CalcValueObserver ob:observers) {
-				if(ob.equals(observer)) {
-					throw new IllegalArgumentException("Already in list.");
-				}
-			}
-		}
-		
-		observers.add(observer);
-	}
-
-	/**
-	 * Remove the observer from observers if present
-	 * @param observer observer to remove
-	 */
-	public void removeObserver(CalcValueObserver observer) {
-		Objects.requireNonNull(observer);
-		
-		if(observers != null) {
-			for(CalcValueObserver ob:observers) {
-				if(ob.equals(observer)) {
-					removeList.add(observer);
-				}
-			}
-		}
-	}
-	
-	/**
-	 * Remove all observers from observers list
-	 */
-	public void clearObservers() {
-		if(observers != null) {
-			for(CalcValueObserver observer:observers) {
-				removeObserver(observer);
 			}
 		}
 	}

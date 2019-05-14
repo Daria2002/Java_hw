@@ -100,6 +100,7 @@ public class CalcModeImpl implements CalcModel {
 	public void clear() {
 		enteredNumberString = "";
 		enteredNumberDecimal = null;
+		editableModel = true;
 	}
 
 	@Override
@@ -108,6 +109,7 @@ public class CalcModeImpl implements CalcModel {
 		enteredNumberDecimal = null;
 		activeOperand = null;
 		pendingOperation = null;
+		editableModel = true;
 	}
 
 	@Override

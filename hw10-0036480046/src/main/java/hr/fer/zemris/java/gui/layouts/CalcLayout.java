@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 
 public class CalcLayout implements LayoutManager2 {
@@ -207,13 +208,17 @@ public class CalcLayout implements LayoutManager2 {
 		for(Component comp : components.keySet()) {
 			labelFont = comp.getFont();
 			
-			
 			try {
 				JLabel compLabel = (JLabel) comp;
 				labelText = compLabel.getText();
 			} catch (Exception e) {
-				JButton button = (JButton) comp;
-				labelText = button.getText();
+				try {
+					JButton button = (JButton) comp;
+					labelText = button.getText();
+				} catch (Exception e1) {
+					JCheckBox button = (JCheckBox) comp;
+					labelText = button.getText();
+				}
 			}
 			
 			stringWidth = comp.getFontMetrics(labelFont).stringWidth(labelText);

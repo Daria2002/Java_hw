@@ -1,5 +1,8 @@
 package hr.fer.zemris.java.gui.calc;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.function.DoubleBinaryOperator;
 
 import hr.fer.zemris.java.gui.calc.model.CalcModel;
@@ -15,6 +18,11 @@ public class CalcModeImpl implements CalcModel {
 	Double activeOperand;
 	DoubleBinaryOperator pendingOperation;
 	boolean containsDot;
+
+	/** list of added observers **/
+	private List<CalcValueObserver> observers;
+	/** list of observers to remove **/
+	private List<CalcValueObserver> removeList;
 	
 	public CalcModeImpl() {
 
@@ -25,6 +33,8 @@ public class CalcModeImpl implements CalcModel {
 		editableModel = true;
 		containsDot = false;
 		positiveNumber = true;
+		observers = new ArrayList<CalcValueObserver>();
+		removeList = new ArrayList<CalcValueObserver>();
 		
 	}
 	
@@ -51,6 +61,63 @@ public class CalcModeImpl implements CalcModel {
 		enteredNumberString = String.valueOf(value);
 		
 		editableModel = false;
+		
+		if(observers!=null) {
+			if(removeList != null) {
+				for(CalcValueObserver observer : removeList) {
+					observers.remove(observer);
+				}
+			}
+			
+			for(CalcValueObserver observer : observers) {
+				observer.valueChanged(this);
+			}
+		}
+	}
+	
+	/**
+	 * Add the observer in observers if not already there
+	 * @param observer observer to add
+	 */
+	public void addObserver(CalcValueObserver observer) {
+		Objects.requireNonNull(observer);
+		
+		if(observers != null) {
+			for(CalcValueObserver ob:observers) {
+				if(ob.equals(observer)) {
+					throw new IllegalArgumentException("Already in list.");
+				}
+			}
+		}
+		
+		observers.add(observer);
+	}
+
+	/**
+	 * Remove the observer from observers if present
+	 * @param observer observer to remove
+	 */
+	public void removeObserver(CalcValueObserver observer) {
+		Objects.requireNonNull(observer);
+		
+		if(observers != null) {
+			for(CalcValueObserver ob:observers) {
+				if(ob.equals(observer)) {
+					removeList.add(observer);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Remove all observers from observers list
+	 */
+	public void clearObservers() {
+		if(observers != null) {
+			for(CalcValueObserver observer:observers) {
+				removeObserver(observer);
+			}
+		}
 	}
 
 	@Override

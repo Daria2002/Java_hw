@@ -6,19 +6,26 @@ import hr.fer.zemris.java.gui.calc.model.CalcModel;
 import hr.fer.zemris.java.gui.calc.model.CalcValueListener;
 import hr.fer.zemris.java.gui.calc.model.CalculatorInputException;
 
-public class MyCalcModel implements CalcModel {
+public class CalcModeImpl implements CalcModel {
 
 	boolean editableModel;
 	boolean positiveNumber;
 	String enteredNumberString;
 	Double enteredNumberDecimal;
 	Double activeOperand;
+	DoubleBinaryOperator pendingOperation;
+	boolean containsDot;
 	
-	public MyCalcModel() {
+	public CalcModeImpl() {
 
+		activeOperand = null;
 		enteredNumberString = "";
 		enteredNumberDecimal = Double.valueOf(0);
-	
+		pendingOperation = null;
+		editableModel = true;
+		containsDot = false;
+		positiveNumber = true;
+		
 	}
 	
 	@Override
@@ -35,45 +42,34 @@ public class MyCalcModel implements CalcModel {
 
 	@Override
 	public double getValue() {
-		return enteredNumberDecimal;
+		return ((positiveNumber ? 1 : (-1)) * enteredNumberDecimal);
 	}
 
 	@Override
 	public void setValue(double value) {
 		enteredNumberDecimal = value;
-		
-		if(Double.isInfinite(value)) {
-			enteredNumberString = "Infinity";
-			
-		} else if(Double.isNaN(value)) {
-			enteredNumberString = "NaN";
-			
-		} else if(Double.isInfinite(-value)) {
-			enteredNumberString = "-Inifinty";
-			
-		} else {
-			enteredNumberString = String.valueOf(value);
-		}
+		enteredNumberString = String.valueOf(value);
 		
 		editableModel = false;
 	}
 
 	@Override
 	public boolean isEditable() {
-		// TODO Auto-generated method stub
-		return false;
+		return editableModel;
 	}
 
 	@Override
 	public void clear() {
-		// TODO Auto-generated method stub
-		
+		enteredNumberString = "";
+		enteredNumberDecimal = null;
 	}
 
 	@Override
 	public void clearAll() {
-		// TODO Auto-generated method stub
-		
+		enteredNumberString = "";
+		enteredNumberDecimal = null;
+		activeOperand = null;
+		pendingOperation = null;
 	}
 
 	@Override
@@ -91,11 +87,26 @@ public class MyCalcModel implements CalcModel {
 			throw new CalculatorInputException("Value is not editable.");
 		}
 		
-		if(enteredNumberString.contains(".")) {
+		if(containsDot) {
 			throw new CalculatorInputException("Decimal point is already in value.");
 		}
 		
-		enteredNumberString += ".";
+		if("".equals(enteredNumberString)) {
+			throw new CalculatorInputException("It is not possible to add decimal point.");
+		}
+		
+		containsDot = true;
+		
+		// step 1: unboxing
+		double dbl = enteredNumberDecimal.doubleValue();
+
+		// step 2: casting
+		int intgr = (int) dbl;
+
+		// step 3: boxing
+		Integer val = Integer.valueOf(intgr);
+		
+		enteredNumberString = Integer.valueOf(val) + ".";
 		enteredNumberDecimal = Double.valueOf(enteredNumberString);
 	}
 
@@ -106,9 +117,15 @@ public class MyCalcModel implements CalcModel {
 		}
 		
 		try {
-			Double help = Double.valueOf(enteredNumberString + String.valueOf(digit));
-			enteredNumberString = String.valueOf(help);
+
+			if(Double.isInfinite(Double.valueOf(enteredNumberString +
+					String.valueOf(digit)))) {
+				throw new CalculatorInputException("Number is infinite.");
+			}
+			
+			enteredNumberString = String.valueOf(enteredNumberString + String.valueOf(digit));
 			enteredNumberDecimal = Double.valueOf(enteredNumberString);
+			
 		} catch (Exception e) {
 			throw new CalculatorInputException("This digit is not valid value.");
 		}
@@ -116,13 +133,15 @@ public class MyCalcModel implements CalcModel {
 
 	@Override
 	public boolean isActiveOperandSet() {
-		// TODO Auto-generated method stub
-		return false;
+		if(activeOperand == null) {
+			return false;
+		}
+		return true;
 	}
 
 	@Override
 	public double getActiveOperand() throws IllegalStateException {
-		if(String.valueOf(activeOperand).isEmpty()) {
+		if(activeOperand == null) {
 			throw new IllegalStateException("Active operand doesn't exists.");
 		}
 		
@@ -131,26 +150,22 @@ public class MyCalcModel implements CalcModel {
 
 	@Override
 	public void setActiveOperand(double activeOperand) {
-		// TODO Auto-generated method stub
-		
+		this.activeOperand = activeOperand;
 	}
 
 	@Override
 	public void clearActiveOperand() {
-		// TODO Auto-generated method stub
-		
+		this.activeOperand = null;
 	}
 
 	@Override
 	public DoubleBinaryOperator getPendingBinaryOperation() {
-		// TODO Auto-generated method stub
-		return null;
+		return pendingOperation;
 	}
 
 	@Override
 	public void setPendingBinaryOperation(DoubleBinaryOperator op) {
-		// TODO Auto-generated method stub
-		
+		pendingOperation = op;
 	}
 
 	@Override
@@ -160,11 +175,19 @@ public class MyCalcModel implements CalcModel {
 			return enteredNumberString;
 		}
 		
-		if(enteredNumberString.isEmpty()) {
+		if(enteredNumberString.isEmpty() || enteredNumberDecimal == 0.0) {
 			return positiveNumber ? "0" : "-0";
 		}
 		
-		return (positiveNumber ? "" : "-") + enteredNumberString;
+		String value = "";
+		
+		try {
+			value = Integer.valueOf(enteredNumberString).toString();
+		} catch (Exception e) {
+			value = Double.valueOf(enteredNumberString).toString();
+		}
+		
+		return (positiveNumber ? "" : "-") + value;
 	}
-	
 }
+	

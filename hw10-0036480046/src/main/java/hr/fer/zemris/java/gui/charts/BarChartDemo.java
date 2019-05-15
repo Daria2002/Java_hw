@@ -1,5 +1,6 @@
 package hr.fer.zemris.java.gui.charts;
 
+import java.awt.BorderLayout;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -9,6 +10,8 @@ import java.util.List;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
@@ -58,7 +61,17 @@ public class BarChartDemo extends JFrame {
 		
 		bcd.setLayout(new BoxLayout(bcd.getContentPane(), BoxLayout.Y_AXIS));
 
-		JLabel lab = new JLabel(fileName);
+		JLabel lab = new JLabel(fileName, SwingConstants.CENTER);
+		
+		
+		//bcd.getContentPane().add(lab);
+		/*
+		JPanel content = new JPanel();
+        content.setLayout(new BorderLayout());
+		
+        content.add(lab , BorderLayout.NORTH);
+		*/
+		
 		bcd.getContentPane().add(lab);
 		bcd.getContentPane().add(bcc);
 		SwingUtilities.invokeLater(() -> {bcd.setVisible(true);});

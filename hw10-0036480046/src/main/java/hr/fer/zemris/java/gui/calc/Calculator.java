@@ -13,10 +13,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
-import hr.fer.zemris.java.gui.calc.model.CalcModel;
-import hr.fer.zemris.java.gui.calc.model.CalcValueListener;
 import hr.fer.zemris.java.gui.layouts.CalcLayout;
-import hr.fer.zemris.java.gui.layouts.DemoFrame1;
 import hr.fer.zemris.java.gui.layouts.RCPosition;
 
 public class Calculator extends JFrame {
@@ -205,7 +202,7 @@ public class Calculator extends JFrame {
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		initGUI();
 		setSize(500, 500);
-		pack();
+		//pack();
 	}
 	
 	String n = "";

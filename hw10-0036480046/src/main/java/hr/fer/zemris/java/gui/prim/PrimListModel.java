@@ -6,17 +6,32 @@ import java.util.List;
 import javax.swing.ListModel;
 import javax.swing.event.ListDataListener;
 
+/**
+ * This class represents model of prime number list.
+ * @author Daria Matković
+ *
+ */
 public class PrimListModel implements ListModel<Integer> {
 
+	/** prime numbers **/
 	List<Integer> prim = new ArrayList<Integer>();
+	/** list data listener **/
 	List<ListDataListener> ldl = new ArrayList<ListDataListener>();
+	/** start index **/
 	private static final int FIRST_START = 0;
+	/** index of last prime number found **/
 	int lastPrime = FIRST_START;
 	
+	/**
+	 * Adds first element to prime list
+	 */
 	public PrimListModel() {
 		prim.add(1);
 	}
 	
+	/**
+	 * Gets next prime number
+	 */
 	void next() {
 		if(lastPrime == FIRST_START) {
 			lastPrime++;

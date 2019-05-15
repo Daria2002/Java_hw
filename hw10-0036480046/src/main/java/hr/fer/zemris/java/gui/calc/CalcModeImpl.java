@@ -158,19 +158,6 @@ public class CalcModeImpl implements CalcModel {
 		
 		positiveNumber = !positiveNumber;
 		
-		enteredNumberDecimal *= -1;
-		
-		if(observers!=null) {
-			if(removeList != null) {
-				for(CalcValueListener observer : removeList) {
-					observers.remove(observer);
-				}
-			}
-			
-			for(CalcValueListener observer : observers) {
-				observer.valueChanged(this);
-			}
-		}
 	}
 
 	@Override

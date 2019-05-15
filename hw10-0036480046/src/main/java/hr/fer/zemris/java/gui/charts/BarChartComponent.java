@@ -102,6 +102,14 @@ public class BarChartComponent extends JComponent {
 		drawArrow(g2D, width - yPadding, height - 50-getY()+9, width - yPadding+5, height - 50-getY()+9);
 	}
 	
+	/**
+	 * This method is used for drawing arrow
+	 * @param g1 graphics
+	 * @param x1 start x value
+	 * @param y1 start y value
+	 * @param x2 stop x value
+	 * @param y2 stop y value
+	 */
 	void drawArrow(Graphics g1, int x1, int y1, int x2, int y2) {
         Graphics2D g = (Graphics2D) g1.create();
 

@@ -169,6 +169,18 @@ public class CalcModeImpl implements CalcModel {
 		} catch (Exception e) {
 			throw new CalculatorInputException("This digit is not valid value.");
 		}
+		
+		if(observers!=null) {
+			if(removeList != null) {
+				for(CalcValueListener observer : removeList) {
+					observers.remove(observer);
+				}
+			}
+			
+			for(CalcValueListener observer : observers) {
+				observer.valueChanged(this);
+			}
+		}
 	}
 
 	@Override

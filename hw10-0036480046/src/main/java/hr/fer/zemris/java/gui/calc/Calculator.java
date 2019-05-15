@@ -21,7 +21,22 @@ import hr.fer.zemris.java.gui.layouts.RCPosition;
 public class Calculator extends JFrame {
 
 	private static CalcModeImpl cmi = new CalcModeImpl();
+
+	private static Container cp;
 	private static JLabel screen;
+	
+	private static ActionListener checkBoxListener = 
+			new ActionListener() {
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			JButton buttonEX = new JButton("e^x");
+			cp.add(buttonEX, new RCPosition(4, 1));
+			
+			JButton buttonArctg = new JButton("arctan");
+			cp.add(buttonArctg, new RCPosition(4, 2));
+		}
+	};
 	
 	private static ActionListener numberListener =
 		(e) -> {
@@ -39,9 +54,11 @@ public class Calculator extends JFrame {
 
 				// step 3: boxing
 				Integer val = Integer.valueOf(intgr);
-				screen.setText(val.toString());
+				//screen.setText(val.toString());
 			}
 		};
+		
+	
 		
 	public Calculator() {
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -52,7 +69,7 @@ public class Calculator extends JFrame {
 	
 	String n = "";
 	private void initGUI() {
-		Container cp = getContentPane();
+		cp = getContentPane();
 		cp.setLayout(new CalcLayout(3));
 		
 		screen = new JLabel("");
@@ -109,7 +126,13 @@ public class Calculator extends JFrame {
 		
 		JButton buttonCos = new JButton("sin");
 		cp.add(buttonCos, new RCPosition(3, 2));
+		/*
+		JButton button10X = new JButton("10^x");
+		cp.add(button10X, new RCPosition(3, 1));
 		
+		JButton buttonArccos = new JButton("arccos");
+		cp.add(buttonArccos, new RCPosition(3, 2));
+		*/
 		JButton button4 = new JButton("4");
 		cp.add(button4, new RCPosition(3, 3));
 		button4.addActionListener(numberListener);
@@ -128,12 +151,18 @@ public class Calculator extends JFrame {
 		JButton buttonPush = new JButton("push");
 		cp.add(buttonPush, new RCPosition(3, 7));
 		
+		JButton buttonLn = new JButton("ln");
+		cp.add(buttonLn, new RCPosition(4, 1));
+		
+		JButton buttonTan = new JButton("tan");
+		cp.add(buttonTan, new RCPosition(4, 2));
+		/*
 		JButton buttonEX = new JButton("e^x");
 		cp.add(buttonEX, new RCPosition(4, 1));
 		
 		JButton buttonArctg = new JButton("arctan");
 		cp.add(buttonArctg, new RCPosition(4, 2));
-		
+		*/
 		JButton button1 = new JButton("1");
 		cp.add(button1, new RCPosition(4, 3));
 		button1.addActionListener(numberListener);
@@ -152,11 +181,19 @@ public class Calculator extends JFrame {
 		JButton buttonPop = new JButton("pop");
 		cp.add(buttonPop, new RCPosition(4, 7));
 		
+		JButton buttonXN = new JButton("x^n");
+		cp.add(buttonXN, new RCPosition(5, 1));
+		
+		JButton buttonCtg = new JButton("ctg");
+		cp.add(buttonCtg, new RCPosition(5, 2));
+		
+		/*
 		JButton buttonXInvN = new JButton("x^(1/n)");
 		cp.add(buttonXInvN, new RCPosition(5, 1));
 		
 		JButton buttonArcctg = new JButton("arcctg");
 		cp.add(buttonArcctg, new RCPosition(5, 2));
+		*/
 		
 		JButton button0 = new JButton("0");
 		cp.add(button0, new RCPosition(5, 3));
@@ -172,7 +209,7 @@ public class Calculator extends JFrame {
 
 		JCheckBox checkBox = new JCheckBox("Inv");
 		cp.add(checkBox, new RCPosition(5, 7));
-		
+		checkBox.addActionListener(checkBoxListener);
 	}
 	
 	private JLabel l(String text) {

@@ -99,17 +99,41 @@ public class CalcModeImpl implements CalcModel {
 	@Override
 	public void clear() {
 		enteredNumberString = "";
-		enteredNumberDecimal = null;
+		enteredNumberDecimal = Double.valueOf(0);
 		editableModel = true;
+		
+		if(observers!=null) {
+			if(removeList != null) {
+				for(CalcValueListener observer : removeList) {
+					observers.remove(observer);
+				}
+			}
+			
+			for(CalcValueListener observer : observers) {
+				observer.valueChanged(this);
+			}
+		}
 	}
 
 	@Override
 	public void clearAll() {
 		enteredNumberString = "";
-		enteredNumberDecimal = null;
+		enteredNumberDecimal = Double.valueOf(0);
 		activeOperand = null;
 		pendingOperation = null;
 		editableModel = true;
+		
+		if(observers!=null) {
+			if(removeList != null) {
+				for(CalcValueListener observer : removeList) {
+					observers.remove(observer);
+				}
+			}
+			
+			for(CalcValueListener observer : observers) {
+				observer.valueChanged(this);
+			}
+		}
 	}
 
 	@Override
@@ -203,6 +227,8 @@ public class CalcModeImpl implements CalcModel {
 	@Override
 	public void setActiveOperand(double activeOperand) {
 		this.activeOperand = activeOperand;
+		enteredNumberDecimal = Double.valueOf(0);
+		enteredNumberString = "";
 	}
 
 	@Override

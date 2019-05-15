@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Stack;
+import java.util.function.DoubleBinaryOperator;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -11,7 +13,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
-
 import hr.fer.zemris.java.gui.calc.model.CalcModel;
 import hr.fer.zemris.java.gui.calc.model.CalcValueListener;
 import hr.fer.zemris.java.gui.layouts.CalcLayout;
@@ -31,6 +32,8 @@ public class Calculator extends JFrame {
 	private static JButton buttonTan = new JButton("tan");
 	private static JButton buttonXN = new JButton("x^n");
 	private static JButton buttonCtg = new JButton("ctg");
+	
+	private static Stack<Double> stack = new Stack<Double>();
 	
 	private static ActionListener checkBoxListener = 
 			new ActionListener() {
@@ -67,13 +70,136 @@ public class Calculator extends JFrame {
 		};
 		
 	private static ActionListener sinListener = 
-			(e) -> {
-				if(invMode) {
-					cmi.setValue(Math.asin(cmi.getValue()));
-				} else {
-					cmi.setValue(Math.sin(cmi.getValue()));
-				}
-			};
+		(e) -> {
+			if(invMode) {
+				cmi.setValue(Math.asin(cmi.getValue()));
+			} else {
+				cmi.setValue(Math.sin(cmi.getValue()));
+			}
+	};
+	
+	private static ActionListener logListener = 
+		(e) -> {
+			if(invMode) {
+				cmi.setValue(Math.pow(10, cmi.getValue()));
+			} else {
+				cmi.setValue(Math.log10(cmi.getValue()));
+			}
+	};
+			
+	private static ActionListener cosListener = 
+		(e) -> {
+			if(invMode) {
+				cmi.setValue(Math.acos(cmi.getValue()));
+			} else {
+				cmi.setValue(Math.cos(cmi.getValue()));
+			}
+	};
+	
+	private static ActionListener lnListener = 
+		(e) -> {
+			if(invMode) {
+				cmi.setValue(Math.pow(Math.E, cmi.getValue()));
+			} else {
+				cmi.setValue(Math.log(cmi.getValue()));
+			}
+	};
+
+	private static ActionListener tanListener = 
+		(e) -> {
+			if(invMode) {
+				cmi.setValue(Math.tan(cmi.getValue()));
+			} else {
+				cmi.setValue(Math.atan(cmi.getValue()));
+			}
+	};		
+	
+	private static ActionListener xNListener = 
+		(e) -> {
+			if(invMode) {
+				cmi.setValue(Math.pow(Math.E, cmi.getValue()));
+			} else {
+				cmi.setValue(Math.log(cmi.getValue()));
+			}
+	};
+
+	private static ActionListener ctgListener = 
+		(e) -> {
+			if(invMode) {
+				cmi.setValue(1.0 / Math.tan(cmi.getValue()));
+			} else {
+				cmi.setValue(Math.PI / 2 - Math.atan(cmi.getValue()));
+			}
+	};
+	
+	private static ActionListener equalsListener = (e) -> {cmi.setValue(
+			cmi.pendingOperation.applyAsDouble(cmi.activeOperand, cmi.getValue()));};
+	
+	private static ActionListener clrListener = (e) -> {cmi.clear();};
+	
+	private static ActionListener inverseListener = (e) -> {cmi.setValue(1./cmi.getValue());}; 
+	
+	private static ActionListener divideListener = (e) -> {
+		cmi.setActiveOperand(cmi.getValue());
+		cmi.setPendingBinaryOperation(new DoubleBinaryOperator() {
+			
+			@Override
+			public double applyAsDouble(double left, double right) {
+				return left/right;
+			}
+		});
+	};
+	
+	private static ActionListener resetListener = (e) -> {cmi.clearAll();};
+	
+	private static ActionListener multiplyListener = (e) -> {
+		cmi.setActiveOperand(cmi.getValue());
+		cmi.setPendingBinaryOperation(new DoubleBinaryOperator() {
+			
+			@Override
+			public double applyAsDouble(double left, double right) {
+				return left*right;
+			}
+		});
+	};
+	
+	private static ActionListener pushListener = (e) -> {stack.add(cmi.getValue());};
+	private static ActionListener popListener = (e) -> {
+		if(stack.isEmpty()) {
+			System.out.println("Stack is empty");
+			System.exit(1);
+		}
+		
+		cmi.setValue(stack.pop());
+	};
+	
+	private static ActionListener minusListener = (e) -> {
+		cmi.setActiveOperand(cmi.getValue());
+		cmi.setPendingBinaryOperation(new DoubleBinaryOperator() {
+			
+			@Override
+			public double applyAsDouble(double left, double right) {
+				return left-right;
+			}
+		});
+	};
+	
+	private static ActionListener swapSignListener = (e) -> {
+		cmi.setValue(cmi.getValue()*(-1));};
+	
+	private static ActionListener dotListener = (e) -> {
+		cmi.insertDecimalPoint();};
+		
+	private static ActionListener plusListener = (e) -> {
+		cmi.setActiveOperand(cmi.getValue());
+		cmi.setPendingBinaryOperation(new DoubleBinaryOperator() {
+			
+			@Override
+			public double applyAsDouble(double left, double right) {
+				return left+right;
+			}
+		});
+	};
 	
 	public Calculator() {
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -93,12 +219,15 @@ public class Calculator extends JFrame {
 		
 		JButton buttonEquals = new JButton("=");
 		cp.add(buttonEquals, new RCPosition(1, 6));
+		buttonEquals.addActionListener(equalsListener);
 		
 		JButton buttonClr = new JButton("clr");
 		cp.add(buttonClr, new RCPosition(1, 7));
+		buttonClr.addActionListener(clrListener);
 		
 		JButton buttonInverse = new JButton("1/x");
 		cp.add(buttonInverse, new RCPosition(2, 1));
+		buttonInverse.addActionListener(inverseListener);
 		
 		cp.add(buttonSin, new RCPosition(2, 2));
 		buttonSin.addActionListener(sinListener);
@@ -117,13 +246,17 @@ public class Calculator extends JFrame {
 		
 		JButton buttonDivide = new JButton("/");
 		cp.add(buttonDivide, new RCPosition(2, 6));
+		buttonDivide.addActionListener(divideListener);
 		
 		JButton buttonReset = new JButton("reset");
 		cp.add(buttonReset, new RCPosition(2, 7));
+		buttonReset.addActionListener(resetListener);
 		
 		cp.add(buttonLog, new RCPosition(3, 1));
+		buttonLog.addActionListener(logListener);
 		
 		cp.add(buttonCos, new RCPosition(3, 2));
+		buttonCos.addActionListener(cosListener);
 		
 		JButton button4 = new JButton("4");
 		cp.add(button4, new RCPosition(3, 3));
@@ -139,13 +272,17 @@ public class Calculator extends JFrame {
 		
 		JButton buttonMultiply = new JButton("*");
 		cp.add(buttonMultiply, new RCPosition(3, 6));
-
+		buttonMultiply.addActionListener(multiplyListener);
+		
 		JButton buttonPush = new JButton("push");
 		cp.add(buttonPush, new RCPosition(3, 7));
+		buttonPush.addActionListener(pushListener);
 		
 		cp.add(buttonLn, new RCPosition(4, 1));
+		buttonLn.addActionListener(lnListener);
 		
 		cp.add(buttonTan, new RCPosition(4, 2));
+		buttonTan.addActionListener(tanListener);
 		
 		JButton button1 = new JButton("1");
 		cp.add(button1, new RCPosition(4, 3));
@@ -161,30 +298,37 @@ public class Calculator extends JFrame {
 		
 		JButton buttonMinus = new JButton("-");
 		cp.add(buttonMinus, new RCPosition(4, 6));
+		buttonMinus.addActionListener(minusListener);
 
 		JButton buttonPop = new JButton("pop");
 		cp.add(buttonPop, new RCPosition(4, 7));
+		buttonPop.addActionListener(popListener);
 		
 		cp.add(buttonXN, new RCPosition(5, 1));
+		buttonXN.addActionListener(xNListener);
 		
 		cp.add(buttonCtg, new RCPosition(5, 2));
+		buttonCtg.addActionListener(ctgListener);
 		
 		JButton button0 = new JButton("0");
 		cp.add(button0, new RCPosition(5, 3));
+		button0.addActionListener(numberListener);
 		
 		JButton buttonSwapSign = new JButton("+/-");
 		cp.add(buttonSwapSign, new RCPosition(5, 4));
+		buttonSwapSign.addActionListener(swapSignListener);
 		
 		JButton buttonDot = new JButton(".");
 		cp.add(buttonDot, new RCPosition(5, 5));
+		buttonDot.addActionListener(dotListener);
 		
 		JButton buttonPlus = new JButton("+");
 		cp.add(buttonPlus, new RCPosition(5, 6));
+		buttonPlus.addActionListener(plusListener);
 
 		JCheckBox checkBox = new JCheckBox("Inv");
 		cp.add(checkBox, new RCPosition(5, 7));
 		checkBox.addActionListener(checkBoxListener);
-		
 	}
 	
 	private JLabel l(String text) {

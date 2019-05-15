@@ -21,20 +21,42 @@ import hr.fer.zemris.java.gui.layouts.RCPosition;
 public class Calculator extends JFrame {
 
 	private static CalcModeImpl cmi = new CalcModeImpl();
-
 	private static Container cp;
-	private static JLabel screen;
+	private static boolean invMode = false;
+
+	private static JButton buttonSin = new JButton("sin");
+	private static JButton buttonLog = new JButton("log");
+	private static JButton buttonCos = new JButton("cos");
+	private static JButton buttonLn = new JButton("ln");
+	private static JButton buttonTan = new JButton("tan");
+	private static JButton buttonXN = new JButton("x^n");
+	private static JButton buttonCtg = new JButton("ctg");
 	
 	private static ActionListener checkBoxListener = 
 			new ActionListener() {
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			JButton buttonEX = new JButton("e^x");
-			cp.add(buttonEX, new RCPosition(4, 1));
 			
-			JButton buttonArctg = new JButton("arctan");
-			cp.add(buttonArctg, new RCPosition(4, 2));
+			invMode = !invMode;
+			if(!invMode) {
+				buttonSin.setText("sin");
+				buttonLog.setText("log");
+				buttonCos.setText("cos");
+				buttonLn.setText("ln");
+				buttonTan.setText("tan");
+				buttonXN.setText("x^n");
+				buttonCtg.setText("ctg");
+			
+			} else {
+				buttonSin.setText("arcsin");
+				buttonLog.setText("10^x");
+				buttonCos.setText("arccos");
+				buttonLn.setText("e^x");
+				buttonTan.setText("arctan");
+				buttonXN.setText("x^(1/n)");
+				buttonCtg.setText("arcctg");
+			}
 		}
 	};
 	
@@ -42,24 +64,17 @@ public class Calculator extends JFrame {
 		(e) -> {
 			JButton button = (JButton)e.getSource();
 			cmi.insertDigit(Integer.valueOf(button.getText()));
-			
-			if(cmi.containsDot) {
-				screen.setText(String.valueOf(cmi.getValue()));
-			} else {
-				// step 1: unboxing
-				double dbl = cmi.getValue();
-
-				// step 2: casting
-				int intgr = (int) dbl;
-
-				// step 3: boxing
-				Integer val = Integer.valueOf(intgr);
-				//screen.setText(val.toString());
-			}
 		};
 		
+	private static ActionListener sinListener = 
+			(e) -> {
+				if(invMode) {
+					cmi.setValue(Math.asin(cmi.getValue()));
+				} else {
+					cmi.setValue(Math.sin(cmi.getValue()));
+				}
+			};
 	
-		
 	public Calculator() {
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		initGUI();
@@ -72,8 +87,9 @@ public class Calculator extends JFrame {
 		cp = getContentPane();
 		cp.setLayout(new CalcLayout(3));
 		
-		screen = new JLabel("");
+		CalculatorLabel screen = new CalculatorLabel();
 		cp.add(screen, new RCPosition(1, 1));
+		cmi.addCalcValueListener(screen);
 		
 		JButton buttonEquals = new JButton("=");
 		cp.add(buttonEquals, new RCPosition(1, 6));
@@ -84,8 +100,8 @@ public class Calculator extends JFrame {
 		JButton buttonInverse = new JButton("1/x");
 		cp.add(buttonInverse, new RCPosition(2, 1));
 		
-		JButton buttonSin = new JButton("sin");
 		cp.add(buttonSin, new RCPosition(2, 2));
+		buttonSin.addActionListener(sinListener);
 		
 		JButton button7 = new JButton("7");
 		cp.add(button7, new RCPosition(2, 3));
@@ -94,22 +110,6 @@ public class Calculator extends JFrame {
 		JButton button8 = new JButton("8");
 		cp.add(button8, new RCPosition(2, 4));
 		button8.addActionListener(numberListener);
-		
-		cmi.addCalcValueListener(new CalcValueListener() {
-			
-			@Override
-			public void valueChanged(CalcModel model) {
-				// step 1: unboxing
-				double dbl = model.getValue();
-
-				// step 2: casting
-				int intgr = (int) dbl;
-
-				// step 3: boxing
-				Integer val = Integer.valueOf(intgr);
-				screen.setText(val.toString());
-			}
-		});
 		
 		JButton button9 = new JButton("9");
 		cp.add(button9, new RCPosition(2, 5));
@@ -121,18 +121,10 @@ public class Calculator extends JFrame {
 		JButton buttonReset = new JButton("reset");
 		cp.add(buttonReset, new RCPosition(2, 7));
 		
-		JButton buttonlog = new JButton("log");
-		cp.add(buttonlog, new RCPosition(3, 1));
+		cp.add(buttonLog, new RCPosition(3, 1));
 		
-		JButton buttonCos = new JButton("sin");
 		cp.add(buttonCos, new RCPosition(3, 2));
-		/*
-		JButton button10X = new JButton("10^x");
-		cp.add(button10X, new RCPosition(3, 1));
 		
-		JButton buttonArccos = new JButton("arccos");
-		cp.add(buttonArccos, new RCPosition(3, 2));
-		*/
 		JButton button4 = new JButton("4");
 		cp.add(button4, new RCPosition(3, 3));
 		button4.addActionListener(numberListener);
@@ -151,18 +143,10 @@ public class Calculator extends JFrame {
 		JButton buttonPush = new JButton("push");
 		cp.add(buttonPush, new RCPosition(3, 7));
 		
-		JButton buttonLn = new JButton("ln");
 		cp.add(buttonLn, new RCPosition(4, 1));
 		
-		JButton buttonTan = new JButton("tan");
 		cp.add(buttonTan, new RCPosition(4, 2));
-		/*
-		JButton buttonEX = new JButton("e^x");
-		cp.add(buttonEX, new RCPosition(4, 1));
 		
-		JButton buttonArctg = new JButton("arctan");
-		cp.add(buttonArctg, new RCPosition(4, 2));
-		*/
 		JButton button1 = new JButton("1");
 		cp.add(button1, new RCPosition(4, 3));
 		button1.addActionListener(numberListener);
@@ -181,19 +165,9 @@ public class Calculator extends JFrame {
 		JButton buttonPop = new JButton("pop");
 		cp.add(buttonPop, new RCPosition(4, 7));
 		
-		JButton buttonXN = new JButton("x^n");
 		cp.add(buttonXN, new RCPosition(5, 1));
 		
-		JButton buttonCtg = new JButton("ctg");
 		cp.add(buttonCtg, new RCPosition(5, 2));
-		
-		/*
-		JButton buttonXInvN = new JButton("x^(1/n)");
-		cp.add(buttonXInvN, new RCPosition(5, 1));
-		
-		JButton buttonArcctg = new JButton("arcctg");
-		cp.add(buttonArcctg, new RCPosition(5, 2));
-		*/
 		
 		JButton button0 = new JButton("0");
 		cp.add(button0, new RCPosition(5, 3));
@@ -210,6 +184,7 @@ public class Calculator extends JFrame {
 		JCheckBox checkBox = new JCheckBox("Inv");
 		cp.add(checkBox, new RCPosition(5, 7));
 		checkBox.addActionListener(checkBoxListener);
+		
 	}
 	
 	private JLabel l(String text) {

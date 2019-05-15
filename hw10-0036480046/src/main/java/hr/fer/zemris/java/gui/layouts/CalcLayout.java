@@ -131,7 +131,8 @@ public class CalcLayout implements LayoutManager2 {
 	private int[] calculateComponentSize(int size, int numberOfComponents) {
 		int[] componentsSize = new int[numberOfComponents]; 
 		
-		if((size - ((numberOfComponents-1)*spaceBetweenRowsAndColumns)) % numberOfComponents != 0) {
+		if((size - ((numberOfComponents-1) * spaceBetweenRowsAndColumns)) % 
+				numberOfComponents != 0) {
 			// number of elements with smaller size
 			int smallerSize = roundUp(
 					(size - ((numberOfComponents-1)*spaceBetweenRowsAndColumns)),
@@ -141,19 +142,22 @@ public class CalcLayout implements LayoutManager2 {
 			for(int i = 0; i < numberOfComponents; i++) {
 				if(i % 2 == 0 && smallerSize > 0) {
 					componentsSize[i] = 
-							roundUp((size - ((numberOfComponents-1)*spaceBetweenRowsAndColumns)),
+							roundUp((size - ((numberOfComponents-1) * 
+									spaceBetweenRowsAndColumns)),
 									numberOfComponents)-1;
 					smallerSize--;
 				} else {
 					componentsSize[i] = 
-							roundUp((size - ((numberOfComponents-1)*spaceBetweenRowsAndColumns)),
+							roundUp((size - ((numberOfComponents-1) * 
+									spaceBetweenRowsAndColumns)),
 									numberOfComponents);
 				}
 			}
 		}
 		else {
 			Arrays.fill(componentsSize,
-					(size - ((numberOfComponents-1)*spaceBetweenRowsAndColumns))/numberOfComponents);
+					(size - ((numberOfComponents-1)*spaceBetweenRowsAndColumns)) / 
+					numberOfComponents);
 		}
 		return componentsSize;
 	}

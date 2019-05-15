@@ -40,7 +40,7 @@ public class CalcModeImpl implements CalcModel {
 	 */
 	public CalcModeImpl() {
 
-		activeOperand = null;
+		activeOperand = Double.valueOf(0);
 		enteredNumberString = "";
 		enteredNumberDecimal = Double.valueOf(0);
 		pendingOperation = null;
@@ -115,6 +115,8 @@ public class CalcModeImpl implements CalcModel {
 		enteredNumberString = "";
 		enteredNumberDecimal = Double.valueOf(0);
 		editableModel = true;
+		containsDot = false;
+		positiveNumber = true;
 		
 		if(observers!=null) {
 			if(removeList != null) {
@@ -133,9 +135,11 @@ public class CalcModeImpl implements CalcModel {
 	public void clearAll() {
 		enteredNumberString = "";
 		enteredNumberDecimal = Double.valueOf(0);
-		activeOperand = null;
+		activeOperand = Double.valueOf(0);
 		pendingOperation = null;
 		editableModel = true;
+		containsDot = false;
+		positiveNumber = true;
 		
 		if(observers!=null) {
 			if(removeList != null) {
@@ -236,7 +240,7 @@ public class CalcModeImpl implements CalcModel {
 
 	@Override
 	public boolean isActiveOperandSet() {
-		if(activeOperand == null) {
+		if(Math.abs(activeOperand - Double.valueOf(0)) < 0.0001) {
 			return false;
 		}
 		return true;
@@ -244,7 +248,7 @@ public class CalcModeImpl implements CalcModel {
 
 	@Override
 	public double getActiveOperand() throws IllegalStateException {
-		if(activeOperand == null) {
+		if(Math.abs(activeOperand - Double.valueOf(0)) < 0.0001) {
 			throw new IllegalStateException("Active operand doesn't exists.");
 		}
 		
@@ -260,7 +264,7 @@ public class CalcModeImpl implements CalcModel {
 
 	@Override
 	public void clearActiveOperand() {
-		this.activeOperand = null;
+		this.activeOperand = Double.valueOf(0);
 	}
 
 	@Override
@@ -270,6 +274,15 @@ public class CalcModeImpl implements CalcModel {
 
 	@Override
 	public void setPendingBinaryOperation(DoubleBinaryOperator op) {
+		if(pendingOperation != null) {
+			System.out.println("ao:"+ activeOperand);
+			System.out.println("eno:"+enteredNumberDecimal);
+			activeOperand = pendingOperation.applyAsDouble(activeOperand, enteredNumberDecimal);
+			
+			enteredNumberDecimal = activeOperand;
+			enteredNumberString = String.valueOf(activeOperand);
+		}
+		
 		pendingOperation = op;
 	}
 

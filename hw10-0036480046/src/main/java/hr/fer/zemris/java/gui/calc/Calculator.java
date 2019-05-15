@@ -226,7 +226,14 @@ public class Calculator extends JFrame {
 		
 	/** plus listener **/
 	private static ActionListener plusListener = (e) -> {
-		cmi.setActiveOperand(cmi.getValue());
+		if(cmi.getActiveOperand() != Double.valueOf(0)) {
+			cmi.setActiveOperand(cmi.getPendingBinaryOperation().
+					applyAsDouble(cmi.getActiveOperand(), cmi.enteredNumberDecimal));
+			cmi.enteredNumberDecimal = cmi.getActiveOperand();
+			cmi.enteredNumberString = String.valueOf(cmi.getActiveOperand());
+		} else {
+			cmi.setActiveOperand(cmi.getValue());
+		}
 		cmi.setPendingBinaryOperation(new DoubleBinaryOperator() {
 			
 			@Override
@@ -243,7 +250,7 @@ public class Calculator extends JFrame {
 	public Calculator() {
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		initGUI();
-		setSize(500, 500);
+		setSize(700, 500);
 		//pack();
 	}
 	

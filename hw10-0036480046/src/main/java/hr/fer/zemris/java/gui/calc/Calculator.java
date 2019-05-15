@@ -88,9 +88,11 @@ public class Calculator extends JFrame {
 	private static ActionListener sinListener = 
 		(e) -> {
 			if(invMode) {
-				cmi.setValue(Math.asin(cmi.getValue()));
+				cmi.setEnteredNumberDecimal(Math.asin(cmi.getValue()));
+				cmi.setEnteredNumberString(String.valueOf(cmi.getValue()));
 			} else {
-				cmi.setValue(Math.sin(cmi.getValue()));
+				cmi.setEnteredNumberDecimal(Math.sin(cmi.getValue()));
+				cmi.setEnteredNumberString(String.valueOf(cmi.getValue()));
 			}
 	};
 	
@@ -98,9 +100,11 @@ public class Calculator extends JFrame {
  	private static ActionListener logListener = 
 		(e) -> {
 			if(invMode) {
-				cmi.setValue(Math.pow(10, cmi.getValue()));
+				cmi.setEnteredNumberDecimal(Math.pow(10, cmi.getValue()));
+				cmi.setEnteredNumberString(String.valueOf(cmi.getValue()));
 			} else {
-				cmi.setValue(Math.log10(cmi.getValue()));
+				cmi.setEnteredNumberDecimal(Math.log10(cmi.getValue()));
+				cmi.setEnteredNumberString(String.valueOf(cmi.getValue()));
 			}
 	};
 			
@@ -108,9 +112,11 @@ public class Calculator extends JFrame {
 	private static ActionListener cosListener = 
 		(e) -> {
 			if(invMode) {
-				cmi.setValue(Math.acos(cmi.getValue()));
+				cmi.setEnteredNumberDecimal(Math.acos(cmi.getValue()));
+				cmi.setEnteredNumberString(String.valueOf(cmi.getValue()));
 			} else {
-				cmi.setValue(Math.cos(cmi.getValue()));
+				cmi.setEnteredNumberDecimal(Math.cos(cmi.getValue()));
+				cmi.setEnteredNumberString(String.valueOf(cmi.getValue()));
 			}
 	};
 	
@@ -118,9 +124,11 @@ public class Calculator extends JFrame {
 	private static ActionListener lnListener = 
 		(e) -> {
 			if(invMode) {
-				cmi.setValue(Math.pow(Math.E, cmi.getValue()));
+				cmi.setEnteredNumberDecimal(Math.pow(Math.E, cmi.getValue()));
+				cmi.setEnteredNumberString(String.valueOf(cmi.getValue()));
 			} else {
-				cmi.setValue(Math.log(cmi.getValue()));
+				cmi.setEnteredNumberDecimal(Math.log(cmi.getValue()));
+				cmi.setEnteredNumberString(String.valueOf(cmi.getValue()));
 			}
 	};
 
@@ -128,9 +136,11 @@ public class Calculator extends JFrame {
 	private static ActionListener tanListener = 
 		(e) -> {
 			if(invMode) {
-				cmi.setValue(Math.tan(cmi.getValue()));
+				cmi.setEnteredNumberDecimal(Math.tan(cmi.getValue()));
+				cmi.setEnteredNumberString(String.valueOf(cmi.getValue()));
 			} else {
-				cmi.setValue(Math.atan(cmi.getValue()));
+				cmi.setEnteredNumberDecimal(Math.atan(cmi.getValue()));
+				cmi.setEnteredNumberString(String.valueOf(cmi.getValue()));
 			}
 	};		
 	
@@ -138,9 +148,11 @@ public class Calculator extends JFrame {
 	private static ActionListener xNListener = 
 		(e) -> {
 			if(invMode) {
-				cmi.setValue(Math.pow(cmi.getValue(), cmi.getActiveOperand()));
+				cmi.setEnteredNumberDecimal(Math.pow(cmi.getValue(), cmi.getActiveOperand()));
+				cmi.setEnteredNumberString(String.valueOf(cmi.getValue()));
 			} else {
-				cmi.setValue(Math.pow(cmi.getValue(), (1./cmi.getActiveOperand())));
+				cmi.setEnteredNumberDecimal(Math.pow(cmi.getValue(), (1./cmi.getActiveOperand())));
+				cmi.setEnteredNumberString(String.valueOf(cmi.getValue()));
 			}
 	};
 
@@ -148,22 +160,20 @@ public class Calculator extends JFrame {
 	private static ActionListener ctgListener = 
 		(e) -> {
 			if(invMode) {
-				cmi.setValue(1.0 / Math.tan(cmi.getValue()));
+				cmi.setEnteredNumberDecimal(1.0 / Math.tan(cmi.getValue()));
+				cmi.setEnteredNumberString(String.valueOf(cmi.getValue()));
 			} else {
-				cmi.setValue(Math.PI / 2 - Math.atan(cmi.getValue()));
+				cmi.setEnteredNumberDecimal(Math.PI / 2 - Math.atan(cmi.getValue()));
+				cmi.setEnteredNumberString(String.valueOf(cmi.getValue()));
 			}
 	};
 	
 	/** equals listener **/
 	private static ActionListener equalsListener = (e) -> {
-		System.out.println("active operand: " + cmi.getActiveOperand());
-		System.out.println("get value: " + cmi.getValue());
-		
 		cmi.setValue(cmi.pendingOperation.applyAsDouble(cmi.getActiveOperand(), cmi.getValue()));
-		System.out.println("setValue: "+ cmi.getValue());
 		
-		cmi.setActiveOperand(Double.valueOf(0));
-		cmi.setPendingBinaryOperation(null);};
+		cmi.setPendingBinaryOperation(null);
+		cmi.containsDot = false;};
 	
 	/** clear listener **/
 	private static ActionListener clrListener = (e) -> {cmi.clear();};
@@ -188,6 +198,7 @@ public class Calculator extends JFrame {
 			}
 		});
 		cmi.positiveNumber = true;
+		cmi.containsDot = false;
 	};
 	
 	/** reset listener **/
@@ -209,11 +220,13 @@ public class Calculator extends JFrame {
 				return left*right;
 			}
 		});
+		cmi.containsDot = false;
 		cmi.positiveNumber = true;
 	};
 	
 	/** push listener **/
-	private static ActionListener pushListener = (e) -> {stack.add(cmi.getValue());};
+	private static ActionListener pushListener = (e) -> {
+		stack.add(cmi.getValue());};
 	
 	/** pop listener **/
 	private static ActionListener popListener = (e) -> {
@@ -221,8 +234,9 @@ public class Calculator extends JFrame {
 			System.out.println("Stack is empty");
 			System.exit(1);
 		}
-		
-		cmi.setValue(stack.pop());
+		Double val = stack.pop();
+		cmi.setEnteredNumberDecimal(val);
+		cmi.setEnteredNumberString(String.valueOf(val));
 	};
 	
 	/** minus listener **/
@@ -242,6 +256,7 @@ public class Calculator extends JFrame {
 			}
 		});
 		cmi.positiveNumber = true;
+		cmi.containsDot = false;
 	};
 	
 	/** swap sign listener **/
@@ -270,6 +285,7 @@ public class Calculator extends JFrame {
 				return left+right;
 			}
 		});
+		cmi.containsDot = false;
 		cmi.positiveNumber = true;
 	};
 	

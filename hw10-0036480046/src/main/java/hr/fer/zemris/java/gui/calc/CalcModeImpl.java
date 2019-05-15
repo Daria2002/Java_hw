@@ -121,7 +121,6 @@ public class CalcModeImpl implements CalcModel {
 
 	@Override
 	public void setValue(double value) {
-		System.out.println("u set value arg: " +  value);
 		
 		if(value > 0) {
 			positiveNumber = true;
@@ -130,8 +129,6 @@ public class CalcModeImpl implements CalcModel {
 		}
 		
 		enteredNumberDecimal = Math.abs(value);
-		
-		System.out.println("dec: " + enteredNumberDecimal);
 		
 		enteredNumberString = String.valueOf(Math.abs(value));
 		editableModel = false;
@@ -315,7 +312,6 @@ public class CalcModeImpl implements CalcModel {
 		this.activeOperand = activeOperand;
 		enteredNumberDecimal = Double.valueOf(0);
 		enteredNumberString = "";
-		
 	}
 
 	@Override
@@ -338,7 +334,7 @@ public class CalcModeImpl implements CalcModel {
 	public String toString() {
 		if("NaN".equals(enteredNumberString) || "Infinity".equals(enteredNumberString) ||
 				"-Infinity".equals(enteredNumberString)) {
-			return enteredNumberString;
+			return (positiveNumber ? "" : "-") + enteredNumberString;
 		}
 		
 		if(enteredNumberString.isEmpty() || enteredNumberDecimal == 0.0) {

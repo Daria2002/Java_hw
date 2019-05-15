@@ -56,24 +56,19 @@ public class BarChartDemo extends JFrame {
 				yMin, yMax, space);
 		
 		BarChartComponent bcc = new BarChartComponent(bc);	
-		
 		BarChartDemo bcd = new BarChartDemo();
 		
 		bcd.setLayout(new BoxLayout(bcd.getContentPane(), BoxLayout.Y_AXIS));
 
 		JLabel lab = new JLabel(fileName, SwingConstants.CENTER);
 		
-		
-		//bcd.getContentPane().add(lab);
-		/*
 		JPanel content = new JPanel();
         content.setLayout(new BorderLayout());
-		
         content.add(lab , BorderLayout.NORTH);
-		*/
-		
-		bcd.getContentPane().add(lab);
-		bcd.getContentPane().add(bcc);
+        content.add(bcc, BorderLayout.CENTER);
+        
+        bcd.setContentPane(content);
+        
 		SwingUtilities.invokeLater(() -> {bcd.setVisible(true);});
 		
 	}

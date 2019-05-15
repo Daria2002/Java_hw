@@ -1,8 +1,11 @@
 package hr.fer.zemris.java.gui.charts;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.font.FontRenderContext;
+import java.awt.font.LineMetrics;
 import java.awt.geom.AffineTransform;
 
 import javax.swing.JComponent;
@@ -10,6 +13,7 @@ import javax.swing.JComponent;
 public class BarChartComponent extends JComponent {
 
 	BarChart barChart;
+	private static final int ARR_SIZE = 5;
 	
 	public BarChartComponent(BarChart barChart) {
 		this.barChart = barChart;
@@ -30,9 +34,9 @@ public class BarChartComponent extends JComponent {
 		
 		g2D.setPaint(Color.GRAY);
 		// x axis
-		g2D.drawLine(width - yPadding, height - 50-5, yPadding, height - 50-5);
+		g2D.drawLine(width - yPadding, height - 50-5-getY(), yPadding, height - 50-5-getY());
 		// y axis
-		g2D.drawLine(yPadding+5, height-50, yPadding+5, 50);
+		g2D.drawLine(yPadding+5, height-50-getY(), yPadding+5, getY());
 		
 		g2D.setPaint(Color.BLACK);
 		// x description
@@ -71,10 +75,16 @@ public class BarChartComponent extends JComponent {
 					height-30);
 		}
 		
+		Font font = g2D.getFont();
+		FontRenderContext frc = g2D.getFontRenderContext();
+		LineMetrics lineMetrics = font.getLineMetrics("0", frc);
+		
+		float letterHeight = lineMetrics.getHeight();
+		
 		// write numbers for y axis
 		for(int i = barChart.yMin; i <= barChart.yMax; i = i + barChart.space) {
 			String help = String.format("%" + String.valueOf(barChart.yMax).length() + "d", i);
-			g2D.drawString(help, yPadding - 20, height - 50-5 - i * rowsHeight);
+			g2D.drawString(help, yPadding - 20, height - 50 + 5 - i * rowsHeight-letterHeight/2);
 		}
 		
 		g2D.setColor(Color.ORANGE);
@@ -85,5 +95,26 @@ public class BarChartComponent extends JComponent {
 			
 			g2D.fillRect(x, y, columnWidth-1, rowsHeight * xy.getY());
 		}
+		
+		g2D.setColor(Color.GRAY);
+		
+		drawArrow(g2D, yPadding+5, 50-getY(), yPadding+5, 45-getY());
+		drawArrow(g2D, width - yPadding, height - 50-getY()+9, width - yPadding+5, height - 50-getY()+9);
 	}
+	
+	void drawArrow(Graphics g1, int x1, int y1, int x2, int y2) {
+        Graphics2D g = (Graphics2D) g1.create();
+
+        double dx = x2 - x1, dy = y2 - y1;
+        double angle = Math.atan2(dy, dx);
+        int len = (int) Math.sqrt(dx*dx + dy*dy);
+        AffineTransform at = AffineTransform.getTranslateInstance(x1, y1);
+        at.concatenate(AffineTransform.getRotateInstance(angle));
+        g.transform(at);
+
+        // Draw horizontal arrow starting in (0, 0)
+        g.drawLine(0, 0, len, 0);
+        g.fillPolygon(new int[] {len, len-ARR_SIZE, len-ARR_SIZE, len},
+                      new int[] {0, -ARR_SIZE, ARR_SIZE, 0}, 4);
+    }
 }

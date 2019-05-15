@@ -8,8 +8,17 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
+/**
+ * Simple demo program for bar chart 
+ * @author Daria Matković
+ *
+ */
 public class MyDemo {
 	
+	/**
+	 * This method is executed when program is run.
+	 * @param args
+	 */
 	public static void main(String[] args) {
 
 		BarChart model = new BarChart(

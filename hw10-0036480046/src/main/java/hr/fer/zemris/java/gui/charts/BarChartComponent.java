@@ -10,11 +10,21 @@ import java.awt.geom.AffineTransform;
 
 import javax.swing.JComponent;
 
+/**
+ * This class represents bar chart component that implements interface JCompoenent.
+ * @author Daria Matković
+ *
+ */
 public class BarChartComponent extends JComponent {
-
+	/** bar chart **/
 	BarChart barChart;
+	/** arrow size **/
 	private static final int ARR_SIZE = 5;
 	
+	/**
+	 * This method represents bar char component that initializes bar chart
+	 * @param barChart bar chart
+	 */
 	public BarChartComponent(BarChart barChart) {
 		this.barChart = barChart;
 	}

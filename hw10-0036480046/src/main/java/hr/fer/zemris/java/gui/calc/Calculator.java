@@ -13,25 +13,42 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
+import javax.swing.event.ListDataListener;
+
 import hr.fer.zemris.java.gui.layouts.CalcLayout;
 import hr.fer.zemris.java.gui.layouts.RCPosition;
 
+/**
+ * This class represents Calculator model that implements JFrame.
+ * @author Daria Matković
+ *
+ */
 public class Calculator extends JFrame {
 
+	/** calculator model **/
 	private static CalcModeImpl cmi = new CalcModeImpl();
+	/** container **/
 	private static Container cp;
+	/** inv mode flag **/
 	private static boolean invMode = false;
-
+	/** sin or arcsin button **/
 	private static JButton buttonSin = new JButton("sin");
+	/** log or 10^x button **/
 	private static JButton buttonLog = new JButton("log");
+	/** cos or arccos button **/
 	private static JButton buttonCos = new JButton("cos");
+	/** ln or e^x button **/
 	private static JButton buttonLn = new JButton("ln");
+	/** tg or arctg button **/
 	private static JButton buttonTan = new JButton("tan");
+	/** x^n or x^(1/n) button **/
 	private static JButton buttonXN = new JButton("x^n");
+	/** ctg or arcctg button **/
 	private static JButton buttonCtg = new JButton("ctg");
-	
+	/** stack **/
 	private static Stack<Double> stack = new Stack<Double>();
 	
+	/** checkbox listener where mode is changed **/
 	private static ActionListener checkBoxListener = 
 			new ActionListener() {
 		
@@ -60,12 +77,14 @@ public class Calculator extends JFrame {
 		}
 	};
 	
+	/** number listener where new digit is displayed **/
 	private static ActionListener numberListener =
 		(e) -> {
 			JButton button = (JButton)e.getSource();
 			cmi.insertDigit(Integer.valueOf(button.getText()));
 		};
 		
+	/** sin or arcsin listener **/
 	private static ActionListener sinListener = 
 		(e) -> {
 			if(invMode) {
@@ -75,7 +94,8 @@ public class Calculator extends JFrame {
 			}
 	};
 	
-	private static ActionListener logListener = 
+	/** log or 10^x listener **/
+ 	private static ActionListener logListener = 
 		(e) -> {
 			if(invMode) {
 				cmi.setValue(Math.pow(10, cmi.getValue()));
@@ -84,6 +104,7 @@ public class Calculator extends JFrame {
 			}
 	};
 			
+	/** cos or arccos listener **/
 	private static ActionListener cosListener = 
 		(e) -> {
 			if(invMode) {
@@ -93,6 +114,7 @@ public class Calculator extends JFrame {
 			}
 	};
 	
+	/** ln or e^x listener **/
 	private static ActionListener lnListener = 
 		(e) -> {
 			if(invMode) {
@@ -102,6 +124,7 @@ public class Calculator extends JFrame {
 			}
 	};
 
+	/** tg or arctg listener **/
 	private static ActionListener tanListener = 
 		(e) -> {
 			if(invMode) {
@@ -111,15 +134,17 @@ public class Calculator extends JFrame {
 			}
 	};		
 	
+	/** x^n or x^(1/n) listener **/
 	private static ActionListener xNListener = 
 		(e) -> {
 			if(invMode) {
-				cmi.setValue(Math.pow(Math.E, cmi.getValue()));
+				cmi.setValue(Math.pow(cmi.getValue(), cmi.getActiveOperand()));
 			} else {
-				cmi.setValue(Math.log(cmi.getValue()));
+				cmi.setValue(Math.pow(cmi.getValue(), (1./cmi.getActiveOperand())));
 			}
 	};
 
+	/** ctg listener **/
 	private static ActionListener ctgListener = 
 		(e) -> {
 			if(invMode) {
@@ -129,13 +154,17 @@ public class Calculator extends JFrame {
 			}
 	};
 	
+	/** equals listener **/
 	private static ActionListener equalsListener = (e) -> {cmi.setValue(
 			cmi.pendingOperation.applyAsDouble(cmi.activeOperand, cmi.getValue()));};
 	
+	/** clear listener **/
 	private static ActionListener clrListener = (e) -> {cmi.clear();};
 	
+	/** inverse listener **/
 	private static ActionListener inverseListener = (e) -> {cmi.setValue(1./cmi.getValue());}; 
 	
+	/** divide listener **/
 	private static ActionListener divideListener = (e) -> {
 		cmi.setActiveOperand(cmi.getValue());
 		cmi.setPendingBinaryOperation(new DoubleBinaryOperator() {
@@ -147,8 +176,10 @@ public class Calculator extends JFrame {
 		});
 	};
 	
+	/** reset listener **/
 	private static ActionListener resetListener = (e) -> {cmi.clearAll();};
 	
+	/** multiply listener **/
 	private static ActionListener multiplyListener = (e) -> {
 		cmi.setActiveOperand(cmi.getValue());
 		cmi.setPendingBinaryOperation(new DoubleBinaryOperator() {
@@ -160,7 +191,10 @@ public class Calculator extends JFrame {
 		});
 	};
 	
+	/** push listener **/
 	private static ActionListener pushListener = (e) -> {stack.add(cmi.getValue());};
+	
+	/** pop listener **/
 	private static ActionListener popListener = (e) -> {
 		if(stack.isEmpty()) {
 			System.out.println("Stack is empty");
@@ -170,6 +204,7 @@ public class Calculator extends JFrame {
 		cmi.setValue(stack.pop());
 	};
 	
+	/** minus listener **/
 	private static ActionListener minusListener = (e) -> {
 		cmi.setActiveOperand(cmi.getValue());
 		cmi.setPendingBinaryOperation(new DoubleBinaryOperator() {
@@ -181,12 +216,15 @@ public class Calculator extends JFrame {
 		});
 	};
 	
+	/** swap sign listener **/
 	private static ActionListener swapSignListener = (e) -> {
-		cmi.setValue(cmi.getValue()*(-1));};
+		cmi.swapSign();};
 	
+	/** dot listener **/
 	private static ActionListener dotListener = (e) -> {
 		cmi.insertDecimalPoint();};
 		
+	/** plus listener **/
 	private static ActionListener plusListener = (e) -> {
 		cmi.setActiveOperand(cmi.getValue());
 		cmi.setPendingBinaryOperation(new DoubleBinaryOperator() {
@@ -198,6 +236,10 @@ public class Calculator extends JFrame {
 		});
 	};
 	
+	/**
+	 * This method represents constructor where size, components and properties
+	 * are set.
+	 */
 	public Calculator() {
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		initGUI();
@@ -205,7 +247,9 @@ public class Calculator extends JFrame {
 		//pack();
 	}
 	
-	String n = "";
+	/**
+	 * This method adds components to calculator.
+	 */
 	private void initGUI() {
 		cp = getContentPane();
 		cp.setLayout(new CalcLayout(3));
@@ -328,17 +372,13 @@ public class Calculator extends JFrame {
 		checkBox.addActionListener(checkBoxListener);
 	}
 	
-	private JLabel l(String text) {
-		JLabel l = new JLabel(text);
-		l.setBackground(Color.YELLOW);
-		l.setOpaque(true);
-		return l;
-	}
-	
+	/**
+	 * This method is executed when program is run
+	 * @param args takes no arguments
+	 */
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(()->{
 			new Calculator().setVisible(true);
 		});
 	}
-	
 }

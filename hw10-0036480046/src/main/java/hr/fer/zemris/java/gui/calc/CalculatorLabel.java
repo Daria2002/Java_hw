@@ -15,6 +15,10 @@ import hr.fer.zemris.java.gui.calc.model.CalcValueListener;
  */
 public class CalculatorLabel extends JLabel implements CalcValueListener {
 
+	/**
+	 * This method represents constructor for calculator label, that initialize
+	 * color for calculator label.
+	 */
 	public CalculatorLabel() {
 		setOpaque(true);
         setBackground(Color.YELLOW);

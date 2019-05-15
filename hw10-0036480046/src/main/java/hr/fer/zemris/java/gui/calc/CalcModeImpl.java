@@ -9,21 +9,35 @@ import hr.fer.zemris.java.gui.calc.model.CalcModel;
 import hr.fer.zemris.java.gui.calc.model.CalcValueListener;
 import hr.fer.zemris.java.gui.calc.model.CalculatorInputException;
 
+/**
+ * This class represents calculator model implementation that implements calculator model. 
+ * @author Daria Matković
+ *
+ */
 public class CalcModeImpl implements CalcModel {
-
+	/** fleg if model is editable **/
 	boolean editableModel;
+	/** positive number **/
 	boolean positiveNumber;
+	/** entered number in string **/
 	String enteredNumberString;
+	/** entered number in double **/
 	Double enteredNumberDecimal;
+	/** active operand **/
 	Double activeOperand;
+	/** pending operation **/
 	DoubleBinaryOperator pendingOperation;
+	/** flag if entered value contains dot **/
 	boolean containsDot;
-
 	/** list of added observers **/
 	private List<CalcValueListener> observers;
 	/** list of observers to remove **/
 	private List<CalcValueListener> removeList;
 	
+	/**
+	 * This method represents constructor for CalcModelImpl, that initialize
+	 * variables
+	 */
 	public CalcModeImpl() {
 
 		activeOperand = null;
@@ -60,7 +74,7 @@ public class CalcModeImpl implements CalcModel {
 		if(observers != null) {
 			for(CalcValueListener ob:observers) {
 				if(ob.equals(l)) {
-					removeList.add((CalcValueObserver) l);
+					removeList.add((CalcValueListener) l);
 				}
 			}
 		}
@@ -143,6 +157,20 @@ public class CalcModeImpl implements CalcModel {
 		}
 		
 		positiveNumber = !positiveNumber;
+		
+		enteredNumberDecimal *= -1;
+		
+		if(observers!=null) {
+			if(removeList != null) {
+				for(CalcValueListener observer : removeList) {
+					observers.remove(observer);
+				}
+			}
+			
+			for(CalcValueListener observer : observers) {
+				observer.valueChanged(this);
+			}
+		}
 	}
 
 	@Override
@@ -172,6 +200,18 @@ public class CalcModeImpl implements CalcModel {
 		
 		enteredNumberString = Integer.valueOf(val) + ".";
 		enteredNumberDecimal = Double.valueOf(enteredNumberString);
+		
+		if(observers!=null) {
+			if(removeList != null) {
+				for(CalcValueListener observer : removeList) {
+					observers.remove(observer);
+				}
+			}
+			
+			for(CalcValueListener observer : observers) {
+				observer.valueChanged(this);
+			}
+		}
 	}
 
 	@Override

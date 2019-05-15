@@ -8,20 +8,32 @@ import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
+/**
+ * This class represents demo program for gui.
+ * @author Daria Matković
+ *
+ */
 public class DemoFrame1 extends JFrame {
-	/*
+	
+	/**
+	 * Constructor that doesn't set size of window
+	 */
 	public DemoFrame1() {
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		initGUI();
 		pack();
 	}
-	*/
+	/*
 	public DemoFrame1() {
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		setSize(500, 500);
 		initGUI();
 	}
+	*/
 	
+	/**
+	 * This method adds compoenents to window
+	 */
 	private void initGUI() {
 		Container cp = getContentPane();
 		cp.setLayout(new CalcLayout(3));
@@ -34,6 +46,11 @@ public class DemoFrame1 extends JFrame {
 		cp.add(l("tekst test"), new RCPosition(5,6));
 	}
 	
+	/**
+	 * This method initialize color and text of label
+	 * @param text label text
+	 * @return label with given text
+	 */
 	private JLabel l(String text) {
 		JLabel l = new JLabel(text);
 		l.setBackground(Color.YELLOW);

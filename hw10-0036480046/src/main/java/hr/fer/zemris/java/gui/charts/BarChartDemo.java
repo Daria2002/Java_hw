@@ -15,13 +15,27 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
+/**
+ * Demonstration program for bar chart.
+ * @author Daria Matković
+ *
+ */
 public class BarChartDemo extends JFrame {
 	
+	/**
+	 * This method represents constructor for bar chart, that sets properties
+	 * and size
+	 */
 	public BarChartDemo() {
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		setSize(500, 500);
 	}
 	
+	/**
+	 * This method represents main method that runs drawing bar chart graph
+	 * for data from given file
+	 * @param args path to file where data for bar chart is written.
+	 */
 	public static void main(String[] args) {
 		String fileName = args[0];
 		List<String> result = new ArrayList<String>();

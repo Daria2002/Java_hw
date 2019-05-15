@@ -12,7 +12,7 @@ public class PrimesCollection implements Iterable<Integer> {
 	/** number of prime numbers in collection **/
 	private int numberOfElements;
 	/** constant that represents first value to check **/
-	private static final int FIRST_START = 1;
+	private static final int FIRST_START = 0;
 	
 	/**
 	 * Constructor that sets number of elements in collection

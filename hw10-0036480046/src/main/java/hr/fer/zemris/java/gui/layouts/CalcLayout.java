@@ -4,33 +4,45 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Insets;
 import java.awt.LayoutManager2;
-import java.awt.Rectangle;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 
+/**
+ * This class represents calculator layout that implements LayoutManager2.
+ * @author Daria Matković
+ *
+ */
 public class CalcLayout implements LayoutManager2 {
-
+	/** space between rows and columns **/
 	private int spaceBetweenRowsAndColumns;
+	/** map of components and positions **/
 	private Map<Component, RCPosition> components;
+	/** number of rows **/
 	private static final int NUMBER_OF_ROWS = 5;
+	/** number of columns **/
 	private static final int NUMBER_OF_COLUMNS = 7;
-	private static final int TOTAL_NUMBER_OF_COMPONENTS = 31;
+	/** array where each element represents width of column **/
 	private int[] columnsWidth;
+	/** array where each element represents height of row **/
 	private int[] rowsHeight;
 	
+	/**
+	 * Calc layout constructor that initialize space between components to 0
+	 */
 	public CalcLayout() {
 		this(0);
 	}
 	
+	/**
+	 * Calc layout constructor that initialize spaceBetweenRowsAndColumns to 
+	 * given value and rest of variables to default values.
+	 * @param space
+	 */
 	public CalcLayout(int space) {
 		spaceBetweenRowsAndColumns = space;
 		components = new HashMap<Component, RCPosition>();
@@ -96,6 +108,13 @@ public class CalcLayout implements LayoutManager2 {
 				(NUMBER_OF_ROWS - 1) * spaceBetweenRowsAndColumns);
 	}
 	
+	/**
+	 * This method compares component dimension to max dimensions and returns bigger size/width
+	 * @param comp component
+	 * @param maxDim current max dimension
+	 * @param componentSize component size
+	 * @return new max dimensions if found, otherwise old max values
+	 */
 	private Dimension getDimension(Component comp, Dimension maxDim, Dimension componentSize) {
 		// if first element
 		if(components.get(comp).getColumn() == 1 &&
@@ -124,9 +143,9 @@ public class CalcLayout implements LayoutManager2 {
 	
 	/**
 	 * This method calculates width or height of each column or row.
-	 * @param size
-	 * @param numberOfComponents
-	 * @return
+	 * @param size total length
+	 * @param numberOfComponents number of components
+	 * @return array of heights/widths of rows/columns
 	 */
 	private int[] calculateComponentSize(int size, int numberOfComponents) {
 		int[] componentsSize = new int[numberOfComponents]; 
@@ -162,11 +181,21 @@ public class CalcLayout implements LayoutManager2 {
 		return componentsSize;
 	}
 
+	/**
+	 * Round up result of dividing num by divisor
+	 * @param num given value to divide
+	 * @param divisor value to divide by
+	 * @return round up result of dividing num by divisor
+	 */
 	public static int roundUp(int num, int divisor) {
 	    int sign = (num > 0 ? 1 : -1) * (divisor > 0 ? 1 : -1);
 	    return sign * (Math.abs(num) + Math.abs(divisor) - 1) / Math.abs(divisor);
 	}
 	
+	/**
+	 * Calculates max dimension of all components
+	 * @return max dimension of all components
+	 */
 	private Dimension getMaxDimensions() {
 		int maxWidth = 0; 
 		int maxHeight = 0;
@@ -201,6 +230,10 @@ public class CalcLayout implements LayoutManager2 {
 		return new Dimension(maxWidth, maxHeight);
 	}
 
+	/**
+	 * Calculates max label text size
+	 * @return dimension of max label text size
+	 */
 	private Dimension calculateSize() {
 		Font labelFont;
 		String labelText;

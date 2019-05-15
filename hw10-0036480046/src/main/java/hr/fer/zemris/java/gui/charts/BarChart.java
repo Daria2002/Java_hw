@@ -18,6 +18,11 @@ public class BarChart {
 			throw new IllegalArgumentException("y range is not ok.");
 		}
 		
+		if((yMax - yMin) % space != 0) {
+			int help = (yMax - yMin + space) / space;
+			yMax = space * help;
+		}
+		
 		this.values = values;
 		this.xDescription = xDescription;
 		this.yDescription = yDescription;
@@ -26,7 +31,4 @@ public class BarChart {
 		this.space = space;
 		
 	}
-	
-	
-	
 }

@@ -26,7 +26,6 @@ public class CalculatorLabel extends JLabel implements CalcValueListener {
 	
 	@Override
 	public void valueChanged(CalcModel model) {
-		// step 1: unboxing
 		double dbl = model.getValue();
 		
 		if(!(model.getValue() == Math.floor(model.getValue()) && 

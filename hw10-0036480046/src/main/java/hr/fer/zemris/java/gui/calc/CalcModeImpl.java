@@ -34,6 +34,40 @@ public class CalcModeImpl implements CalcModel {
 	/** list of observers to remove **/
 	private List<CalcValueListener> removeList;
 	
+	
+	
+	public void setEnteredNumberString(String enteredNumberString) {
+		this.enteredNumberString = enteredNumberString;
+		
+		if(observers!=null) {
+			if(removeList != null) {
+				for(CalcValueListener observer : removeList) {
+					observers.remove(observer);
+				}
+			}
+			
+			for(CalcValueListener observer : observers) {
+				observer.valueChanged(this);
+			}
+		}
+	}
+
+	public void setEnteredNumberDecimal(Double enteredNumberDecimal) {
+		this.enteredNumberDecimal = enteredNumberDecimal;
+		
+		if(observers!=null) {
+			if(removeList != null) {
+				for(CalcValueListener observer : removeList) {
+					observers.remove(observer);
+				}
+			}
+			
+			for(CalcValueListener observer : observers) {
+				observer.valueChanged(this);
+			}
+		}
+	}
+
 	/**
 	 * This method represents constructor for CalcModelImpl, that initialize
 	 * variables
@@ -87,8 +121,19 @@ public class CalcModeImpl implements CalcModel {
 
 	@Override
 	public void setValue(double value) {
-		enteredNumberDecimal = value;
-		enteredNumberString = String.valueOf(value);
+		System.out.println("u set value arg: " +  value);
+		
+		if(value > 0) {
+			positiveNumber = true;
+		} else {
+			positiveNumber = false;
+		}
+		
+		enteredNumberDecimal = Math.abs(value);
+		
+		System.out.println("dec: " + enteredNumberDecimal);
+		
+		enteredNumberString = String.valueOf(Math.abs(value));
 		editableModel = false;
 		
 		if(observers!=null) {
@@ -161,6 +206,17 @@ public class CalcModeImpl implements CalcModel {
 		
 		positiveNumber = !positiveNumber;
 		
+		if(observers!=null) {
+			if(removeList != null) {
+				for(CalcValueListener observer : removeList) {
+					observers.remove(observer);
+				}
+			}
+			
+			for(CalcValueListener observer : observers) {
+				observer.valueChanged(this);
+			}
+		}
 	}
 
 	@Override
@@ -259,6 +315,7 @@ public class CalcModeImpl implements CalcModel {
 		this.activeOperand = activeOperand;
 		enteredNumberDecimal = Double.valueOf(0);
 		enteredNumberString = "";
+		
 	}
 
 	@Override
@@ -274,6 +331,7 @@ public class CalcModeImpl implements CalcModel {
 	@Override
 	public void setPendingBinaryOperation(DoubleBinaryOperator op) {
 		pendingOperation = op;
+
 	}
 
 	@Override

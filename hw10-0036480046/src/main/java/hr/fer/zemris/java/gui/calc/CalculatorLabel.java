@@ -1,5 +1,7 @@
 package hr.fer.zemris.java.gui.calc;
 
+import java.awt.Color;
+
 import javax.swing.JLabel;
 
 import hr.fer.zemris.java.gui.calc.model.CalcModel;
@@ -13,6 +15,11 @@ import hr.fer.zemris.java.gui.calc.model.CalcValueListener;
  */
 public class CalculatorLabel extends JLabel implements CalcValueListener {
 
+	public CalculatorLabel() {
+		setOpaque(true);
+        setBackground(Color.YELLOW);
+	}
+	
 	@Override
 	public void valueChanged(CalcModel model) {
 		// step 1: unboxing

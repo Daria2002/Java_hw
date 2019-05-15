@@ -212,7 +212,7 @@ public class Calculator extends JFrame {
 	private void initGUI() {
 		cp = getContentPane();
 		cp.setLayout(new CalcLayout(3));
-		
+	
 		CalculatorLabel screen = new CalculatorLabel();
 		cp.add(screen, new RCPosition(1, 1));
 		cmi.addCalcValueListener(screen);

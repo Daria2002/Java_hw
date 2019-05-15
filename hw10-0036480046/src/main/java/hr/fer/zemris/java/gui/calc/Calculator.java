@@ -166,6 +166,12 @@ public class Calculator extends JFrame {
 	
 	/** divide listener **/
 	private static ActionListener divideListener = (e) -> {
+		if(cmi.getPendingBinaryOperation() != null) {
+			cmi.setActiveOperand(cmi.getPendingBinaryOperation().
+					applyAsDouble(cmi.getActiveOperand(), cmi.enteredNumberDecimal));
+			cmi.enteredNumberDecimal = cmi.getActiveOperand();
+			cmi.enteredNumberString = String.valueOf(cmi.getActiveOperand());
+		}
 		cmi.setActiveOperand(cmi.getValue());
 		cmi.setPendingBinaryOperation(new DoubleBinaryOperator() {
 			
@@ -181,6 +187,12 @@ public class Calculator extends JFrame {
 	
 	/** multiply listener **/
 	private static ActionListener multiplyListener = (e) -> {
+		if(cmi.getPendingBinaryOperation() != null) {
+			cmi.setActiveOperand(cmi.getPendingBinaryOperation().
+					applyAsDouble(cmi.getActiveOperand(), cmi.enteredNumberDecimal));
+			cmi.enteredNumberDecimal = cmi.getActiveOperand();
+			cmi.enteredNumberString = String.valueOf(cmi.getActiveOperand());
+		}
 		cmi.setActiveOperand(cmi.getValue());
 		cmi.setPendingBinaryOperation(new DoubleBinaryOperator() {
 			
@@ -206,6 +218,12 @@ public class Calculator extends JFrame {
 	
 	/** minus listener **/
 	private static ActionListener minusListener = (e) -> {
+		if(cmi.getPendingBinaryOperation() != null) {
+			cmi.setActiveOperand(cmi.getPendingBinaryOperation().
+					applyAsDouble(cmi.getActiveOperand(), cmi.enteredNumberDecimal));
+			cmi.enteredNumberDecimal = cmi.getActiveOperand();
+			cmi.enteredNumberString = String.valueOf(cmi.getActiveOperand());
+		}
 		cmi.setActiveOperand(cmi.getValue());
 		cmi.setPendingBinaryOperation(new DoubleBinaryOperator() {
 			
@@ -226,14 +244,14 @@ public class Calculator extends JFrame {
 		
 	/** plus listener **/
 	private static ActionListener plusListener = (e) -> {
-		if(cmi.getActiveOperand() != Double.valueOf(0)) {
+		if(cmi.getPendingBinaryOperation() != null) {
 			cmi.setActiveOperand(cmi.getPendingBinaryOperation().
 					applyAsDouble(cmi.getActiveOperand(), cmi.enteredNumberDecimal));
 			cmi.enteredNumberDecimal = cmi.getActiveOperand();
 			cmi.enteredNumberString = String.valueOf(cmi.getActiveOperand());
-		} else {
-			cmi.setActiveOperand(cmi.getValue());
 		}
+		cmi.setActiveOperand(cmi.getValue());
+		
 		cmi.setPendingBinaryOperation(new DoubleBinaryOperator() {
 			
 			@Override

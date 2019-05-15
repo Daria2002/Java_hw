@@ -89,7 +89,6 @@ public class CalcModeImpl implements CalcModel {
 	public void setValue(double value) {
 		enteredNumberDecimal = value;
 		enteredNumberString = String.valueOf(value);
-		
 		editableModel = false;
 		
 		if(observers!=null) {
@@ -274,15 +273,6 @@ public class CalcModeImpl implements CalcModel {
 
 	@Override
 	public void setPendingBinaryOperation(DoubleBinaryOperator op) {
-		if(pendingOperation != null) {
-			System.out.println("ao:"+ activeOperand);
-			System.out.println("eno:"+enteredNumberDecimal);
-			activeOperand = pendingOperation.applyAsDouble(activeOperand, enteredNumberDecimal);
-			
-			enteredNumberDecimal = activeOperand;
-			enteredNumberString = String.valueOf(activeOperand);
-		}
-		
 		pendingOperation = op;
 	}
 

@@ -101,7 +101,7 @@ public class SmartScriptParser {
 								+ "should not appear.");
 					}
 					
-					return;
+					continue;
 					
 				case FOR_LOOP_TAG:
 					// if there are not four arguments, that means that current token
@@ -115,7 +115,7 @@ public class SmartScriptParser {
 
 				case ECHO_TAG:
 					echoTag();
-					return;
+					continue;
 					
 				default:
 					throw new IllegalArgumentException("Exception occured");
@@ -180,9 +180,9 @@ public class SmartScriptParser {
 			throw new SmartScriptParserException("Variable name can't be number");
 		}
 		
-		ElementVariable variable = new ElementVariable(lexer.getToken().toString());
-		Element startExpression = getIntegerDoubleOrString(lexer.nextToken().toString());
-		Element endExpression =  getIntegerDoubleOrString(lexer.nextToken().toString());
+		ElementVariable variable = new ElementVariable(lexer.getToken().getValue().toString());
+		Element startExpression = getIntegerDoubleOrString(lexer.nextToken().getValue().toString());
+		Element endExpression =  getIntegerDoubleOrString(lexer.nextToken().getValue().toString());
 		Element stepExpression = null;
 		
 		boolean fourArgs = false;
@@ -341,7 +341,9 @@ public class SmartScriptParser {
 			stack = new ObjectStack();
 			stack.push(documentNode);
 			
-			makeDocumentNode();
+			//makeDocumentNode();
+			
+			buildDocumentModel();
 			
 			Node node = (Node)stack.peek();
 			if(!(node instanceof DocumentNode)) {

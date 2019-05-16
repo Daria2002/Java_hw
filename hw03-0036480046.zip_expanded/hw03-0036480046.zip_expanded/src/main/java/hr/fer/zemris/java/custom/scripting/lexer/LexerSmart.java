@@ -1,5 +1,6 @@
 package hr.fer.zemris.java.custom.scripting.lexer;
 
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 /** 
@@ -238,8 +239,69 @@ public class LexerSmart {
 		StringBuilder tokenValue = new StringBuilder();
 		// escape sequence is true if last char was \
 		boolean escapeSequence = false;
+		boolean stringSequence = false;
+		
+		// EOF
+		if(currentIndex == data.length) {
+			currentIndex++;
+			return new TokenSmart(TokenSmartType.EOF, null);
+		}
+		
+		// there are no more tokens
+		if(currentIndex > data.length) {
+			throw new NoSuchElementException("There are no more elements");
+		}
+		
+		while(data[currentIndex] == ' ') {
+			currentIndex++;
+		}
+		
+		// tag close can occur after tag name or tag element
+		if(getToken() != null && (getToken().getType() == TokenSmartType.TAG_ELEMENT
+				|| getToken().getType() == TokenSmartType.TAG_NAME)&&
+				data[currentIndex] == '$' && currentIndex+1 < data.length &&
+				data[currentIndex+1] == '}') {
+			currentIndex += 2;
+			return new TokenSmart(TokenSmartType.TAG_CLOSE, "$}");
+		}
+		
+		// check if token is string  expression
+		// string expression ends with quote "
+		if(data[currentIndex] == '"') {
+			currentIndex++;
+			tokenValue.append("\"");
+			stringSequence = true;
+		}
 		
 		while(currentIndex < data.length) {
+			// check if end of quoted sequence
+			if(stringSequence && !escapeSequence && data[currentIndex] == '"') {
+				currentIndex++;
+				return new TokenSmart(TokenSmartType.TAG_ELEMENT, String.valueOf(tokenValue.append("\"")));
+			}
+			
+			// tag element stops when tag close occurs
+			if(getToken() != null && (getToken().getType() == TokenSmartType.TAG_ELEMENT
+					|| getToken().getType() == TokenSmartType.TAG_NAME)&&
+					data[currentIndex] == '$' && currentIndex+1 < data.length &&
+					data[currentIndex+1] == '}') {
+				return new TokenSmart(TokenSmartType.TAG_ELEMENT, String.valueOf(tokenValue));
+			}
+			
+			// tag element can occur after tag element or tag name
+			if(getToken() != null && (getToken().getType() == TokenSmartType.TAG_ELEMENT
+					|| getToken().getType() == TokenSmartType.TAG_NAME) &&
+					tokenValue.length() > 0 && !stringSequence && (data[currentIndex] == '"' 
+					|| data[currentIndex] == ' ' || data[currentIndex] == '}')) {
+				return new TokenSmart(TokenSmartType.TAG_ELEMENT, String.valueOf(tokenValue));
+			}
+			
+			// tag name should be after tag open token
+			if(getToken() != null && getToken().getType() == TokenSmartType.TAG_OPEN &&
+					(data[currentIndex] == ' ' || data[currentIndex] == '$')) {
+				return new TokenSmart(TokenSmartType.TAG_NAME, String.valueOf(tokenValue));
+			}
+			
 			// if next token is tag open (first element is tag open)
 			if(data[currentIndex] == '{'  && currentIndex + 1 < data.length 
 					&& data[currentIndex + 1] == '$' && tokenValue.length() == 0) {
@@ -250,7 +312,7 @@ public class LexerSmart {
 			// return text if {$ occurs and it is not escape sequence
 			else if(data[currentIndex] == '{' && currentIndex + 1 < data.length
 					&& data[currentIndex + 1] == '$' && !escapeSequence) {
-				return new TokenSmart(TokenSmartType.TEXT, tokenValue);
+				return new TokenSmart(TokenSmartType.TEXT, String.valueOf(tokenValue));
 			}
 			
 			// if \ occurs and escape sequence is off, turn escape sequence on
@@ -276,7 +338,7 @@ public class LexerSmart {
 			tokenValue.append(data[currentIndex++]);
 		}
 		
-		return new TokenSmart(TokenSmartType.TEXT, tokenValue);
+		return new TokenSmart(TokenSmartType.TEXT, String.valueOf(tokenValue));
 	}
 
 	/**

@@ -2,9 +2,10 @@ package hr.fer.zemris.java.custom.scripting.lexer;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.jupiter.api.Test;
+import java.util.NoSuchElementException;
 
-import com.sun.source.tree.AssertTree;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DisplayNameGenerator.Standard;
 
 public class LexerSmartTest {
 
@@ -21,28 +22,37 @@ public class LexerSmartTest {
 		LexerSmart lexer = new LexerSmart(text);
 		
 		assertEquals(lexer.nextToken().getType(), TokenSmartType.TEXT);
-		assertEquals(lexer.getToken().getValue(), "This is sample text.");
+		assertEquals(String.valueOf(lexer.getToken().getValue()), "This is sample text.");
 		
 		assertEquals(lexer.nextToken().getType(), TokenSmartType.TAG_OPEN);
 		assertEquals(lexer.getToken().getValue(), "{$");
 		
 		assertEquals(lexer.nextToken().getType(), TokenSmartType.TAG_NAME);
-		assertEquals(lexer.getToken().getValue(), "FOR");
+		assertEquals(String.valueOf(lexer.getToken().getValue()), "FOR");
 		
 		assertEquals(lexer.nextToken().getType(), TokenSmartType.TAG_ELEMENT);
-		assertEquals(lexer.getToken().getValue().toString().strip(), "i 1 10 1");
+		assertEquals(lexer.getToken().getValue().toString().strip(), "i");
+		
+		assertEquals(lexer.nextToken().getType(), TokenSmartType.TAG_ELEMENT);
+		assertEquals(lexer.getToken().getValue().toString().strip(), "1");
+		
+		assertEquals(lexer.nextToken().getType(), TokenSmartType.TAG_ELEMENT);
+		assertEquals(lexer.getToken().getValue().toString().strip(), "10");
+		
+		assertEquals(lexer.nextToken().getType(), TokenSmartType.TAG_ELEMENT);
+		assertEquals(lexer.getToken().getValue().toString().strip(), "1");
 		
 		assertEquals(lexer.nextToken().getType(), TokenSmartType.TAG_CLOSE);
 		assertEquals(lexer.getToken().getValue(), "$}");
 		
 		assertEquals(lexer.nextToken().getType(), TokenSmartType.TEXT);
-		assertEquals(lexer.getToken().getValue(), "This is ");
+		assertEquals(String.valueOf(lexer.getToken().getValue()), "This is ");
 		
 		assertEquals(lexer.nextToken().getType(), TokenSmartType.TAG_OPEN);
 		assertEquals(lexer.getToken().getValue(), "{$");
 		
 		assertEquals(lexer.nextToken().getType(), TokenSmartType.TAG_NAME);
-		assertEquals(lexer.getToken().getValue(), "=");
+		assertEquals(String.valueOf(lexer.getToken().getValue()), "=");
 		
 		assertEquals(lexer.nextToken().getType(), TokenSmartType.TAG_ELEMENT);
 		assertEquals(lexer.getToken().getValue().toString().strip(), "i");
@@ -51,18 +61,23 @@ public class LexerSmartTest {
 		assertEquals(lexer.getToken().getValue(), "$}");
 		
 		assertEquals(lexer.nextToken().getType(), TokenSmartType.TEXT);
-		assertEquals(lexer.getToken().getValue(), "-th time this message is generated.");
+		assertEquals(String.valueOf(lexer.getToken().getValue()),
+				"-th time this message is generated.");
 		
 		assertEquals(lexer.nextToken().getType(), TokenSmartType.TAG_OPEN);
-		assertEquals(lexer.getToken().getValue(), "{$");
+		assertEquals(String.valueOf(lexer.getToken().getValue()), "{$");
 		
 		assertEquals(lexer.nextToken().getType(), TokenSmartType.TAG_NAME);
 		assertEquals(lexer.getToken().getValue(), "END");
 		
 		assertEquals(lexer.nextToken().getType(), TokenSmartType.TAG_CLOSE);
 		assertEquals(lexer.getToken().getValue(), "$}");
+		
+		assertEquals(lexer.nextToken().getType(), TokenSmartType.EOF);
+		assertEquals(lexer.getToken().getValue(), null);
 	}
 
+	/* test za parser 
 	@Test
 	void testUnclosedLoop() {
 		String text = "This is sample text.{$ FOR i 1 10 1 $}";
@@ -77,7 +92,7 @@ public class LexerSmartTest {
 		
 		assertThrows(LexerSmartException.class, () -> lexer.nextToken());
 	}
-
+	**/
 	@Test
 	void testCode() {
 		String text = "This is text.{$ FOR \"i\" \"-101\" 10 1 $}"
@@ -96,7 +111,16 @@ public class LexerSmartTest {
 		assertEquals(lexer.getToken().getValue(), "FOR");
 		
 		assertEquals(lexer.nextToken().getType(), TokenSmartType.TAG_ELEMENT);
-		assertEquals(lexer.getToken().getValue().toString().strip(), "\"i\" \"-101\" 10 1");
+		assertEquals(lexer.getToken().getValue().toString().strip(), "\"i\"");
+		
+		assertEquals(lexer.nextToken().getType(), TokenSmartType.TAG_ELEMENT);
+		assertEquals(lexer.getToken().getValue().toString().strip(), "\"-101\"");
+		
+		assertEquals(lexer.nextToken().getType(), TokenSmartType.TAG_ELEMENT);
+		assertEquals(lexer.getToken().getValue().toString().strip(), "10");
+		
+		assertEquals(lexer.nextToken().getType(), TokenSmartType.TAG_ELEMENT);
+		assertEquals(lexer.getToken().getValue().toString().strip(), "1");
 		
 		assertEquals(lexer.nextToken().getType(), TokenSmartType.TAG_CLOSE);
 		assertEquals(lexer.getToken().getValue(), "$}");
@@ -111,7 +135,13 @@ public class LexerSmartTest {
 		assertEquals(lexer.getToken().getValue(), "=");
 		
 		assertEquals(lexer.nextToken().getType(), TokenSmartType.TAG_ELEMENT);
-		assertEquals(lexer.getToken().getValue().toString().strip(), "i @sin \"h_el\\\\lo\"");
+		assertEquals(lexer.getToken().getValue().toString().strip(), "i");
+		
+		assertEquals(lexer.nextToken().getType(), TokenSmartType.TAG_ELEMENT);
+		assertEquals(lexer.getToken().getValue().toString().strip(), "@sin");
+		
+		assertEquals(lexer.nextToken().getType(), TokenSmartType.TAG_ELEMENT);
+		assertEquals(lexer.getToken().getValue().toString().strip(), "\"h_el\\lo\"");
 		
 		assertEquals(lexer.nextToken().getType(), TokenSmartType.TAG_CLOSE);
 		assertEquals(lexer.getToken().getValue(), "$}");
@@ -128,6 +158,6 @@ public class LexerSmartTest {
 		LexerSmart lexer = new LexerSmart("");
 		lexer.nextToken();
 		
-		assertThrows(LexerSmartException.class, () -> lexer.nextToken());
+		assertThrows(NoSuchElementException.class, () -> lexer.nextToken());
 	}
 }

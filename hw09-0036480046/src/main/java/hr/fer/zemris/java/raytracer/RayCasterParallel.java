@@ -247,7 +247,7 @@ public class RayCasterParallel {
 						RayIntersection testClosest = obj.findClosestRayIntersection(ray);
 						
 						if(testClosest != null) {
-							if(closestEl == null || testClosest.getDistance() > testClosest.getDistance()) {
+							if(closestEl == null || closestEl.getDistance() > testClosest.getDistance()) {
 								closestEl = testClosest;
 							}
 						}

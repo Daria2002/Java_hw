@@ -19,6 +19,8 @@ import hr.fer.zemris.java.raytracer.viewer.RayTracerViewer;
  *
  */
 public class Raytracer {
+	/** tolerance for comparing double values **/
+	private static final double TOL = 1E-5;
 
 	/**
 	 * This method is executed when program is run.
@@ -124,7 +126,7 @@ public class Raytracer {
 					RayIntersection testClosest = obj.findClosestRayIntersection(ray);
 					
 					if(testClosest != null) {
-						if(closestEl == null || testClosest.getDistance() > testClosest.getDistance()) {
+						if(closestEl == null || closestEl.getDistance() > testClosest.getDistance()) {
 							closestEl = testClosest;
 						}
 					}
@@ -211,7 +213,7 @@ public class Raytracer {
 					double diffuseComponent = Math.max(0, phongParams.n.scalarProduct(phongParams.l));
 					double reflectionComponent = phongParams.r.scalarProduct(phongParams.v);
 					
-					if(reflectionComponent < 0) {
+					if(reflectionComponent  - 0 < TOL) {
 						reflectionComponent = 0;
 					}
 					

@@ -165,6 +165,8 @@ public class RayCasterParallel2 {
 				int height;
 				/** threshold for creating new objects **/
 				static final int THRESHOLD = 3;
+				/** tolerance for comparing double values **/
+				private static final double TOL = 1E-5;
 				
 				/**
 				 * Constructor that initializes local variables 
@@ -260,7 +262,7 @@ public class RayCasterParallel2 {
 						double diffuseComponent = Math.max(0, phongParams.n.scalarProduct(phongParams.l));
 						double reflectionComponent = phongParams.r.scalarProduct(phongParams.v);
 						
-						if(reflectionComponent < 0) {
+						if(reflectionComponent - 0 < TOL) {
 							reflectionComponent = 0;
 						}
 						
@@ -292,7 +294,7 @@ public class RayCasterParallel2 {
 						RayIntersection testClosest = obj.findClosestRayIntersection(ray);
 						
 						if(testClosest != null) {
-							if(closestEl == null || testClosest.getDistance() > testClosest.getDistance()) {
+							if(closestEl == null || closestEl.getDistance() > testClosest.getDistance()) {
 								closestEl = testClosest;
 							}
 						}

@@ -31,6 +31,8 @@ public class Sphere extends GraphicalObject {
 	double krb;
 	/** shininess factor **/
 	double krn;
+	/** tolerance for comparing double values **/
+	private static final double TOL = 1E-5;
 	
 	/**
 	 * Constructor initialize local variables
@@ -89,25 +91,24 @@ public class Sphere extends GraphicalObject {
 	    }
 	    
 	    // two points 
-	    
     	double t1 = (-b + Math.sqrt(discriminant))/(2*a);
     	
-    	if(t0 < t1 && t0 > 0) {
+    	if(t0 - t1 < TOL && t0 - 0 > TOL) {
     		return new IntersectionStruct(
 	    			ray.direction.scalarMultiply(t0).add(ray.start),
 	    			t0, true);
     		
-    	} else if(t1 < t0 && t1 > 0) {
+    	} else if(t1 - t0 < TOL && t1 - 0 > TOL) {
     		return new IntersectionStruct(
 	    			ray.direction.scalarMultiply(t1).add(ray.start),
 	    			t1, true);
     		
-    	} else if(t1 > 0) {
+    	} else if(t1 - 0 > TOL) {
     		return new IntersectionStruct(
 	    			ray.direction.scalarMultiply(t1).add(ray.start),
 	    			t1, false);
     		
-    	} else if(t0 > 0) {
+    	} else if(t0 - 0 > TOL) {
     		return new IntersectionStruct(
 	    			ray.direction.scalarMultiply(t0).add(ray.start),
 	    			t0, false);
@@ -116,12 +117,25 @@ public class Sphere extends GraphicalObject {
     	return null;
 	}
 	
+	/**
+	 * This class represents structure that describes intersection point.
+	 * @author Daria Matković
+	 *
+	 */
 	private static class IntersectionStruct {
-		
+		/** intersection point **/
 		private Point3D intersectionPoint;
+		/** flag for ray direction **/
 		private boolean outer;
+		/** distance between ray source and intersection point**/
 		private double distance;
 		
+		/**
+		 * This method defines constructor for intersection structure
+		 * @param intersectionPoint  intersection point
+		 * @param distance distance
+		 * @param outer ray direction
+		 */
 		public IntersectionStruct(Point3D intersectionPoint, 
 				double distance, boolean outer) {
 			this.intersectionPoint = intersectionPoint;

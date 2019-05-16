@@ -88,6 +88,7 @@ public class ComplexPolynomial {
 			if(factors[i] == null) {
 				continue;
 			}
+	
 			result = result.add(factors[i].multiply(z.power(i)));
 		}
 

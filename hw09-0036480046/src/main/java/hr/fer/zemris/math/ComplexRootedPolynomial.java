@@ -103,16 +103,25 @@ public class ComplexRootedPolynomial {
 	 * @return index of closest root
 	 */
 	public int indexOfClosestRootFor(Complex z, double threshold) {
+		if(z == null) {
+			return -1;
+		}
+		
 		int index = 0;
+		double smallestDif = threshold * 1E5;
+		int bestIndex = -1;
 		
 		for(Complex el : roots) {
 			if(threshold > (z.sub(el)).module()) {
-				return index;
+				if(smallestDif > (z.sub(el)).module()) {
+					smallestDif = (z.sub(el)).module();
+					bestIndex = index;
+				}
 			}
 			
 			index++;
 		}
 		
-		return -1;
+		return bestIndex;
 	}
 }

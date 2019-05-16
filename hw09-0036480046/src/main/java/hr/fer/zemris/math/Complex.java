@@ -10,14 +10,19 @@ import java.util.List;
  *
  */
 public class Complex {
-	
+	/** real component of complex number **/
 	private final double re;
+	/** imaginary component of complex number **/
 	private final double im;
-	
+	/** Complex number of zero **/
 	public static final Complex ZERO = new Complex(0, 0);
+	/** Complex number of onde **/
 	public static final Complex ONE = new Complex(1, 0);
+	/** complex number of -1 **/
 	public static final Complex ONE_NEG = new Complex(-1, 0);
+	/** complex number of i **/
 	public static final Complex IM = new Complex(0, 1);
+	/** complex number of -i **/
 	public static final Complex IM_NEG = new Complex(0, -1);
 	
 	/**
@@ -175,8 +180,6 @@ public class Complex {
 		
 		return complexNumbers;
 	}
-	
-	
 	
 	@Override
 	public String toString() {

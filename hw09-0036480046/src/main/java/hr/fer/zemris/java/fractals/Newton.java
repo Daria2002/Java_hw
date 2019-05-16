@@ -9,6 +9,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import hr.fer.zemris.java.fractals.viewer.FractalViewer;
 import hr.fer.zemris.java.fractals.viewer.IFractalProducer;
 import hr.fer.zemris.java.fractals.viewer.IFractalResultObserver;
@@ -150,9 +152,8 @@ public class Newton {
 			for(int k = yMin; k <= yMax; k++) {
 			
 				for(int l = 1; l <= width; l++) {
-					
+
 					offset = k * width + l - 1;
-					
 					double newRe = l * (reMax - reMin) / (width - 1) + reMin;
 					double newIm = (height - 1 - k) * (imMax - imMin) / (height - 1) + imMin;
 					
@@ -165,18 +166,16 @@ public class Newton {
 			    	do {
 			    		  Complex numerator = polynomial.apply(zn);
 			    		  Complex denominator = derived.apply(zn);
+			    		  znold = zn;
 			    		  Complex fraction = numerator.divide(denominator);
-			    		  znold = zn.sub(fraction);
-			    		  Complex helpModule = znold.sub(zn);
-			    		  
-			    		  module = helpModule.module();
-			    		  zn = znold;
+			    		  zn = zn.sub(fraction);
+			    		  module = znold.sub(zn).module();
 			    		  iter++;
 			
 			    	} while(iter < 1000 && module > 0.001);
 
 			    	int index = crp.indexOfClosestRootFor(zn, 0.002);
-			    	
+
 			    	data[offset] = (short) (index+1);
 				}
 			}
@@ -227,7 +226,8 @@ public class Newton {
 		@Override
 		public void produce(double reMin, double reMax, double imMin,
 				double imMax, int width, int height,
-				long requestNo, IFractalResultObserver observer) {
+				long requestNo, IFractalResultObserver observer, AtomicBoolean
+				atomicBoolean) {
 			
 			short[] data = new short[width * height];
 			List<Future<Void>> futureObjects = new ArrayList<Future<Void>>();
@@ -240,8 +240,7 @@ public class Newton {
 				}
 				
 				futureObjects.add(executor.submit(new Work(yMin, yMax, width,
-						height, polynomial, derived, 
-						reMin, reMax, imMax, imMin, crp, data)));
+						height, polynomial, derived, reMin, reMax, imMax, imMin, crp, data)));
 			}
 			
 			for(Future<Void> obj : futureObjects) {
@@ -255,22 +254,7 @@ public class Newton {
 				}
 			}
 			
-			observer.acceptResult(data, (short) (polynomial.order() + 1), requestNo);
-		}
-	}
-	
-	/**
-	 * This method returns imaginary value
-	 * @param root string to parse
-	 * @param operator separator between real and imaginary value
-	 * @return imaginary value
-	 */
-	private static double getIm(String root, char operator) {
-		// +1+1 to skip + and i
-		if(root.indexOf('i') == root.length() - 1) {
-			return Double.valueOf(1);
-		} else {
-			return Double.valueOf(root.substring(root.indexOf(operator) + 1 + 1));
+			observer.acceptResult(data, (short) polynomial.order(), requestNo);
 		}
 	}
 	
@@ -280,49 +264,31 @@ public class Newton {
 	 * @return complex number
 	 */
 	private static Complex parseComplexNumber(String root) {
-		Complex complexNumber = new Complex();
-		
-		if(root == null) {
-			return null;
+		// complex number has only real component
+		if(!root.contains("i")) {
+			return new Complex(Double.valueOf(root), 0);
 		}
 		
-		if(root.contains("+") && root.indexOf("+") != 0) {
-			double im = getIm(root, '+');
+		// complex number has only imaginary component
+		else if(root.contains("i") && root.indexOf("i") < 2) {
+			// complex number is i or -i
+			if(!root.replace("i", "").matches(".*\\d.*")) {
+				return new Complex(0, root.contains("-") ? -1 : 1);
+			}
 			
-			complexNumber = new Complex(
-					Double.valueOf(root.substring(0, root.indexOf('+'))), im);
-					
-			
-					//str.indexOf("is", str.indexOf("is") + 1);
-		} else if(root.contains("-") && root.indexOf("-") != 0) {
-			// multiply with -1 because sign before i is -
-			double im = getIm(root, '-') * (-1);
-			
-			complexNumber = new Complex(
-					Double.valueOf(root.substring(0, root.indexOf('-'))), im);		
+			return new Complex(0, Double.valueOf(root.replace("i", "")));
+		}
+	
+		int helpIndex = root.substring(1).contains("+") ?
+				root.indexOf("+", 1) : root.indexOf("-", 1);
+		double re = Double.valueOf(root.substring(0, helpIndex));
+		String imPart = root.substring(helpIndex + 1);
 		
-		} else if(root.indexOf("-") == 0) {
-			// multiply with -1 because sign before i is -
-			double im = getIm(root, '-') * (-1);
-			
-			complexNumber = new Complex(
-					Double.valueOf(root.substring(0,
-							root.indexOf('-', root.indexOf('-') + 1))), im);
-			
-		} else if(root.equals("0")) {
-			complexNumber = new Complex(0, 0);
-			
-		} else if(root.equals("i")) {
-			complexNumber = new Complex(0, 1);
-		
-		} else if(root.contains("i")) {
-			complexNumber = new Complex(0, Double.valueOf(
-					new StringBuilder().charAt(root.indexOf("i"))));
-			
-		} else {
-			complexNumber = new Complex(Double.valueOf(root), 0);
+		if(!imPart.replace("i", "").matches(".*\\d.*")) {
+			return new Complex(re, imPart.contains("-") ? -1 : 1);
 		}
 		
-		return complexNumber;
+		return new Complex(re, Double.valueOf(Double.valueOf(imPart.replace("i", "")) *
+				(root.substring(1).contains("+") ? 1:(-1))));
 	}
 }

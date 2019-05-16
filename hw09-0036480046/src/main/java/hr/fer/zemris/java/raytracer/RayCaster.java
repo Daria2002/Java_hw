@@ -18,7 +18,7 @@ import hr.fer.zemris.java.raytracer.viewer.RayTracerViewer;
  * @author Daria Matković
  *
  */
-public class Raytracer {
+public class RayCaster {
 	/** tolerance for comparing double values **/
 	private static final double TOL = 1E-5;
 

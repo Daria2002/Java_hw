@@ -144,7 +144,6 @@ public class RayCasterParallel {
 						double horizontal, double vertical, int yMax, int xMax, int yMin,
 						Scene scene, short[] red, short[] green, short[] blue, Point3D eye,
 						int offset, Point3D view, int height) {
-					super();
 					this.screenCorner = screenCorner;
 					this.xAxis = xAxis;
 					this.yAxis = yAxis;
@@ -324,7 +323,7 @@ public class RayCasterParallel {
 							
 							Point3D screenPoint = screenCorner.add(
 									xAxis.scalarMultiply(x * horizontal/(xMax-1)))
-									.sub(yAxis.scalarMultiply(y * vertical/(500-1)));
+									.sub(yAxis.scalarMultiply(y * vertical/(height-1)));
 
 							Ray ray = Ray.fromPoints(eye, screenPoint);
 							
@@ -362,7 +361,6 @@ public class RayCasterParallel {
 								offset, view, height);
 						
 						invokeAll(first, second);
-						
 					}	
 				}	
 			}

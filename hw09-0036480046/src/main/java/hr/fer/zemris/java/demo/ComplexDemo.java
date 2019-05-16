@@ -1,4 +1,8 @@
-package hr.fer.zemris.math;
+package hr.fer.zemris.java.demo;
+
+import hr.fer.zemris.math.Complex;
+import hr.fer.zemris.math.ComplexPolynomial;
+import hr.fer.zemris.math.ComplexRootedPolynomial;
 
 /**
  * Demonstration program for complex number

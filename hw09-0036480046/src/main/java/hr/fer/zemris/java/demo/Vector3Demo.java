@@ -1,4 +1,6 @@
-package hr.fer.zemris.math;
+package hr.fer.zemris.java.demo;
+
+import hr.fer.zemris.math.Vector3;
 
 /**
  * This class represents demo program for Vector3 class

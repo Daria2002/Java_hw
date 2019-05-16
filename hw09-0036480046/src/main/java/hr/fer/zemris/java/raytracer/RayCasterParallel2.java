@@ -383,7 +383,7 @@ public class RayCasterParallel2 {
 							
 							Point3D screenPoint = screenCorner.add(
 									xAxis.scalarMultiply(x * horizontal/(xMax-1)))
-									.sub(yAxis.scalarMultiply(y * vertical/(500-1)));
+									.sub(yAxis.scalarMultiply(y * vertical/(height-1)));
 
 							Ray ray = Ray.fromPoints(eye, screenPoint);
 							

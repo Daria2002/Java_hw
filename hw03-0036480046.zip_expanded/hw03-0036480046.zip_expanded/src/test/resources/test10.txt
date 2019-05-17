@@ -1,3 +1,0 @@
-{$ FOR i @sin 10$}
-	This is some text.
-{$ENDE$}

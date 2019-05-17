@@ -94,9 +94,10 @@ public class LexerSmart {
 				}
 				
 				// if token is operator
-				if(currentIndex < data.length && data[currentIndex] == '*' ||
+				if((currentIndex < data.length && data[currentIndex] == '*' ||
 						data[currentIndex] == '^' || data[currentIndex] == '/' ||
-						data[currentIndex] == '-' || data[currentIndex] == '+') {
+						data[currentIndex] == '-' || data[currentIndex] == '+') &&
+						currentIndex+1 < data.length && !Character.isDigit(data[currentIndex+1])) {
 					currentIndex++;
 					return new TokenSmart(TokenSmartType.TAG_ELEMENT, data[currentIndex - 1]);
 				}
@@ -172,7 +173,8 @@ public class LexerSmart {
 		}
 		
 		tokenValue.append(data[currentIndex++]);
-		while(data[currentIndex] != ' ' && Character.isDigit(data[currentIndex])) {
+		while(data[currentIndex] != ' ' && (Character.isDigit(data[currentIndex]) 
+				|| data[currentIndex] == '.')) {
 			tokenValue.append(data[currentIndex++]);
 		}
 		
@@ -282,17 +284,20 @@ public class LexerSmart {
 			
 			// tag element stops when tag close occurs
 			if(getToken() != null && (getToken().getType() == TokenSmartType.TAG_ELEMENT
-					|| getToken().getType() == TokenSmartType.TAG_NAME)&&
+					|| getToken().getType() == TokenSmartType.TAG_NAME) &&
 					data[currentIndex] == '$' && currentIndex+1 < data.length &&
 					data[currentIndex+1] == '}') {
 				return new TokenSmart(TokenSmartType.TAG_ELEMENT, String.valueOf(tokenValue));
 			}
 			
 			// tag element can occur after tag element or tag name
+			// tag element stops when current element is -, space or }
 			if(getToken() != null && (getToken().getType() == TokenSmartType.TAG_ELEMENT
 					|| getToken().getType() == TokenSmartType.TAG_NAME) &&
-					tokenValue.length() > 0 && !stringSequence && (data[currentIndex] == '"' 
-					|| data[currentIndex] == ' ' || data[currentIndex] == '}')) {
+					tokenValue.length() > 0 && !stringSequence && (data[currentIndex] == '"'
+					|| data[currentIndex] == ' ' || (data[currentIndex] == '$' &&
+					currentIndex+1 < data.length && data[currentIndex] == '}') ||
+					data[currentIndex] == '-')) {
 				return new TokenSmart(TokenSmartType.TAG_ELEMENT, String.valueOf(tokenValue));
 			}
 			

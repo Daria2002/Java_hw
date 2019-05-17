@@ -1,0 +1,46 @@
+Recenzija 1:
+
+Za ovu zadaću ide ocjena 1 jer u drugom i trećem zadatku nisu zadovoljeni minimalni uvjeti.
+
+Kao prvo nisi koristila dobar jar u Newtonu. Trebalo je onaj koji podržava i Mandelbrota.
+
+Prvi zadatak--
+Minimalni uvjeti zadovoljeni. Kao prvo demo programe odvoji u zaseban paket. Također kod ispisa bolje je forsirati točku nego zarez, preglednije je i bolje. 
+ComplexPolynomial#apply nije dobra. Ideš od većih potencija prema manjima, a krivo potenciraš. Možda je zbog toga greška u sljedeća dva zadatka.Također kod ComplexRooted..#indexOfClosestRootFor trebala bi ići od prve potencije, znači preskočiš ovaj 0. član i ideš od prve i za to vratiš indeks taj koji si našla. Jer ovo prvo je koeficijent. Ostalo mi se čini oke.
+
+Drugi zadatak--
+Minimalni uvjeti nisu zadovoljen i zbog ovog ide ocjena 1. U drugom moraš podržat parsiranje broja "-1" te kad se unese "-i" samostalno. Ostali izračuni se čine oke. Slika nije identična onoj traženoj iako je blizu. Kod proširivanja prozora nema raspadanja uz stacktrace tako da je to oke.
+
+Treći zadatak--
+Iako je slika opet skoro ista traženoj, pretpostavljam da zbog izračunavanja reflektirane komponente slika ne ispada dobro, tj onako kako je traženo. Zbog toga ni tu nije zadovoljen minimalni uvjet. Kod reflektivne komponente, možeš vidjet i u knjizi, ne postavljaš vrijednost na 0 ako je manja od 0 nego onda ne izračunavaš taj dio.
+Ostalo se čini oke.
+
+Komentar 1:
+Promjenalila sam jar tako da je korišten ovogodišnji, demo programi su odvojeni
+u zaseban paket, ispravno se nacrtaju fraktali iz problema 2, ispravno se prikazuju kugle,
+kad se koristi rotacija i kad se ne koristi rotacija. Popravljen je parser za 2.zdk.
+Popravljen je koeficijent kod ComplexRooted#indexOfClosestRootFor.
+
+Recenzija 2:
+Ovu zadaću ocjenjujem ocjenom 1 jer se u RayCasterParallel2 slika neispravno crta i dolazi do lošeg prikaza prilikom promjena dimenzija
+
+#1
+poly demo radi dobro
+vector demo isto radi dobro
+Complex fali dokumentacija final varijabli
+
+#2
+Boje su ti fulane, rečeno je da to ne narušava minimalne pa ću tu korigirati ocjenu
+Inače je zadatak dobro riješen
+
+#3
+Fali sav JavaDoc na IntersectionStruct
+Prozori nisu osjetljivi na povećanje po širini i to radi dobro, ali proširivanje po visini ne radi ispravno, odnosno slika se ne sredi dobro i nedostaju dijelovi iste ili je crno
+Krivo se crta Parallel2-> Prve dvije kugle su stalno ispred, a grid se iza njih okreće
+
+Inače je zadaća dobro dokumentirana i ok složena
+
+Komentar 2:
+Dodana je dokumentacija final varijabli u razredu Complex. U drugom zadatku
+nacrtane su dobre boje. Napisan je javadoc za IntersectionStruct. Radi proširivanje
+prozora po visini. Popravljen je prikaz kugli bez rotacije i sa rotacijom.

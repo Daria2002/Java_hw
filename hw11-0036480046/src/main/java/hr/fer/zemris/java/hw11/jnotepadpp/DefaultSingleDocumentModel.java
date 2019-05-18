@@ -14,10 +14,11 @@ public class DefaultSingleDocumentModel implements SingleDocumentModel {
 	private JTextArea textContent;
 	private boolean isModified;
 	private List<SingleDocumentListener> listenerList;
+	public JNotepadPP editor = new JNotepadPP();
 	
-	public DefaultSingleDocumentModel(Path filePath, JTextArea textContent) {
+	public DefaultSingleDocumentModel(Path filePath, String textContent) {
 		this.filePath = filePath;
-		this.textContent = textContent;
+		this.textContent = new JTextArea(textContent);
 		listenerList = new ArrayList<SingleDocumentListener>();
 		
 		this.textContent.getDocument().addDocumentListener(new DocumentListener() {
@@ -38,7 +39,7 @@ public class DefaultSingleDocumentModel implements SingleDocumentModel {
 			}
 		});
 	}
-	
+
 	private void setFlagAndNotifyListeners() {
 		for(SingleDocumentListener l : listenerList) {
 			l.documentModifyStatusUpdated(this);

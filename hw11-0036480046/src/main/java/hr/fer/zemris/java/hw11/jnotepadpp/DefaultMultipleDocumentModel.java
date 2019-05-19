@@ -111,6 +111,9 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 		
 		setSelectedIndex(col.size()-1);
 		
+		
+		
+		
 		return newSingleDoc;
 	}
 

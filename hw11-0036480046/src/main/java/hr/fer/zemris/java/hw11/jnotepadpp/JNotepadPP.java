@@ -129,6 +129,38 @@ public class JNotepadPP extends JFrame {
 			return;
 		}
 	};
+	
+	private final Action closeDocument = new AbstractAction() {
+			
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if(multiDocModel.getCurrentDocument().getFilePath() == null) {
+				JFileChooser jfc = new JFileChooser();
+				
+				if(JOptionPane.showConfirmDialog(JNotepadPP.this, "Do you want to save file "
+						+ "before closing?", "Save or discard changes", JOptionPane.YES_NO_OPTION)
+						!= JOptionPane.YES_OPTION) {
+					multiDocModel.closeDocument(multiDocModel.getCurrentDocument());
+					return;
+				}
+				
+				jfc.setDialogTitle("Save document");
+				if(jfc.showSaveDialog(JNotepadPP.this) != JFileChooser.APPROVE_OPTION) {
+					JOptionPane.showMessageDialog(JNotepadPP.this, "Ništa nije spremljeno.", 
+							"Informacija", JOptionPane.INFORMATION_MESSAGE);
+					return;
+				}
+				openedFilePath = jfc.getSelectedFile().toPath();
+			}
+			else {
+				openedFilePath = multiDocModel.getCurrentDocument().getFilePath();
+			}
+
+			multiDocModel.closeDocument(multiDocModel.getCurrentDocument());
+			return;
+		}
+	};
+	
 	/*
 	private final Action deleteSelectedPart = new AbstractAction() {
 		
@@ -225,6 +257,10 @@ public class JNotepadPP extends JFrame {
 		exitAction.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_X);
 		exitAction.putValue(Action.SHORT_DESCRIPTION, "Exits editor.");
 		
+		closeDocument.putValue(Action.NAME, "Close action");
+		closeDocument.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control W"));
+		closeDocument.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_W);
+		closeDocument.putValue(Action.SHORT_DESCRIPTION, "Closes tab.");
 		
 	}
 	
@@ -236,8 +272,8 @@ public class JNotepadPP extends JFrame {
 		file.add(new JMenuItem(newDocument));
 		file.add(new JMenuItem(openDocument));
 		file.add(new JMenuItem(saveDocument));
-		file.addSeparator();
 		file.add(new JMenuItem(exitAction));
+		file.add(new JMenuItem(closeDocument));
 		
 		JMenu edit = new JMenu("Edit");
 		mb.add(edit);
@@ -253,6 +289,7 @@ public class JNotepadPP extends JFrame {
 		tb.add(new JButton(newDocument));
 		tb.add(new JButton(openDocument));
 		tb.add(new JButton(saveDocument));
+		tb.add(new JButton(closeDocument));
 		tb.add(new JButton(exitAction));
 		//tb.add(new JButton(toggleSelectedPart));
 		return tb;

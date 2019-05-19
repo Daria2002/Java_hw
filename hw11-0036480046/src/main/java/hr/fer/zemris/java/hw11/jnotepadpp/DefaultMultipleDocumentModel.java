@@ -1,7 +1,9 @@
 package hr.fer.zemris.java.hw11.jnotepadpp;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.GridLayout;
 import java.awt.Image;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -18,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
@@ -113,38 +116,35 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 				
 			}
 		});
-		JLabel status = new JLabel();
+		JPanel status = new JPanel(new GridLayout(1, 2));
+		JLabel label1 = new JLabel("length:0");
+		JLabel label2 = new JLabel("Ln: 0 Col:0 + Sel:11");
+		
+		label1.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.GRAY));
+		status.add(label1);
+		status.add(label2);
+		
 		this.currentSingleDocumentModel.getTextComponent().addCaretListener(new CaretListener() {
 
 	        
 			@Override
 			public void caretUpdate(CaretEvent e) {
 				JTextArea editArea = (JTextArea)e.getSource();
-
-                // Lets start with some default values for the line and column.
                 int linenum = 1;
                 int columnnum = 1;
-
-                // We create a try catch to catch any exceptions. We will simply ignore such an error for our demonstration.
+                
                 try {
-                    // First we find the position of the caret. This is the number of where the caret is in relation to the start of the JTextArea
-                    // in the upper left corner. We use this position to find offset values (eg what line we are on for the given position as well as
-                    // what position that line starts on.
                     int caretpos = editArea.getCaretPosition();
                     linenum = editArea.getLineOfOffset(caretpos);
-
-                    // We subtract the offset of where our line starts from the overall caret position.
-                    // So lets say that we are on line 5 and that line starts at caret position 100, if our caret position is currently 106
-                    // we know that we must be on column 6 of line 5.
                     columnnum = caretpos - editArea.getLineStartOffset(linenum);
-
-                    // We have to add one here because line numbers start at 0 for getLineOfOffset and we want it to start at 1 for display.
                     linenum += 1;
                 }
                 catch(Exception ex) { }
-
-                // Once we know the position of the line and the column, pass it to a helper function for updating the status bar.
-                status.setText("Line: " + linenum + " Column: " + columnnum);
+                label1.setText("length: " + editArea.getText().length());
+                
+                int len = Math.abs(editArea.getCaret().getDot()-
+						editArea.getCaret().getMark());
+                label2.setText("Ln: " + linenum + "     Col: " + columnnum + "     Sel: " + len);
 			}
 			
 		});
@@ -154,8 +154,6 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 		panel.add(status, BorderLayout.PAGE_END);
 		addTab("(unnamed)", imageIconGreen, panel, "(unnamed)");
 		
-        // Give the status update value
-		status.setText("Line: " + 1 + " Column: " + 1);
 		setSelectedIndex(col.size()-1);
 		return newSingleDoc;
 	}
@@ -219,7 +217,8 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 
 	@Override
 	public void closeDocument(SingleDocumentModel model) {
-		tabbedPane.remove(componentDictionary.remove(model.getTextComponent()));
+		componentDictionary.remove(model.getTextComponent());
+		remove(getSelectedIndex());
 		col.remove(model);
 	}
 

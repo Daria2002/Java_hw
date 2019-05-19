@@ -2,10 +2,13 @@ package hr.fer.zemris.java.hw11.jnotepadpp;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import javax.swing.Action;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -14,8 +17,10 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
+import javax.swing.border.BevelBorder;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 
@@ -25,14 +30,16 @@ import java.nio.file.Path;
 import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 public class JNotepadPP extends JFrame {
 
 	private Path openedFilePath;
 	private JTabbedPane tabbedPane = new JTabbedPane();
 	private MultipleDocumentModel multiDocModel;
-    private JTextField status;
+    private JTextArea statusPanel;
 	
+
 	public JNotepadPP() {
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		setLocation(10, 10);
@@ -53,19 +60,10 @@ public class JNotepadPP extends JFrame {
 		
 		cp.add(def);
 		multiDocModel = def; 
-		
 		createActions();
 		createMenus();
-		//createStatusBar();
 		cp.add(createToolbar(), BorderLayout.PAGE_START);
-		
 	}	
-	
-	private void updateStatus(int linenumber, int columnnumber) {
-		status.setText("Line: " + linenumber + " Column: " + columnnumber);
-    }
-	
-	
 	
 	private final Action newDocument = new AbstractAction() {
 	
@@ -100,6 +98,8 @@ public class JNotepadPP extends JFrame {
 			
 			openedFilePath = filePath;
 			multiDocModel.loadDocument(openedFilePath);
+			
+			
 			// ovo je moglo biti umjesto editor.setText(text)
 //			int len = editor.getDocument().getLength();
 //			editor.getDocument().remove(0, len);
@@ -124,7 +124,7 @@ public class JNotepadPP extends JFrame {
 			else {
 				openedFilePath = multiDocModel.getCurrentDocument().getFilePath();
 			}
-			
+
 			multiDocModel.saveDocument(multiDocModel.getCurrentDocument(), openedFilePath);
 			return;
 		}
@@ -225,41 +225,10 @@ public class JNotepadPP extends JFrame {
 		exitAction.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_X);
 		exitAction.putValue(Action.SHORT_DESCRIPTION, "Exits editor.");
 		
-	}
-/*
-	private void createStatusBar() {
-		multiDocModel.getCurrentDocument().getTextComponent()
-		.addCaretListener(new CaretListener() {
-	      // Each time the caret is moved, it will trigger the listener and its method caretUpdate.
-		  // It will then pass the event to the update method including the source of the event (which is our textarea control)
-		  public void caretUpdate(CaretEvent e) {
-		      JTextArea editArea = (JTextArea)e.getSource();
 		
-		      int linenum = 1;
-		      int columnnum = 1;
-		      
-		      try {
-		          int caretpos = editArea.getCaretPosition();
-		          linenum = editArea.getLineOfOffset(caretpos);
-		          columnnum = caretpos - editArea.getLineStartOffset(linenum);
-		          linenum += 1;
-		      } catch(Exception ex) { }
-	
-      		  // Once we know the position of the line and the column, pass it to a helper function for updating the status bar.
-        	  updateStatus(linenum, columnnum);
-	      }
-  		});
-
-  		// Add the fields to the layout, the editor in the middle and the status at the bottom.
-  		add(editor, BorderLayout.CENTER);
-
-  		status = new JTextField();
-  		add(status, BorderLayout.SOUTH);
-
-  		// Give the status update value
-  		updateStatus(1,1);
 	}
-	*/
+	
+	
 	private void createMenus() {
 		JMenuBar mb = new JMenuBar();
 		JMenu file = new JMenu("File");

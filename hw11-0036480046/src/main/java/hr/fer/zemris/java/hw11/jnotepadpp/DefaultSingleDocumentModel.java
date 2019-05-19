@@ -4,9 +4,13 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -16,7 +20,7 @@ public class DefaultSingleDocumentModel implements SingleDocumentModel {
 	private JTextArea textContent;
 	private boolean isModified;
 	private List<SingleDocumentListener> listenerList;
-	public JNotepadPP editor = new JNotepadPP();
+
 
 	public DefaultSingleDocumentModel(Path filePath, String textContent) {
 		this.filePath = filePath;
@@ -42,7 +46,7 @@ public class DefaultSingleDocumentModel implements SingleDocumentModel {
 			}
 		});
 	}
-
+	
 	private void setFlagAndNotifyListeners() {
 		for(SingleDocumentListener l : listenerList) {
 			l.documentModifyStatusUpdated(this);

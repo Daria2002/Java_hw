@@ -1,5 +1,6 @@
 package hr.fer.zemris.java.hw11.jnotepadpp;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Image;
 import java.io.ByteArrayOutputStream;
@@ -26,6 +27,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
 
 public class DefaultMultipleDocumentModel extends JTabbedPane implements MultipleDocumentModel {
 
@@ -44,7 +48,8 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 		imageIconGreen = getIcon(pathToGreen);
 		imageIconRed = getIcon(pathToRed);
 	}
-	
+
+
 	private ImageIcon getIcon(String path) {
 		InputStream is = this.getClass().getResourceAsStream(path);
 		if(is==null) {
@@ -93,7 +98,7 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 		DefaultSingleDocumentModel newSingleDoc = new DefaultSingleDocumentModel(null, "");
 		col.add(newSingleDoc);
 		currentSingleDocumentModel = newSingleDoc;
-		addTab("(unnamed)", imageIconGreen, newSingleDoc.getTextComponent(), "(unnamed)");
+		//addTab("(unnamed)", imageIconGreen, newSingleDoc.getTextComponent(), "(unnamed)");
 		
 		currentSingleDocumentModel.addSingleDocumentListener(new SingleDocumentListener() {
 			
@@ -108,14 +113,53 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 				
 			}
 		});
+		JLabel status = new JLabel();
+		this.currentSingleDocumentModel.getTextComponent().addCaretListener(new CaretListener() {
+
+	        
+			@Override
+			public void caretUpdate(CaretEvent e) {
+				JTextArea editArea = (JTextArea)e.getSource();
+
+                // Lets start with some default values for the line and column.
+                int linenum = 1;
+                int columnnum = 1;
+
+                // We create a try catch to catch any exceptions. We will simply ignore such an error for our demonstration.
+                try {
+                    // First we find the position of the caret. This is the number of where the caret is in relation to the start of the JTextArea
+                    // in the upper left corner. We use this position to find offset values (eg what line we are on for the given position as well as
+                    // what position that line starts on.
+                    int caretpos = editArea.getCaretPosition();
+                    linenum = editArea.getLineOfOffset(caretpos);
+
+                    // We subtract the offset of where our line starts from the overall caret position.
+                    // So lets say that we are on line 5 and that line starts at caret position 100, if our caret position is currently 106
+                    // we know that we must be on column 6 of line 5.
+                    columnnum = caretpos - editArea.getLineStartOffset(linenum);
+
+                    // We have to add one here because line numbers start at 0 for getLineOfOffset and we want it to start at 1 for display.
+                    linenum += 1;
+                }
+                catch(Exception ex) { }
+
+                // Once we know the position of the line and the column, pass it to a helper function for updating the status bar.
+                status.setText("Line: " + linenum + " Column: " + columnnum);
+			}
+			
+		});
+
+		JPanel panel = new JPanel(new BorderLayout());
+		panel.add(currentSingleDocumentModel.getTextComponent(), BorderLayout.CENTER);
+		panel.add(status, BorderLayout.PAGE_END);
+		addTab("(unnamed)", imageIconGreen, panel, "(unnamed)");
 		
+        // Give the status update value
+		status.setText("Line: " + 1 + " Column: " + 1);
 		setSelectedIndex(col.size()-1);
-		
-		
-		
-		
 		return newSingleDoc;
 	}
+	
 
 	@Override
 	public SingleDocumentModel getCurrentDocument() {
@@ -169,6 +213,7 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 				this,
 				"Dokument je uredno spremljen", 
 				"Informacija", JOptionPane.INFORMATION_MESSAGE);
+		
 		return;
 	}
 

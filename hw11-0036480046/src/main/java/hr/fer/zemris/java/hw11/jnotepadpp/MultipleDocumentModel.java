@@ -3,6 +3,7 @@ package hr.fer.zemris.java.hw11.jnotepadpp;
 import java.nio.file.Path;
 
 public interface MultipleDocumentModel extends Iterable<SingleDocumentModel>{
+	
 	SingleDocumentModel createNewDocument();
 	SingleDocumentModel getCurrentDocument();
 	SingleDocumentModel loadDocument(Path path);
@@ -12,4 +13,5 @@ public interface MultipleDocumentModel extends Iterable<SingleDocumentModel>{
 	void removeMultipleDocumentListener(MultipleDocumentListener l);
 	int getNumberOfDocuments();
 	SingleDocumentModel getDocument(int index);
+	
 }

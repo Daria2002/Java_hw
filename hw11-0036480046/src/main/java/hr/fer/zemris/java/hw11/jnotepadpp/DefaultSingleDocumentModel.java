@@ -4,6 +4,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -15,11 +17,12 @@ public class DefaultSingleDocumentModel implements SingleDocumentModel {
 	private boolean isModified;
 	private List<SingleDocumentListener> listenerList;
 	public JNotepadPP editor = new JNotepadPP();
-	
+
 	public DefaultSingleDocumentModel(Path filePath, String textContent) {
 		this.filePath = filePath;
 		this.textContent = new JTextArea(textContent);
 		listenerList = new ArrayList<SingleDocumentListener>();
+		this.getTextComponent().setText(textContent);
 		
 		this.textContent.getDocument().addDocumentListener(new DocumentListener() {
 			

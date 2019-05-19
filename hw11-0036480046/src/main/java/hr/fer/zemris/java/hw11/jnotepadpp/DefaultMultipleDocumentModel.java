@@ -90,14 +90,33 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 	
 	@Override
 	public SingleDocumentModel createNewDocument() {
-		JComponent panel1 = new JLabel("(unnamed)");
-		addTab("(unnamed)", imageIconGreen, panel1, "(unnamed)");
-		return new DefaultSingleDocumentModel(null, "");
+		DefaultSingleDocumentModel newSingleDoc = new DefaultSingleDocumentModel(null, "");
+		col.add(newSingleDoc);
+		currentSingleDocumentModel = newSingleDoc;
+		addTab("(unnamed)", imageIconGreen, newSingleDoc.getTextComponent(), "(unnamed)");
+		
+		currentSingleDocumentModel.addSingleDocumentListener(new SingleDocumentListener() {
+			
+			@Override
+			public void documentModifyStatusUpdated(SingleDocumentModel model) {
+				setIconAt(getSelectedIndex(), imageIconRed);
+			}
+			
+			@Override
+			public void documentFilePathUpdated(SingleDocumentModel model) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		
+		setSelectedIndex(col.size()-1);
+		
+		return newSingleDoc;
 	}
 
 	@Override
 	public SingleDocumentModel getCurrentDocument() {
-		return col.get(currentIndex);
+		return col.get(getSelectedIndex());
 	}
 
 	@Override
@@ -127,12 +146,21 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 	@Override
 	public void saveDocument(SingleDocumentModel model, Path newPath) {
 		try {
-			Files.writeString(newPath, currentSingleDocumentModel.getTextComponent().getText());
+			Files.writeString(newPath, col.get(getSelectedIndex()).getTextComponent().getText());
 		} catch (IOException e1) {
 			JOptionPane.showMessageDialog(this, "Dogodila se greška pri spremanju!", 
 					"Pogreška", JOptionPane.ERROR_MESSAGE);
 			return;
+		} catch (Exception e) {
+			System.out.println("Desila se pogreska kod pisanja");
+			//e.printStackTrace();
+			return;
 		}
+		
+		model.setFilePath(newPath);
+		setIconAt(getSelectedIndex(), imageIconGreen);
+		setTitleAt(getSelectedIndex(), getDocument(getSelectedIndex())
+				.getFilePath().getFileName().toString());
 		
 		JOptionPane.showMessageDialog(
 				this,

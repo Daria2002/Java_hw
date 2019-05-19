@@ -10,11 +10,15 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
+
 import java.awt.event.ActionEvent;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -52,43 +56,16 @@ public class JNotepadPP extends JFrame {
 		
 		createActions();
 		createMenus();
+		//createStatusBar();
 		cp.add(createToolbar(), BorderLayout.PAGE_START);
 		
-//        editor.addCaretListener(new CaretListener() {
-//            // Each time the caret is moved, it will trigger the listener and its method caretUpdate.
-//            // It will then pass the event to the update method including the source of the event (which is our textarea control)
-//            public void caretUpdate(CaretEvent e) {
-//                JTextArea editArea = (JTextArea)e.getSource();
-//
-//                int linenum = 1;
-//                int columnnum = 1;
-//                
-//                try {
-//                    int caretpos = editArea.getCaretPosition();
-//                    linenum = editArea.getLineOfOffset(caretpos);
-//                    columnnum = caretpos - editArea.getLineStartOffset(linenum);
-//                    linenum += 1;
-//                }
-//                catch(Exception ex) { }
-//
-//                // Once we know the position of the line and the column, pass it to a helper function for updating the status bar.
-//                updateStatus(linenum, columnnum);
-//            }
-//        });
-//
-//        // Add the fields to the layout, the editor in the middle and the status at the bottom.
-//        add(editor, BorderLayout.CENTER);
-//
-//        status = new JTextField();
-//        add(status, BorderLayout.SOUTH);
-//
-//        // Give the status update value
-//        updateStatus(1,1);
 	}	
-//	
-//	private void updateStatus(int linenumber, int columnnumber) {
-//		status.setText("Line: " + linenumber + " Column: " + columnnumber);
-//    }
+	
+	private void updateStatus(int linenumber, int columnnumber) {
+		status.setText("Line: " + linenumber + " Column: " + columnnumber);
+    }
+	
+	
 	
 	private final Action newDocument = new AbstractAction() {
 	
@@ -134,7 +111,7 @@ public class JNotepadPP extends JFrame {
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if(openedFilePath == null) {
+			if(multiDocModel.getCurrentDocument().getFilePath() == null) {
 				JFileChooser jfc = new JFileChooser();
 				jfc.setDialogTitle("Save document");
 				if(jfc.showSaveDialog(JNotepadPP.this) != JFileChooser.APPROVE_OPTION) {
@@ -144,6 +121,10 @@ public class JNotepadPP extends JFrame {
 				}
 				openedFilePath = jfc.getSelectedFile().toPath();
 			}
+			else {
+				openedFilePath = multiDocModel.getCurrentDocument().getFilePath();
+			}
+			
 			multiDocModel.saveDocument(multiDocModel.getCurrentDocument(), openedFilePath);
 			return;
 		}
@@ -245,7 +226,40 @@ public class JNotepadPP extends JFrame {
 		exitAction.putValue(Action.SHORT_DESCRIPTION, "Exits editor.");
 		
 	}
+/*
+	private void createStatusBar() {
+		multiDocModel.getCurrentDocument().getTextComponent()
+		.addCaretListener(new CaretListener() {
+	      // Each time the caret is moved, it will trigger the listener and its method caretUpdate.
+		  // It will then pass the event to the update method including the source of the event (which is our textarea control)
+		  public void caretUpdate(CaretEvent e) {
+		      JTextArea editArea = (JTextArea)e.getSource();
+		
+		      int linenum = 1;
+		      int columnnum = 1;
+		      
+		      try {
+		          int caretpos = editArea.getCaretPosition();
+		          linenum = editArea.getLineOfOffset(caretpos);
+		          columnnum = caretpos - editArea.getLineStartOffset(linenum);
+		          linenum += 1;
+		      } catch(Exception ex) { }
+	
+      		  // Once we know the position of the line and the column, pass it to a helper function for updating the status bar.
+        	  updateStatus(linenum, columnnum);
+	      }
+  		});
 
+  		// Add the fields to the layout, the editor in the middle and the status at the bottom.
+  		add(editor, BorderLayout.CENTER);
+
+  		status = new JTextField();
+  		add(status, BorderLayout.SOUTH);
+
+  		// Give the status update value
+  		updateStatus(1,1);
+	}
+	*/
 	private void createMenus() {
 		JMenuBar mb = new JMenuBar();
 		JMenu file = new JMenu("File");

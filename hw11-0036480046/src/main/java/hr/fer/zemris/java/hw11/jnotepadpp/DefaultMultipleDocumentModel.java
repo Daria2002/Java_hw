@@ -10,6 +10,8 @@ import java.util.Objects;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 
@@ -18,6 +20,9 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 	List<SingleDocumentModel> col = new ArrayList<SingleDocumentModel>();
 	DefaultSingleDocumentModel currentSingleDocumentModel;
 	private List<MultipleDocumentListener> listenerList;
+	private JTabbedPane tabbedPane = new JTabbedPane();
+	private JPanel panel = new JPanel();
+	private JScrollPane pane = new JScrollPane();
 	
 	@Override
 	public void currentDocumentChanged(SingleDocumentModel previousModel, SingleDocumentModel currentModel) {
@@ -27,11 +32,15 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 	@Override
 	public void documentAdded(SingleDocumentModel model) {
 		col.add(model);
+		tabbedPane.add(panel.add(pane.add(model.getTextComponent())));
 	}
 
 	@Override
 	public void documentRemoved(SingleDocumentModel model) {
 		col.remove(model);
+		pane.remove(model.getTextComponent());
+		panel.add(pane);
+		tabbedPane.add(panel);
 	}
 
 	private void loadDocument(Path filePath) {
@@ -83,7 +92,6 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 					"Pogreška", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		//editor.getDocument().getText(0, editor.getDocument().getLength());
 		
 		JOptionPane.showMessageDialog(
 				this,

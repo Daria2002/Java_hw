@@ -143,9 +143,10 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
                 catch(Exception ex) { }
                 label1.setText("length: " + editArea.getText().length());
                 
-                int len = Math.abs(editArea.getCaret().getDot()-
+                int selectedLength = Math.abs(editArea.getCaret().getDot()-
 						editArea.getCaret().getMark());
-                label2.setText("Ln: " + linenum + "     Col: " + columnnum + "     Sel: " + len);
+                
+                label2.setText("Ln: " + linenum + "     Col: " + columnnum + "     Sel: " + selectedLength);
 			}
 			
 		});

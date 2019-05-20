@@ -25,6 +25,7 @@ import javax.swing.WindowConstants;
 import javax.swing.border.BevelBorder;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
+import javax.swing.text.Document;
 
 import java.awt.event.ActionEvent;
 import java.nio.file.Files;
@@ -70,10 +71,35 @@ public class JNotepadPP extends JFrame {
 	}	
 	
 	private final Action newDocument = new AbstractAction() {
-	
+		
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			multiDocModel.createNewDocument();
+			
+			multiDocModel.getCurrentDocument().getTextComponent().addCaretListener(new CaretListener() {
+				
+				@Override
+				public void caretUpdate(CaretEvent e) {
+					JTextArea editArea = (JTextArea)e.getSource();
+		            int linenum = 1;
+		            int columnnum = 1;
+		            
+		            try {
+		                int caretpos = editArea.getCaretPosition();
+		                linenum = editArea.getLineOfOffset(caretpos);
+		                columnnum = caretpos - editArea.getLineStartOffset(linenum);
+		                linenum += 1;
+		            }
+		            catch(Exception ex) { }
+		            
+		            int selectedLength = Math.abs(editArea.getCaret().getDot()-
+							editArea.getCaret().getMark());
+		            if(selectedLength > 0) {
+		            	toggleSelectedPart.setEnabled(true);
+		            }
+				}
+			});
+			
 			// ovo je moglo biti umjesto editor.setText(text)
 //			int len = editor.getDocument().getLength();
 //			editor.getDocument().remove(0, len);
@@ -104,6 +130,30 @@ public class JNotepadPP extends JFrame {
 			multiDocModel.loadDocument(openedFilePath);
 			
 			
+			multiDocModel.getCurrentDocument().getTextComponent().addCaretListener(new CaretListener() {
+				
+				@Override
+				public void caretUpdate(CaretEvent e) {
+					JTextArea editArea = (JTextArea)e.getSource();
+		            int linenum = 1;
+		            int columnnum = 1;
+		            
+		            try {
+		                int caretpos = editArea.getCaretPosition();
+		                linenum = editArea.getLineOfOffset(caretpos);
+		                columnnum = caretpos - editArea.getLineStartOffset(linenum);
+		                linenum += 1;
+		            }
+		            catch(Exception ex) { }
+		            
+		            int selectedLength = Math.abs(editArea.getCaret().getDot()-
+							editArea.getCaret().getMark());
+		            if(selectedLength > 0) {
+		            	toggleSelectedPart.setEnabled(true);
+		            }
+				}
+			});
+			
 			// ovo je moglo biti umjesto editor.setText(text)
 //			int len = editor.getDocument().getLength();
 //			editor.getDocument().remove(0, len);
@@ -129,6 +179,22 @@ public class JNotepadPP extends JFrame {
 				openedFilePath = multiDocModel.getCurrentDocument().getFilePath();
 			}
 
+
+			if(Files.exists(openedFilePath)) {
+				int result = JOptionPane.showConfirmDialog(JNotepadPP.this,
+						"The file exists, overwrite?","Existing file",JOptionPane.YES_NO_CANCEL_OPTION);
+	            switch(result){
+	                case JOptionPane.YES_OPTION:
+	                    break;
+	                case JOptionPane.NO_OPTION:
+	                    return;
+	                case JOptionPane.CLOSED_OPTION:
+	                    return;
+	                case JOptionPane.CANCEL_OPTION:
+	                    return;
+	            }
+			}
+			
 			multiDocModel.saveDocument(multiDocModel.getCurrentDocument(), openedFilePath);
 			return;
 		}
@@ -162,7 +228,6 @@ public class JNotepadPP extends JFrame {
 			}
 			
 			multiDocModel.saveDocument(multiDocModel.getCurrentDocument(), openedFilePath);
-			
 			
 			return;
 		}
@@ -213,21 +278,22 @@ public class JNotepadPP extends JFrame {
 			}
 		}
 	};
-	
+	*/
 	
 	private final Action toggleSelectedPart = new AbstractAction() {
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			int start = Math.min(editor.getCaret().getDot(),
-					editor.getCaret().getMark());
-			int len = Math.abs(editor.getCaret().getDot()-
-							editor.getCaret().getMark());
+			int start = Math.min(multiDocModel.getCurrentDocument().getTextComponent().getCaret().getDot(),
+					multiDocModel.getCurrentDocument().getTextComponent().getCaret().getMark());
+			int len = Math.abs(multiDocModel.getCurrentDocument().getTextComponent().getCaret().getDot()-
+					multiDocModel.getCurrentDocument().getTextComponent().getCaret().getMark());
 			
 			if(len < 1) {
 				return;
 			}
-			Document doc = editor.getDocument();
+			
+			Document doc = multiDocModel.getCurrentDocument().getTextComponent().getDocument();
 			
 			try {
 				String text = doc.getText(start, len);
@@ -250,7 +316,7 @@ public class JNotepadPP extends JFrame {
 			return new String(chars);
 		}
 	};
-	*/
+	
 	private final Action exitAction = new AbstractAction() {
 		
 		@Override
@@ -288,6 +354,7 @@ public class JNotepadPP extends JFrame {
 		deleteSelectedPart.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_D);
 		deleteSelectedPart.putValue(Action.SHORT_DESCRIPTION, "Delete selection from document if selection exists");
 		deleteSelectedPart.setEnabled(false);
+		*/
 		
 		toggleSelectedPart.putValue(Action.NAME, "Toggle case in selection");
 		toggleSelectedPart.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("F3"));
@@ -295,13 +362,13 @@ public class JNotepadPP extends JFrame {
 		toggleSelectedPart.putValue(Action.SHORT_DESCRIPTION, "Toggles character casing in selection, if"
 				+ " selection exists.");
 		toggleSelectedPart.setEnabled(false);
-		*/
+		
 		exitAction.putValue(Action.NAME, "Exit action");
 		exitAction.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control U"));
 		exitAction.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_X);
 		exitAction.putValue(Action.SHORT_DESCRIPTION, "Exits editor.");
 		
-		closeDocument.putValue(Action.NAME, "Close action");
+		closeDocument.putValue(Action.NAME, "Close tab");
 		closeDocument.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control W"));
 		closeDocument.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_W);
 		closeDocument.putValue(Action.SHORT_DESCRIPTION, "Closes tab.");
@@ -323,7 +390,7 @@ public class JNotepadPP extends JFrame {
 		JMenu edit = new JMenu("Edit");
 		mb.add(edit);
 		//edit.add(new JMenuItem(deleteSelectedPart));
-		//edit.add(new JMenuItem(toggleSelectedPart));
+		edit.add(new JMenuItem(toggleSelectedPart));
 		
 		setJMenuBar(mb);
 	}
@@ -337,7 +404,7 @@ public class JNotepadPP extends JFrame {
 		tb.add(new JButton(saveAsDocument));
 		tb.add(new JButton(closeDocument));
 		tb.add(new JButton(exitAction));
-		//tb.add(new JButton(toggleSelectedPart));
+		tb.add(new JButton(toggleSelectedPart));
 		return tb;
 	}
 	

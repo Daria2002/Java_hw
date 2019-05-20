@@ -5,13 +5,18 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,6 +37,8 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 
@@ -120,13 +127,30 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 		
 		JToolBar toolbar = new JToolBar();
 		
-		JPanel status = new JPanel(new GridLayout(1, 2));
+		JPanel status = new JPanel(new GridLayout(1, 3));
 		JLabel label1 = new JLabel("length: " + 0);
 		JLabel label2 = new JLabel("Ln: " + 0 + "     Col: " + 0 + "     Sel: " + 0);
+        String timeStamp = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Calendar.getInstance().getTime());
+		JLabel label3 = new JLabel(timeStamp);
+		label3.setHorizontalAlignment(RIGHT);
+		
+		Timer t = new Timer(1000, new ActionListener() {
+
+		    @Override
+		    public void actionPerformed(ActionEvent e) {
+		        // TODO Auto-generated method stub
+		        label3.setText(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Calendar.getInstance().getTime()));
+
+		        }
+
+		    });
+
+		 t.start();
 		
 		label1.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.GRAY));
 		status.add(label1);
 		status.add(label2);
+		status.add(label3);
 
 		toolbar.add(status);
 		toolbar.setFloatable(false);
@@ -141,7 +165,7 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
                 try {
                     int caretpos = editArea.getCaretPosition();
                     linenum = editArea.getLineOfOffset(caretpos);
-                    columnnum = caretpos - editArea.getLineStartOffset(linenum);
+                    columnnum = caretpos - editArea.getLineStartOffset(linenum)+1;
                     linenum += 1;
                 }
                 catch(Exception ex) { }
@@ -150,7 +174,10 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
                 int selectedLength = Math.abs(editArea.getCaret().getDot()-
 						editArea.getCaret().getMark());
                 
+                
                 label2.setText("Ln: " + linenum + "     Col: " + columnnum + "     Sel: " + selectedLength);
+
+                label3.setText(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Calendar.getInstance().getTime()));
 			}
 			
 		});

@@ -2,50 +2,34 @@ package hr.fer.zemris.java.hw11.jnotepadpp;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
-import java.awt.Dimension;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
+import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JTabbedPane;
+import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
-import javax.swing.border.BevelBorder;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.text.Document;
 
-import java.awt.event.ActionEvent;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-import javax.swing.AbstractAction;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-
 public class JNotepadPP extends JFrame {
-
 	private Path openedFilePath;
-	private JTabbedPane tabbedPane = new JTabbedPane();
 	private MultipleDocumentModel multiDocModel;
-    private JTextArea statusPanel;
     private String buffer = "";
 	
-
 	public JNotepadPP() {
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		setLocation(10, 10);
@@ -79,6 +63,7 @@ public class JNotepadPP extends JFrame {
 			closeDocument.setEnabled(true);
 			saveAsDocument.setEnabled(true);
 			saveDocument.setEnabled(true);
+			statisticalInfo.setEnabled(true);
 			multiDocModel.getCurrentDocument().getTextComponent().addCaretListener(new CaretListener() {
 				
 				@Override
@@ -126,6 +111,7 @@ public class JNotepadPP extends JFrame {
 			closeDocument.setEnabled(true);
 			saveAsDocument.setEnabled(true);
 			saveDocument.setEnabled(true);
+			statisticalInfo.setEnabled(true);
 			Path filePath = jfc.getSelectedFile().toPath();
 			if(!Files.isReadable(filePath)) {
 				JOptionPane.showMessageDialog(
@@ -214,7 +200,7 @@ public class JNotepadPP extends JFrame {
 	};
 	
 	private final Action saveAsDocument = new AbstractAction() {
-		
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			JFileChooser jfc = new JFileChooser();
@@ -246,6 +232,26 @@ public class JNotepadPP extends JFrame {
 		}
 	};
 	
+	private final Action statisticalInfo = new AbstractAction() {
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			Object[] options = { "OK" };
+			
+			long len = multiDocModel.getCurrentDocument().getTextComponent().getText().length();
+			long nonBlank = multiDocModel.getCurrentDocument().getTextComponent()
+					.getText().replaceAll("\\s+", "").length();
+			long lines = multiDocModel.getCurrentDocument().getTextComponent()
+					.getText().split("\r\n|\r|\n").length;
+			
+			JOptionPane.showOptionDialog(null, "Your document has " + len + " characters, " +
+					nonBlank + " non-blank characters and " + lines + " lines.", "Statistical info",
+					JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE,
+			null, options, options[0]);
+			
+		}
+	};
+	
 	private final Action closeDocument = new AbstractAction() {
 			
 		@Override
@@ -257,6 +263,14 @@ public class JNotepadPP extends JFrame {
 						+ "before closing?", "Save or discard changes", JOptionPane.YES_NO_OPTION)
 						!= JOptionPane.YES_OPTION) {
 					multiDocModel.closeDocument(multiDocModel.getCurrentDocument());
+					
+					if(multiDocModel.getNumberOfDocuments() <= 0) {
+						saveAsDocument.setEnabled(false);
+						saveDocument.setEnabled(false);
+						closeDocument.setEnabled(false);
+						statisticalInfo.setEnabled(false);
+					}
+					
 					return;
 				}
 				
@@ -278,6 +292,7 @@ public class JNotepadPP extends JFrame {
 				saveAsDocument.setEnabled(false);
 				saveDocument.setEnabled(false);
 				closeDocument.setEnabled(false);
+				statisticalInfo.setEnabled(false);
 			}
 			
 			return;
@@ -324,18 +339,6 @@ public class JNotepadPP extends JFrame {
 			} catch (Exception e2) {
 			}
 		}
-
-		private String toggleCase(String text) {
-			char[] chars = text.toCharArray();
-			for(int i = 0; i < chars.length; i++) {
-				if(Character.isUpperCase(chars[i])) {
-					chars[i] = Character.toLowerCase(chars[i]);
-				} else if(Character.isLowerCase(chars[i])) {
-					chars[i] = Character.toUpperCase(chars[i]);
-				}
-			}
-			return new String(chars);
-		}
 	};
 	
 	private final Action pasteSelectedPart = new AbstractAction() {
@@ -353,18 +356,6 @@ public class JNotepadPP extends JFrame {
 				doc.insertString(start, buffer, null);
 			} catch (Exception e2) {
 			}
-		}
-
-		private String toggleCase(String text) {
-			char[] chars = text.toCharArray();
-			for(int i = 0; i < chars.length; i++) {
-				if(Character.isUpperCase(chars[i])) {
-					chars[i] = Character.toLowerCase(chars[i]);
-				} else if(Character.isLowerCase(chars[i])) {
-					chars[i] = Character.toUpperCase(chars[i]);
-				}
-			}
-			return new String(chars);
 		}
 	};
 	
@@ -456,6 +447,13 @@ public class JNotepadPP extends JFrame {
 		closeDocument.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_W);
 		closeDocument.putValue(Action.SHORT_DESCRIPTION, "Closes tab.");
 		closeDocument.setEnabled(false);
+		
+		statisticalInfo.putValue(Action.NAME, "Statistical info");
+		statisticalInfo.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control I"));
+		statisticalInfo.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_I);
+		statisticalInfo.putValue(Action.SHORT_DESCRIPTION, "Statistical info.");
+		statisticalInfo.setEnabled(false);
+		
 	}
 	
 	
@@ -472,6 +470,7 @@ public class JNotepadPP extends JFrame {
 		file.add(new JMenuItem(cutSelectedPart));
 		file.add(new JMenuItem(pasteSelectedPart));
 		file.add(new JMenuItem(copySelectedPart));
+		file.add(new JMenuItem(statisticalInfo));
 		JMenu edit = new JMenu("Edit");
 		mb.add(edit);
 		//edit.add(new JMenuItem(deleteSelectedPart));
@@ -492,6 +491,7 @@ public class JNotepadPP extends JFrame {
 		tb.add(new JButton(cutSelectedPart));
 		tb.add(new JButton(pasteSelectedPart));
 		tb.add(new JButton(copySelectedPart));
+		tb.add(new JButton(statisticalInfo));
 		return tb;
 	}
 	

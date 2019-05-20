@@ -218,8 +218,9 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 			//e.printStackTrace();
 			return;
 		}
-		
-		model.setFilePath(newPath);
+		if(model.getFilePath() == null) {
+			model.setFilePath(newPath);
+		}
 		setIconAt(getSelectedIndex(), imageIconGreen);
 		setTitleAt(getSelectedIndex(), getDocument(getSelectedIndex())
 				.getFilePath().getFileName().toString());

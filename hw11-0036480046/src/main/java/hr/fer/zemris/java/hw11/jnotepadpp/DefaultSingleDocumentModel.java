@@ -1,5 +1,6 @@
 package hr.fer.zemris.java.hw11.jnotepadpp;
 
+import java.awt.Color;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +14,10 @@ import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.text.DefaultCaret;
+import javax.swing.text.DefaultHighlighter;
+import javax.swing.text.DefaultHighlighter.DefaultHighlightPainter;
+import javax.swing.text.Highlighter;
 
 public class DefaultSingleDocumentModel implements SingleDocumentModel {
 
@@ -25,6 +30,7 @@ public class DefaultSingleDocumentModel implements SingleDocumentModel {
 	public DefaultSingleDocumentModel(Path filePath, String textContent) {
 		this.filePath = filePath;
 		this.textContent = new JTextArea(textContent);
+		this.textContent.setCaret(new HighlightCaret());
 		listenerList = new ArrayList<SingleDocumentListener>();
 		this.getTextComponent().setText(textContent);
 		
@@ -113,5 +119,27 @@ public class DefaultSingleDocumentModel implements SingleDocumentModel {
 		} else if (!filePath.equals(other.filePath))
 			return false;
 		return true;
+	}
+	
+	class HighlightCaret extends DefaultCaret {
+
+	    private final Highlighter.HighlightPainter unfocusedPainter = new DefaultHighlighter.DefaultHighlightPainter(Color.WHITE);
+	    private final Highlighter.HighlightPainter focusedPainter = new DefaultHighlighter.DefaultHighlightPainter(Color.GRAY);
+	    private static final long serialVersionUID = 1L;
+	    private boolean isFocused;
+
+	    @Override
+	    protected Highlighter.HighlightPainter getSelectionPainter() {
+	        setBlinkRate(500); // otherwise is disabled, stopped
+	        return isFocused ? focusedPainter/*super.getSelectionPainter()*/ : unfocusedPainter;
+	    }
+
+	    @Override
+	    public void setSelectionVisible(boolean hasFocus) {
+	        if (hasFocus != isFocused) {
+	            isFocused = hasFocus;
+	            super.setSelectionVisible(true);
+	        }
+	    }
 	}
 }

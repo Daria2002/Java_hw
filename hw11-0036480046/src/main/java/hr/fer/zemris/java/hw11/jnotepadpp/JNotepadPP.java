@@ -76,7 +76,9 @@ public class JNotepadPP extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			multiDocModel.createNewDocument();
-			
+			closeDocument.setEnabled(true);
+			saveAsDocument.setEnabled(true);
+			saveDocument.setEnabled(true);
 			multiDocModel.getCurrentDocument().getTextComponent().addCaretListener(new CaretListener() {
 				
 				@Override
@@ -98,6 +100,9 @@ public class JNotepadPP extends JFrame {
 		            if(selectedLength > 0) {
 		            	cutSelectedPart.setEnabled(true);
 		            	copySelectedPart.setEnabled(true);
+		            } else {
+		            	cutSelectedPart.setEnabled(false);
+		            	copySelectedPart.setEnabled(false);
 		            }
 				}
 			});
@@ -118,7 +123,9 @@ public class JNotepadPP extends JFrame {
 			if(jfc.showOpenDialog(JNotepadPP.this) != JFileChooser.APPROVE_OPTION) {
 				return;
 			}
-			
+			closeDocument.setEnabled(true);
+			saveAsDocument.setEnabled(true);
+			saveDocument.setEnabled(true);
 			Path filePath = jfc.getSelectedFile().toPath();
 			if(!Files.isReadable(filePath)) {
 				JOptionPane.showMessageDialog(
@@ -153,6 +160,9 @@ public class JNotepadPP extends JFrame {
 		            if(selectedLength > 0) {
 		            	cutSelectedPart.setEnabled(true);
 		            	copySelectedPart.setEnabled(true);
+		            } else {
+		            	cutSelectedPart.setEnabled(false);
+		            	copySelectedPart.setEnabled(false);
 		            }
 				}
 			});
@@ -183,7 +193,7 @@ public class JNotepadPP extends JFrame {
 			}
 
 
-			if(Files.exists(openedFilePath)) {
+			if(Files.exists(openedFilePath) && openedFilePath != multiDocModel.getCurrentDocument().getFilePath()) {
 				int result = JOptionPane.showConfirmDialog(JNotepadPP.this,
 						"The file exists, overwrite?","Existing file",JOptionPane.YES_NO_CANCEL_OPTION);
 	            switch(result){
@@ -215,7 +225,7 @@ public class JNotepadPP extends JFrame {
 			}
 			openedFilePath = jfc.getSelectedFile().toPath();
 
-			if(Files.exists(openedFilePath)) {
+			if(Files.exists(openedFilePath) && openedFilePath != multiDocModel.getCurrentDocument().getFilePath()) {
 				int result = JOptionPane.showConfirmDialog(JNotepadPP.this,
 						"The file exists, overwrite?","Existing file",JOptionPane.YES_NO_CANCEL_OPTION);
 	            switch(result){
@@ -263,6 +273,13 @@ public class JNotepadPP extends JFrame {
 			}
 
 			multiDocModel.closeDocument(multiDocModel.getCurrentDocument());
+			
+			if(multiDocModel.getNumberOfDocuments() <= 0) {
+				saveAsDocument.setEnabled(false);
+				saveDocument.setEnabled(false);
+				closeDocument.setEnabled(false);
+			}
+			
 			return;
 		}
 	};
@@ -368,18 +385,6 @@ public class JNotepadPP extends JFrame {
 			} catch (Exception e2) {
 			}
 		}
-
-		private String toggleCase(String text) {
-			char[] chars = text.toCharArray();
-			for(int i = 0; i < chars.length; i++) {
-				if(Character.isUpperCase(chars[i])) {
-					chars[i] = Character.toLowerCase(chars[i]);
-				} else if(Character.isLowerCase(chars[i])) {
-					chars[i] = Character.toUpperCase(chars[i]);
-				}
-			}
-			return new String(chars);
-		}
 	};
 	
 	private final Action exitAction = new AbstractAction() {
@@ -407,11 +412,13 @@ public class JNotepadPP extends JFrame {
 		saveDocument.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control S"));
 		saveDocument.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_S);
 		saveDocument.putValue(Action.SHORT_DESCRIPTION, "Save document form disk");
+		saveDocument.setEnabled(false);
 		
 		saveAsDocument.putValue(Action.NAME, "Save as");
 		saveAsDocument.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control alt S"));
 		saveAsDocument.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_ALT+KeyEvent.VK_S);
 		saveAsDocument.putValue(Action.SHORT_DESCRIPTION, "Save as document form disk");
+		saveAsDocument.setEnabled(false);
 		
 		/*
 		deleteSelectedPart.putValue(Action.NAME, "Delete selected part");
@@ -428,13 +435,13 @@ public class JNotepadPP extends JFrame {
 		cutSelectedPart.setEnabled(false);
 		
 		pasteSelectedPart.putValue(Action.NAME, "Paste");
-		pasteSelectedPart.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control V"));
+		pasteSelectedPart.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control v"));
 		pasteSelectedPart.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_V);
 		pasteSelectedPart.putValue(Action.SHORT_DESCRIPTION, "Paste text from buffer");
 		pasteSelectedPart.setEnabled(false);
 		
 		copySelectedPart.putValue(Action.NAME, "Copy");
-		copySelectedPart.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control C"));
+		copySelectedPart.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control c"));
 		copySelectedPart.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_C);
 		copySelectedPart.putValue(Action.SHORT_DESCRIPTION, "Copy selected text");
 		copySelectedPart.setEnabled(false);
@@ -448,7 +455,7 @@ public class JNotepadPP extends JFrame {
 		closeDocument.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control W"));
 		closeDocument.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_W);
 		closeDocument.putValue(Action.SHORT_DESCRIPTION, "Closes tab.");
-		
+		closeDocument.setEnabled(false);
 	}
 	
 	

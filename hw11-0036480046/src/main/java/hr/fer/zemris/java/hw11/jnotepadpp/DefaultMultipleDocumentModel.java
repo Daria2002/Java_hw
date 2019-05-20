@@ -116,9 +116,10 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 				
 			}
 		});
+		
 		JPanel status = new JPanel(new GridLayout(1, 2));
-		JLabel label1 = new JLabel("length:0");
-		JLabel label2 = new JLabel("Ln: 0 Col:0 + Sel:11");
+		JLabel label1 = new JLabel("length: " + 0);
+		JLabel label2 = new JLabel("Ln: " + 0 + "     Col: " + 0 + "     Sel: " + 0);
 		
 		label1.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.GRAY));
 		status.add(label1);
@@ -180,10 +181,16 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 		currentSingleDocumentModel = new DefaultSingleDocumentModel(path,
 				text);
 		
-		JPanel panel = new JPanel();
-		panel.add(new JScrollPane(currentSingleDocumentModel.getTextComponent()));
+		JPanel panel = new JPanel(new BorderLayout());
+		panel.add(new JScrollPane(currentSingleDocumentModel.getTextComponent()),
+				BorderLayout.CENTER);
 		componentDictionary.put(currentSingleDocumentModel.getTextComponent(), panel);
-		tabbedPane.add(panel);
+
+		addTab(currentSingleDocumentModel.getFilePath().getFileName().toString(),
+				imageIconGreen, panel, 
+				currentSingleDocumentModel.getFilePath().getFileName().toString());
+		col.add(currentSingleDocumentModel);
+		setSelectedIndex(col.size()-1);
 		
 		return currentSingleDocumentModel;
 	}

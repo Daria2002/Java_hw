@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;
+import java.io.File;
+
 import javax.swing.Action;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -27,6 +29,8 @@ import javax.swing.event.CaretListener;
 import java.awt.event.ActionEvent;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -126,6 +130,40 @@ public class JNotepadPP extends JFrame {
 			}
 
 			multiDocModel.saveDocument(multiDocModel.getCurrentDocument(), openedFilePath);
+			return;
+		}
+	};
+	
+	private final Action saveAsDocument = new AbstractAction() {
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			JFileChooser jfc = new JFileChooser();
+			jfc.setDialogTitle("Save as document");if(jfc.showSaveDialog(JNotepadPP.this) != JFileChooser.APPROVE_OPTION) {
+				JOptionPane.showMessageDialog(JNotepadPP.this, "Ništa nije spremljeno.", 
+						"Informacija", JOptionPane.INFORMATION_MESSAGE);
+				return;
+			}
+			openedFilePath = jfc.getSelectedFile().toPath();
+
+			if(Files.exists(openedFilePath)) {
+				int result = JOptionPane.showConfirmDialog(JNotepadPP.this,
+						"The file exists, overwrite?","Existing file",JOptionPane.YES_NO_CANCEL_OPTION);
+	            switch(result){
+	                case JOptionPane.YES_OPTION:
+	                    break;
+	                case JOptionPane.NO_OPTION:
+	                    return;
+	                case JOptionPane.CLOSED_OPTION:
+	                    return;
+	                case JOptionPane.CANCEL_OPTION:
+	                    return;
+	            }
+			}
+			
+			multiDocModel.saveDocument(multiDocModel.getCurrentDocument(), openedFilePath);
+			
+			
 			return;
 		}
 	};
@@ -238,6 +276,12 @@ public class JNotepadPP extends JFrame {
 		saveDocument.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control S"));
 		saveDocument.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_S);
 		saveDocument.putValue(Action.SHORT_DESCRIPTION, "Save document form disk");
+		
+		saveAsDocument.putValue(Action.NAME, "Save as");
+		saveAsDocument.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control alt S"));
+		saveAsDocument.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_ALT+KeyEvent.VK_S);
+		saveAsDocument.putValue(Action.SHORT_DESCRIPTION, "Save as document form disk");
+		
 		/*
 		deleteSelectedPart.putValue(Action.NAME, "Delete selected part");
 		deleteSelectedPart.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("F2"));
@@ -273,6 +317,7 @@ public class JNotepadPP extends JFrame {
 		file.add(new JMenuItem(openDocument));
 		file.add(new JMenuItem(saveDocument));
 		file.add(new JMenuItem(exitAction));
+		file.add(new JMenuItem(saveAsDocument));
 		file.add(new JMenuItem(closeDocument));
 		
 		JMenu edit = new JMenu("Edit");
@@ -289,6 +334,7 @@ public class JNotepadPP extends JFrame {
 		tb.add(new JButton(newDocument));
 		tb.add(new JButton(openDocument));
 		tb.add(new JButton(saveDocument));
+		tb.add(new JButton(saveAsDocument));
 		tb.add(new JButton(closeDocument));
 		tb.add(new JButton(exitAction));
 		//tb.add(new JButton(toggleSelectedPart));

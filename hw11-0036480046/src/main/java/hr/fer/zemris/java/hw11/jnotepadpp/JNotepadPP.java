@@ -89,10 +89,6 @@ public class JNotepadPP extends JFrame {
 			
 			Path filePath = jfc.getSelectedFile().toPath();
 			if(!Files.isReadable(filePath)) {
-				// check if file is opened in other tab
-				// if file is opened in other tab, just change focus
-				
-				
 				JOptionPane.showMessageDialog(
 						JNotepadPP.this,
 						"Datoteku" + filePath + " nije moguće čitati", 

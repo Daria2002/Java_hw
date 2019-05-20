@@ -167,6 +167,15 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 
 	@Override
 	public SingleDocumentModel loadDocument(Path path) {
+		for(int i = 0; i < getNumberOfDocuments(); i++) {
+			SingleDocumentModel document = getDocument(i);
+			if(path.equals(document.getFilePath())) {
+				currentSingleDocumentModel = col.get(i);
+				setSelectedIndex(i);
+				return currentSingleDocumentModel;
+			}
+		}
+		
 		String text = null;
 		try {
 			text = Files.readString(path);

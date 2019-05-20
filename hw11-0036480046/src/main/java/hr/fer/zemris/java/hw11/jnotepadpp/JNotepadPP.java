@@ -43,12 +43,13 @@ public class JNotepadPP extends JFrame {
 	private JTabbedPane tabbedPane = new JTabbedPane();
 	private MultipleDocumentModel multiDocModel;
     private JTextArea statusPanel;
+    private String buffer = "";
 	
 
 	public JNotepadPP() {
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		setLocation(10, 10);
-		setSize(500, 500);
+		setSize(700, 500);
 		setTitle("JNotepad++");
 		
 		initGUI();
@@ -95,7 +96,8 @@ public class JNotepadPP extends JFrame {
 		            int selectedLength = Math.abs(editArea.getCaret().getDot()-
 							editArea.getCaret().getMark());
 		            if(selectedLength > 0) {
-		            	toggleSelectedPart.setEnabled(true);
+		            	cutSelectedPart.setEnabled(true);
+		            	copySelectedPart.setEnabled(true);
 		            }
 				}
 			});
@@ -149,7 +151,8 @@ public class JNotepadPP extends JFrame {
 		            int selectedLength = Math.abs(editArea.getCaret().getDot()-
 							editArea.getCaret().getMark());
 		            if(selectedLength > 0) {
-		            	toggleSelectedPart.setEnabled(true);
+		            	cutSelectedPart.setEnabled(true);
+		            	copySelectedPart.setEnabled(true);
 		            }
 				}
 			});
@@ -280,7 +283,7 @@ public class JNotepadPP extends JFrame {
 	};
 	*/
 	
-	private final Action toggleSelectedPart = new AbstractAction() {
+	private final Action cutSelectedPart = new AbstractAction() {
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -296,10 +299,72 @@ public class JNotepadPP extends JFrame {
 			Document doc = multiDocModel.getCurrentDocument().getTextComponent().getDocument();
 			
 			try {
-				String text = doc.getText(start, len);
-				text = toggleCase(text);
+				buffer = doc.getText(start, len);
+				pasteSelectedPart.setEnabled(true);
+				//text = toggleCase(text);
 				doc.remove(start, len);
-				doc.insertString(start, text, null);
+				//doc.insertString(start, text, null);
+			} catch (Exception e2) {
+			}
+		}
+
+		private String toggleCase(String text) {
+			char[] chars = text.toCharArray();
+			for(int i = 0; i < chars.length; i++) {
+				if(Character.isUpperCase(chars[i])) {
+					chars[i] = Character.toLowerCase(chars[i]);
+				} else if(Character.isLowerCase(chars[i])) {
+					chars[i] = Character.toUpperCase(chars[i]);
+				}
+			}
+			return new String(chars);
+		}
+	};
+	
+	private final Action pasteSelectedPart = new AbstractAction() {
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			int start = Math.min(multiDocModel.getCurrentDocument().getTextComponent().getCaret().getDot(),
+					multiDocModel.getCurrentDocument().getTextComponent().getCaret().getMark());
+			int len = Math.abs(multiDocModel.getCurrentDocument().getTextComponent().getCaret().getDot()-
+					multiDocModel.getCurrentDocument().getTextComponent().getCaret().getMark());
+			
+			Document doc = multiDocModel.getCurrentDocument().getTextComponent().getDocument();
+			
+			try {
+				doc.insertString(start, buffer, null);
+			} catch (Exception e2) {
+			}
+		}
+
+		private String toggleCase(String text) {
+			char[] chars = text.toCharArray();
+			for(int i = 0; i < chars.length; i++) {
+				if(Character.isUpperCase(chars[i])) {
+					chars[i] = Character.toLowerCase(chars[i]);
+				} else if(Character.isLowerCase(chars[i])) {
+					chars[i] = Character.toUpperCase(chars[i]);
+				}
+			}
+			return new String(chars);
+		}
+	};
+	
+	private final Action copySelectedPart = new AbstractAction() {
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			int start = Math.min(multiDocModel.getCurrentDocument().getTextComponent().getCaret().getDot(),
+					multiDocModel.getCurrentDocument().getTextComponent().getCaret().getMark());
+			int len = Math.abs(multiDocModel.getCurrentDocument().getTextComponent().getCaret().getDot()-
+					multiDocModel.getCurrentDocument().getTextComponent().getCaret().getMark());
+			
+			Document doc = multiDocModel.getCurrentDocument().getTextComponent().getDocument();
+			
+			try {
+				buffer = doc.getText(start, len);
+				pasteSelectedPart.setEnabled(true);
 			} catch (Exception e2) {
 			}
 		}
@@ -356,14 +421,25 @@ public class JNotepadPP extends JFrame {
 		deleteSelectedPart.setEnabled(false);
 		*/
 		
-		toggleSelectedPart.putValue(Action.NAME, "Toggle case in selection");
-		toggleSelectedPart.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("F3"));
-		toggleSelectedPart.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_T);
-		toggleSelectedPart.putValue(Action.SHORT_DESCRIPTION, "Toggles character casing in selection, if"
-				+ " selection exists.");
-		toggleSelectedPart.setEnabled(false);
+		cutSelectedPart.putValue(Action.NAME, "Cut");
+		cutSelectedPart.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control x"));
+		cutSelectedPart.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_X);
+		cutSelectedPart.putValue(Action.SHORT_DESCRIPTION, "Cut selected text");
+		cutSelectedPart.setEnabled(false);
 		
-		exitAction.putValue(Action.NAME, "Exit action");
+		pasteSelectedPart.putValue(Action.NAME, "Paste");
+		pasteSelectedPart.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control V"));
+		pasteSelectedPart.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_V);
+		pasteSelectedPart.putValue(Action.SHORT_DESCRIPTION, "Paste text from buffer");
+		pasteSelectedPart.setEnabled(false);
+		
+		copySelectedPart.putValue(Action.NAME, "Copy");
+		copySelectedPart.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control C"));
+		copySelectedPart.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_C);
+		copySelectedPart.putValue(Action.SHORT_DESCRIPTION, "Copy selected text");
+		copySelectedPart.setEnabled(false);
+		
+		exitAction.putValue(Action.NAME, "Exit");
 		exitAction.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control U"));
 		exitAction.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_X);
 		exitAction.putValue(Action.SHORT_DESCRIPTION, "Exits editor.");
@@ -386,11 +462,13 @@ public class JNotepadPP extends JFrame {
 		file.add(new JMenuItem(exitAction));
 		file.add(new JMenuItem(saveAsDocument));
 		file.add(new JMenuItem(closeDocument));
-		
+		file.add(new JMenuItem(cutSelectedPart));
+		file.add(new JMenuItem(pasteSelectedPart));
+		file.add(new JMenuItem(copySelectedPart));
 		JMenu edit = new JMenu("Edit");
 		mb.add(edit);
 		//edit.add(new JMenuItem(deleteSelectedPart));
-		edit.add(new JMenuItem(toggleSelectedPart));
+		edit.add(new JMenuItem(cutSelectedPart));
 		
 		setJMenuBar(mb);
 	}
@@ -404,7 +482,9 @@ public class JNotepadPP extends JFrame {
 		tb.add(new JButton(saveAsDocument));
 		tb.add(new JButton(closeDocument));
 		tb.add(new JButton(exitAction));
-		tb.add(new JButton(toggleSelectedPart));
+		tb.add(new JButton(cutSelectedPart));
+		tb.add(new JButton(pasteSelectedPart));
+		tb.add(new JButton(copySelectedPart));
 		return tb;
 	}
 	

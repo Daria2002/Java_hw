@@ -31,6 +31,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JToolBar;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 
@@ -117,6 +118,8 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 			}
 		});
 		
+		JToolBar toolbar = new JToolBar();
+		
 		JPanel status = new JPanel(new GridLayout(1, 2));
 		JLabel label1 = new JLabel("length: " + 0);
 		JLabel label2 = new JLabel("Ln: " + 0 + "     Col: " + 0 + "     Sel: " + 0);
@@ -124,10 +127,11 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 		label1.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.GRAY));
 		status.add(label1);
 		status.add(label2);
-		
+
+		toolbar.add(status);
+		toolbar.setFloatable(false);
 		this.currentSingleDocumentModel.getTextComponent().addCaretListener(new CaretListener() {
 
-	        
 			@Override
 			public void caretUpdate(CaretEvent e) {
 				JTextArea editArea = (JTextArea)e.getSource();
@@ -153,7 +157,8 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 
 		JPanel panel = new JPanel(new BorderLayout());
 		panel.add(currentSingleDocumentModel.getTextComponent(), BorderLayout.CENTER);
-		panel.add(status, BorderLayout.PAGE_END);
+		panel.add(toolbar, BorderLayout.PAGE_END);
+		
 		addTab("(unnamed)", imageIconGreen, panel, "(unnamed)");
 		
 		setSelectedIndex(col.size()-1);

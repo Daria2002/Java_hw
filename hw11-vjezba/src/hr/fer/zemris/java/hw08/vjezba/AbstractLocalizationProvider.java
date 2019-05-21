@@ -3,11 +3,11 @@ package hr.fer.zemris.java.hw08.vjezba;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractLoccalizationProvider implements ILocalizationProvider {
+public abstract class AbstractLocalizationProvider implements ILocalizationProvider {
 
 	List<ILocalizationListener> listeners;
 	
-	public AbstractLoccalizationProvider() {
+	public AbstractLocalizationProvider() {
 		listeners = new ArrayList<>();
 	}
 	

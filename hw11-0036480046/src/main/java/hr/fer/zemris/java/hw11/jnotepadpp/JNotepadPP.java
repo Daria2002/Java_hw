@@ -459,6 +459,7 @@ public class JNotepadPP extends JFrame {
 	
 	private void createMenus() {
 		JMenuBar mb = new JMenuBar();
+		
 		JMenu file = new JMenu("File");
 		mb.add(file);
 		file.add(new JMenuItem(newDocument));
@@ -467,14 +468,16 @@ public class JNotepadPP extends JFrame {
 		file.add(new JMenuItem(exitAction));
 		file.add(new JMenuItem(saveAsDocument));
 		file.add(new JMenuItem(closeDocument));
-		file.add(new JMenuItem(cutSelectedPart));
-		file.add(new JMenuItem(pasteSelectedPart));
-		file.add(new JMenuItem(copySelectedPart));
-		file.add(new JMenuItem(statisticalInfo));
+		
 		JMenu edit = new JMenu("Edit");
 		mb.add(edit);
-		//edit.add(new JMenuItem(deleteSelectedPart));
 		edit.add(new JMenuItem(cutSelectedPart));
+		edit.add(new JMenuItem(pasteSelectedPart));
+		edit.add(new JMenuItem(copySelectedPart));
+		
+		JMenu info = new JMenu("Info");
+		mb.add(info);
+		info.add(new JMenuItem(statisticalInfo));
 		
 		setJMenuBar(mb);
 	}

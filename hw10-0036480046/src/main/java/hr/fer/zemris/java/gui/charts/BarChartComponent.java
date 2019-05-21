@@ -91,10 +91,12 @@ public class BarChartComponent extends JComponent {
 		
 		float letterHeight = lineMetrics.getHeight();
 		
+
+		int spaceLength = String.valueOf(barChart.yMax).length();
 		// write numbers for y axis
 		for(int i = barChart.yMin; i <= barChart.yMax; i = i + barChart.space) {
-			String help = String.format("%" + String.valueOf(barChart.yMax).length() + "d", i);
-			g2D.drawString(help, yPadding - 20, height - 50 + 5 - i * rowsHeight-letterHeight/2);
+			String help = String.format("%" + spaceLength + "d", i);
+			g2D.drawString(help, yPadding-g2D.getFontMetrics().stringWidth(help), height - 50 + 5 - i * rowsHeight-letterHeight/2);
 		}
 		
 		g2D.setColor(Color.ORANGE);

@@ -42,6 +42,9 @@ import javax.swing.Timer;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 
+import hr.fer.zemris.java.hw11.jnotepadpp.local.FormLocalizationProvider;
+import hr.fer.zemris.java.hw11.jnotepadpp.local.LJLabel;
+
 public class DefaultMultipleDocumentModel extends JTabbedPane implements MultipleDocumentModel {
 
 	List<SingleDocumentModel> col = new ArrayList<SingleDocumentModel>();
@@ -54,10 +57,12 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 	String pathToRed = "icons/red.png";
 	ImageIcon imageIconGreen;
 	ImageIcon imageIconRed;
+	FormLocalizationProvider flp;
 	
-	public DefaultMultipleDocumentModel() {
+	public DefaultMultipleDocumentModel(FormLocalizationProvider flp) {
 		imageIconGreen = getIcon(pathToGreen);
 		imageIconRed = getIcon(pathToRed);
+		this.flp = flp;
 	}
 
 
@@ -128,7 +133,10 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 		JToolBar toolbar = new JToolBar();
 		
 		JPanel status = new JPanel(new GridLayout(1, 3));
-		JLabel label1 = new JLabel("length: " + 0);
+		
+		LJLabel labelHelp = new LJLabel("length", flp);
+		labelHelp.setText(labelHelp.getLocalizedText() + ": " + 0);
+		//JLabel label1 = new JLabel(": " + String.valueOf(0));
 		JLabel label2 = new JLabel("Ln: " + 0 + "     Col: " + 0 + "     Sel: " + 0);
         String timeStamp = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Calendar.getInstance().getTime());
 		JLabel label3 = new JLabel(timeStamp);
@@ -147,8 +155,9 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 
 		 t.start();
 		
-		label1.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.GRAY));
-		status.add(label1);
+		labelHelp.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.GRAY));
+		status.add(labelHelp);
+		//status.add(label1);
 		status.add(label2);
 		status.add(label3);
 
@@ -169,7 +178,8 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
                     linenum += 1;
                 }
                 catch(Exception ex) { }
-                label1.setText("length: " + editArea.getText().length());
+                labelHelp.setText(labelHelp.getLocalizedText() + ": " + editArea.getText().length());
+                //label1.setText(": " + editArea.getText().length());
                 
                 int selectedLength = Math.abs(editArea.getCaret().getDot()-
 						editArea.getCaret().getMark());

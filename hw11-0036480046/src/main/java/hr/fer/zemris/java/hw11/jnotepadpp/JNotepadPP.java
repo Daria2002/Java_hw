@@ -25,10 +25,18 @@ import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.text.Document;
 
+import hr.fer.zemris.java.hw11.jnotepadpp.local.FormLocalizationProvider;
+import hr.fer.zemris.java.hw11.jnotepadpp.local.ILocalizationProvider;
+import hr.fer.zemris.java.hw11.jnotepadpp.local.LJMenu;
+import hr.fer.zemris.java.hw11.jnotepadpp.local.LocalizableAction;
+import hr.fer.zemris.java.hw11.jnotepadpp.local.LocalizationProvider;
+
 public class JNotepadPP extends JFrame {
 	private Path openedFilePath;
 	private MultipleDocumentModel multiDocModel;
     private String buffer = "";
+    private FormLocalizationProvider flp = new FormLocalizationProvider
+    		(LocalizationProvider.getInstance(), this);
 	
 	public JNotepadPP() {
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -46,7 +54,7 @@ public class JNotepadPP extends JFrame {
 	private void initGUI() {
 		Container cp = getContentPane();
 		cp.setLayout(new BorderLayout());
-		DefaultMultipleDocumentModel def = new DefaultMultipleDocumentModel();
+		DefaultMultipleDocumentModel def = new DefaultMultipleDocumentModel(flp);
 		
 		cp.add(def);
 		multiDocModel = def; 
@@ -55,7 +63,7 @@ public class JNotepadPP extends JFrame {
 		cp.add(createToolbar(), BorderLayout.PAGE_START);
 	}	
 	
-	private final Action newDocument = new AbstractAction() {
+	private final Action newDocument = new LocalizableAction("new", flp) {
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -91,15 +99,10 @@ public class JNotepadPP extends JFrame {
 		            }
 				}
 			});
-			
-			// ovo je moglo biti umjesto editor.setText(text)
-//			int len = editor.getDocument().getLength();
-//			editor.getDocument().remove(0, len);
-//			editor.getDocument().insertString(0, text, null);
 		}
 	};
 	
-	private final Action openDocument = new AbstractAction() {
+	private final Action openDocument = new LocalizableAction("open", flp) {
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -152,15 +155,10 @@ public class JNotepadPP extends JFrame {
 		            }
 				}
 			});
-			
-			// ovo je moglo biti umjesto editor.setText(text)
-//			int len = editor.getDocument().getLength();
-//			editor.getDocument().remove(0, len);
-//			editor.getDocument().insertString(0, text, null);
 		}
 	};
 
-	private final Action saveDocument = new AbstractAction() {
+	private final Action saveDocument = new LocalizableAction("save", flp) {
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -199,8 +197,8 @@ public class JNotepadPP extends JFrame {
 		}
 	};
 	
-	private final Action saveAsDocument = new AbstractAction() {
-
+	private final Action saveAsDocument = new LocalizableAction("saveas", flp) {
+		
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			JFileChooser jfc = new JFileChooser();
@@ -232,7 +230,7 @@ public class JNotepadPP extends JFrame {
 		}
 	};
 	
-	private final Action statisticalInfo = new AbstractAction() {
+	private final Action statisticalInfo = new LocalizableAction("statistics", flp) {
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -248,12 +246,11 @@ public class JNotepadPP extends JFrame {
 					nonBlank + " non-blank characters and " + lines + " lines.", "Statistical info",
 					JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE,
 			null, options, options[0]);
-			
 		}
 	};
 	
-	private final Action closeDocument = new AbstractAction() {
-			
+	private final Action closeDocument = new LocalizableAction("close", flp) {
+		
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if(multiDocModel.getCurrentDocument().getFilePath() == null) {
@@ -299,23 +296,7 @@ public class JNotepadPP extends JFrame {
 		}
 	};
 	
-	/*
-	private final Action deleteSelectedPart = new AbstractAction() {
-		
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			try {
-				editor.getDocument().remove(Math.min(editor.getCaret().getDot(),
-						editor.getCaret().getMark()), Math.abs(editor.getCaret().getDot()-
-								editor.getCaret().getMark()));
-			} catch (BadLocationException e1) {
-				
-			}
-		}
-	};
-	*/
-	
-	private final Action cutSelectedPart = new AbstractAction() {
+	private final Action cutSelectedPart = new LocalizableAction("cut", flp) {
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -333,15 +314,13 @@ public class JNotepadPP extends JFrame {
 			try {
 				buffer = doc.getText(start, len);
 				pasteSelectedPart.setEnabled(true);
-				//text = toggleCase(text);
 				doc.remove(start, len);
-				//doc.insertString(start, text, null);
 			} catch (Exception e2) {
 			}
 		}
 	};
 	
-	private final Action pasteSelectedPart = new AbstractAction() {
+	private final Action pasteSelectedPart = new LocalizableAction("paste", flp) {
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -359,7 +338,7 @@ public class JNotepadPP extends JFrame {
 		}
 	};
 	
-	private final Action copySelectedPart = new AbstractAction() {
+	private final Action copySelectedPart = new LocalizableAction("copy", flp) {
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -378,7 +357,7 @@ public class JNotepadPP extends JFrame {
 		}
 	};
 	
-	private final Action exitAction = new AbstractAction() {
+	private final Action exitAction = new LocalizableAction("exit", flp) {
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -387,97 +366,97 @@ public class JNotepadPP extends JFrame {
 	};
 	
 	private void createActions() {
-		openDocument.putValue(Action.NAME, "Open");
 		//openDocument.putValue(Action.NAME, tr.getTranspation("main_open"));
 		openDocument.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control 0"));
 		openDocument.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_0);
-		openDocument.putValue(Action.SHORT_DESCRIPTION, "Open document form disk");
 		
-		newDocument.putValue(Action.NAME, "New");
 		//newDocument.putValue(Action.NAME, tr.getTranspation("main_open"));
 		newDocument.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control N"));
 		newDocument.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_N);
-		newDocument.putValue(Action.SHORT_DESCRIPTION, "Create new document");
 		
-		saveDocument.putValue(Action.NAME, "Save");
 		saveDocument.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control S"));
 		saveDocument.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_S);
-		saveDocument.putValue(Action.SHORT_DESCRIPTION, "Save document form disk");
 		saveDocument.setEnabled(false);
 		
-		saveAsDocument.putValue(Action.NAME, "Save as");
 		saveAsDocument.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control alt S"));
 		saveAsDocument.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_ALT+KeyEvent.VK_S);
-		saveAsDocument.putValue(Action.SHORT_DESCRIPTION, "Save as document form disk");
 		saveAsDocument.setEnabled(false);
 		
-		/*
-		deleteSelectedPart.putValue(Action.NAME, "Delete selected part");
-		deleteSelectedPart.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("F2"));
-		deleteSelectedPart.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_D);
-		deleteSelectedPart.putValue(Action.SHORT_DESCRIPTION, "Delete selection from document if selection exists");
-		deleteSelectedPart.setEnabled(false);
-		*/
-		
-		cutSelectedPart.putValue(Action.NAME, "Cut");
 		cutSelectedPart.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control x"));
 		cutSelectedPart.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_X);
-		cutSelectedPart.putValue(Action.SHORT_DESCRIPTION, "Cut selected text");
 		cutSelectedPart.setEnabled(false);
 		
-		pasteSelectedPart.putValue(Action.NAME, "Paste");
 		pasteSelectedPart.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control v"));
 		pasteSelectedPart.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_V);
-		pasteSelectedPart.putValue(Action.SHORT_DESCRIPTION, "Paste text from buffer");
 		pasteSelectedPart.setEnabled(false);
 		
-		copySelectedPart.putValue(Action.NAME, "Copy");
 		copySelectedPart.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control c"));
 		copySelectedPart.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_C);
-		copySelectedPart.putValue(Action.SHORT_DESCRIPTION, "Copy selected text");
 		copySelectedPart.setEnabled(false);
 		
-		exitAction.putValue(Action.NAME, "Exit");
 		exitAction.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control U"));
 		exitAction.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_X);
-		exitAction.putValue(Action.SHORT_DESCRIPTION, "Exits editor.");
 		
-		closeDocument.putValue(Action.NAME, "Close tab");
 		closeDocument.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control W"));
 		closeDocument.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_W);
-		closeDocument.putValue(Action.SHORT_DESCRIPTION, "Closes tab.");
 		closeDocument.setEnabled(false);
 		
-		statisticalInfo.putValue(Action.NAME, "Statistical info");
 		statisticalInfo.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control I"));
 		statisticalInfo.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_I);
-		statisticalInfo.putValue(Action.SHORT_DESCRIPTION, "Statistical info.");
 		statisticalInfo.setEnabled(false);
-		
 	}
 	
+	private final Action en = new LocalizableAction("eng", flp) {
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			LocalizationProvider.getInstance().setLanguage("en");
+		}
+	};
+	
+	private final Action hr = new LocalizableAction("hr", flp) {
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			LocalizationProvider.getInstance().setLanguage("hr");
+		}
+	};
+	
+	private final Action de = new LocalizableAction("de", flp) {
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			LocalizationProvider.getInstance().setLanguage("de");
+		}
+	};
 	
 	private void createMenus() {
 		JMenuBar mb = new JMenuBar();
 		
-		JMenu file = new JMenu("File");
+		LJMenu file = new LJMenu("file", flp);
 		mb.add(file);
-		file.add(new JMenuItem(newDocument));
-		file.add(new JMenuItem(openDocument));
-		file.add(new JMenuItem(saveDocument));
-		file.add(new JMenuItem(exitAction));
-		file.add(new JMenuItem(saveAsDocument));
-		file.add(new JMenuItem(closeDocument));
+		file.add(newDocument);
+		file.add(openDocument);
+		file.add(saveDocument);
+		file.add(exitAction);
+		file.add(saveAsDocument);
+		file.add(closeDocument);
 		
-		JMenu edit = new JMenu("Edit");
+		LJMenu edit = new LJMenu("edit", flp);
 		mb.add(edit);
-		edit.add(new JMenuItem(cutSelectedPart));
-		edit.add(new JMenuItem(pasteSelectedPart));
-		edit.add(new JMenuItem(copySelectedPart));
+		edit.add(cutSelectedPart);
+		edit.add(pasteSelectedPart);
+		edit.add(copySelectedPart);
 		
-		JMenu info = new JMenu("Info");
+		LJMenu languages = new LJMenu("languages", flp);
+		mb.add(languages);
+		languages.add(de);
+		languages.add(hr);
+		languages.add(en);
+		
+		LJMenu info = new LJMenu("info", flp);
 		mb.add(info);
-		info.add(new JMenuItem(statisticalInfo));
+		info.add(statisticalInfo);
 		
 		setJMenuBar(mb);
 	}
@@ -497,7 +476,4 @@ public class JNotepadPP extends JFrame {
 		tb.add(new JButton(statisticalInfo));
 		return tb;
 	}
-	
-	
-	
 }

@@ -1,4 +1,4 @@
-package hr.fer.zemris.java.hw08.vjezba;
+package hr.fer.zemris.java.hw11.jnotepadpp.local;
 
 import java.awt.BorderLayout;
 import java.awt.HeadlessException;

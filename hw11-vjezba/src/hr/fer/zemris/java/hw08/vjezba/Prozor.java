@@ -26,9 +26,11 @@ public class Prozor extends JFrame {
 	
 	private static final long serialVersionUID = 1L;
 	JButton button;
+	private FormLocalizationProvider flp;
 	
 	public Prozor() throws HeadlessException {
-		LocalizationProvider.getInstance().addLocalizationListener(new ILocalizationListener() {
+		flp = new FormLocalizationProvider(LocalizationProvider.getInstance(), this);
+		flp.addLocalizationListener(new ILocalizationListener() {
 			
 			@Override
 			public void localizationChanged() {
@@ -86,7 +88,7 @@ public class Prozor extends JFrame {
 	private void initGUI() {
 		getContentPane().setLayout(new BorderLayout());
 		button = new JButton(
-				LocalizationProvider.getInstance().getString("login")
+				flp.getString("login")
 				);
 		
 		JMenuBar mb = new JMenuBar();

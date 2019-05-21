@@ -1,24 +1,41 @@
 package hr.fer.zemris.java.hw08.vjezba;
 
+import java.util.List;
+
 public class LocalizationProviderBridge extends AbstractLocalizationProvider implements ILocalizationProvider {
 
 	boolean connected;
+	ILocalizationProvider provider;
+	String language;
+	ILocalizationListener listener;
 	
 	public LocalizationProviderBridge(ILocalizationProvider provider) {
-		// TODO Auto-generated constructor stub
+		this.provider = provider;
 	}
 	
 	void disconnect() {
-		
+		provider.removeLocalizationListener(listener);
+		connected = false;
 	}
 	
 	void connect() {
+		if(connected) {
+			return;
+		}
 		
+		listener = new ILocalizationListener() {
+			
+			@Override
+			public void localizationChanged() {
+				fire();
+			}
+		};
+		connected = true;
+		provider.addLocalizationListener(listener);
 	}
 	
 	@Override
 	public String getString(String string) {
-		// TODO Auto-generated method stub
-		return null;
+		return provider.getString(string);
 	}
 }

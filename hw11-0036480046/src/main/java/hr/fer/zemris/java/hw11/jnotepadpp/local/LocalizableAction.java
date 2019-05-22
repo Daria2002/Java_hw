@@ -1,15 +1,28 @@
 package hr.fer.zemris.java.hw11.jnotepadpp.local;
 
-import java.awt.event.ActionEvent;
-
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 
+/**
+ * This class represents localizable action that extends abstract action
+ * @author Daria Matković
+ *
+ */
 public abstract class LocalizableAction extends AbstractAction {
-
+	/**
+	 * serial version
+	 */
+	private static final long serialVersionUID = 1L;
+	/** key **/
 	String key;
+	/** provider **/
 	ILocalizationProvider lp;
 	
+	/**
+	 * Constructor that initialize key and provider
+	 * @param key key 
+	 * @param lp provider
+	 */
 	public LocalizableAction(String key, ILocalizationProvider lp) {
 		this.key = key;
 		this.lp = lp;
@@ -29,5 +42,4 @@ public abstract class LocalizableAction extends AbstractAction {
 			}
 		});
 	}
-	
 }

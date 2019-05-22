@@ -45,22 +45,6 @@ public class Prozor extends JFrame {
 		pack();
 	}
 	
-	/*
-	private void initGUI() {
-		getContentPane().setLayout(new BorderLayout());
-		JButton gumb = new JButton(
-		language.equals("hr") ? "Prijava" : "Login"
-		);
-		getContentPane().add(gumb, BorderLayout.CENTER);
-		gumb.addActionListener(new ActionListener() {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-		// Napravi prijavu...
-		}
-		});
-	}
-	*/
-	
 	private final Action de = new AbstractAction() {
 		
 		@Override
@@ -140,15 +124,15 @@ public class Prozor extends JFrame {
 			System.err.println("Očekivao sam oznaku jezika kao argument!");
 			System.err.println("Zadajte kao parametar hr ili en.");
 			System.exit(-1);
-			}
-			final String jezik = args[0];
-			SwingUtilities.invokeLater(new Runnable() {
+		}
+		final String jezik = args[0];
+		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
 			LocalizationProvider.getInstance().setLanguage(jezik);
 			new Prozor().setVisible(true);
 			}
-			});
+		});
 	}
 }
 

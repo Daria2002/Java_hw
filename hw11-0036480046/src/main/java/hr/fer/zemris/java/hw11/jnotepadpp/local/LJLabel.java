@@ -13,6 +13,11 @@ public class LJLabel extends JLabel {
 	/** localization provider **/
 	ILocalizationProvider lp;
 
+	/**
+	 * Constructor for LJabel that initalize key and ILocalization provider
+	 * @param key key 
+	 * @param lp provider
+	 */
 	public LJLabel(String key, ILocalizationProvider lp) {
 		super();
 		this.key = key;
@@ -20,7 +25,6 @@ public class LJLabel extends JLabel {
 		String translation = lp.getString(key);
 		
 		this.setText(translation);
-		//this.putValue(Action.NAME, translation);
 		lp.addLocalizationListener(new ILocalizationListener() {
 			
 			@Override
@@ -38,8 +42,11 @@ public class LJLabel extends JLabel {
 		});
 	}
 	
+	/**
+	 * This method gets translated text
+	 * @return translated text
+	 */
 	public String getLocalizedText() {
 		return lp.getString(key);
 	}
-	
 }

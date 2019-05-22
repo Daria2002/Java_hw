@@ -638,6 +638,8 @@ public class JNotepadPP extends JFrame {
 			
 				String[] lines = multiDocModel.getCurrentDocument().getTextComponent().getText().split("\n");
 
+				int firstSize = lines.length;
+				
 				Locale hrLocale = new Locale("hr");
 				Collator hrCollator = Collator.getInstance(hrLocale);
 				
@@ -647,23 +649,30 @@ public class JNotepadPP extends JFrame {
 				
 				Set<String> set = new LinkedHashSet<String>();
 
-				for(int i = linestart; i <= lineend; i++){
+				for(int i = linestart; i < lineend; i++){
 				  set.add(lines[i]);
 				}
 				
-				int index = linestart;
-				for(String line:set) {
-					lines[index++] = line;
+				int newSize = lines.length - (lineend - linestart) + set.size()-1;
+				String[] newLines = new String[newSize];
+				
+				for(int i = 0; i < linestart; i++) {
+					newLines[i] = lines[i];
 				}
 				
-				for(int i = lineend+1; i < lines.length-lineend; i++) {
-					lines[index++] = lines[i];
+				int index = linestart; 
+				for(String el:set) {
+					newLines[index++] = el;
+				}
+				
+				for(int i = lineend+1; i < lines.length; i++) {
+					newLines[index++] = lines[i]; 
 				}
 				
 				Document doc = multiDocModel.getCurrentDocument().getTextComponent().getDocument();
 				doc.remove(0, doc.getLength());
 				
-				String joinedString = String.join("\n", lines);
+				String joinedString = String.join("\n", newLines);
 				doc.insertString(0, joinedString, null);
 				
 				

@@ -134,9 +134,8 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 		
 		JPanel status = new JPanel(new GridLayout(1, 3));
 		
-		LJLabel labelHelp = new LJLabel("length", flp);
-		labelHelp.setText(labelHelp.getLocalizedText() + ": " + 0);
-		//JLabel label1 = new JLabel(": " + String.valueOf(0));
+		LJLabel label1 = new LJLabel("length", flp);
+		label1.setText(label1.getLocalizedText() + ": " + 0);
 		JLabel label2 = new JLabel("Ln: " + 0 + "     Col: " + 0 + "     Sel: " + 0);
         String timeStamp = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Calendar.getInstance().getTime());
 		JLabel label3 = new JLabel(timeStamp);
@@ -154,13 +153,13 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 		    });
 
 		 t.start();
-		
-		labelHelp.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.GRAY));
-		status.add(labelHelp);
+		 
+		label1.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.GRAY));
+		status.add(label1);
 		//status.add(label1);
 		status.add(label2);
 		status.add(label3);
-
+		
 		toolbar.add(status);
 		toolbar.setFloatable(false);
 		this.currentSingleDocumentModel.getTextComponent().addCaretListener(new CaretListener() {
@@ -178,8 +177,7 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
                     linenum += 1;
                 }
                 catch(Exception ex) { }
-                labelHelp.setText(labelHelp.getLocalizedText() + ": " + editArea.getText().length());
-                //label1.setText(": " + editArea.getText().length());
+                label1.setText(label1.getLocalizedText() + ": " + editArea.getText().length());
                 
                 int selectedLength = Math.abs(editArea.getCaret().getDot()-
 						editArea.getCaret().getMark());

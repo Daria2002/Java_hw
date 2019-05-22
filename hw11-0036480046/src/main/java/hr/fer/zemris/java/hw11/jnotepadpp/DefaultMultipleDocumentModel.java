@@ -91,7 +91,6 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 		byte file[];
 		
 		try {
-
 			byte[] buffer = new byte[8192];
 		    int bytesRead;
 		    ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -144,7 +143,6 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 		});
 		
 		JToolBar toolbar = new JToolBar();
-		
 		JPanel status = new JPanel(new GridLayout(1, 3));
 		
 		LJLabel label1 = new LJLabel("length", flp);
@@ -153,7 +151,6 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 		StatusJLabel label2 = new StatusJLabel("statusInfo", flp);
 		label2.setText(label2.getLocalizedLn() + ": " + 0 + " " + label2.getLocalizedCol()
 		+ ": " + 0 + " " + label2.getLocalizedSel() + ": " + 0);
-		
 		
         String timeStamp = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Calendar.getInstance().getTime());
 		JLabel label3 = new JLabel(timeStamp);
@@ -201,7 +198,6 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
                 
                 label3.setText(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Calendar.getInstance().getTime()));
 			}
-			
 		});
 
 		JPanel panel = new JPanel(new BorderLayout());
@@ -268,12 +264,36 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 			return;
 		} catch (Exception e) {
 			System.out.println("Desila se pogreska kod pisanja");
-			//e.printStackTrace();
 			return;
 		}
+		
 		if(model.getFilePath() == null) {
 			model.setFilePath(newPath);
 		}
+
+		// if file is saved as existing file opened in other tab, current document should
+		// be saved and tab should be closed 
+		for(int i = 0; i < getNumberOfDocuments(); i++) {
+			if(i == currentIndex) {
+				continue;
+			}
+			
+			SingleDocumentModel document = getDocument(i);
+			if(newPath.equals(document.getFilePath())) {
+				componentDictionary.remove(model.getTextComponent());
+				remove(getSelectedIndex());
+				currentSingleDocumentModel = col.get(i);
+				col.remove(model);
+				
+				JOptionPane.showMessageDialog(
+						this,
+						"Dokument je uredno spremljen i vec je bio otvoren.", 
+						"Informacija", JOptionPane.INFORMATION_MESSAGE);
+				
+				return;
+			}
+		}
+		
 		setIconAt(getSelectedIndex(), imageIconGreen);
 		setTitleAt(getSelectedIndex(), getDocument(getSelectedIndex())
 				.getFilePath().getFileName().toString());

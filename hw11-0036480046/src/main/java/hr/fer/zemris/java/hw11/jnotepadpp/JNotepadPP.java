@@ -170,7 +170,6 @@ public class JNotepadPP extends JFrame {
 			openedFilePath = filePath;
 			multiDocModel.loadDocument(openedFilePath);
 			
-			
 			multiDocModel.getCurrentDocument().getTextComponent().addCaretListener(new CaretListener() {
 				
 				@Override
@@ -285,7 +284,6 @@ public class JNotepadPP extends JFrame {
 			}
 			
 			multiDocModel.saveDocument(multiDocModel.getCurrentDocument(), openedFilePath);
-			
 			return;
 		}
 	};

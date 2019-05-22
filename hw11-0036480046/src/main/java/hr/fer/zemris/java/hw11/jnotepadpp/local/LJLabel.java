@@ -8,6 +8,10 @@ import javax.swing.JLabel;
  *
  */
 public class LJLabel extends JLabel {
+	/**
+	 * serial version
+	 */
+	private static final long serialVersionUID = 1L;
 	/** key **/
 	String key;
 	/** localization provider **/

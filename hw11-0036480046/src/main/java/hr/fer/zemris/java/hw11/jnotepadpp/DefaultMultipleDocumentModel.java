@@ -29,6 +29,8 @@ import javax.swing.JToolBar;
 import javax.swing.Timer;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import hr.fer.zemris.java.hw11.jnotepadpp.local.FormLocalizationProvider;
 import hr.fer.zemris.java.hw11.jnotepadpp.local.LJLabel;
@@ -66,15 +68,47 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 	ImageIcon imageIconRed;
 	/* form localization provider **/
 	FormLocalizationProvider flp;
+	/* panel */
+	JPanel status;
 	
 	/**
 	 * Constructor for DefaultMultipleDocumentModel gets icons and initialize flp
 	 * @param flp FormLocalizationProvider
 	 */
-	public DefaultMultipleDocumentModel(FormLocalizationProvider flp) {
+	public DefaultMultipleDocumentModel(FormLocalizationProvider flp, JPanel panel) {
 		imageIconGreen = getIcon(pathToGreen);
 		imageIconRed = getIcon(pathToRed);
 		this.flp = flp;
+		this.status = panel;
+		
+		addChangeListener(new ChangeListener() {
+			
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				
+				JTextArea editArea = getCurrentDocument().getTextComponent();
+                int linenum = 1;
+                int columnnum = 1;
+                
+                try {
+                    int caretpos = editArea.getCaretPosition();
+                    linenum = editArea.getLineOfOffset(caretpos);
+                    columnnum = caretpos - editArea.getLineStartOffset(linenum)+1;
+                    linenum += 1;
+                }
+                catch(Exception ex) { }
+                
+                LJLabel label1 = (LJLabel) DefaultMultipleDocumentModel.this.status.getComponent(0);
+                StatusJLabel label2 = (StatusJLabel) DefaultMultipleDocumentModel.this.status.getComponent(1);
+                
+                label1.setText(label1.getLocalizedText() + ": " + editArea.getText().length());
+                
+                int selectedLength = Math.abs(editArea.getCaret().getDot()-
+						editArea.getCaret().getMark());
+                label2.setText(label2.getLocalizedLn() + ": " + linenum + " " + label2.getLocalizedCol()
+                		+ ": " + columnnum + " " + label2.getLocalizedSel() + ": " + selectedLength);
+			}
+		});
 	}
 
 	/**
@@ -142,38 +176,6 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 			}
 		});
 		
-		JToolBar toolbar = new JToolBar();
-		JPanel status = new JPanel(new GridLayout(1, 3));
-		
-		LJLabel label1 = new LJLabel("length", flp);
-		label1.setText(label1.getLocalizedText() + ": " + 0);
-		
-		StatusJLabel label2 = new StatusJLabel("statusInfo", flp);
-		label2.setText(label2.getLocalizedLn() + ": " + 0 + " " + label2.getLocalizedCol()
-		+ ": " + 0 + " " + label2.getLocalizedSel() + ": " + 0);
-		
-        String timeStamp = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Calendar.getInstance().getTime());
-		JLabel label3 = new JLabel(timeStamp);
-		label3.setHorizontalAlignment(RIGHT);
-		
-		Timer t = new Timer(1000, new ActionListener() {
-
-		    @Override
-		    public void actionPerformed(ActionEvent e) {
-		        label3.setText(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Calendar.getInstance().getTime()));
-		    }
-
-		});
-
-		t.start();
-		 
-		label1.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.GRAY));
-		status.add(label1);
-		status.add(label2);
-		status.add(label3);
-		
-		toolbar.add(status);
-		toolbar.setFloatable(false);
 		this.currentSingleDocumentModel.getTextComponent().addCaretListener(new CaretListener() {
 
 			@Override
@@ -189,20 +191,21 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
                     linenum += 1;
                 }
                 catch(Exception ex) { }
+                
+                LJLabel label1 = (LJLabel) DefaultMultipleDocumentModel.this.status.getComponent(0);
+                StatusJLabel label2 = (StatusJLabel) DefaultMultipleDocumentModel.this.status.getComponent(1);
+                
                 label1.setText(label1.getLocalizedText() + ": " + editArea.getText().length());
                 
                 int selectedLength = Math.abs(editArea.getCaret().getDot()-
 						editArea.getCaret().getMark());
                 label2.setText(label2.getLocalizedLn() + ": " + linenum + " " + label2.getLocalizedCol()
                 		+ ": " + columnnum + " " + label2.getLocalizedSel() + ": " + selectedLength);
-                
-                label3.setText(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Calendar.getInstance().getTime()));
 			}
 		});
 
 		JPanel panel = new JPanel(new BorderLayout());
 		panel.add(currentSingleDocumentModel.getTextComponent(), BorderLayout.CENTER);
-		panel.add(toolbar, BorderLayout.PAGE_END);
 		
 		addTab("(unnamed)", imageIconGreen, panel, "(unnamed)");
 		

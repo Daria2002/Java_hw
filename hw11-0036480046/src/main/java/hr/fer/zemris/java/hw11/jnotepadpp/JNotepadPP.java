@@ -1,25 +1,35 @@
 package hr.fer.zemris.java.hw11.jnotepadpp;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Container;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.Collator;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Set;
 import javax.swing.Action;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import javax.swing.WindowConstants;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
@@ -27,9 +37,11 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 
 import hr.fer.zemris.java.hw11.jnotepadpp.local.FormLocalizationProvider;
+import hr.fer.zemris.java.hw11.jnotepadpp.local.LJLabel;
 import hr.fer.zemris.java.hw11.jnotepadpp.local.LJMenu;
 import hr.fer.zemris.java.hw11.jnotepadpp.local.LocalizableAction;
 import hr.fer.zemris.java.hw11.jnotepadpp.local.LocalizationProvider;
+import hr.fer.zemris.java.hw11.jnotepadpp.local.StatusJLabel;
 
 /**
  * This class represents Notepad++ program that has functionality to choose between
@@ -79,9 +91,40 @@ public class JNotepadPP extends JFrame {
 	private void initGUI() {
 		Container cp = getContentPane();
 		cp.setLayout(new BorderLayout());
-		DefaultMultipleDocumentModel def = new DefaultMultipleDocumentModel(flp);
 		
-		cp.add(def);
+		JPanel status = new JPanel(new GridLayout(1, 3));
+		
+		LJLabel label1 = new LJLabel("length", flp);
+		label1.setText(label1.getLocalizedText() + ": " + 0);
+		
+		StatusJLabel label2 = new StatusJLabel("statusInfo", flp);
+		label2.setText(label2.getLocalizedLn() + ": " + 0 + " " + label2.getLocalizedCol()
+		+ ": " + 0 + " " + label2.getLocalizedSel() + ": " + 0);
+		
+        String timeStamp = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Calendar.getInstance().getTime());
+		JLabel label3 = new JLabel(timeStamp);
+		label3.setHorizontalAlignment(SwingConstants.RIGHT);
+		
+		Timer t = new Timer(1000, new ActionListener() {
+
+		    @Override
+		    public void actionPerformed(ActionEvent e) {
+		        label3.setText(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Calendar.getInstance().getTime()));
+		    }
+
+		});
+
+		t.start();
+		 
+		label1.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.GRAY));
+		status.add(label1);
+		status.add(label2);
+		status.add(label3);
+
+		DefaultMultipleDocumentModel def = new DefaultMultipleDocumentModel(flp, status);
+		cp.add(def, BorderLayout.CENTER);
+		cp.add(status, BorderLayout.PAGE_END);
+		
 		multiDocModel = def; 
 		createActions();
 		createMenus();

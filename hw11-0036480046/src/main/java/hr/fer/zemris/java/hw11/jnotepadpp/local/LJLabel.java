@@ -1,8 +1,5 @@
 package hr.fer.zemris.java.hw11.jnotepadpp.local;
 
-import java.awt.event.ActionEvent;
-
-import javax.swing.Action;
 import javax.swing.JLabel;
 
 public class LJLabel extends JLabel {
@@ -24,7 +21,7 @@ public class LJLabel extends JLabel {
 			public void localizationChanged() {
 				String translation = lp.getString(key);
 				
-				if("length".equals(key) || "col".equals(key) || "ln".equals(key) || "sel".equals(key)) {
+				if("length".equals(key)) {
 					String str = LJLabel.this.getText().split(":")[1].trim();
 					LJLabel.this.setText(translation + ": " + str);
 					

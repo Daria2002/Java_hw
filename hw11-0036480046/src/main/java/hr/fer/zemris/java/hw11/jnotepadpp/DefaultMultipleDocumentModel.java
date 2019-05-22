@@ -44,6 +44,7 @@ import javax.swing.event.CaretListener;
 
 import hr.fer.zemris.java.hw11.jnotepadpp.local.FormLocalizationProvider;
 import hr.fer.zemris.java.hw11.jnotepadpp.local.LJLabel;
+import hr.fer.zemris.java.hw11.jnotepadpp.local.StatusJLabel;
 
 public class DefaultMultipleDocumentModel extends JTabbedPane implements MultipleDocumentModel {
 
@@ -114,7 +115,6 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 		DefaultSingleDocumentModel newSingleDoc = new DefaultSingleDocumentModel(null, "");
 		col.add(newSingleDoc);
 		currentSingleDocumentModel = newSingleDoc;
-		//addTab("(unnamed)", imageIconGreen, newSingleDoc.getTextComponent(), "(unnamed)");
 		
 		currentSingleDocumentModel.addSingleDocumentListener(new SingleDocumentListener() {
 			
@@ -137,26 +137,21 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 		LJLabel label1 = new LJLabel("length", flp);
 		label1.setText(label1.getLocalizedText() + ": " + 0);
 		
-		LJLabel label2 = new LJLabel("length", flp);
-		label1.setText(label1.getLocalizedText() + ": " + 0);
+		StatusJLabel label2 = new StatusJLabel("statusInfo", flp);
+		label2.setText(label2.getLocalizedLn() + ": " + 0 + " " + label2.getLocalizedCol()
+		+ ": " + 0 + " " + label2.getLocalizedSel() + ": " + 0);
 		
-		LJLabel label3 = new LJLabel("length", flp);
-		label1.setText(label1.getLocalizedText() + ": " + 0);
 		
-		LJLabel label4 = new LJLabel("length", flp);
-		label1.setText(label1.getLocalizedText() + ": " + 0);
-		
-		JLabel label2 = new JLabel("Ln: " + 0 + "     Col: " + 0 + "     Sel: " + 0);
         String timeStamp = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Calendar.getInstance().getTime());
-		JLabel label5 = new JLabel(timeStamp);
-		label5.setHorizontalAlignment(RIGHT);
+		JLabel label3 = new JLabel(timeStamp);
+		label3.setHorizontalAlignment(RIGHT);
 		
 		Timer t = new Timer(1000, new ActionListener() {
 
 		    @Override
 		    public void actionPerformed(ActionEvent e) {
 		        // TODO Auto-generated method stub
-		        label5.setText(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Calendar.getInstance().getTime()));
+		        label3.setText(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Calendar.getInstance().getTime()));
 
 		        }
 
@@ -166,9 +161,8 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 		 
 		label1.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.GRAY));
 		status.add(label1);
-		//status.add(label1);
 		status.add(label2);
-		status.add(label5);
+		status.add(label3);
 		
 		toolbar.add(status);
 		toolbar.setFloatable(false);
@@ -191,13 +185,10 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
                 
                 int selectedLength = Math.abs(editArea.getCaret().getDot()-
 						editArea.getCaret().getMark());
+                label2.setText(label2.getLocalizedLn() + ": " + linenum + " " + label2.getLocalizedCol()
+                		+ ": " + columnnum + " " + label2.getLocalizedSel() + ": " + selectedLength);
                 
-                
-                label2.setText("Ln: " + linenum + "     Col: " + columnnum + "     Sel: " + selectedLength);
-
-                
-                
-                label5.setText(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Calendar.getInstance().getTime()));
+                label3.setText(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Calendar.getInstance().getTime()));
 			}
 			
 		});

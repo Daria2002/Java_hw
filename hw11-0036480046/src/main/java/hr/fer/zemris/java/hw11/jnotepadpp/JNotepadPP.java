@@ -69,7 +69,7 @@ public class JNotepadPP extends JFrame {
      * Constructor that is used for initializing window size, location and title
      */
 	public JNotepadPP() {
-		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		setLocation(10, 10);
 		setSize(700, 500);
 		setTitle("JNotepad++");
@@ -552,15 +552,15 @@ public class JNotepadPP extends JFrame {
 		saveAsDocument.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_ALT+KeyEvent.VK_S);
 		saveAsDocument.setEnabled(false);
 		
-		cutSelectedPart.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control x"));
+		cutSelectedPart.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control X"));
 		cutSelectedPart.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_X);
 		cutSelectedPart.setEnabled(false);
 		
-		pasteSelectedPart.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control v"));
+		pasteSelectedPart.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control V"));
 		pasteSelectedPart.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_V);
 		pasteSelectedPart.setEnabled(false);
 		
-		copySelectedPart.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control c"));
+		copySelectedPart.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control C"));
 		copySelectedPart.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_C);
 		copySelectedPart.setEnabled(false);
 		

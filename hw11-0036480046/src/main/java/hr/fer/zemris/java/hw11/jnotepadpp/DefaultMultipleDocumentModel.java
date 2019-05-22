@@ -84,6 +84,7 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 		imageIconRed = getIcon(pathToRed);
 		this.flp = flp;
 		this.status = panel;
+		listenerList = new ArrayList<MultipleDocumentListener>();
 		
 		addChangeListener(new ChangeListener() {
 			
@@ -344,6 +345,15 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 		componentDictionary.remove(model.getTextComponent());
 		remove(getSelectedIndex());
 		col.remove(model);
+		
+		if(getNumberOfDocuments() <= 0) {
+            LJLabel label1 = (LJLabel) DefaultMultipleDocumentModel.this.status.getComponent(0);
+            StatusJLabel label2 = (StatusJLabel) DefaultMultipleDocumentModel.this.status.getComponent(1);
+            
+            label1.setText(label1.getLocalizedText() + ": " + 0);
+            label2.setText(label2.getLocalizedLn() + ": " + 0 + " " + label2.getLocalizedCol()
+            		+ ": " + 0 + " " + label2.getLocalizedSel() + ": " + 0);
+		}
 	}
 
 	@Override

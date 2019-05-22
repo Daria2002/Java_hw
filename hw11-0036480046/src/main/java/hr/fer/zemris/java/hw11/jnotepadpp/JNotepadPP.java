@@ -93,6 +93,7 @@ public class JNotepadPP extends JFrame {
 		cp.setLayout(new BorderLayout());
 		
 		JPanel status = new JPanel(new GridLayout(1, 3));
+		JPanel helpLayout = new JPanel(new BorderLayout());
 		
 		LJLabel label1 = new LJLabel("length", flp);
 		label1.setText(label1.getLocalizedText() + ": " + 0);
@@ -122,8 +123,10 @@ public class JNotepadPP extends JFrame {
 		status.add(label3);
 
 		DefaultMultipleDocumentModel def = new DefaultMultipleDocumentModel(flp, status);
-		cp.add(def, BorderLayout.CENTER);
-		cp.add(status, BorderLayout.PAGE_END);
+		helpLayout.add(def, BorderLayout.CENTER);
+		helpLayout.add(status, BorderLayout.PAGE_END);
+		
+		cp.add(helpLayout, BorderLayout.CENTER);
 		
 		multiDocModel = def; 
 		createActions();

@@ -2,9 +2,7 @@ package hr.fer.zemris.java.hw11.jnotepadpp;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.GridLayout;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.ByteArrayOutputStream;
@@ -15,29 +13,19 @@ import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Dictionary;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.JToolBar;
-import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
@@ -46,14 +34,23 @@ import hr.fer.zemris.java.hw11.jnotepadpp.local.FormLocalizationProvider;
 import hr.fer.zemris.java.hw11.jnotepadpp.local.LJLabel;
 import hr.fer.zemris.java.hw11.jnotepadpp.local.StatusJLabel;
 
+/**
+ * This class represents default multiple document model that extends JTabbedPane
+ * and implements MultipleDocumentModel
+ * @author Daria Matković
+ *
+ */
 public class DefaultMultipleDocumentModel extends JTabbedPane implements MultipleDocumentModel {
 
+	/**
+	 * serial version
+	 */
+	private static final long serialVersionUID = 1L;
 	List<SingleDocumentModel> col = new ArrayList<SingleDocumentModel>();
 	SingleDocumentModel currentSingleDocumentModel;
 	private int currentIndex = 0;
 	private List<MultipleDocumentListener> listenerList;
 	private Map<JTextArea, JPanel> componentDictionary = new HashMap<>();
-	private JTabbedPane tabbedPane = new JTabbedPane();
 	String pathToGreen = "icons/green.png";
 	String pathToRed = "icons/red.png";
 	ImageIcon imageIconGreen;
@@ -125,8 +122,6 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 			
 			@Override
 			public void documentFilePathUpdated(SingleDocumentModel model) {
-				// TODO Auto-generated method stub
-				
 			}
 		});
 		
@@ -150,14 +145,12 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 
 		    @Override
 		    public void actionPerformed(ActionEvent e) {
-		        // TODO Auto-generated method stub
 		        label3.setText(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Calendar.getInstance().getTime()));
+		    }
 
-		        }
+		});
 
-		    });
-
-		 t.start();
+		t.start();
 		 
 		label1.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.GRAY));
 		status.add(label1);
@@ -203,7 +196,6 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 		return newSingleDoc;
 	}
 	
-
 	@Override
 	public SingleDocumentModel getCurrentDocument() {
 		return col.get(getSelectedIndex());

@@ -7,21 +7,14 @@ import java.awt.event.KeyEvent;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.Collator;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-import java.util.stream.Stream;
-
-import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JMenu;
 import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.JToolBar;
@@ -34,18 +27,35 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 
 import hr.fer.zemris.java.hw11.jnotepadpp.local.FormLocalizationProvider;
-import hr.fer.zemris.java.hw11.jnotepadpp.local.ILocalizationProvider;
 import hr.fer.zemris.java.hw11.jnotepadpp.local.LJMenu;
 import hr.fer.zemris.java.hw11.jnotepadpp.local.LocalizableAction;
 import hr.fer.zemris.java.hw11.jnotepadpp.local.LocalizationProvider;
 
+/**
+ * This class represents Notepad++ program that has functionality to choose between
+ * three languages(english, german, croatian). It is possible to add more tabs and 
+ * edit text.
+ * @author Daria Matković
+ *
+ */
 public class JNotepadPP extends JFrame {
+	/**
+	 * serial version
+	 */
+	private static final long serialVersionUID = 1L;
+	/** opened file path **/
 	private Path openedFilePath;
+	/** multiple document model **/
 	private MultipleDocumentModel multiDocModel;
+	/** buffer **/
     private String buffer = "";
+    /** form localization provider **/
     private FormLocalizationProvider flp = new FormLocalizationProvider
     		(LocalizationProvider.getInstance(), this);
 	
+    /**
+     * Constructor that is used for initializing window size, location and title
+     */
 	public JNotepadPP() {
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		setLocation(10, 10);
@@ -55,10 +65,17 @@ public class JNotepadPP extends JFrame {
 		initGUI();
 	}
 	
+	/**
+	 * This method is executed when program is run
+	 * @param args takes no arguments
+	 */
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(()->{new JNotepadPP().setVisible(true);});
 	}
 
+	/**
+	 * This method initialize gui components
+	 */
 	private void initGUI() {
 		Container cp = getContentPane();
 		cp.setLayout(new BorderLayout());
@@ -71,8 +88,16 @@ public class JNotepadPP extends JFrame {
 		cp.add(createToolbar(), BorderLayout.PAGE_START);
 	}	
 	
+	/**
+	 * This class represents action for adding new document in tab
+	 */
 	private final Action newDocument = new LocalizableAction("new", flp) {
 		
+		/**
+		 * serial version
+		 */
+		private static final long serialVersionUID = 1L;
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			multiDocModel.createNewDocument();
@@ -94,20 +119,34 @@ public class JNotepadPP extends JFrame {
 		            	uppercase.setEnabled(true);
 		    			lowercase.setEnabled(true);
 		    			invertCase.setEnabled(true);
+		    			asc.setEnabled(true);
+		    			desc.setEnabled(true);
+		    			unique.setEnabled(true);
 		            } else {
 		            	cutSelectedPart.setEnabled(false);
 		            	copySelectedPart.setEnabled(false);
 		            	uppercase.setEnabled(false);
 		    			lowercase.setEnabled(false);
 		    			invertCase.setEnabled(false);
+		    			asc.setEnabled(false);
+		    			desc.setEnabled(false);
+		    			unique.setEnabled(false);
 		            }
 				}
 			});
 		}
 	};
 	
+	/**
+	 * This class represents action for opening document saved on disc
+	 */
 	private final Action openDocument = new LocalizableAction("open", flp) {
 		
+		/**
+		 * serial version
+		 */
+		private static final long serialVersionUID = 1L;
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			JFileChooser jfc = new JFileChooser();
@@ -137,16 +176,6 @@ public class JNotepadPP extends JFrame {
 				@Override
 				public void caretUpdate(CaretEvent e) {
 					JTextArea editArea = (JTextArea)e.getSource();
-		            int linenum = 1;
-		            int columnnum = 1;
-		            
-		            try {
-		                int caretpos = editArea.getCaretPosition();
-		                linenum = editArea.getLineOfOffset(caretpos);
-		                columnnum = caretpos - editArea.getLineStartOffset(linenum);
-		                linenum += 1;
-		            }
-		            catch(Exception ex) { }
 		            
 		            int selectedLength = Math.abs(editArea.getCaret().getDot()-
 							editArea.getCaret().getMark());
@@ -156,20 +185,34 @@ public class JNotepadPP extends JFrame {
 		            	uppercase.setEnabled(true);
 		    			lowercase.setEnabled(true);
 		    			invertCase.setEnabled(true);
+		    			asc.setEnabled(true);
+		    			desc.setEnabled(true);
+		    			unique.setEnabled(true);
 		            } else {
 		            	cutSelectedPart.setEnabled(false);
 		            	copySelectedPart.setEnabled(false);
 		            	uppercase.setEnabled(false);
 		    			lowercase.setEnabled(false);
 		    			invertCase.setEnabled(false);
+		    			asc.setEnabled(false);
+		    			desc.setEnabled(false);
+		    			unique.setEnabled(false);
 		            }
 				}
 			});
 		}
 	};
 
+	/**
+	 * This class represents action for saving document
+	 */
 	private final Action saveDocument = new LocalizableAction("save", flp) {
 		
+		/**
+		 * serial version
+		 */
+		private static final long serialVersionUID = 1L;
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if(multiDocModel.getCurrentDocument().getFilePath() == null) {
@@ -185,8 +228,7 @@ public class JNotepadPP extends JFrame {
 			else {
 				openedFilePath = multiDocModel.getCurrentDocument().getFilePath();
 			}
-
-
+			
 			if(Files.exists(openedFilePath) && openedFilePath != multiDocModel.getCurrentDocument().getFilePath()) {
 				int result = JOptionPane.showConfirmDialog(JNotepadPP.this,
 						"The file exists, overwrite?","Existing file",JOptionPane.YES_NO_CANCEL_OPTION);
@@ -207,8 +249,16 @@ public class JNotepadPP extends JFrame {
 		}
 	};
 	
+	/**
+	 * This class represents action for saving as
+	 */
 	private final Action saveAsDocument = new LocalizableAction("saveas", flp) {
 		
+		/**
+		 * serial version
+		 */
+		private static final long serialVersionUID = 1L;
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			JFileChooser jfc = new JFileChooser();
@@ -240,8 +290,16 @@ public class JNotepadPP extends JFrame {
 		}
 	};
 	
+	/**
+	 * This class represents action for printing statistical info
+	 */
 	private final Action statisticalInfo = new LocalizableAction("statistics", flp) {
 		
+		/**
+		 * serial version
+		 */
+		private static final long serialVersionUID = 1L;
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			Object[] options = { "OK" };
@@ -259,8 +317,16 @@ public class JNotepadPP extends JFrame {
 		}
 	};
 	
+	/**
+	 * This class represents action for closing document
+	 */
 	private final Action closeDocument = new LocalizableAction("close", flp) {
 		
+		/**
+		 * serial version
+		 */
+		private static final long serialVersionUID = 1L;
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if(multiDocModel.getCurrentDocument().getFilePath() == null) {
@@ -275,7 +341,16 @@ public class JNotepadPP extends JFrame {
 						saveAsDocument.setEnabled(false);
 						saveDocument.setEnabled(false);
 						closeDocument.setEnabled(false);
+						cutSelectedPart.setEnabled(false);
+						copySelectedPart.setEnabled(false);
+						pasteSelectedPart.setEnabled(false);
 						statisticalInfo.setEnabled(false);
+						uppercase.setEnabled(false);
+						lowercase.setEnabled(false);
+						invertCase.setEnabled(false);
+						asc.setEnabled(false);
+						desc.setEnabled(false);
+						unique.setEnabled(false);
 					}
 					
 					return;
@@ -299,15 +374,32 @@ public class JNotepadPP extends JFrame {
 				saveAsDocument.setEnabled(false);
 				saveDocument.setEnabled(false);
 				closeDocument.setEnabled(false);
+				cutSelectedPart.setEnabled(false);
+				copySelectedPart.setEnabled(false);
+				pasteSelectedPart.setEnabled(false);
 				statisticalInfo.setEnabled(false);
+				uppercase.setEnabled(false);
+				lowercase.setEnabled(false);
+				invertCase.setEnabled(false);
+				asc.setEnabled(false);
+				desc.setEnabled(false);
+				unique.setEnabled(false);
 			}
 			
 			return;
 		}
 	};
 	
+	/**
+	 * This class represents action for cutting selected part
+	 */
 	private final Action cutSelectedPart = new LocalizableAction("cut", flp) {
 		
+		/**
+		 * serial version
+		 */
+		private static final long serialVersionUID = 1L;
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			int start = Math.min(multiDocModel.getCurrentDocument().getTextComponent().getCaret().getDot(),
@@ -330,13 +422,19 @@ public class JNotepadPP extends JFrame {
 		}
 	};
 	
+	/**
+	 * This class represents action for pasting selected part
+	 */
 	private final Action pasteSelectedPart = new LocalizableAction("paste", flp) {
 		
+		/**
+		 * serial version
+		 */
+		private static final long serialVersionUID = 1L;
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			int start = Math.min(multiDocModel.getCurrentDocument().getTextComponent().getCaret().getDot(),
-					multiDocModel.getCurrentDocument().getTextComponent().getCaret().getMark());
-			int len = Math.abs(multiDocModel.getCurrentDocument().getTextComponent().getCaret().getDot()-
 					multiDocModel.getCurrentDocument().getTextComponent().getCaret().getMark());
 			
 			Document doc = multiDocModel.getCurrentDocument().getTextComponent().getDocument();
@@ -348,8 +446,16 @@ public class JNotepadPP extends JFrame {
 		}
 	};
 	
+	/*
+	 * This class represents action for copying selected part
+	 */
 	private final Action copySelectedPart = new LocalizableAction("copy", flp) {
 		
+		/**
+		 * serial version
+		 */
+		private static final long serialVersionUID = 1L;
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			int start = Math.min(multiDocModel.getCurrentDocument().getTextComponent().getCaret().getDot(),
@@ -367,20 +473,30 @@ public class JNotepadPP extends JFrame {
 		}
 	};
 	
+	/*
+	 * This class represents action for exiting
+	 */
 	private final Action exitAction = new LocalizableAction("exit", flp) {
 		
+		/**
+		 * serial version
+		 */
+		private static final long serialVersionUID = 1L;
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			dispose();
 		}
 	};
 	
+	/**
+	 * This method creates actions, adds keyboard shortcuts and sets enable status for
+	 * each component
+	 */
 	private void createActions() {
-		//openDocument.putValue(Action.NAME, tr.getTranspation("main_open"));
 		openDocument.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control 0"));
 		openDocument.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_0);
 		
-		//newDocument.putValue(Action.NAME, tr.getTranspation("main_open"));
 		newDocument.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control N"));
 		newDocument.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_N);
 		
@@ -418,34 +534,69 @@ public class JNotepadPP extends JFrame {
 		uppercase.setEnabled(false);
 		lowercase.setEnabled(false);
 		invertCase.setEnabled(false);
+		asc.setEnabled(false);
+		desc.setEnabled(false);
+		unique.setEnabled(false);
 	}
 	
+	/**
+	 * This action sets language to english
+	 */
 	private final Action en = new LocalizableAction("eng", flp) {
 		
+		/**
+		 * serial version
+		 */
+		private static final long serialVersionUID = 1L;
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			LocalizationProvider.getInstance().setLanguage("en");
 		}
 	};
 	
+	/**
+	 * This class represents action that sets language to croatian
+	 */
 	private final Action hr = new LocalizableAction("hr", flp) {
 		
+		/**
+		 * serial version
+		 */
+		private static final long serialVersionUID = 1L;
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			LocalizationProvider.getInstance().setLanguage("hr");
 		}
 	};
 	
+	/**
+	 * This class represents action that sets language to german
+	 */
 	private final Action de = new LocalizableAction("de", flp) {
 		
+		/**
+		 * serial version
+		 */
+		private static final long serialVersionUID = 1L;
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			LocalizationProvider.getInstance().setLanguage("de");
 		}
 	};
 	
+	/**
+	 * This class represents action that sets uppercase for selected text
+	 */
 	private final Action uppercase = new LocalizableAction("uppercase", flp) {
 		
+		/**
+		 * serial version
+		 */
+		private static final long serialVersionUID = 1L;
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			int start = Math.min(multiDocModel.getCurrentDocument().getTextComponent().getCaret().getDot(),
@@ -468,8 +619,16 @@ public class JNotepadPP extends JFrame {
 		}
 	};
 	
+	/**
+	 * This class represents action that sets selected text to lowercase
+	 */
 	private final Action lowercase = new LocalizableAction("lowercase", flp) {
 		
+		/**
+		 * serial version
+		 */
+		private static final long serialVersionUID = 1L;
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			int start = Math.min(multiDocModel.getCurrentDocument().getTextComponent().getCaret().getDot(),
@@ -492,8 +651,16 @@ public class JNotepadPP extends JFrame {
 		}
 	};
 	
+	/**
+	 * This class represents action that inverts case of selected text
+	 */
 	private final Action invertCase = new LocalizableAction("invertCase", flp) {
 		
+		/**
+		 * serial version
+		 */
+		private static final long serialVersionUID = 1L;
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			int start = Math.min(multiDocModel.getCurrentDocument().getTextComponent().getCaret().getDot(),
@@ -526,8 +693,16 @@ public class JNotepadPP extends JFrame {
 		}
 	};
 	
+	/**
+	 * This class represents action for sorting selected lines in ascending order
+	 */
 	private final Action asc = new LocalizableAction("asc", flp) {
 		
+		/**
+		 * serial version
+		 */
+		private static final long serialVersionUID = 1L;
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			int caretpos = multiDocModel.getCurrentDocument().getTextComponent().getCaretPosition();
@@ -569,8 +744,16 @@ public class JNotepadPP extends JFrame {
 		}
 	};
 	
+	/**
+	 * This class represents action for sorting selected lines in descending order
+	 */
 	private final Action desc = new LocalizableAction("desc", flp) {
 		
+		/**
+		 * serial version
+		 */
+		private static final long serialVersionUID = 1L;
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			int caretpos = multiDocModel.getCurrentDocument().getTextComponent().getCaretPosition();
@@ -612,8 +795,16 @@ public class JNotepadPP extends JFrame {
 		}
 	};
 	
+	/**
+	 * This class represents action for removing duplicated lines in selected lines
+	 */
 	private final Action unique = new LocalizableAction("unique", flp) {
 		
+		/**
+		 * serial version
+		 */
+		private static final long serialVersionUID = 1L;
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			int caretpos = multiDocModel.getCurrentDocument().getTextComponent().getCaretPosition();
@@ -663,6 +854,9 @@ public class JNotepadPP extends JFrame {
 		}
 	};
 	
+	/*
+	 * This method creates menu
+	 */
 	private void createMenus() {
 		JMenuBar mb = new JMenuBar();
 		
@@ -709,6 +903,11 @@ public class JNotepadPP extends JFrame {
 		setJMenuBar(mb);
 	}
 
+	/**
+	 * This method creates tool  bar with functionalities to make new document, open
+	 * document, save document, save ad, close, exit, cut, copy, paste and statistical info.
+	 * @return created tool bar
+	 */
 	private JToolBar createToolbar() {
 		JToolBar tb = new JToolBar();
 		tb.setFloatable(true);

@@ -36,7 +36,7 @@ import hr.fer.zemris.java.hw11.jnotepadpp.local.StatusJLabel;
 
 /**
  * This class represents default multiple document model that extends JTabbedPane
- * and implements MultipleDocumentModel
+ * and implements MultipleDocumentModel.
  * @author Daria Matković
  *
  */
@@ -46,24 +46,42 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 	 * serial version
 	 */
 	private static final long serialVersionUID = 1L;
+	/** single document model collection **/
 	List<SingleDocumentModel> col = new ArrayList<SingleDocumentModel>();
+	/** current single document model**/
 	SingleDocumentModel currentSingleDocumentModel;
+	/** current index **/
 	private int currentIndex = 0;
+	/** list of multiple document listeners **/
 	private List<MultipleDocumentListener> listenerList;
+	/** component dictionary **/
 	private Map<JTextArea, JPanel> componentDictionary = new HashMap<>();
+	/** path to green icon **/
 	String pathToGreen = "icons/green.png";
+	/** path to red icon **/
 	String pathToRed = "icons/red.png";
+	/** green image icon **/
 	ImageIcon imageIconGreen;
+	/** red image icon **/
 	ImageIcon imageIconRed;
+	/* form localization provider **/
 	FormLocalizationProvider flp;
 	
+	/**
+	 * Constructor for DefaultMultipleDocumentModel gets icons and initialize flp
+	 * @param flp FormLocalizationProvider
+	 */
 	public DefaultMultipleDocumentModel(FormLocalizationProvider flp) {
 		imageIconGreen = getIcon(pathToGreen);
 		imageIconRed = getIcon(pathToRed);
 		this.flp = flp;
 	}
 
-
+	/**
+	 * This method gets icon from given path
+	 * @param path icon's path
+	 * @return image icon from given path
+	 */
 	private ImageIcon getIcon(String path) {
 		InputStream is = this.getClass().getResourceAsStream(path);
 		if(is==null) {
@@ -294,5 +312,4 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 	public SingleDocumentModel getDocument(int index) {
 		return col.get(index);
 	}
-	
 }

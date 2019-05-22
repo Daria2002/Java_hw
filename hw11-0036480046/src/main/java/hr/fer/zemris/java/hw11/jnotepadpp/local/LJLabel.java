@@ -2,9 +2,15 @@ package hr.fer.zemris.java.hw11.jnotepadpp.local;
 
 import javax.swing.JLabel;
 
+/**
+ * This class represents localized label
+ * @author Daria Matković
+ *
+ */
 public class LJLabel extends JLabel {
-
+	/** key **/
 	String key;
+	/** localization provider **/
 	ILocalizationProvider lp;
 
 	public LJLabel(String key, ILocalizationProvider lp) {

@@ -2,12 +2,31 @@ package hr.fer.zemris.java.hw11.jnotepadpp.local;
 
 import javax.swing.JLabel;
 
+/**
+ * This class represents status label that is used for displaying current caret line,
+ * column and selected length 
+ * @author Daria Matković
+ *
+ */
 public class StatusJLabel extends JLabel {
 
+	/**
+	 * serial version
+	 */
+	private static final long serialVersionUID = 1L;
+	/** key **/
 	String key;
+	/** ILocalizationProvider **/
 	ILocalizationProvider lp;
+	/** array of translated words **/
 	String[] words;
 
+	/**
+	 * Constructor that initialize key and ILocalizationProvider. It also adds 
+	 * ILocalizationListener to ILocalizationProvider
+	 * @param key key
+	 * @param lp ILocalizationProvider
+	 */
 	public StatusJLabel(String key, ILocalizationProvider lp) {
 		super();
 		this.key = key;
@@ -16,7 +35,6 @@ public class StatusJLabel extends JLabel {
 		words = translation.split(",");
 		
 		this.setText(translation);
-		//this.putValue(Action.NAME, translation);
 		lp.addLocalizationListener(new ILocalizationListener() {
 			
 			@Override
@@ -38,14 +56,26 @@ public class StatusJLabel extends JLabel {
 		});
 	}
 	
+	/**
+	 * Gets translation for line
+	 * @return translated word for line
+	 */
 	public String getLocalizedLn() {
 		return words[0];
 	}
 	
+	/**
+	 * Gets translation for column
+	 * @return translated word for column
+	 */
 	public String getLocalizedCol() {
 		return words[1];
 	}
 	
+	/**
+	 * Gets translation for selected
+	 * @return translation for selected
+	 */
 	public String getLocalizedSel() {
 		return words[2];
 	}

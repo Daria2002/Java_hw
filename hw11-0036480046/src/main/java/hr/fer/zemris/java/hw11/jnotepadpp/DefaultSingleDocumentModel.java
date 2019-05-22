@@ -19,14 +19,26 @@ import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.DefaultHighlighter.DefaultHighlightPainter;
 import javax.swing.text.Highlighter;
 
+/**
+ * This class represents DefaultSingleDocumentModel that implements SingleDocumentModel
+ * @author Daria Matković
+ *
+ */
 public class DefaultSingleDocumentModel implements SingleDocumentModel {
-
+	/** file path **/
 	private Path filePath;
+	/** text content **/
 	private JTextArea textContent;
+	/** flag for modification status **/
 	private boolean isModified;
+	/** listeners list **/
 	private List<SingleDocumentListener> listenerList;
 
-
+	/**
+	 * This class represents constructor for DefaultSingleDocumentModel
+	 * @param filePath file path
+	 * @param textContent text content
+	 */
 	public DefaultSingleDocumentModel(Path filePath, String textContent) {
 		this.filePath = filePath;
 		this.textContent = new JTextArea(textContent);
@@ -53,6 +65,9 @@ public class DefaultSingleDocumentModel implements SingleDocumentModel {
 		});
 	}
 	
+	/**
+	 * This method sets flag and notifies listeners
+	 */
 	private void setFlagAndNotifyListeners() {
 		for(SingleDocumentListener l : listenerList) {
 			l.documentModifyStatusUpdated(this);
@@ -121,17 +136,27 @@ public class DefaultSingleDocumentModel implements SingleDocumentModel {
 		return true;
 	}
 	
+	/**
+	 * This class represents class has special properties set for caret
+	 * @author Daria Matković
+	 *
+	 */
 	class HighlightCaret extends DefaultCaret {
-
-	    private final Highlighter.HighlightPainter unfocusedPainter = new DefaultHighlighter.DefaultHighlightPainter(Color.WHITE);
-	    private final Highlighter.HighlightPainter focusedPainter = new DefaultHighlighter.DefaultHighlightPainter(Color.GRAY);
+		/** unfocused painter **/
+	    private final Highlighter.HighlightPainter unfocusedPainter = 
+	    		new DefaultHighlighter.DefaultHighlightPainter(Color.WHITE);
+	    /** focused pointer **/
+	    private final Highlighter.HighlightPainter focusedPainter = 
+	    		new DefaultHighlighter.DefaultHighlightPainter(Color.GRAY);
+	    /** serial version **/
 	    private static final long serialVersionUID = 1L;
+	    /** this flag is used for checking focus status **/
 	    private boolean isFocused;
 
 	    @Override
 	    protected Highlighter.HighlightPainter getSelectionPainter() {
-	        setBlinkRate(500); // otherwise is disabled, stopped
-	        return isFocused ? focusedPainter/*super.getSelectionPainter()*/ : unfocusedPainter;
+	        setBlinkRate(500);
+	        return isFocused ? focusedPainter : unfocusedPainter;
 	    }
 
 	    @Override

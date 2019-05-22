@@ -411,7 +411,10 @@ public class JNotepadPP extends JFrame {
 			else {
 				openedFilePath = multiDocModel.getCurrentDocument().getFilePath();
 			}
-
+			
+			if(multiDocModel.getCurrentDocument().isModified()) {
+				multiDocModel.saveDocument(multiDocModel.getCurrentDocument(), openedFilePath);
+			}
 			multiDocModel.closeDocument(multiDocModel.getCurrentDocument());
 			
 			if(multiDocModel.getNumberOfDocuments() <= 0) {
@@ -429,7 +432,7 @@ public class JNotepadPP extends JFrame {
 				desc.setEnabled(false);
 				unique.setEnabled(false);
 			}
-			
+
 			return;
 		}
 	};

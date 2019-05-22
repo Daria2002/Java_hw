@@ -1,32 +1,22 @@
 package hr.fer.zemris.java.hw11.jnotepadpp;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
-import javax.swing.JToolBar;
-import javax.swing.Timer;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.event.ChangeEvent;
@@ -66,9 +56,9 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 	ImageIcon imageIconGreen;
 	/** red image icon **/
 	ImageIcon imageIconRed;
-	/* form localization provider **/
+	/** form localization provider **/
 	FormLocalizationProvider flp;
-	/* panel */
+	/** panel **/
 	JPanel status;
 	/** current tab index **/
 	private int currentTabIndex = 0;
@@ -90,8 +80,12 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 			
 			@Override
 			public void stateChanged(ChangeEvent e) {
-				
-				JTextArea editArea = getCurrentDocument().getTextComponent();
+				JTextArea editArea;
+				try {
+					editArea = getCurrentDocument().getTextComponent();
+				} catch (Exception e2) {
+					return;
+				}
                 int linenum = 1;
                 int columnnum = 1;
                 
@@ -296,36 +290,11 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 			return;
 		}
 		
-		if(model.getFilePath() == null) {
-			model.setFilePath(newPath);
-		}
-
-		// if file is saved as existing file opened in other tab, current document should
-		// be saved and tab should be closed 
-		for(int i = 0; i < getNumberOfDocuments(); i++) {
-			if(i == currentIndex) {
-				continue;
-			}
-			
-			SingleDocumentModel document = getDocument(i);
-			if(newPath.equals(document.getFilePath())) {
-				componentDictionary.remove(model.getTextComponent());
-				remove(getSelectedIndex());
-				currentSingleDocumentModel = col.get(i);
-				col.remove(model);
-				
-				JOptionPane.showMessageDialog(
-						this,
-						"Dokument je uredno spremljen i vec je bio otvoren.", 
-						"Informacija", JOptionPane.INFORMATION_MESSAGE);
-				
-				return;
-			}
-		}
+		model.setModified(false);
+		model.setFilePath(newPath);
 		
 		setIconAt(getSelectedIndex(), imageIconGreen);
-		setTitleAt(getSelectedIndex(), getDocument(getSelectedIndex())
-				.getFilePath().getFileName().toString());
+		setTitleAt(getSelectedIndex(), newPath.getFileName().toString());
 		
 		JOptionPane.showMessageDialog(
 				this,

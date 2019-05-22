@@ -7,8 +7,11 @@ import java.awt.event.KeyEvent;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.Collator;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import javax.swing.AbstractAction;
@@ -622,8 +625,50 @@ public class JNotepadPP extends JFrame {
 	
 	private final Action unique = new LocalizableAction("unique", flp) {
 		
+		
+		
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			int caretpos = multiDocModel.getCurrentDocument().getTextComponent().getCaretPosition();
+			int caretEnd = multiDocModel.getCurrentDocument().getTextComponent().getCaret().getMark();
+			
+            try {
+				int lineend = multiDocModel.getCurrentDocument().getTextComponent().getLineOfOffset(caretpos);
+				int linestart = multiDocModel.getCurrentDocument().getTextComponent().getLineOfOffset(caretEnd);
+			
+				String[] lines = multiDocModel.getCurrentDocument().getTextComponent().getText().split("\n");
+
+				Locale hrLocale = new Locale("hr");
+				Collator hrCollator = Collator.getInstance(hrLocale);
+				
+				int help = lineend;
+				lineend = lineend > linestart ? lineend : linestart;
+				linestart = help > linestart ? linestart : help;
+				
+				Set<String> set = new LinkedHashSet<String>();
+
+				for(int i = linestart; i <= lineend; i++){
+				  set.add(lines[i]);
+				}
+				
+				int index = linestart;
+				for(String line:set) {
+					lines[index++] = line;
+				}
+				
+				for(int i = lineend+1; i < lines.length-lineend; i++) {
+					lines[index++] = lines[i];
+				}
+				
+				Document doc = multiDocModel.getCurrentDocument().getTextComponent().getDocument();
+				doc.remove(0, doc.getLength());
+				
+				String joinedString = String.join("\n", lines);
+				doc.insertString(0, joinedString, null);
+				
+				
+			} catch (BadLocationException e1) {
+			}
 		}
 	};
 	

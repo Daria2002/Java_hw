@@ -529,6 +529,30 @@ public class JNotepadPP extends JFrame {
 		}
 	};
 	
+	private final Action asc = new LocalizableAction("asc", flp) {
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			LocalizationProvider.getInstance().setLanguage("en");
+		}
+	};
+	
+	private final Action desc = new LocalizableAction("desc", flp) {
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			LocalizationProvider.getInstance().setLanguage("hr");
+		}
+	};
+	
+	private final Action unique = new LocalizableAction("unique", flp) {
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			LocalizationProvider.getInstance().setLanguage("de");
+		}
+	};
+	
 	private void createMenus() {
 		JMenuBar mb = new JMenuBar();
 		
@@ -563,8 +587,14 @@ public class JNotepadPP extends JFrame {
 		changeCase.add(uppercase);
 		changeCase.add(lowercase);
 		changeCase.add(invertCase);
+		
+		LJMenu sort = new LJMenu("sort", flp);
+		tools.add(sort);
+		sort.add(asc);
+		sort.add(desc);
 		mb.add(tools);
 		
+		tools.add(unique);
 		
 		setJMenuBar(mb);
 	}

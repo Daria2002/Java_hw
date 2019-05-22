@@ -72,6 +72,7 @@ public class JNotepadPP extends JFrame {
 			saveAsDocument.setEnabled(true);
 			saveDocument.setEnabled(true);
 			statisticalInfo.setEnabled(true);
+			
 			multiDocModel.getCurrentDocument().getTextComponent().addCaretListener(new CaretListener() {
 				
 				@Override
@@ -93,9 +94,15 @@ public class JNotepadPP extends JFrame {
 		            if(selectedLength > 0) {
 		            	cutSelectedPart.setEnabled(true);
 		            	copySelectedPart.setEnabled(true);
+		            	uppercase.setEnabled(true);
+		    			lowercase.setEnabled(true);
+		    			invertCase.setEnabled(true);
 		            } else {
 		            	cutSelectedPart.setEnabled(false);
 		            	copySelectedPart.setEnabled(false);
+		            	uppercase.setEnabled(false);
+		    			lowercase.setEnabled(false);
+		    			invertCase.setEnabled(false);
 		            }
 				}
 			});
@@ -149,9 +156,15 @@ public class JNotepadPP extends JFrame {
 		            if(selectedLength > 0) {
 		            	cutSelectedPart.setEnabled(true);
 		            	copySelectedPart.setEnabled(true);
+		            	uppercase.setEnabled(true);
+		    			lowercase.setEnabled(true);
+		    			invertCase.setEnabled(true);
 		            } else {
 		            	cutSelectedPart.setEnabled(false);
 		            	copySelectedPart.setEnabled(false);
+		            	uppercase.setEnabled(false);
+		    			lowercase.setEnabled(false);
+		    			invertCase.setEnabled(false);
 		            }
 				}
 			});
@@ -404,6 +417,10 @@ public class JNotepadPP extends JFrame {
 		statisticalInfo.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control I"));
 		statisticalInfo.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_I);
 		statisticalInfo.setEnabled(false);
+		
+		uppercase.setEnabled(false);
+		lowercase.setEnabled(false);
+		invertCase.setEnabled(false);
 	}
 	
 	private final Action en = new LocalizableAction("eng", flp) {
@@ -427,6 +444,88 @@ public class JNotepadPP extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			LocalizationProvider.getInstance().setLanguage("de");
+		}
+	};
+	
+	private final Action uppercase = new LocalizableAction("uppercase", flp) {
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			int start = Math.min(multiDocModel.getCurrentDocument().getTextComponent().getCaret().getDot(),
+					multiDocModel.getCurrentDocument().getTextComponent().getCaret().getMark());
+			int len = Math.abs(multiDocModel.getCurrentDocument().getTextComponent().getCaret().getDot()-
+					multiDocModel.getCurrentDocument().getTextComponent().getCaret().getMark());
+			
+			if(len < 1) {
+				return;
+			}
+			
+			Document doc = multiDocModel.getCurrentDocument().getTextComponent().getDocument();
+			
+			try {
+				buffer = doc.getText(start, len);
+				doc.insertString(start, buffer.toUpperCase(), null);
+				doc.remove(start+len, len);
+			} catch (Exception e2) {
+			}
+		}
+	};
+	
+	private final Action lowercase = new LocalizableAction("lowercase", flp) {
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			int start = Math.min(multiDocModel.getCurrentDocument().getTextComponent().getCaret().getDot(),
+					multiDocModel.getCurrentDocument().getTextComponent().getCaret().getMark());
+			int len = Math.abs(multiDocModel.getCurrentDocument().getTextComponent().getCaret().getDot()-
+					multiDocModel.getCurrentDocument().getTextComponent().getCaret().getMark());
+			
+			if(len < 1) {
+				return;
+			}
+			
+			Document doc = multiDocModel.getCurrentDocument().getTextComponent().getDocument();
+			
+			try {
+				buffer = doc.getText(start, len);
+				doc.insertString(start, buffer.toLowerCase(), null);
+				doc.remove(start+len, len);
+			} catch (Exception e2) {
+			}
+		}
+	};
+	
+	private final Action invertCase = new LocalizableAction("invertCase", flp) {
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			int start = Math.min(multiDocModel.getCurrentDocument().getTextComponent().getCaret().getDot(),
+					multiDocModel.getCurrentDocument().getTextComponent().getCaret().getMark());
+			int len = Math.abs(multiDocModel.getCurrentDocument().getTextComponent().getCaret().getDot()-
+					multiDocModel.getCurrentDocument().getTextComponent().getCaret().getMark());
+			
+			if(len < 1) {
+				return;
+			}
+			
+			Document doc = multiDocModel.getCurrentDocument().getTextComponent().getDocument();
+			
+			try {
+				buffer = doc.getText(start, len);
+				StringBuilder help = new StringBuilder();
+				
+				for(int i = 0; i < buffer.length(); i++) {
+					if(Character.isLowerCase(buffer.charAt(i))) {
+						help.append(Character.toUpperCase(buffer.charAt(i)));
+					} else {
+						help.append(Character.toLowerCase(buffer.charAt(i)));
+					}
+				}
+				
+				doc.insertString(start, help.toString(), null);
+				doc.remove(start+len, len);
+			} catch (Exception e2) {
+			}
 		}
 	};
 	
@@ -457,6 +556,15 @@ public class JNotepadPP extends JFrame {
 		LJMenu info = new LJMenu("info", flp);
 		mb.add(info);
 		info.add(statisticalInfo);
+		
+		LJMenu tools = new LJMenu("tools", flp);
+		LJMenu changeCase = new LJMenu("changeCase", flp);
+		tools.add(changeCase);
+		changeCase.add(uppercase);
+		changeCase.add(lowercase);
+		changeCase.add(invertCase);
+		mb.add(tools);
+		
 		
 		setJMenuBar(mb);
 	}

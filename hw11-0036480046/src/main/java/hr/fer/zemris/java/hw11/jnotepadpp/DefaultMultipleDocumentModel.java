@@ -70,6 +70,10 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 	FormLocalizationProvider flp;
 	/* panel */
 	JPanel status;
+	/** current tab index **/
+	private int currentTabIndex = 0;
+	/** previous tab index **/
+	private int previousTabIndex = 0;
 	
 	/**
 	 * Constructor for DefaultMultipleDocumentModel gets icons and initialize flp
@@ -96,6 +100,7 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
                     columnnum = caretpos - editArea.getLineStartOffset(linenum)+1;
                     linenum += 1;
                 }
+                
                 catch(Exception ex) { }
                 
                 LJLabel label1 = (LJLabel) DefaultMultipleDocumentModel.this.status.getComponent(0);
@@ -107,6 +112,18 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 						editArea.getCaret().getMark());
                 label2.setText(label2.getLocalizedLn() + ": " + linenum + " " + label2.getLocalizedCol()
                 		+ ": " + columnnum + " " + label2.getLocalizedSel() + ": " + selectedLength);
+			}
+		});
+		
+		addChangeListener(new ChangeListener() {
+			
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				previousTabIndex = currentTabIndex;
+				currentTabIndex = getSelectedIndex();
+				for(MultipleDocumentListener list:listenerList) {
+					list.currentDocumentChanged(col.get(previousTabIndex), col.get(currentTabIndex));
+				}
 			}
 		});
 	}
@@ -176,6 +193,10 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 			}
 		});
 		
+		for(MultipleDocumentListener list:listenerList) {
+			list.documentAdded(currentSingleDocumentModel);
+		}
+		
 		this.currentSingleDocumentModel.getTextComponent().addCaretListener(new CaretListener() {
 
 			@Override
@@ -242,6 +263,10 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 		
 		currentSingleDocumentModel = new DefaultSingleDocumentModel(path,
 				text);
+		
+		for(MultipleDocumentListener list:listenerList) {
+			list.documentAdded(currentSingleDocumentModel);
+		}
 		
 		JPanel panel = new JPanel(new BorderLayout());
 		panel.add(new JScrollPane(currentSingleDocumentModel.getTextComponent()),
@@ -311,6 +336,11 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 
 	@Override
 	public void closeDocument(SingleDocumentModel model) {
+		
+		for(MultipleDocumentListener list:listenerList) {
+			list.documentRemoved(model);
+		}
+		
 		componentDictionary.remove(model.getTextComponent());
 		remove(getSelectedIndex());
 		col.remove(model);

@@ -6,6 +6,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.Collator;
+import java.util.List;
+import java.util.Locale;
+import java.util.stream.Stream;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -23,6 +27,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 
 import hr.fer.zemris.java.hw11.jnotepadpp.local.FormLocalizationProvider;
@@ -533,7 +538,42 @@ public class JNotepadPP extends JFrame {
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			LocalizationProvider.getInstance().setLanguage("en");
+			int caretpos = multiDocModel.getCurrentDocument().getTextComponent().getCaretPosition();
+			int caretEnd = multiDocModel.getCurrentDocument().getTextComponent().getCaret().getMark();
+			
+            try {
+				int lineend = multiDocModel.getCurrentDocument().getTextComponent().getLineOfOffset(caretpos);
+				int linestart = multiDocModel.getCurrentDocument().getTextComponent().getLineOfOffset(caretEnd);
+			
+				String[] lines = multiDocModel.getCurrentDocument().getTextComponent().getText().split("\n");
+
+				Locale hrLocale = new Locale("hr");
+				Collator hrCollator = Collator.getInstance(hrLocale);
+				
+				int help = lineend;
+				lineend = lineend > linestart ? lineend : linestart;
+				linestart = help > linestart ? linestart : help;
+				
+				
+				for(int i = linestart; i <= lineend; i++) {
+					for (int j = i + 1; j <= lineend; j++) {
+				        if (hrCollator.compare(lines[i], lines[j]) > 0) {
+				        	String tmp = lines[i];
+				        	lines[i] = lines[j];
+				        	lines[j] = tmp;
+				        }
+				    }
+				}
+
+				Document doc = multiDocModel.getCurrentDocument().getTextComponent().getDocument();
+				doc.remove(0, doc.getLength());
+				
+				String joinedString = String.join("\n", lines);
+				doc.insertString(0, joinedString, null);
+				
+				
+			} catch (BadLocationException e1) {
+			}
 		}
 	};
 	
@@ -541,7 +581,42 @@ public class JNotepadPP extends JFrame {
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			LocalizationProvider.getInstance().setLanguage("hr");
+			int caretpos = multiDocModel.getCurrentDocument().getTextComponent().getCaretPosition();
+			int caretEnd = multiDocModel.getCurrentDocument().getTextComponent().getCaret().getMark();
+			
+            try {
+				int lineend = multiDocModel.getCurrentDocument().getTextComponent().getLineOfOffset(caretpos);
+				int linestart = multiDocModel.getCurrentDocument().getTextComponent().getLineOfOffset(caretEnd);
+			
+				String[] lines = multiDocModel.getCurrentDocument().getTextComponent().getText().split("\n");
+
+				Locale hrLocale = new Locale("hr");
+				Collator hrCollator = Collator.getInstance(hrLocale);
+				
+				int help = lineend;
+				lineend = lineend > linestart ? lineend : linestart;
+				linestart = help > linestart ? linestart : help;
+				
+				
+				for(int i = linestart; i <= lineend; i++) {
+					for (int j = i + 1; j <= lineend; j++) {
+				        if (hrCollator.compare(lines[i], lines[j]) <= 0) {
+				        	String tmp = lines[i];
+				        	lines[i] = lines[j];
+				        	lines[j] = tmp;
+				        }
+				    }
+				}
+
+				Document doc = multiDocModel.getCurrentDocument().getTextComponent().getDocument();
+				doc.remove(0, doc.getLength());
+				
+				String joinedString = String.join("\n", lines);
+				doc.insertString(0, joinedString, null);
+				
+				
+			} catch (BadLocationException e1) {
+			}
 		}
 	};
 	
@@ -549,7 +624,6 @@ public class JNotepadPP extends JFrame {
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			LocalizationProvider.getInstance().setLanguage("de");
 		}
 	};
 	

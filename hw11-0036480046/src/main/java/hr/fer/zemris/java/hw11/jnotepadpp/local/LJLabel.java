@@ -24,7 +24,7 @@ public class LJLabel extends JLabel {
 			public void localizationChanged() {
 				String translation = lp.getString(key);
 				
-				if("length".equals(key)) {
+				if("length".equals(key) || "col".equals(key) || "ln".equals(key) || "sel".equals(key)) {
 					String str = LJLabel.this.getText().split(":")[1].trim();
 					LJLabel.this.setText(translation + ": " + str);
 					

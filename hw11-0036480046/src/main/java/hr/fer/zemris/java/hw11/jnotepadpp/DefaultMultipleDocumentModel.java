@@ -136,17 +136,27 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 		
 		LJLabel label1 = new LJLabel("length", flp);
 		label1.setText(label1.getLocalizedText() + ": " + 0);
+		
+		LJLabel label2 = new LJLabel("length", flp);
+		label1.setText(label1.getLocalizedText() + ": " + 0);
+		
+		LJLabel label3 = new LJLabel("length", flp);
+		label1.setText(label1.getLocalizedText() + ": " + 0);
+		
+		LJLabel label4 = new LJLabel("length", flp);
+		label1.setText(label1.getLocalizedText() + ": " + 0);
+		
 		JLabel label2 = new JLabel("Ln: " + 0 + "     Col: " + 0 + "     Sel: " + 0);
         String timeStamp = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Calendar.getInstance().getTime());
-		JLabel label3 = new JLabel(timeStamp);
-		label3.setHorizontalAlignment(RIGHT);
+		JLabel label5 = new JLabel(timeStamp);
+		label5.setHorizontalAlignment(RIGHT);
 		
 		Timer t = new Timer(1000, new ActionListener() {
 
 		    @Override
 		    public void actionPerformed(ActionEvent e) {
 		        // TODO Auto-generated method stub
-		        label3.setText(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Calendar.getInstance().getTime()));
+		        label5.setText(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Calendar.getInstance().getTime()));
 
 		        }
 
@@ -158,7 +168,7 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 		status.add(label1);
 		//status.add(label1);
 		status.add(label2);
-		status.add(label3);
+		status.add(label5);
 		
 		toolbar.add(status);
 		toolbar.setFloatable(false);
@@ -185,7 +195,9 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
                 
                 label2.setText("Ln: " + linenum + "     Col: " + columnnum + "     Sel: " + selectedLength);
 
-                label3.setText(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Calendar.getInstance().getTime()));
+                
+                
+                label5.setText(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Calendar.getInstance().getTime()));
 			}
 			
 		});

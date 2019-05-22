@@ -86,17 +86,6 @@ public class JNotepadPP extends JFrame {
 				@Override
 				public void caretUpdate(CaretEvent e) {
 					JTextArea editArea = (JTextArea)e.getSource();
-		            int linenum = 1;
-		            int columnnum = 1;
-		            
-		            try {
-		                int caretpos = editArea.getCaretPosition();
-		                linenum = editArea.getLineOfOffset(caretpos);
-		                columnnum = caretpos - editArea.getLineStartOffset(linenum);
-		                linenum += 1;
-		            }
-		            catch(Exception ex) { }
-		            
 		            int selectedLength = Math.abs(editArea.getCaret().getDot()-
 							editArea.getCaret().getMark());
 		            if(selectedLength > 0) {
@@ -625,8 +614,6 @@ public class JNotepadPP extends JFrame {
 	
 	private final Action unique = new LocalizableAction("unique", flp) {
 		
-		
-		
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			int caretpos = multiDocModel.getCurrentDocument().getTextComponent().getCaretPosition();
@@ -638,18 +625,13 @@ public class JNotepadPP extends JFrame {
 			
 				String[] lines = multiDocModel.getCurrentDocument().getTextComponent().getText().split("\n");
 
-				int firstSize = lines.length;
-				
-				Locale hrLocale = new Locale("hr");
-				Collator hrCollator = Collator.getInstance(hrLocale);
-				
 				int help = lineend;
 				lineend = lineend > linestart ? lineend : linestart;
 				linestart = help > linestart ? linestart : help;
 				
 				Set<String> set = new LinkedHashSet<String>();
 
-				for(int i = linestart; i < lineend; i++){
+				for(int i = linestart; i < lineend+1; i++){
 				  set.add(lines[i]);
 				}
 				

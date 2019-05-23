@@ -211,12 +211,31 @@ Finally, another empty line should be emitted to signal the end of headers.
 		
 		if(!outputCookies.isEmpty()) {
 			for(RCCookie element : outputCookies) {
-				//' Set-Cookie: ' name ' =” ' value ' ”; Domain= ' domain ' ; Path= ' path ' ; Max-Age= ' maxAge
-				header.append("")
+				
+				boolean separate = false;
+				
+				header.append("Set-Cookie: ");
+				
+				if(element.name != null) {
+					header.append(element.name + "=" + "\"" + element.value + "\"");
+					separate = true;
+				}
+				
+				if(element.domain != null) {
+					header.append((separate ? ";" : "") + "Domain=" + element.domain);
+				}
+				
+				if(element.path != null) {
+					header.append((separate ? ";" : "") + "Path=" + element.path);
+				}
+				
+				if(element.maxAge != null) {
+					header.append((separate ? ";" : "") + "Max-Age=" + element.maxAge);
+				}
+				
+				header.append("\r\n");
 			}
 		}
-		
-		header.append("\r\n");
 		
 		byte[] b = header.toString().getBytes(Charset.forName("ISO_8859_1"));
 		try {
@@ -305,6 +324,13 @@ Finally, another empty line should be emitted to signal the end of headers.
 		this.contentLength = contentLength;
 	}
 
+	public void addRCCookie(RCCookie rcCookie) {
+		if(headerGenerated) {
+			throw new RuntimeException("Header is generated, can't call addRCCookie");
+		}
+		outputCookies.add(rcCookie);
+	}
+
 	public static class RCCookie {
 		
 		private String name;
@@ -313,6 +339,13 @@ Finally, another empty line should be emitted to signal the end of headers.
 		private String path;
 		private Integer maxAge;
 		
+		public RCCookie(String name, String value, Integer maxAge, String domain, String path) {
+			this.name = name;
+			this.value = value;
+			this.maxAge = maxAge;
+			this.domain = domain;
+			this.path = path;
+		}
 		public String getName() {
 			return name;
 		}

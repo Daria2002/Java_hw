@@ -28,6 +28,7 @@ public class DemoRequestContext {
 		rc.write("Čevapčići i Šiščevapčići.");
 		os.close();
 	}
+	
 	private static void demo2(String filePath, String encoding) throws IOException {
 		OutputStream os = Files.newOutputStream(Paths.get(filePath));
 		RequestContext rc = new RequestContext(os, new HashMap<String, String>(),

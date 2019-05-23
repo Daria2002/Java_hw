@@ -1,6 +1,5 @@
 package hr.fer.zemris.java.webserver;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
@@ -162,6 +161,7 @@ public class RequestContext {
 		
 		charset = Charset.forName(encoding);
 		byte[] b = text.getBytes(charset);
+		
 		outputStream.write(b);
 		return this;
 	}
@@ -196,13 +196,14 @@ Finally, another empty line should be emitted to signal the end of headers.
 		
 		StringBuilder header = new StringBuilder();
 		
-		header.append(" HTTP/1.1 " + statusCode + " " + statusText + "\r\n");
-		header.append(" Content-Type: " + mimeType);
+		header.append("HTTP/1.1 " + statusCode + " " + statusText + "\r\n");
+		header.append("Content-Type: " + mimeType);
 		
 		if(appendCharset()) {
-			header.append(" ; charset= " + encoding);
+			header.append("; charset=" + encoding);
 		}
 		
+		header.append("\r\n");
 		header.append("\r\n");
 		
 		if(contentLength != null) {

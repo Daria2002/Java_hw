@@ -25,6 +25,7 @@ public class TextNode extends Node {
 		return text;
 	}
 	
+	@Override
 	public void accept(INodeVisitor visitor) {
 		visitor.visitTextNode(this);
 	}

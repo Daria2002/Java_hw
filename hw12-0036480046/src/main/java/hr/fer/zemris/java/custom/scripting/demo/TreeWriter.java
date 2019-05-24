@@ -25,7 +25,8 @@ public class TreeWriter {
 		try {
 			encoded = Files.readAllBytes(Paths.get(fileName));
 		} catch (IOException e) {
-			System.out.println("Can't open given file.");;
+			System.out.println("Can't open given file.");
+			System.exit(0);
 		}
 		
 		String docBody = new String(encoded);

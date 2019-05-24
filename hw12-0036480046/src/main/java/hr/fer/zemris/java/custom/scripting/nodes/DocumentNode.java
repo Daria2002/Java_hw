@@ -12,6 +12,7 @@ public class DocumentNode extends Node {
 		return "";
 	}
 	
+	@Override
 	public void accept(INodeVisitor visitor) {
 		visitor.visitDocumentNode(this);
 	}

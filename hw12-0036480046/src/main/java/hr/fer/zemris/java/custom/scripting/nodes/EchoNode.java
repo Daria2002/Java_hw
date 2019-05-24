@@ -30,6 +30,7 @@ public class EchoNode extends Node {
 		return elements;
 	}
 	
+	@Override
 	public void accept(INodeVisitor visitor) {
 		visitor.visitEchoNode(this);
 	}

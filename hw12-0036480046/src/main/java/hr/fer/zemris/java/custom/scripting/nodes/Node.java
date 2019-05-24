@@ -39,6 +39,10 @@ public class Node {
 		return (Node)collection.get(index);
 	}
 	
+	public void accept(INodeVisitor visitor) {
+		return;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

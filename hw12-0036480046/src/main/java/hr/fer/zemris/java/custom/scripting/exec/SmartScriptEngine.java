@@ -49,7 +49,6 @@ public class SmartScriptEngine {
 			return ((ElementConstantDouble) el).getValue();
 		}
 		
-		// TODO: moze li biti elementconstantstring
 		@Override
 		public void visitForLoopNode(ForLoopNode node) {
 			double start = getElement(node.getStartExpression());
@@ -88,7 +87,7 @@ public class SmartScriptEngine {
 				}
 				
 				if(token instanceof ElementVariable) {
-					stack.push(multistack.peek(((ElementVariable) token).getName()));
+					stack.push(multistack.peek(((ElementVariable) token).getName()).getValue());
 					continue;
 				}
 				
@@ -101,22 +100,22 @@ public class SmartScriptEngine {
 					
 					switch (op) {
 					case "+":
-						valWrapper1.add(valWrapper2);
+						valWrapper1.add(valWrapper2.getValue());
 						stack.push(valWrapper1.getValue());
 						break;
 					
 					case "-":
-						valWrapper1.subtract(valWrapper2);
+						valWrapper1.subtract(valWrapper2.getValue());
 						stack.push(valWrapper1.getValue());
 						break;
 					
 					case "*":
-						valWrapper1.multiply(valWrapper2);
+						valWrapper1.multiply(valWrapper2.getValue());
 						stack.push(valWrapper1.getValue());
 						break;
 					
 					case "/":
-						valWrapper1.divide(valWrapper2);
+						valWrapper1.divide(valWrapper2.getValue());
 						stack.push(valWrapper1.getValue());
 						break;
 				

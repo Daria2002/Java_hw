@@ -256,7 +256,7 @@ public class SmartScriptParser {
 				
 			} catch (Exception e2) {
 				// exception occurs if given value is not int and double
-				if(value.indexOf('"') == 0 && value.indexOf('"') == value.length()) {
+				if(value.indexOf('"') == 0 && value.substring(1).indexOf('"') == value.length()-2) {
 					return new ElementString(removeQuotes(value));
 				}
 				

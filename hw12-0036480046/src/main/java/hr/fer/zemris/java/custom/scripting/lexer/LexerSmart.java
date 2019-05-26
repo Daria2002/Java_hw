@@ -1,5 +1,6 @@
 package hr.fer.zemris.java.custom.scripting.lexer;
 
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 /** 
@@ -17,9 +18,6 @@ public class LexerSmart {
 	// index of first unanalyzed sign
 	private int currentIndex;
 	private LexerSmartState lexerState;
-	private boolean tagNameAdded = false;
-	private boolean tagElementsAdded = false;
-	private boolean escapeSequence = false;
 	
 	/**
 	 * Constructor get text that need to be analyzed.
@@ -34,27 +32,8 @@ public class LexerSmart {
 		setState(LexerSmartState.BASIC);
 	} 
 	
-	private String addTagName() {
-		String tagName = "";
-		
-		// skip whitespace
-		while(Character.isWhitespace(data[currentIndex]) || data[currentIndex] == ' ') {
-			currentIndex++;
-		}
-		
-		// build tag name while whitespace doesn't occur or while tag close 
-		// doesn't occur
-		while(!Character.isWhitespace(data[currentIndex]) &&
-				data[currentIndex] != '$' && data[currentIndex+1] != '}') {
-			tagName += data[currentIndex++];
-			
-			// if tag name is = break after = is added in tag name
-			if(data[currentIndex-1] == '=') {
-				break;
-			}
-		}
-		
-		return tagName;
+	public LexerSmartState getLexerState() {
+		return lexerState;
 	}
 	
 	/**
@@ -63,173 +42,310 @@ public class LexerSmart {
 	 * @return next token
 	 */
 	public TokenSmart nextToken() {
-		String stringValue = "";
+		if(lexerState.equals(LexerSmartState.BASIC)) {
+			token = getBasicToken();
+			return token;
+		}
+		
+		token = getTagToken();
+		return token;
+	}
+	
+	/**
+	 * This method returns token when lexer is in tag node.
+	 * In tag mode only escape in string is possible. Possible escapes are
+	 * \\, \" 
+	 * @return
+	 */
+	private TokenSmart getTagToken() {
+		StringBuilder tokenValue = new StringBuilder();
+		
+		while (currentIndex < data.length) {
+			// skip whitespace
+			while(Character.isWhitespace(data[currentIndex])) {
+				currentIndex++;
+			}
+			
+			// if next token is tag close (first element is tag open)
+			if(data[currentIndex] == '$'  && currentIndex + 1 < data.length 
+					&& data[currentIndex + 1] == '}' && tokenValue.length() == 0) {
+				currentIndex = currentIndex + 2;
+				return new TokenSmart(TokenSmartType.TAG_CLOSE, "$}");
+			}
+			
+			// if last token was TAG_OPEN, next token should be TAG_NAME
+			else if(getToken().getType() == TokenSmartType.TAG_OPEN) {
+				return new TokenSmart(TokenSmartType.TAG_NAME , getTagName());
+			}
+			
+			// if last token was TAG_NAME or TAG_ELEMENT, next token can be TAG_ELEMENT or
+			// TAG_CLOSE
+			else if(getToken().getType() == TokenSmartType.TAG_ELEMENT || 
+					getToken().getType() == TokenSmartType.TAG_NAME) {
+				
+				// if there are quotes, get string under quotes
+				if(data[currentIndex] == '\"') {
+					return getTokenUnderQuotes();
+				}
+				
+				// if value is function
+				if(currentIndex < data.length && data[currentIndex] == '@') {
+					return getFunction();
+				}
+				
+				// if token is operator
+				if((currentIndex < data.length && data[currentIndex] == '*' ||
+						data[currentIndex] == '^' || data[currentIndex] == '/' ||
+						data[currentIndex] == '-' || data[currentIndex] == '+') &&
+						currentIndex+1 < data.length && !Character.isDigit(data[currentIndex+1])) {
+					currentIndex++;
+					return new TokenSmart(TokenSmartType.TAG_ELEMENT, data[currentIndex - 1]);
+				}
+				
+				// if value is not under quotes, check if token is variable name
+				if(currentIndex < data.length && Character.isAlphabetic(data[currentIndex])) {
+					return getWordTagElement();
+					
+				} else if(currentIndex < data.length && (Character.isDigit(data[currentIndex]) ||
+						data[currentIndex] == '-')) {
+					return getNumberTagElement();
+				}
+			}
+		}
+		
+		return null;
+	}
+
+	private TokenSmart getTokenUnderQuotes() {
+
+		boolean escapeSequence = false;
+		currentIndex++;
+		StringBuilder tokenValue = new StringBuilder();
+		
+		// building token whose value is under string
+		while(currentIndex < data.length) {
+			// throw exception if escape sequence is on and invalid escaping occurs
+			if(data[currentIndex] != '\\' && data[currentIndex] != '\"' && escapeSequence) {
+				throw new IllegalArgumentException("Invalid escaping in quotes");
+			}
+			
+			// if valid escape
+			else if((data[currentIndex] == '\\' || data[currentIndex] == '\"') && escapeSequence) {
+				escapeSequence = false;
+				tokenValue.append(data[currentIndex++]);
+				continue;
+			}
+				
+			// if \ occurs, escape sequence is on
+			else if(data[currentIndex] == '\\' && !escapeSequence) {
+				escapeSequence = true;
+				currentIndex++;
+				continue;
+			}
+			
+			// quoted value ends
+			if(data[currentIndex] == '\"' && !escapeSequence) {
+				currentIndex++;
+				break;
+			}
+			
+			tokenValue.append(data[currentIndex++]);
+		}
+		
+		return new TokenSmart(TokenSmartType.TAG_ELEMENT,  "\"" + tokenValue + "\"");
+	}
+	
+	private TokenSmart getFunction() {
+		StringBuilder tokenValue = new StringBuilder();
+		
+		while(data[currentIndex] != ' ') {
+			tokenValue.append(data[currentIndex++]);
+		}
+		
+		return new TokenSmart(TokenSmartType.TAG_ELEMENT, tokenValue);
+	}
+
+	private TokenSmart getNumberTagElement() {
+		StringBuilder tokenValue = new StringBuilder();
+		
+		if(currentIndex + 1 >= data.length) {
+			throw new IllegalArgumentException("Illegal argument");
+		}
+		
+		tokenValue.append(data[currentIndex++]);
+		while(data[currentIndex] != ' ' && (Character.isDigit(data[currentIndex]) 
+				|| data[currentIndex] == '.')) {
+			tokenValue.append(data[currentIndex++]);
+		}
+		
+		return new TokenSmart(TokenSmartType.TAG_ELEMENT, tokenValue);
+	}
+
+	private TokenSmart getWordTagElement() {
+		StringBuilder tokenValue = new StringBuilder();
+		
+		// build token value while current char is not operator, whitespace or quote
+		while(!Character.isWhitespace(data[currentIndex]) &&
+				data[currentIndex] != '\"' && data[currentIndex] != '-' &&
+				data[currentIndex] != '+' && data[currentIndex] != '/' &&
+				data[currentIndex] != '*' && data[currentIndex] != '^' && 
+				currentIndex < data.length) {
+			
+			tokenValue.append(data[currentIndex++]);
+			
+			// if TAG_CLOSE occurs
+			if(data[currentIndex] == '$' && currentIndex + 1 < data.length &&
+				data[currentIndex + 1] == '}') {
+				break;
+			}
+		}
+		
+		return new TokenSmart(TokenSmartType.TAG_ELEMENT, tokenValue);
+	}
+
+	/**
+	 * This method returns tag name.
+	 * @return
+	 */
+	private Object getTagName() {
+		StringBuilder tagName = new StringBuilder();
+		
+		while(Character.isWhitespace(data[currentIndex])) {
+			currentIndex++;
+		}
+		
+		if(data[currentIndex] == '=') {
+			currentIndex++;
+			return "=";
+		}
+		
+		while(!Character.isWhitespace(data[currentIndex])) {
+			// if TAG_CLOSE occurs
+			if(data[currentIndex] == '$' && currentIndex + 1 < data.length &&
+				data[currentIndex + 1] == '}') {
+				break;
+			}
+			
+			tagName.append(data[currentIndex++]);
+		}
+		
+		return tagName;
+	}
+
+	/**
+	 * This method returns token when lexer is in basic mode. 
+	 * In basic mode only \\ and \{ escapes are allowed.
+	 * @return
+	 */
+	private TokenSmart getBasicToken() {
+		StringBuilder tokenValue = new StringBuilder();
+		// escape sequence is true if last char was \
+		boolean escapeSequence = false;
+		boolean stringSequence = false;
 		
 		// EOF
 		if(currentIndex == data.length) {
 			currentIndex++;
-			token = new TokenSmart(TokenSmartType.EOF, null);
-			return token;
+			return new TokenSmart(TokenSmartType.EOF, null);
 		}
 		
-		// call after EOF
+		// there are no more tokens
 		if(currentIndex > data.length) {
-			throw new LexerSmartException();
+			throw new NoSuchElementException("There are no more elements");
 		}
 		
-		// work in basic mode
-		while(currentIndex <= data.length-1 && lexerState == LexerSmartState.BASIC) {
-			// if tag occurs, break
-			if(data[currentIndex] == '{' && data[currentIndex+1] == '$' && !escapeSequence) {
-				// if \ is before tag, continue building text, otherwise return token
-				setState(LexerSmartState.TAG);
-				
-				// if value is not empty make token and return it
-				if(!stringValue.isEmpty()) {
-					token = new TokenSmart(TokenSmartType.TEXT, stringValue);
-					currentIndex++;
-					return token;
-				}
-				
-			// if end, return text
-			} else if(currentIndex + 1 > data.length-1) {
-				stringValue += data[currentIndex++];
-				token = new TokenSmart(TokenSmartType.TEXT, stringValue);
-				
-				return token;
-			}
-			// if basic mode continue adding text
-			// if escape sequence starts
-			if(data[currentIndex] == '\\' && !escapeSequence) {
-				// if escape sequence is valid
-				if(currentIndex + 1 < data.length && (data[currentIndex + 1] == '\\'
-						|| data[currentIndex + 1] == '{')) {
-					escapeSequence = true;
-					currentIndex++;
-					continue;
-					
-				} else {
-					throw new LexerSmartException("Invalid escaping.");
-				}
-				
-			} else if(data[currentIndex] == '{' && escapeSequence) {
-				// escaping {
-				escapeSequence = false;
-				lexerState = LexerSmartState.BASIC;
-				
-				// escaping /
-			} else if(data[currentIndex] == '\\' && escapeSequence) {
-				escapeSequence = false;
-				// add basic element
-			}
-			stringValue += data[currentIndex++];
-		} 
-		// tag occurred
-		if(currentIndex-1 >= 0 && data[currentIndex-1] == '{' &&
-				data[currentIndex] == '$' && lexerState == LexerSmartState.TAG
-				&& !escapeSequence) {
-			// if tag open occurred go to tag state
-			setState(LexerSmartState.TAG);
-			token = new TokenSmart(TokenSmartType.TAG_OPEN, "{$");
-			currentIndex ++;
-			
-			return token;
-		} 
-		// return tag name token
-		if(lexerState == LexerSmartState.TAG && !tagNameAdded) {
-			tagNameAdded = true;
-			token = new TokenSmart(TokenSmartType.TAG_NAME, addTagName());
-			
-			return token;
+		while(data[currentIndex] == ' ') {
+			currentIndex++;
 		}
 		
-		// add tag elements, only if tag name is not end
-		// tag end doesn't have elements
-		if(lexerState == LexerSmartState.TAG && tagNameAdded && !tagElementsAdded &&
-				!"end".equalsIgnoreCase(getToken().getValue().toString())) {
-			String tagElements = "";
-			
-			// flag used for detecting string, because only in strings (in tag)
-			// should use escaping
-			boolean inString = false;
-			
-			// build tagElements value
-			while(currentIndex + 1 < data.length) {
-				char current = data[currentIndex];
-				
-				// if tag close occurred, checks that escapeSequence is off
-				if(!escapeSequence && data[currentIndex] == '$' &&
-						data[currentIndex+1] == '}' ) {
-					break;
-					
-					// if illegal escape occurred
-				} else if(escapeSequence && !(data[currentIndex] == '\\' ||
-						data[currentIndex] == '"')) {
-					throw new LexerSmartException("Invalid escape.");
-					
-					//escapeSequence on
-				} else if(!escapeSequence && data[currentIndex] == '\\') {
-					escapeSequence = true;
-					
-					// add element and turn escapeSequence off
-				} else {
-					
-					if(!(Character.isDigit(current) || Character.isAlphabetic(current)
-							|| current == '_' || current == '*' || current == '+'
-							|| current == '/' || current == '^' || current == '-'
-							|| current == ' ' || current == '@' || current == '\"'
-							|| current == '.' || Character.isWhitespace(current) 
-							|| current == '\\') && !inString) {
-						throw new LexerSmartException("Invalid expression");
-					}
-					
-					// if string occurred and escapeSequence is off change state of inString
-					if(data[currentIndex] == '\"' && !escapeSequence) {
-						inString = !inString;
-						
-					// if string occurred and escapeSequense is on, don't change state of inString
-					// change escapeSequence to false, if " escaped
-					} else if((Character.isWhitespace(data[currentIndex]) ||
-							data[currentIndex] == '\"' || data[currentIndex] == '\\') &&
-							escapeSequence) {
-						tagElements += '\\';
-						escapeSequence = false; 
-					}
-					
-					tagElements += data[currentIndex];
-					escapeSequence = false;
-				}
-
-				currentIndex++;
-			}
-			// no more elements, but tag didn't close
-			if(currentIndex == data.length-1) {
-				throw new LexerSmartException("Tag didn''t close.");
-			}
-			
-			token = new TokenSmart(TokenSmartType.TAG_ELEMENT, tagElements);
-			tagElementsAdded = true;
-			
-			return token;
-		}
-		
-		// if tag elements and tag name added, add tag close
-		// tag elements added when close tag occurred, so next element is tag close
-		if(lexerState == LexerSmartState.TAG && tagNameAdded && (tagElementsAdded
-				|| "end".equalsIgnoreCase(getToken().getValue().toString()))) {
-			
-			token = new TokenSmart(TokenSmartType.TAG_CLOSE, "$}");
+		// tag close can occur after tag name or tag element
+		if(getToken() != null && (getToken().getType() == TokenSmartType.TAG_ELEMENT
+				|| getToken().getType() == TokenSmartType.TAG_NAME)&&
+				data[currentIndex] == '$' && currentIndex+1 < data.length &&
+				data[currentIndex+1] == '}') {
 			currentIndex += 2;
-			setState(LexerSmartState.BASIC);
-			
-			tagElementsAdded = false;
-			tagNameAdded = false;
-			
-			return token;
+			return new TokenSmart(TokenSmartType.TAG_CLOSE, "$}");
 		}
-		throw new LexerSmartException("No more token in given document.");
+		
+		// check if token is string  expression
+		// string expression ends with quote "
+		if(data[currentIndex] == '"') {
+			currentIndex++;
+			tokenValue.append("\"");
+			stringSequence = true;
+		}
+		
+		while(currentIndex < data.length) {
+			// check if end of quoted sequence
+			if(stringSequence && !escapeSequence && data[currentIndex] == '"') {
+				currentIndex++;
+				return new TokenSmart(TokenSmartType.TAG_ELEMENT, String.valueOf(tokenValue.append("\"")));
+			}
+			
+			// tag element stops when tag close occurs
+			if(getToken() != null && (getToken().getType() == TokenSmartType.TAG_ELEMENT
+					|| getToken().getType() == TokenSmartType.TAG_NAME) &&
+					data[currentIndex] == '$' && currentIndex+1 < data.length &&
+					data[currentIndex+1] == '}') {
+				return new TokenSmart(TokenSmartType.TAG_ELEMENT, String.valueOf(tokenValue));
+			}
+			
+			// tag element can occur after tag element or tag name
+			// tag element stops when current element is -, space or }
+			if(getToken() != null && (getToken().getType() == TokenSmartType.TAG_ELEMENT
+					|| getToken().getType() == TokenSmartType.TAG_NAME) &&
+					tokenValue.length() > 0 && !stringSequence && (data[currentIndex] == '"'
+					|| data[currentIndex] == ' ' || (data[currentIndex] == '$' &&
+					currentIndex+1 < data.length && data[currentIndex] == '}') ||
+					data[currentIndex] == '-')) {
+				return new TokenSmart(TokenSmartType.TAG_ELEMENT, String.valueOf(tokenValue));
+			}
+			
+			// tag name should be after tag open token
+			if(getToken() != null && getToken().getType() == TokenSmartType.TAG_OPEN &&
+					(data[currentIndex] == ' ' || data[currentIndex] == '$')) {
+				return new TokenSmart(TokenSmartType.TAG_NAME, String.valueOf(tokenValue));
+			}
+			
+			// if next token is tag open (first element is tag open)
+			if(data[currentIndex] == '{'  && currentIndex + 1 < data.length 
+					&& data[currentIndex + 1] == '$' && tokenValue.length() == 0) {
+				currentIndex += 2;
+				return new TokenSmart(TokenSmartType.TAG_OPEN, "{$");
+			}
+			
+			// return text if {$ occurs and it is not escape sequence
+			else if(data[currentIndex] == '{' && currentIndex + 1 < data.length
+					&& data[currentIndex + 1] == '$' && !escapeSequence) {
+				return new TokenSmart(TokenSmartType.TEXT, String.valueOf(tokenValue));
+			}
+			
+			// if \ occurs and escape sequence is off, turn escape sequence on
+			else if(data[currentIndex] == '\\' && !escapeSequence) {
+				escapeSequence = true;
+				currentIndex++;
+				continue;
+			}
+			
+			// if escape sequence on and next char \ or {, escape \
+			else if((data[currentIndex] == '\\' || data[currentIndex] == '{') && escapeSequence) {
+				escapeSequence = false;
+				tokenValue.append(data[currentIndex++]);
+				continue;
+			}
+			
+			// if escape sequence on and next char can't be escaped
+			else if(data[currentIndex] != '\\' && data[currentIndex] != '{' && escapeSequence) {
+				throw new IllegalArgumentException("It is possible to escape only { and \\ outside of tags");
+			}
+			
+			// build token value
+			tokenValue.append(data[currentIndex++]);
+		}
+		
+		return new TokenSmart(TokenSmartType.TEXT, String.valueOf(tokenValue));
 	}
-	
+
 	/**
 	 * Gets last generated token. Can be called more times and it doesn't runs
 	 * generation of next token.

@@ -20,7 +20,7 @@ public class ObjectMultistack {
 	
 	/**
 	 * This method is implements command for saving given valueWrapper on stack named keyName
-	 * @param keyName key of stack where valueWrapper is pushed
+	 * @param keyName key of the value
 	 * @param valueWrapper value to push on stack with key keyName
 	 */
 	public void push(String keyName, ValueWrapper valueWrapper) {

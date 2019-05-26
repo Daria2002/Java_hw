@@ -34,7 +34,7 @@ public class ValueWrapper {
 	 */
 	private Object getValue(Object testValue) {
 		testValue = CheckValue(testValue);
-		
+
 		if(testValue.getClass().equals(String.class)) {
 			try {
 				return Integer.parseInt((String) testValue);
@@ -53,7 +53,7 @@ public class ValueWrapper {
 				(testValue.getClass().equals(Double.class))) {
 			return testValue;
 		}
-
+		
 		throw new RuntimeException("Given value is not valid argument");
 	}
 	

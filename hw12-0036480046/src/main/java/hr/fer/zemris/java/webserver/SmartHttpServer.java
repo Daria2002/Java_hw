@@ -115,6 +115,10 @@ public class SmartHttpServer {
 			List<String> request = readRequest();
 		}
 
+		
+		
+		
+		
 		private void extract(String firstLine) throws IOException {
 			this.method = firstLine.trim().substring(0, 3);
 			String requestedPath = firstLine.substring(firstLine.indexOf("/"),
@@ -128,6 +132,8 @@ public class SmartHttpServer {
 					!"HTTP/1.1".equals(version)) {
 				sendError(this.ostream, 400, "Not ok method or version");
 			}
+			
+			
 			
 		}
 
@@ -145,8 +151,13 @@ public class SmartHttpServer {
 		}
 
 		private List<String> readRequest() {
-			// TODO Auto-generated method stub
-			return null;
+			List<String> request;
+			
+			
+			String line;
+			while ((line=istream.read()) != null) {
+			    myDict.add(line);
+			}
 		}
 	}	
 }

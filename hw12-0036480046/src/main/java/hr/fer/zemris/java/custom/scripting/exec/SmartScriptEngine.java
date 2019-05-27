@@ -88,12 +88,7 @@ public class SmartScriptEngine {
 				
 				if(token instanceof ElementVariable) {
 					stack.push(multistack.peek(((ElementVariable) token).getName()).getValue());
-					try {
-						requestContext.write(stack.peek().toString());
-					} catch (IOException e) {
-						throw new IllegalArgumentException("Error occurred while writing to "
-								+ "request context.");
-					}
+					
 					continue;
 				}
 				
@@ -196,6 +191,16 @@ public class SmartScriptEngine {
 					}
 				}
 			}
+			
+			try {
+				if(stack.isEmpty()) {
+					return;
+				}
+				requestContext.write(stack.peek().toString());
+			} catch (IOException e) {
+				throw new IllegalArgumentException("Error occurred while writing to "
+						+ "request context.");
+			}
 		}
 		
 		private void tParamDel(Stack<Object> stack) {
@@ -262,7 +267,7 @@ public class SmartScriptEngine {
 		}
 
 		private Object sin(double value) {
-			return Math.sin(value);
+			return Math.sin(value * Math.PI/180);
 		}
 
 		private Object getConstant(Element el) {

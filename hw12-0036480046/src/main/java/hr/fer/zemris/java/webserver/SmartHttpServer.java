@@ -1,17 +1,25 @@
 package hr.fer.zemris.java.webserver;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PushbackInputStream;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import hr.fer.zemris.java.webserver.RequestContext.RCCookie;
 
@@ -28,7 +36,8 @@ public class SmartHttpServer {
 	private Path documentRoot;
 	
 	public static void main(String[] args) {
-		
+		SmartHttpServer shs = new SmartHttpServer(args[0]);
+		shs.start();
 	}
 	
 	public SmartHttpServer(String configFileName) {
@@ -36,16 +45,28 @@ public class SmartHttpServer {
 	}
 	
 	protected synchronized void start() {
-	// ... start server thread if not already running ...
-	// ... init threadpool by Executors.newFixedThreadPool(...); ...
+		if(serverThread != null && serverThread.isAlive()) {
+			return;
+		}
+		
+		threadPool = Executors.newFixedThreadPool(workerThreads);
+		serverThread = new ServerThread();
+		
+		serverThread.run();
+		// TODO:session cleaner
 	}
 	
 	protected synchronized void stop() {
 	// ... signal server thread to stop running ...
 	// ... shutdown threadpool ...
+		threadPool.shutdown();
+		serverThread.finish();
 	}
 	
 	protected class ServerThread extends Thread {
+		boolean running = true;
+		ServerSocket serverSocket;
+		
 		@Override
 		public void run() {
 			// given in pesudo-code:
@@ -55,18 +76,32 @@ public class SmartHttpServer {
 			// ClientWorker cw = new ClientWorker(client);
 			// submit cw to threadpool for execution
 			// }
-			ServerSocket serverSocket;
+			
 			try {
 				serverSocket = new ServerSocket(SmartHttpServer.this.port);
 				
-				while(true) {
+				serverSocket.bind(new InetSocketAddress(
+						InetAddress.getByAddress(address.getBytes()), port));
+				
+				serverSocket.setSoTimeout(sessionTimeout);
+				
+				while(running) {
 					Socket client = serverSocket.accept();
 					ClientWorker cw = new ClientWorker(client);
 					threadPool.execute(cw);
+					//threadPool.submit(cw);
 				}
 				
 			} catch (IOException e) {
 				throw new IllegalArgumentException("Server socket can't open given port");
+			}
+		}
+		
+		public void finish() {
+			running = false;
+			try {
+				serverSocket.close();
+			} catch (IOException e) {
 			}
 		}
 	}
@@ -97,46 +132,147 @@ public class SmartHttpServer {
 				// obtain output stream from socket
 				ostream = csocket.getOutputStream();
 				// Then read complete request header from your client in separate method...
-				List<String> request = readRequest();
+				
+				String requested = new String(readRequest(istream), StandardCharsets.US_ASCII);
+				
+				List<String> request = extractHeaders(requested);
 				
 				// If header is invalid (less then a line at least) return response status 400
 				if(request.size() < 1) {
-					sendError(ostream, 400, "Invalid header");
+					sendError(ostream, 400, "Header is not ok");
+					return;
 				}
 				
 				String firstLine = request.get(0);
-				extract(firstLine);
 				
+				String[] firstLineArray = firstLine.split(" ");
+				
+				this.method = firstLineArray[0];
+				String requestedPath = firstLineArray[1];
+				version = firstLineArray[2];
+				String path = requestedPath.substring(0, requestedPath.indexOf("?"));
+				String paramString = requestedPath.substring(requestedPath.indexOf("?") + 1);
+				
+				if(!"GET".equals(method) || !"HTTP/1.0".equals(version) ||
+						!"HTTP/1.1".equals(version)) {
+					sendError(this.ostream, 400, "Not ok method or version");
+					return;
+				}
+				
+				for(int i = 1; i < request.size(); i++) {
+					if(request.get(i).contains("Host:")) {
+						this.host = checkName(request.get(i).substring(request.indexOf(":")+1)
+								.trim());
+						continue;
+					}
+					
+					domainName = checkName(request.get(i).substring(request.indexOf(":")+1)
+							.trim());
+				}
+				
+				parseParameters(paramString);
+				
+				requestedPath = documentRoot.toAbsolutePath().resolve(path).toString();
+				
+				if(!requestedPath.startsWith(documentRoot.toString())) {
+					sendError(ostream, 403, "Response status forbidden");
+					return;
+				}
+				
+				String extension;
+				
+				if(Files.exists(Paths.get(requestedPath)) &&
+						!Files.isDirectory(Paths.get(requestedPath)) &&
+						Files.isReadable(Paths.get(requestedPath))) {
+					extension = getExtension(requestedPath);
+				} else {
+					sendError(ostream, 404, "File not ok");
+					return;
+				}
+				
+				String mimeType = mimeTypes.get(extension);
+				
+				if(mimeType == null) {
+					mimeType = "application/octet-stream";
+				}
+				
+				RequestContext rc = new RequestContext(ostream, params, permPrams, outputCookies);
+				rc.setMimeType(mimeType);
+				rc.setStatusCode(200);
+				rc.setStatusText("OK");
+				
+				rc.write(Files.readString(Paths.get(requestedPath)));
+				
+				ostream.flush();
+				csocket.close();
+				istream.close();
 				
 			} catch (IOException e) {
 				throw new IllegalArgumentException("Can't get output stream");
 			}
-			
-			List<String> request = readRequest();
 		}
-
 		
-		
-		
-		
-		private void extract(String firstLine) throws IOException {
-			this.method = firstLine.trim().substring(0, 3);
-			String requestedPath = firstLine.substring(firstLine.indexOf("/"),
-					firstLine.substring(firstLine.indexOf("/")).indexOf(" "));
-			version = firstLine.substring(firstLine.substring(
-					firstLine.indexOf("/")).indexOf(" ") + 1).trim();
-			String path = requestedPath.substring(0, requestedPath.indexOf("?"));
-			String paramString = requestedPath.substring(requestedPath.indexOf("?") + 1);
+		private String getExtension(String fileName) {
+			String fileExtension="";
 			
-			if(!"GET".equals(method) || !"HTTP/1.0".equals(version) ||
-					!"HTTP/1.1".equals(version)) {
-				sendError(this.ostream, 400, "Not ok method or version");
+			// If fileName do not contain "." or starts with "." then it is not a valid file
+			if(fileName.contains(".") && fileName.lastIndexOf(".")!= 0) {
+				fileExtension=fileName.substring(fileName.lastIndexOf(".")+1);
 			}
 			
+			return fileExtension;
+	    }
+
+		private void parseParameters(String paramString) {
+			String[] paramsArray = paramString.split("&");
 			
-			
+			for(int i = 0; i < paramsArray.length; i++) {
+				String[] elements = paramsArray[i].split("=");
+				
+				params.put(elements[0], elements[1]);
+			}
 		}
 
+		private String checkName(String name) {
+			if(name.contains(":") && isNumeric(name.substring(name.indexOf(":")+1))) {
+				return name.substring(0, name.indexOf(":"));
+			}
+			return name;
+		}
+		
+		// Zaglavlje predstavljeno kao jedan string splita po enterima
+		// pazeći na višeretčane atribute...
+		private List<String> extractHeaders(String requestHeader) {
+			List<String> headers = new ArrayList<String>();
+			String currentLine = null;
+			for(String s : requestHeader.split("\n")) {
+				if(s.isEmpty()) break;
+				char c = s.charAt(0);
+				// tab ili space
+				if(c==9 || c==32) {
+					currentLine += s;
+				} else {
+					if(currentLine != null) {
+						headers.add(currentLine);
+					}
+					currentLine = s;
+				}
+			}
+			if(!currentLine.isEmpty()) {
+				headers.add(currentLine);
+			}
+			return headers;
+		}
+		
+		private boolean isNumeric(String str) { 
+			try {  
+			  Double.parseDouble(str);  
+			  return true;
+		  	} catch(NumberFormatException e){  
+			  return false;  
+		  	}  
+		}
+		
 		private void sendError(OutputStream cos, int statusCode, String statusText) throws IOException {
 
 				cos.write(
@@ -150,14 +286,37 @@ public class SmartHttpServer {
 				cos.flush();
 		}
 
-		private List<String> readRequest() {
-			List<String> request;
-			
-			
-			String line;
-			while ((line=istream.read()) != null) {
-			    myDict.add(line);
+		// Jednostavan automat koji čita zaglavlje HTTP zahtjeva...
+		private byte[] readRequest(InputStream is) throws IOException {
+
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			int state = 0;
+	l:		while(true) {
+				int b = is.read();
+				if(b==-1) return null;
+				if(b!=13) {
+					bos.write(b);
+				}
+				switch(state) {
+				case 0: 
+					if(b==13) { state=1; } else if(b==10) state=4;
+					break;
+				case 1: 
+					if(b==10) { state=2; } else state=0;
+					break;
+				case 2: 
+					if(b==13) { state=3; } else state=0;
+					break;
+				case 3: 
+					if(b==10) { break l; } else state=0;
+					break;
+				case 4: 
+					if(b==10) { break l; } else state=0;
+					break;
+				}
 			}
+			return bos.toByteArray();
 		}
+		
 	}	
 }

@@ -88,6 +88,12 @@ public class SmartScriptEngine {
 				
 				if(token instanceof ElementVariable) {
 					stack.push(multistack.peek(((ElementVariable) token).getName()).getValue());
+					try {
+						requestContext.write(stack.peek().toString());
+					} catch (IOException e) {
+						throw new IllegalArgumentException("Error occurred while writing to "
+								+ "request context.");
+					}
 					continue;
 				}
 				

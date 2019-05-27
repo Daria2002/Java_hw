@@ -167,33 +167,6 @@ public class RequestContext {
 	}
 	
 	private void createHeader() {
-		
-		/*
-		 *So how does the header looks like? Properties used for header construction are encoding, statusCode,
-statusText, mimeType, outputCookies, contentLength .
-Header is obtained by serializing a several lines of text into bytes using codepage ISO_8859_1 (see
-StandardCharsets ). Lines are separated by "\r\n". First line must be of form:
-“ HTTP/1.1 ” statusCode statusMessage
-Second line must be of form:
-“ Content-Type: “ mimeType
-If mime type starts with “ text/ ” (for example, “ text/html ” or “ text/plain ”), you should append on
-mime-type “ ; charset= ” encoding.
-		
-If property contentLength is not null, add next line to headers:
-“ Content-Length: “ contentLength
-If contentLength is null, previous line must not be included; this way, the consumer of the sent data will*/
-/*
-read all the data we send through the output stream, until the stream is closed.If list of outputCookies is not empty, for each cookie you should emit a single line of form:
-' Set-Cookie: ' name ' =” ' value ' ”; Domain= ' domain ' ; Path= ' path ' ; Max-Age= ' maxAge
-domain, path and maxAge are included only if they are not null in given cookie object. For example, for a
-cookie with only name set to 'korisnik' and value set to 'perica' you would emit:
-Set-Cookie: korisnik="perica"
-If cookie also included maxAge set to 3600 you would instead emit a line:
-Set-Cookie: korisnik="perica"; Max-Age=3600
-Finally, another empty line should be emitted to signal the end of headers. 
-		 * 
-		 */
-		
 		StringBuilder header = new StringBuilder();
 		
 		header.append("HTTP/1.1 " + statusCode + " " + statusText + "\r\n");
@@ -243,6 +216,8 @@ Finally, another empty line should be emitted to signal the end of headers.
 			this.outputStream.write(b);
 		} catch (IOException e) {
 		}
+		
+		headerGenerated = true;
 	}
 
 	private boolean appendCharset() {

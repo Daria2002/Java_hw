@@ -136,6 +136,7 @@ public class SmartScriptParser {
 		while(lexer.nextToken().getType() != TokenSmartType.TAG_CLOSE) {
 			
 			String tokenValue = removeQuotes(lexer.getToken().getValue().toString());
+			String tokenValueWithQuotes = lexer.getToken().getValue().toString();
 			
 			if(tokenValue.charAt(0) == '@') {
 				elementList.add(new ElementFunction(tokenValue.substring(1)));
@@ -144,7 +145,7 @@ public class SmartScriptParser {
 				elementList.add(new ElementOperator(tokenValue));
 				
 			} else {
-				elementList.add(getIntegerDoubleOrString(tokenValue));
+				elementList.add(getValue(tokenValueWithQuotes));
 			}
 		}
 
@@ -237,6 +238,33 @@ public class SmartScriptParser {
 		}
 	}
 
+	/**
+	 * Checks type of value (string, double, int) and convert it to right element
+	 * @param value value to check
+	 * @return Element object from given value
+	 */
+	private Element getValue(String value) {
+		// check if value if integer
+		try {
+			return new ElementConstantInteger(Integer.parseInt(value));
+			
+		} catch (Exception e) {
+			// exception occurs if given value is not int
+			// check if given value is double
+			try {
+				return new ElementConstantDouble(Double.parseDouble(value));
+				
+			} catch (Exception e2) {
+				// exception occurs if given value is not int and double
+				if(value.indexOf('"') == 0 && value.substring(1).indexOf('"') == value.length()-2) {
+					return new ElementString(removeQuotes(value));
+				}
+				
+				return new ElementVariable(removeQuotes(value));
+			}
+		}
+	}
+	
 	/**
 	 * Checks type of value (string, double, int) and convert it to right element
 	 * @param value value to check

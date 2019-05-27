@@ -41,7 +41,7 @@ public class SmartScriptEngine {
 			}
 		}
 
-		private double getElement(Element el) {
+		private Object getElement(Element el) {
 			if(el instanceof ElementConstantInteger) {
 				return ((ElementConstantInteger) el).getValue();
 			}
@@ -51,18 +51,19 @@ public class SmartScriptEngine {
 		
 		@Override
 		public void visitForLoopNode(ForLoopNode node) {
-			double start = getElement(node.getStartExpression());
+			Object start = getElement(node.getStartExpression());
 			
 			ValueWrapper valueWrapper = new ValueWrapper(start);
 			multistack.push(node.getVariable().getName(), valueWrapper);
-			
-			double end = getElement(node.getEndExpression());
-			double step = getElement(node.getStepExpression());
+			// double
+			Object end = getElement(node.getEndExpression());
+			Object step = getElement(node.getStepExpression());
 			
 			while(true) {
 				ValueWrapper current = multistack.peek(node.getVariable().getName());
 				
-				if((Double)current.getValue() - end > 0.00001) {
+				if(Double.valueOf(current.getValue().toString()) - 
+						Double.valueOf(end.toString()) > 0.00001) {
 					break;
 				}
 
@@ -136,7 +137,7 @@ public class SmartScriptEngine {
 					switch (functionName) {
 					case "sin":
 						valueWrapper1 = new ValueWrapper(stack.pop());
-						stack.push(sin((Double)valueWrapper1.getValue()));
+						stack.push(sin(Double.valueOf(valueWrapper1.getValue().toString())));
 						break;
 
 					case "decfmt":
@@ -202,7 +203,7 @@ public class SmartScriptEngine {
 						+ "request context.");
 			}
 		}
-		
+	
 		private void tParamDel(Stack<Object> stack) {
 			requestContext.removeTemporaryParameter((String) stack.pop());
 		}
@@ -282,6 +283,18 @@ public class SmartScriptEngine {
 			
 			}
 			return null;
+		}
+		
+		private Object getValue(Object el) {
+			try {
+				return Integer.valueOf((String) el);
+			} catch (Exception e) {
+				try {
+					return Double.valueOf((String) el);
+				} catch (Exception e2) {
+					return el;
+				}
+			}
 		}
 		
 		@Override

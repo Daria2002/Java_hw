@@ -23,7 +23,7 @@ public class RequestContext {
 	public Long contentLength = null;
 	
 	private Map<String, String> parameters;
-	private Map<String, String> temporaryParameters;
+	private Map<String, String> temporaryParameters = new HashMap<String, String>();
 	private Map<String, String> persistentParameters;
 	private List<RCCookie> outputCookies;
 	boolean headerGenerated = false;

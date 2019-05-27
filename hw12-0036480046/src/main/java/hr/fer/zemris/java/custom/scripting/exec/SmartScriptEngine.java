@@ -191,7 +191,7 @@ public class SmartScriptEngine {
 						break;
 					
 					default:
-						throw new IllegalArgumentException("Invalid function name.");
+						throw new IllegalArgumentException("Invalid function name: " + functionName);
 					}
 				}
 			}
@@ -200,10 +200,6 @@ public class SmartScriptEngine {
 				if(stack.isEmpty()) {
 					return;
 				}
-				
-				
-				//requestContext.write(stack.peek().toString());
-				
 				
 				List<String> stackElements = new ArrayList<String>();
 				
@@ -226,8 +222,8 @@ public class SmartScriptEngine {
 		}
 
 		private void tparamSet(Stack<Object> stack) {
-			String name = (String) stack.pop();
-			String value = (String) stack.pop();
+			String name = stack.pop().toString();
+			String value = stack.pop().toString();
 			requestContext.setTemporaryParameter(name, value);
 		}
 
@@ -243,8 +239,8 @@ public class SmartScriptEngine {
 		}
 
 		private void pparamSet(Stack<Object> stack) {
-			String name = (String) stack.pop();
-			String value = (String) stack.pop();
+			String name = stack.pop().toString();
+			String value = stack.pop().toString();
 			requestContext.setPersistentParameter(name, value);
 		}
 

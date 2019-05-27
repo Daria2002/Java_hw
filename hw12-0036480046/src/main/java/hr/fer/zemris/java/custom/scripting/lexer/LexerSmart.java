@@ -113,10 +113,15 @@ public class LexerSmart {
 			}
 		}
 		
+		if(currentIndex == data.length) {
+			return new TokenSmart(TokenSmartType.EOF, null);
+		}
+		
 		return null;
 	}
 
 	private TokenSmart getTokenUnderQuotes() {
+
 
 		boolean escapeSequence = false;
 		currentIndex++;
@@ -125,13 +130,29 @@ public class LexerSmart {
 		// building token whose value is under string
 		while(currentIndex < data.length) {
 			// throw exception if escape sequence is on and invalid escaping occurs
-			if(data[currentIndex] != '\\' && data[currentIndex] != '\"' && escapeSequence) {
+			if(data[currentIndex] != '\\' && data[currentIndex] != '\"' 
+					&& data[currentIndex] != 'n' && data[currentIndex] != 'r' && escapeSequence) {
 				throw new IllegalArgumentException("Invalid escaping in quotes");
 			}
 			
 			// if valid escape
-			else if((data[currentIndex] == '\\' || data[currentIndex] == '\"') && escapeSequence) {
+			else if((data[currentIndex] == '\\' || data[currentIndex] == '\"' ||
+					data[currentIndex] == 'n' || data[currentIndex] == 'r') && escapeSequence) {
+				
 				escapeSequence = false;
+				
+				if(data[currentIndex] == 'n') {
+					tokenValue.append('\n');
+					currentIndex++;
+					continue;
+				}
+				
+				if(data[currentIndex] == 'r') {
+					tokenValue.append('\r');
+					currentIndex++;
+					continue;
+				}
+				
 				tokenValue.append(data[currentIndex++]);
 				continue;
 			}
@@ -158,7 +179,8 @@ public class LexerSmart {
 	private TokenSmart getFunction() {
 		StringBuilder tokenValue = new StringBuilder();
 		
-		while(data[currentIndex] != ' ') {
+		while(data[currentIndex] != ' ' && !Character.isSpaceChar(data[currentIndex]) && 
+				data[currentIndex] != '\n') {
 			tokenValue.append(data[currentIndex++]);
 		}
 		

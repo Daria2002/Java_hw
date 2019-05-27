@@ -44,6 +44,7 @@ public class SmartScriptParser {
 	}
 	
 	private void buildDocumentModel() {
+		
 		lexer = new LexerSmart(documentBody);
 		TokenSmart token = lexer.nextToken();
 		ParserMode parserMode = ParserMode.TEXT;
@@ -125,7 +126,8 @@ public class SmartScriptParser {
 			}
 			
 			
-			token = lexer.nextToken();	
+			token = lexer.nextToken();
+			
 		}
 		
 	}
@@ -133,7 +135,7 @@ public class SmartScriptParser {
 	private void echoTag() {
 		List<Element> elementList = new ArrayList<Element>();
 		
-		while(lexer.nextToken().getType() != TokenSmartType.TAG_CLOSE) {
+		while(lexer.getToken().getType() != TokenSmartType.EOF && lexer.nextToken().getType() != TokenSmartType.TAG_CLOSE) {
 			
 			String tokenValue = removeQuotes(lexer.getToken().getValue().toString());
 			String tokenValueWithQuotes = lexer.getToken().getValue().toString();

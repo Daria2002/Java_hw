@@ -3,6 +3,8 @@ package hr.fer.zemris.java.custom.scripting.exec;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
@@ -84,6 +86,7 @@ public class SmartScriptEngine {
 				
 				if(value != null) {
 					stack.push(value);
+					
 					continue;
 				}
 				
@@ -197,7 +200,21 @@ public class SmartScriptEngine {
 				if(stack.isEmpty()) {
 					return;
 				}
-				requestContext.write(stack.peek().toString());
+				
+				
+				//requestContext.write(stack.peek().toString());
+				
+				
+				List<String> stackElements = new ArrayList<String>();
+				
+				while(!stack.isEmpty()) {
+					stackElements.add(stack.pop().toString());
+				}
+				
+				for(int i = stackElements.size() - 1; i >= 0; i--) {
+					requestContext.write(stackElements.get(i));
+				}
+				
 			} catch (IOException e) {
 				throw new IllegalArgumentException("Error occurred while writing to "
 						+ "request context.");

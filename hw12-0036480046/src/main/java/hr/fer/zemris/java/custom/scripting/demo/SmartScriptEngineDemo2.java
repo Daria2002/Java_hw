@@ -13,13 +13,15 @@ import hr.fer.zemris.java.custom.scripting.parser.SmartScriptParser;
 import hr.fer.zemris.java.webserver.RequestContext;
 import hr.fer.zemris.java.webserver.RequestContext.RCCookie;
 
-public class SmartScriptEngineDemo {
-
+public class SmartScriptEngineDemo2 {
+	
 	public static void main(String[] args) {
-		String documentBody = readFromDisk("osnovni.smscr");
+		String documentBody = readFromDisk("zbrajanje.smscr");
 		Map<String,String> parameters = new HashMap<String, String>();
 		Map<String,String> persistentParameters = new HashMap<String, String>();
 		List<RCCookie> cookies = new ArrayList<RequestContext.RCCookie>();
+		parameters.put("a", "4");
+		parameters.put("b", "2");
 		// create engine and execute it
 		new SmartScriptEngine(
 		new SmartScriptParser(documentBody).getDocumentNode(),

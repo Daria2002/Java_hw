@@ -169,6 +169,11 @@ public class SmartHttpServer {
 			
 		@Override
 		public void run() {
+			
+			if(csocket.isClosed()) {
+				return;
+			}
+			
 			try {
 				// obtain input stream from socket
 				istream = new PushbackInputStream(csocket.getInputStream());
@@ -180,7 +185,6 @@ public class SmartHttpServer {
 					return;
 				}
 				String requested = new String(b, StandardCharsets.US_ASCII);
-				
 				
 				List<String> request = extractHeaders(requested);
 				
@@ -228,36 +232,30 @@ public class SmartHttpServer {
 					
 					parseParameters(paramString);
 					
-					if("smscr".equals(getExtension(path))) {
-						String documentBody = readFromDisk(path);
-
-						DocumentNode dn = new SmartScriptParser(documentBody).getDocumentNode();
-						RequestContext rc = new RequestContext(ostream, params,
-								permPrams, outputCookies, tempParams, this);
-						
-						SmartScriptEngine sse = new SmartScriptEngine(dn, rc);
-						sse.execute();
-						//ostream.flush();
-						
-						return;
-					}
-					
 				} else {
 					requestedPath = documentRoot.toAbsolutePath().resolve(requestedPath.substring(1)).toString();
+				}
 				
-					if("smscr".equals(getExtension(requestedPath))) {
-						String documentBody = readFromDisk(requestedPath);
+				if("smscr".equals(getExtension(requestedPath))) {
+					String documentBody = readFromDisk(requestedPath);
 
-						DocumentNode dn = new SmartScriptParser(documentBody).getDocumentNode();
-						RequestContext rc = new RequestContext(ostream, params,
-								permPrams, outputCookies, tempParams, this);
-						
-						SmartScriptEngine sse = new SmartScriptEngine(dn, rc);
-						sse.execute();
-						//ostream.flush();
-						
-						return;
-					}
+					DocumentNode dn = new SmartScriptParser(documentBody).getDocumentNode();
+					
+					RequestContext rc = new RequestContext(ostream, params,
+							permPrams, outputCookies, tempParams, this);
+					
+					rc.setMimeType("text/html");
+					rc.setStatusText("OK");
+					rc.setStatusCode(200);
+					
+					SmartScriptEngine sse = new SmartScriptEngine(dn, rc);
+					sse.execute();
+					
+					ostream.flush();
+					csocket.close();
+					
+					//istream.close();
+					return;
 				}
 				
 				try {
@@ -293,11 +291,10 @@ public class SmartHttpServer {
 					}
 					cos.flush();
 			} catch (Exception e) {
-				// TODO: handle exception
 			}
 		}
 		
-		private void vratiSliku(OutputStream cos, BufferedImage img) throws IOException {
+		private void getImage(OutputStream cos, BufferedImage img) throws IOException {
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
 			ImageIO.write(img, "png", bos);
 			byte[] podaci = bos.toByteArray();
@@ -433,6 +430,7 @@ public class SmartHttpServer {
 					!Files.isDirectory(Paths.get(requestedPath)) &&
 					Files.isReadable(Paths.get(requestedPath))) {
 				extension = getExtension(requestedPath);
+				
 			} else {
 				sendError(ostream, 404, "File not ok");
 				return;
@@ -453,7 +451,7 @@ public class SmartHttpServer {
 				//rc.write(Files.readString(Paths.get(requestedPath)));
 				getText(ostream, Paths.get(requestedPath), mimeType);
 			} else {
-				vratiSliku(ostream, ImageIO.read(new File(requestedPath)));
+				getImage(ostream, ImageIO.read(new File(requestedPath)));
 			}
 			
 			ostream.flush();

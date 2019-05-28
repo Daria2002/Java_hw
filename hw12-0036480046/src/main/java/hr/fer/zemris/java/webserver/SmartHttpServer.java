@@ -59,7 +59,7 @@ public class SmartHttpServer {
 			port = Integer.valueOf(prop.getProperty("server.port"));
 			workerThreads = Integer.valueOf(prop.getProperty("server.workerThreads"));
 			sessionTimeout = Integer.valueOf(prop.getProperty("session.timeout"));
-			documentRoot = Paths.get(prop.getProperty("server.workers"));
+			documentRoot = Paths.get(prop.getProperty("server.documentRoot"));
 			
 		} catch (Exception e) {
 		}
@@ -180,34 +180,37 @@ public class SmartHttpServer {
 				String requestedPath = firstLineArray[1];
 				version = firstLineArray[2];
 				
-				String path = requestedPath.substring(0, requestedPath.indexOf("?"));
-				
-				String paramString = requestedPath.substring(requestedPath.indexOf("?") + 1);
-				
-				if(!"GET".equals(method) || (!"HTTP/1.0".equals(version) &&
-						!"HTTP/1.1".equals(version))) {
-					sendError(this.ostream, 400, "Not ok method or version");
-					return;
-				}
-				
-				for(int i = 1; i < request.size(); i++) {
-					if(request.get(i).contains("Host:")) {
-						this.host = checkName(request.get(i).substring(request.indexOf(":")+1)
-								.trim());
-						continue;
+				if(requestedPath.contains("?")) {
+					String path = requestedPath.substring(0, requestedPath.indexOf("?"));
+					
+					String paramString = requestedPath.substring(requestedPath.indexOf("?") + 1);
+					
+					if(!"GET".equals(method) || (!"HTTP/1.0".equals(version) &&
+							!"HTTP/1.1".equals(version))) {
+						sendError(this.ostream, 400, "Not ok method or version");
+						return;
 					}
 					
-					domainName = checkName(request.get(i).substring(request.indexOf(":")+1)
-							.trim());
-				}
-				
-				parseParameters(paramString);
-				
-				requestedPath = documentRoot.toAbsolutePath().resolve(path).toString();
-				
-				if(!requestedPath.startsWith(documentRoot.toString())) {
-					sendError(ostream, 403, "Response status forbidden");
-					return;
+					for(int i = 1; i < request.size(); i++) {
+						if(request.get(i).contains("Host:")) {
+							this.host = checkName(request.get(i).substring(request.indexOf(":")+1)
+									.trim());
+							continue;
+						}
+						
+						domainName = checkName(request.get(i).substring(request.indexOf(":")+1)
+								.trim());
+					}
+					requestedPath = documentRoot.toAbsolutePath().resolve(path).toString();
+					
+					if(!requestedPath.startsWith(documentRoot.toString())) {
+						sendError(ostream, 403, "Response status forbidden");
+						return;
+					}
+					parseParameters(paramString);
+					
+				} else {
+					requestedPath = documentRoot.toAbsolutePath().resolve(requestedPath.substring(1)).toString();
 				}
 				
 				String extension;
@@ -239,6 +242,7 @@ public class SmartHttpServer {
 				istream.close();
 				
 			} catch (IOException e) {
+				e.printStackTrace();
 				throw new IllegalArgumentException("Can't get output stream");
 			}
 		}

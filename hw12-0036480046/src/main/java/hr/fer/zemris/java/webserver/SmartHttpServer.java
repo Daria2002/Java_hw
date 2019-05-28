@@ -1,6 +1,10 @@
 package hr.fer.zemris.java.webserver;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -25,6 +29,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import javax.imageio.ImageIO;
 
 import hr.fer.zemris.java.webserver.RequestContext.RCCookie;
 
@@ -243,16 +249,46 @@ public class SmartHttpServer {
 				rc.setStatusCode(200);
 				rc.setStatusText("OK");
 				
-				rc.write(Files.readString(Paths.get(requestedPath)));
+				if(!"png".equals(extension)) {
+					rc.write(Files.readString(Paths.get(requestedPath)));
+					ostream.flush();
+					csocket.close();
+					istream.close();
+				} else {
+					vratiSliku(ostream, ImageIO.read(new File(requestedPath)));
+				}
 				
-				ostream.flush();
-				csocket.close();
-				istream.close();
+				
 				
 			} catch (IOException e) {
 				e.printStackTrace();
 				throw new IllegalArgumentException("Can't get output stream");
 			}
+		}
+		
+		private void vratiSliku(OutputStream cos, BufferedImage img) throws IOException {
+//			Graphics2D g2d = bim.createGraphics();
+//			g2d.setColor(Color.WHITE);
+//			g2d.fillRect(0, 0, 300, 200);
+//			g2d.setColor(Color.RED);
+//			g2d.fillOval(0, 0, 300, 200);
+//			g2d.dispose();
+//			
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			ImageIO.write(img, "png", bos);
+			byte[] podaci = bos.toByteArray();
+			
+			cos.write(
+					("HTTP/1.1 200 OK\r\n"+
+					"Server: simple java server\r\n"+
+					"Content-Type: image/png\r\n"+
+					"Content-Length: "+ podaci.length+"\r\n"+
+					"Connection: close\r\n"+
+					"\r\n").getBytes(StandardCharsets.US_ASCII)
+			);
+			
+			cos.write(podaci);
+			cos.flush();
 		}
 		
 		private String getExtension(String fileName) {

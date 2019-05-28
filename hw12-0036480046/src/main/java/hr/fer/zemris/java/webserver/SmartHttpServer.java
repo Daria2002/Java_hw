@@ -3,6 +3,7 @@ package hr.fer.zemris.java.webserver;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -117,17 +118,15 @@ public class SmartHttpServer {
 				SocketAddress socketAddress = new InetSocketAddress(
 						InetAddress.getByName(SmartHttpServer.this.address), 
 						SmartHttpServer.this.port);
-				serverSocket.setReuseAddress(true);
 				serverSocket.bind(socketAddress);
 				
 				serverSocket.setSoTimeout(SmartHttpServer.this.sessionTimeout * 1000);
 
-				Socket client = serverSocket.accept();
+				
 				
 				while(running) {
-					
+					Socket client = serverSocket.accept();
 					ClientWorker cw = new ClientWorker(client);
-					//threadPool.execute(cw);
 					threadPool.submit(cw);
 					
 				      
@@ -150,8 +149,8 @@ public class SmartHttpServer {
 	
 	private class ClientWorker implements Runnable {
 		private Socket csocket;
-		private PushbackInputStream istream;
-		private OutputStream ostream;
+		//private PushbackInputStream istream;
+		//private OutputStream ostream;
 		private String version;
 		private String method;
 		private String host;
@@ -163,6 +162,7 @@ public class SmartHttpServer {
 		
 		public ClientWorker(Socket csocket) {
 			super();
+		
 			this.csocket = csocket;
 			run();
 		}
@@ -171,12 +171,16 @@ public class SmartHttpServer {
 		public void run() {
 			try {
 				// obtain input stream from socket
-				istream = new PushbackInputStream(csocket.getInputStream());
+				PushbackInputStream istream = new PushbackInputStream(csocket.getInputStream());
 				// obtain output stream from socket
-				ostream = csocket.getOutputStream();
+				OutputStream ostream = csocket.getOutputStream();
 				// Then read complete request header from your client in separate method...
+				byte[] b = readRequest(istream);
+				if(b == null) {
+					return;
+				}
+				String requested = new String(b, StandardCharsets.US_ASCII);
 				
-				String requested = new String(readRequest(istream), StandardCharsets.US_ASCII);
 				
 				List<String> request = extractHeaders(requested);
 				
@@ -201,7 +205,7 @@ public class SmartHttpServer {
 					
 					if(!"GET".equals(method) || (!"HTTP/1.0".equals(version) &&
 							!"HTTP/1.1".equals(version))) {
-						sendError(this.ostream, 400, "Not ok method or version");
+						sendError(ostream, 400, "Not ok method or version");
 						return;
 					}
 					
@@ -250,15 +254,13 @@ public class SmartHttpServer {
 				rc.setStatusText("OK");
 				
 				if(!"png".equals(extension)) {
-					rc.write(Files.readString(Paths.get(requestedPath)));
-					ostream.flush();
-					csocket.close();
-					istream.close();
+					//rc.write(Files.readString(Paths.get(requestedPath)));
+					getText(ostream, Paths.get(requestedPath), mimeType);
 				} else {
 					vratiSliku(ostream, ImageIO.read(new File(requestedPath)));
 				}
 				
-				
+				ostream.flush();
 				
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -266,14 +268,33 @@ public class SmartHttpServer {
 			}
 		}
 		
+		private void getText(OutputStream cos, Path requestedFile, String mime) throws IOException {
+			long len = Files.size(requestedFile);
+			try(InputStream fis = new BufferedInputStream(Files.newInputStream(requestedFile))) {
+				
+				cos.write(
+						("HTTP/1.1 200 OK\r\n"+
+						"Server: simple java server\r\n"+
+						"Content-Type: "+ mime+ "\r\n"+
+						"Content-Length: "+ len+"\r\n"+
+						"Connection: close\r\n"+
+						"\r\n").getBytes(StandardCharsets.US_ASCII)
+					);
+					cos.flush();
+				
+					byte[] buf = new byte[1024];
+					while(true) {
+						int r = fis.read(buf);
+						if(r<1) break;
+						cos.write(buf, 0, r);
+					}
+					cos.flush();
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+		}
+		
 		private void vratiSliku(OutputStream cos, BufferedImage img) throws IOException {
-//			Graphics2D g2d = bim.createGraphics();
-//			g2d.setColor(Color.WHITE);
-//			g2d.fillRect(0, 0, 300, 200);
-//			g2d.setColor(Color.RED);
-//			g2d.fillOval(0, 0, 300, 200);
-//			g2d.dispose();
-//			
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
 			ImageIO.write(img, "png", bos);
 			byte[] podaci = bos.toByteArray();
@@ -288,7 +309,6 @@ public class SmartHttpServer {
 			);
 			
 			cos.write(podaci);
-			cos.flush();
 		}
 		
 		private String getExtension(String fileName) {
@@ -354,14 +374,14 @@ public class SmartHttpServer {
 		
 		private void sendError(OutputStream cos, int statusCode, String statusText) throws IOException {
 
-				cos.write(
+				/*cos.write(
 					("HTTP/1.1 " + statusCode + " " + statusText + "\r\n"+
 					"Server: simple java server\r\n"+
 					"Content-Type: text/plain;charset=UTF-8\r\n"+
 					"Content-Length: 0\r\n"+
 					"Connection: close\r\n"+
 					"\r\n").getBytes(StandardCharsets.US_ASCII)
-				);
+				);*/
 				cos.flush();
 		}
 

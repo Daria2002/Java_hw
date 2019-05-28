@@ -147,10 +147,10 @@ public class SmartHttpServer {
 		}
 	}
 	
-	private class ClientWorker implements Runnable {
+	private class ClientWorker implements Runnable, IDispatcher {
 		private Socket csocket;
-		//private PushbackInputStream istream;
-		//private OutputStream ostream;
+		private PushbackInputStream istream;
+		private OutputStream ostream;
 		private String version;
 		private String method;
 		private String host;
@@ -171,9 +171,9 @@ public class SmartHttpServer {
 		public void run() {
 			try {
 				// obtain input stream from socket
-				PushbackInputStream istream = new PushbackInputStream(csocket.getInputStream());
+				istream = new PushbackInputStream(csocket.getInputStream());
 				// obtain output stream from socket
-				OutputStream ostream = csocket.getOutputStream();
+				ostream = csocket.getOutputStream();
 				// Then read complete request header from your client in separate method...
 				byte[] b = readRequest(istream);
 				if(b == null) {
@@ -231,6 +231,12 @@ public class SmartHttpServer {
 					requestedPath = documentRoot.toAbsolutePath().resolve(requestedPath.substring(1)).toString();
 				}
 				
+				try {
+					internalDispatchRequest(requestedPath, true);
+				} catch (Exception e) {
+				}
+				
+				/*
 				String extension;
 				
 				if(Files.exists(Paths.get(requestedPath)) &&
@@ -261,7 +267,7 @@ public class SmartHttpServer {
 				}
 				
 				ostream.flush();
-				
+				*/
 			} catch (IOException e) {
 				e.printStackTrace();
 				throw new IllegalArgumentException("Can't get output stream");
@@ -416,6 +422,44 @@ public class SmartHttpServer {
 			}
 			return bos.toByteArray();
 		}
-		
+
+		@Override
+		public void dispatchRequest(String urlPath) throws Exception {
+			internalDispatchRequest(urlPath, false);
+		}
+
+		private void internalDispatchRequest(String requestedPath, boolean b)
+				throws Exception {
+			String extension;
+			
+			if(Files.exists(Paths.get(requestedPath)) &&
+					!Files.isDirectory(Paths.get(requestedPath)) &&
+					Files.isReadable(Paths.get(requestedPath))) {
+				extension = getExtension(requestedPath);
+			} else {
+				sendError(ostream, 404, "File not ok");
+				return;
+			}
+			
+			String mimeType = SmartHttpServer.this.mimeTypes.get(extension);
+			
+			if(mimeType == null) {
+				mimeType = "application/octet-stream";
+			}
+			
+			RequestContext rc = new RequestContext(ostream, params, permPrams, outputCookies);
+			rc.setMimeType(mimeType);
+			rc.setStatusCode(200);
+			rc.setStatusText("OK");
+			
+			if(!"png".equals(extension)) {
+				//rc.write(Files.readString(Paths.get(requestedPath)));
+				getText(ostream, Paths.get(requestedPath), mimeType);
+			} else {
+				vratiSliku(ostream, ImageIO.read(new File(requestedPath)));
+			}
+			
+			ostream.flush();
+		}
 	}	
 }

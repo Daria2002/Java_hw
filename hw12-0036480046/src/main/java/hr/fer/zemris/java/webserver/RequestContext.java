@@ -22,6 +22,9 @@ public class RequestContext {
 	public String mimeType = "text/html";
 	public Long contentLength = null;
 	
+	/** readonly **/
+	private IDispatcher dispatcher;
+	
 	private Map<String, String> parameters;
 	private Map<String, String> temporaryParameters = new HashMap<String, String>();
 	private Map<String, String> persistentParameters;
@@ -40,6 +43,20 @@ public class RequestContext {
 		this.outputCookies = outputCookies == null ? new ArrayList<RequestContext.RCCookie>() : outputCookies;
 	}
 	
+	public RequestContext(OutputStream outputStream, Map<String,String> parameters,
+			Map<String,String> persistentParameters, List<RCCookie> outputCookies, 
+			Map<String, String> temporaryParameters, IDispatcher dispatcher) {
+		
+		this(outputStream, parameters, persistentParameters, outputCookies);
+		
+		this.temporaryParameters = temporaryParameters;
+		this.dispatcher = dispatcher;
+	}
+	
+	public IDispatcher getDispatcher() {
+		return dispatcher;
+	}
+
 	/**
 	 * method that retrieves value from parameters map (or null if no association exists)
 	 * @param name key

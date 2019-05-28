@@ -33,6 +33,9 @@ import java.util.concurrent.Executors;
 
 import javax.imageio.ImageIO;
 
+import hr.fer.zemris.java.custom.scripting.exec.SmartScriptEngine;
+import hr.fer.zemris.java.custom.scripting.nodes.DocumentNode;
+import hr.fer.zemris.java.custom.scripting.parser.SmartScriptParser;
 import hr.fer.zemris.java.webserver.RequestContext.RCCookie;
 
 public class SmartHttpServer {
@@ -225,7 +228,19 @@ public class SmartHttpServer {
 						sendError(ostream, 403, "Response status forbidden");
 						return;
 					}
+					
 					parseParameters(paramString);
+					
+					if(getExtension(path) == "smscr") {
+						String documentBody = readFromDisk(path);
+
+						DocumentNode dn = new SmartScriptParser(documentBody).getDocumentNode();
+						RequestContext rc = new RequestContext(ostream, params,
+								permPrams, outputCookies, tempParams, ClientWorker.this);
+						
+						SmartScriptEngine sse = new SmartScriptEngine(dn, rc);
+						sse.execute();
+					}
 					
 				} else {
 					requestedPath = documentRoot.toAbsolutePath().resolve(requestedPath.substring(1)).toString();
@@ -236,38 +251,6 @@ public class SmartHttpServer {
 				} catch (Exception e) {
 				}
 				
-				/*
-				String extension;
-				
-				if(Files.exists(Paths.get(requestedPath)) &&
-						!Files.isDirectory(Paths.get(requestedPath)) &&
-						Files.isReadable(Paths.get(requestedPath))) {
-					extension = getExtension(requestedPath);
-				} else {
-					sendError(ostream, 404, "File not ok");
-					return;
-				}
-				
-				String mimeType = SmartHttpServer.this.mimeTypes.get(extension);
-				
-				if(mimeType == null) {
-					mimeType = "application/octet-stream";
-				}
-				
-				RequestContext rc = new RequestContext(ostream, params, permPrams, outputCookies);
-				rc.setMimeType(mimeType);
-				rc.setStatusCode(200);
-				rc.setStatusText("OK");
-				
-				if(!"png".equals(extension)) {
-					//rc.write(Files.readString(Paths.get(requestedPath)));
-					getText(ostream, Paths.get(requestedPath), mimeType);
-				} else {
-					vratiSliku(ostream, ImageIO.read(new File(requestedPath)));
-				}
-				
-				ostream.flush();
-				*/
 			} catch (IOException e) {
 				e.printStackTrace();
 				throw new IllegalArgumentException("Can't get output stream");
@@ -461,5 +444,16 @@ public class SmartHttpServer {
 			
 			ostream.flush();
 		}
-	}	
+	}
+	
+	private static String readFromDisk(String fileName) {
+		try {
+			String filePath = System.getProperty("user.dir") + 
+					"/src/main/java/hr/fer/zemris/java/custom/scripting/demo/"+fileName;
+			return new String(Files.readAllBytes(Paths.get(filePath)));
+		} catch (IOException e) {
+			System.out.println("Can't open file");
+			return null;
+		}
+	}
 }

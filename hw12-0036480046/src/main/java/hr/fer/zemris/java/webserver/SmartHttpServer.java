@@ -61,6 +61,14 @@ public class SmartHttpServer {
 			sessionTimeout = Integer.valueOf(prop.getProperty("session.timeout"));
 			documentRoot = Paths.get(prop.getProperty("server.documentRoot"));
 			
+			FileInputStream mime = new FileInputStream(
+					Paths.get(prop.getProperty("server.mimeConfig")).toString());
+			Properties mimeProp = new Properties();
+			mimeProp.load(mime);
+			for(Object el : mimeProp.keySet()) {
+				mimeTypes.put(el.toString(), mimeProp.getProperty(el.toString()));
+			}
+			
 		} catch (Exception e) {
 		}
 		
@@ -224,7 +232,7 @@ public class SmartHttpServer {
 					return;
 				}
 				
-				String mimeType = mimeTypes.get(extension);
+				String mimeType = SmartHttpServer.this.mimeTypes.get(extension);
 				
 				if(mimeType == null) {
 					mimeType = "application/octet-stream";

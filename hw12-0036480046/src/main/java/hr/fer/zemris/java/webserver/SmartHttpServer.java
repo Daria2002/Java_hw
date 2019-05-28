@@ -97,22 +97,32 @@ public class SmartHttpServer {
 			// }
 			
 			try {
-				serverSocket = new ServerSocket(SmartHttpServer.this.port);
 				
+				InetAddress addr = InetAddress.getByName(SmartHttpServer.this.address);
+
+				serverSocket = new ServerSocket(SmartHttpServer.this.port, 50, addr);
+				
+				
+				//serverSocket = new ServerSocket(SmartHttpServer.this.port);
+				/*
 				serverSocket.bind(new InetSocketAddress(
 						InetAddress.getByAddress(SmartHttpServer.this.address.getBytes()),
 						SmartHttpServer.this.port));
+						*/
 				
-				serverSocket.setSoTimeout(sessionTimeout);
+				serverSocket.setSoTimeout(SmartHttpServer.this.sessionTimeout);
 				
 				while(running) {
+					
 					Socket client = serverSocket.accept();
+					
 					ClientWorker cw = new ClientWorker(client);
 					threadPool.execute(cw);
 					//threadPool.submit(cw);
 				}
 				
 			} catch (IOException e) {
+				e.printStackTrace();
 				throw new IllegalArgumentException("Server socket can't open given port");
 			}
 		}

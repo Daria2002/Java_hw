@@ -241,6 +241,9 @@ public class SmartHttpServer {
 						domainName = checkName(request.get(i).substring(request.indexOf(":")+1)
 								.trim());
 					}
+					
+					String pathCheck = requestedPath.substring(0, requestedPath.indexOf("?"));
+					
 					requestedPath = documentRoot.toAbsolutePath().resolve(path).toString();
 					
 					if(!requestedPath.startsWith(documentRoot.toString())) {
@@ -250,7 +253,35 @@ public class SmartHttpServer {
 					
 					parseParameters(paramString);
 					
+
+					if(context == null) {
+						context = new RequestContext(ostream, params, permPrams, outputCookies);
+					}
+					
+					if(workersMap.containsKey(pathCheck)) {
+						try {
+							workersMap.get(pathCheck).processRequest(context);
+						} catch (Exception e) {
+						}
+						ostream.flush();
+						return;
+					}
+					
+					
 				} else {
+					if(context == null) {
+						context = new RequestContext(ostream, params, permPrams, outputCookies);
+					}
+					
+					if(workersMap.containsKey(requestedPath)) {
+						try {
+							workersMap.get(requestedPath).processRequest(context);
+						} catch (Exception e) {
+						}
+						ostream.flush();
+						return;
+					}
+					
 					requestedPath = documentRoot.toAbsolutePath().resolve(requestedPath.substring(1)).toString();
 				}
 				
@@ -460,10 +491,13 @@ public class SmartHttpServer {
 				mimeType = "application/octet-stream";
 			}
 			
-			RequestContext rc = new RequestContext(ostream, params, permPrams, outputCookies);
-			rc.setMimeType(mimeType);
-			rc.setStatusCode(200);
-			rc.setStatusText("OK");
+			if(context == null) {
+				context = new RequestContext(ostream, params, permPrams, outputCookies);
+			}
+			
+			context.setMimeType(mimeType);
+			context.setStatusCode(200);
+			context.setStatusText("OK");
 			
 			if(!"png".equals(extension)) {
 				//rc.write(Files.readString(Paths.get(requestedPath)));

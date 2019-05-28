@@ -49,6 +49,7 @@ public class SmartHttpServer {
 	private ServerThread serverThread;
 	private ExecutorService threadPool;
 	private Path documentRoot;
+	private Map<String,IWebWorker> workersMap = new HashMap<String, IWebWorker>();
 	
 	// /home/daria/eclipse-workspace/my-hw/hw12-0036480046/config/server.properties
 	public static void main(String[] args) {
@@ -77,6 +78,21 @@ public class SmartHttpServer {
 			mimeProp.load(mime);
 			for(Object el : mimeProp.keySet()) {
 				mimeTypes.put(el.toString(), mimeProp.getProperty(el.toString()));
+			}
+			
+			FileInputStream fisFqcn = new FileInputStream(
+					Paths.get(prop.getProperty("server.workers")).toString());
+			
+			Properties fqcnProp = new Properties();
+			fqcnProp.load(fisFqcn);
+			
+			for(Object el : fqcnProp.keySet()) {
+				Class<?> referenceToClass = 
+						this.getClass().getClassLoader().loadClass(
+								fqcnProp.getProperty(el.toString()));
+				Object newObject = referenceToClass.newInstance();
+				IWebWorker iww = (IWebWorker)newObject;
+				workersMap.put(el.toString(), iww);
 			}
 			
 		} catch (Exception e) {
@@ -148,6 +164,8 @@ public class SmartHttpServer {
 	}
 	
 	private class ClientWorker implements Runnable, IDispatcher {
+		private RequestContext context = null;
+		
 		private Socket csocket;
 		private PushbackInputStream istream;
 		private OutputStream ostream;

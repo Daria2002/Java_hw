@@ -125,14 +125,11 @@ public class SmartHttpServer {
 				
 				serverSocket.setSoTimeout(SmartHttpServer.this.sessionTimeout * 1000);
 
-				
-				
 				while(running) {
 					Socket client = serverSocket.accept();
 					ClientWorker cw = new ClientWorker(client);
 					threadPool.submit(cw);
 					
-				      
 				}
 				
 			} catch (IOException e) {
@@ -202,7 +199,7 @@ public class SmartHttpServer {
 				version = firstLineArray[2];
 				
 				if(requestedPath.contains("?")) {
-					String path = requestedPath.substring(0, requestedPath.indexOf("?"));
+					String path = requestedPath.substring(1, requestedPath.indexOf("?"));
 					
 					String paramString = requestedPath.substring(requestedPath.indexOf("?") + 1);
 					
@@ -231,19 +228,36 @@ public class SmartHttpServer {
 					
 					parseParameters(paramString);
 					
-					if(getExtension(path) == "smscr") {
+					if("smscr".equals(getExtension(path))) {
 						String documentBody = readFromDisk(path);
 
 						DocumentNode dn = new SmartScriptParser(documentBody).getDocumentNode();
 						RequestContext rc = new RequestContext(ostream, params,
-								permPrams, outputCookies, tempParams, ClientWorker.this);
+								permPrams, outputCookies, tempParams, this);
 						
 						SmartScriptEngine sse = new SmartScriptEngine(dn, rc);
 						sse.execute();
+						//ostream.flush();
+						
+						return;
 					}
 					
 				} else {
 					requestedPath = documentRoot.toAbsolutePath().resolve(requestedPath.substring(1)).toString();
+				
+					if("smscr".equals(getExtension(requestedPath))) {
+						String documentBody = readFromDisk(requestedPath);
+
+						DocumentNode dn = new SmartScriptParser(documentBody).getDocumentNode();
+						RequestContext rc = new RequestContext(ostream, params,
+								permPrams, outputCookies, tempParams, this);
+						
+						SmartScriptEngine sse = new SmartScriptEngine(dn, rc);
+						sse.execute();
+						//ostream.flush();
+						
+						return;
+					}
 				}
 				
 				try {
@@ -317,7 +331,7 @@ public class SmartHttpServer {
 			for(int i = 0; i < paramsArray.length; i++) {
 				String[] elements = paramsArray[i].split("=");
 				
-				params.put(elements[0], elements[1]);
+				this.params.put(elements[0], elements[1]);
 			}
 		}
 
@@ -446,10 +460,8 @@ public class SmartHttpServer {
 		}
 	}
 	
-	private static String readFromDisk(String fileName) {
+	private static String readFromDisk(String filePath) {
 		try {
-			String filePath = System.getProperty("user.dir") + 
-					"/src/main/java/hr/fer/zemris/java/custom/scripting/demo/"+fileName;
 			return new String(Files.readAllBytes(Paths.get(filePath)));
 		} catch (IOException e) {
 			System.out.println("Can't open file");

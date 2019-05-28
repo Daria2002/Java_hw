@@ -1,6 +1,8 @@
 package hr.fer.zemris.java.webserver;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -18,6 +20,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -35,6 +38,7 @@ public class SmartHttpServer {
 	private ExecutorService threadPool;
 	private Path documentRoot;
 	
+	// /home/daria/eclipse-workspace/my-hw/hw12-0036480046/config/server.properties
 	public static void main(String[] args) {
 		SmartHttpServer shs = new SmartHttpServer(args[0]);
 		shs.start();
@@ -42,6 +46,22 @@ public class SmartHttpServer {
 	
 	public SmartHttpServer(String configFileName) {
 	// ... do stuff here ...
+		Properties prop = new Properties();
+		FileInputStream fis;
+		
+		try {
+			fis = new FileInputStream(configFileName);
+			prop.load(fis);
+			address = prop.getProperty("server.address");
+			domainName = prop.getProperty("server.domainName");
+			port = Integer.valueOf(prop.getProperty("server.port"));
+			workerThreads = Integer.valueOf(prop.getProperty("server.workerThreads"));
+			sessionTimeout = Integer.valueOf(prop.getProperty("session.timeout"));
+			documentRoot = Paths.get(prop.getProperty("server.workers"));
+			
+		} catch (Exception e) {
+		}
+		
 	}
 	
 	protected synchronized void start() {
@@ -51,7 +71,6 @@ public class SmartHttpServer {
 		
 		threadPool = Executors.newFixedThreadPool(workerThreads);
 		serverThread = new ServerThread();
-		
 		serverThread.run();
 		// TODO:session cleaner
 	}
@@ -81,7 +100,8 @@ public class SmartHttpServer {
 				serverSocket = new ServerSocket(SmartHttpServer.this.port);
 				
 				serverSocket.bind(new InetSocketAddress(
-						InetAddress.getByAddress(address.getBytes()), port));
+						InetAddress.getByAddress(SmartHttpServer.this.address.getBytes()),
+						SmartHttpServer.this.port));
 				
 				serverSocket.setSoTimeout(sessionTimeout);
 				

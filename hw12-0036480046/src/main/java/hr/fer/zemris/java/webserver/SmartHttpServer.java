@@ -11,6 +11,8 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketAddress;
+import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -97,28 +99,24 @@ public class SmartHttpServer {
 			// }
 			
 			try {
+				serverSocket = new ServerSocket();
+				SocketAddress socketAddress = new InetSocketAddress(
+						InetAddress.getByName(SmartHttpServer.this.address), 
+						SmartHttpServer.this.port);
+				serverSocket.setReuseAddress(true);
+				serverSocket.bind(socketAddress);
 				
-				InetAddress addr = InetAddress.getByName(SmartHttpServer.this.address);
+				serverSocket.setSoTimeout(SmartHttpServer.this.sessionTimeout * 1000);
 
-				serverSocket = new ServerSocket(SmartHttpServer.this.port, 50, addr);
-				
-				
-				//serverSocket = new ServerSocket(SmartHttpServer.this.port);
-				/*
-				serverSocket.bind(new InetSocketAddress(
-						InetAddress.getByAddress(SmartHttpServer.this.address.getBytes()),
-						SmartHttpServer.this.port));
-						*/
-				
-				serverSocket.setSoTimeout(SmartHttpServer.this.sessionTimeout);
+				Socket client = serverSocket.accept();
 				
 				while(running) {
 					
-					Socket client = serverSocket.accept();
-					
 					ClientWorker cw = new ClientWorker(client);
-					threadPool.execute(cw);
-					//threadPool.submit(cw);
+					//threadPool.execute(cw);
+					threadPool.submit(cw);
+					
+				      
 				}
 				
 			} catch (IOException e) {
@@ -152,13 +150,14 @@ public class SmartHttpServer {
 		public ClientWorker(Socket csocket) {
 			super();
 			this.csocket = csocket;
+			run();
 		}
 			
 		@Override
 		public void run() {
 			try {
 				// obtain input stream from socket
-				istream = (PushbackInputStream) csocket.getInputStream();
+				istream = new PushbackInputStream(csocket.getInputStream());
 				// obtain output stream from socket
 				ostream = csocket.getOutputStream();
 				// Then read complete request header from your client in separate method...
@@ -180,11 +179,13 @@ public class SmartHttpServer {
 				this.method = firstLineArray[0];
 				String requestedPath = firstLineArray[1];
 				version = firstLineArray[2];
+				
 				String path = requestedPath.substring(0, requestedPath.indexOf("?"));
+				
 				String paramString = requestedPath.substring(requestedPath.indexOf("?") + 1);
 				
-				if(!"GET".equals(method) || !"HTTP/1.0".equals(version) ||
-						!"HTTP/1.1".equals(version)) {
+				if(!"GET".equals(method) || (!"HTTP/1.0".equals(version) &&
+						!"HTTP/1.1".equals(version))) {
 					sendError(this.ostream, 400, "Not ok method or version");
 					return;
 				}

@@ -35,8 +35,10 @@ import javax.imageio.ImageIO;
 
 import hr.fer.zemris.java.custom.scripting.exec.SmartScriptEngine;
 import hr.fer.zemris.java.custom.scripting.nodes.DocumentNode;
+import hr.fer.zemris.java.custom.scripting.nodes.EchoNode;
 import hr.fer.zemris.java.custom.scripting.parser.SmartScriptParser;
 import hr.fer.zemris.java.webserver.RequestContext.RCCookie;
+import hr.fer.zemris.java.webserver.workers.EchoParams;
 
 public class SmartHttpServer {
 
@@ -50,6 +52,7 @@ public class SmartHttpServer {
 	private ExecutorService threadPool;
 	private Path documentRoot;
 	private Map<String,IWebWorker> workersMap = new HashMap<String, IWebWorker>();
+	private Properties prop;
 	
 	// /home/daria/eclipse-workspace/my-hw/hw12-0036480046/config/server.properties
 	public static void main(String[] args) {
@@ -59,7 +62,7 @@ public class SmartHttpServer {
 	
 	public SmartHttpServer(String configFileName) {
 	// ... do stuff here ...
-		Properties prop = new Properties();
+		prop = new Properties();
 		FileInputStream fis;
 		
 		try {
@@ -90,6 +93,7 @@ public class SmartHttpServer {
 				Class<?> referenceToClass = 
 						this.getClass().getClassLoader().loadClass(
 								fqcnProp.getProperty(el.toString()));
+				
 				Object newObject = referenceToClass.newInstance();
 				IWebWorker iww = (IWebWorker)newObject;
 				workersMap.put(el.toString(), iww);
@@ -219,6 +223,45 @@ public class SmartHttpServer {
 				this.method = firstLineArray[0];
 				String requestedPath = firstLineArray[1];
 				version = firstLineArray[2];
+				
+				IWebWorker iww = null;
+				
+				if(requestedPath.startsWith("/ext/")) {
+					Class<?> referenceToClass;
+					Object newObject = null;
+					
+					FileInputStream fis = new FileInputStream(
+							Paths.get(prop.getProperty("server.workers")).toString());
+					
+					Properties pr = new Properties();
+					pr.load(fis);
+					
+					try {
+						
+						String name = requestedPath.contains("?") ? 
+								requestedPath.substring(4, requestedPath.indexOf("?")) :
+									requestedPath.substring(4);
+						
+						referenceToClass = this.getClass()
+								.getClassLoader().loadClass(pr.getProperty(name));
+						
+						newObject = referenceToClass.newInstance();
+					} catch (Exception e) {
+					}
+					
+					iww = (IWebWorker)newObject;
+				}
+				
+				if(iww != null) {
+					context = new RequestContext(ostream, params, permPrams, outputCookies);
+				
+					try {
+						iww.processRequest(context);
+					} catch (Exception e) {
+					}
+					ostream.flush();
+					return;
+				}
 				
 				if(requestedPath.contains("?")) {
 					String path = requestedPath.substring(1, requestedPath.indexOf("?"));

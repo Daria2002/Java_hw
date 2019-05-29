@@ -287,6 +287,10 @@ public class SmartHttpServer {
 					
 					String pathCheck = requestedPath.substring(0, requestedPath.indexOf("?"));
 					
+					if("calc".equals(path)) {
+						path = "private/pages/" + path;
+					}
+					
 					requestedPath = documentRoot.toAbsolutePath().resolve(path).toString();
 					
 					if(!requestedPath.startsWith(documentRoot.toString())) {
@@ -323,6 +327,10 @@ public class SmartHttpServer {
 						}
 						ostream.flush();
 						return;
+					}
+					
+					if("/calc".equals(requestedPath)) {
+						requestedPath = "/private/pages" + requestedPath;
 					}
 					
 					requestedPath = documentRoot.toAbsolutePath().resolve(requestedPath.substring(1)).toString();
@@ -514,9 +522,15 @@ public class SmartHttpServer {
 			internalDispatchRequest(urlPath, false);
 		}
 
-		private void internalDispatchRequest(String requestedPath, boolean b)
+		private void internalDispatchRequest(String requestedPath, boolean directCall)
 				throws Exception {
 			String extension;
+			
+			if(("/private".equals(requestedPath) || requestedPath.startsWith("/private/"))
+					&& directCall) {
+				sendError(ostream, 404, "File not ok");
+				return;
+			}
 			
 			if(Files.exists(Paths.get(requestedPath)) &&
 					!Files.isDirectory(Paths.get(requestedPath)) &&

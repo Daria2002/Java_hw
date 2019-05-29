@@ -60,12 +60,10 @@ public class SumWorker implements IWebWorker {
 			String imgsrc = System.getProperty("user.dir") + "/webroot/images/" +
 					context.getTemporaryParameter("imgName");
 			
-			System.out.println(imgsrc);
 			
-			
-			
-			//context.write(String.format("<img src=\"%s\" width=\"400\" height=\"400\"></img>", imgsrc));
-			
+			//context.write(String.format("<img src=\"%s\" width=\"400\" height=\"400\"", imgsrc));
+			//  <img src="http://localhost/home/daria/eclipse-workspace/my-hw/hw12-0036480046/webroot/images/beach.jpg"/>
+
 			/*
 			{$= "image/jpg" @setMimeType $}
 		    <img src="file:///home/daria/eclipse-workspace/my-hw/hw12-0036480046/webroot/images/beach.jpg"/>

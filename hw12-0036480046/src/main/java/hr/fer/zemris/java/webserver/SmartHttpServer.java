@@ -532,7 +532,7 @@ public class SmartHttpServer {
 				throws Exception {
 			String extension;
 			
-			if(("/private".equals(requestedPath) || requestedPath.startsWith("/private/"))
+			if(("private".equals(requestedPath) || requestedPath.startsWith("private/"))
 					&& directCall) {
 				sendError(ostream, 404, "File not ok");
 				return;

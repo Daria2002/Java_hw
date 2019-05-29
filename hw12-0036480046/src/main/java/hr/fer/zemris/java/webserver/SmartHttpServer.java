@@ -293,6 +293,7 @@ public class SmartHttpServer {
 						context = new RequestContext(ostream, params, permPrams, outputCookies, tempParams, this);
 					}
 					
+					// for calc...
 					if(workersMap.containsKey(pathCheck)) {
 						try {
 							workersMap.get(pathCheck).processRequest(context);
@@ -302,23 +303,16 @@ public class SmartHttpServer {
 						return;
 					}
 					
-					/*
-					if("calc".equals(path)) {
-						path = "private/pages/" + path + ".smscr";
-					}
-					*/
 					requestedPath = documentRoot.toAbsolutePath().resolve(path).toString();
 					
 					if(!requestedPath.startsWith(documentRoot.toString())) {
 						sendError(ostream, 403, "Response status forbidden");
 						return;
 					}
+					
 					if(checkSmscr(requestedPath)) {
 						return;
 					}
-					
-					
-					
 					
 				} else {
 					if(context == null) {
@@ -333,11 +327,6 @@ public class SmartHttpServer {
 						ostream.flush();
 						return;
 					}
-					
-					if(requestedPath.startsWith("/calc")) {
-						requestedPath = "/private/pages" + requestedPath;
-					}
-					
 					requestedPath = documentRoot.toAbsolutePath().resolve(requestedPath.substring(1)).toString();
 				}
 				
@@ -359,7 +348,6 @@ public class SmartHttpServer {
 		private boolean checkSmscr(String requestedPath) {
 			if("smscr".equals(getExtension(requestedPath))) {
 				String documentBody = readFromDisk(requestedPath);
-
 				DocumentNode dn = new SmartScriptParser(documentBody).getDocumentNode();
 				
 				RequestContext rc = new RequestContext(ostream, params,
@@ -573,11 +561,11 @@ public class SmartHttpServer {
 			}
 			
 			if(context == null) {
-				context = new RequestContext(ostream, params, permPrams, outputCookies);
+				context = new RequestContext(ostream, params, permPrams, outputCookies, tempParams, this);
 			}
 			
 			if(!context.headerGenerated) {
-				context.setMimeType(mimeType);
+				//context.setMimeType(mimeType);
 				context.setStatusCode(200);
 				context.setStatusText("OK");
 			}

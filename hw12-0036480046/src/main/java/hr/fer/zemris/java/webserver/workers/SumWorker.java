@@ -46,9 +46,7 @@ public class SumWorker implements IWebWorker {
 		context.setTemporaryParameter("imgName", result % 2 == 0 ? 
 				"beach.jpg" : "mountain.png");
 		
-		
 		try {
-			//context.setMimeType("text/html");
 			context.write("Zbrajanje\n");
 
 			context.getDispatcher().dispatchRequest("private/pages/calc.smscr");
@@ -60,40 +58,9 @@ public class SumWorker implements IWebWorker {
 			String imgsrc = "images/" + context.getTemporaryParameter("imgName");
 			context.write(String.format("<img src=\"../../" + imgsrc + "\"/>"));
 			
-			//context.write(String.format("<img src=\"%s\" width=\"400\" height=\"400\"", imgsrc));
-			//  <img src="http://localhost/home/daria/eclipse-workspace/my-hw/hw12-0036480046/webroot/images/beach.jpg"/>
-
-			/*
-			{$= "image/jpg" @setMimeType $}
-		    <img src="file:///home/daria/eclipse-workspace/my-hw/hw12-0036480046/webroot/images/beach.jpg"/>
-			*/
-			//context.write(String.format("<img src=\"%s\" width=\"400\" height=\"400\"></img>", imgsrc));
-		
-			//getImage(context, img);
-			
 		} catch(Exception ex) {
 		// Log exception to servers log...
 			ex.printStackTrace();
 		}
-	}
-
-	
-	private void getImage(RequestContext context, BufferedImage img) throws IOException {
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		ImageIO.write(img, result % 2 == 0 ? "jpg" : "png", bos);
-		byte[] podaci = bos.toByteArray();
-		
-		//context.setMimeType(result % 2 == 0 ? "image/jpg" : "image/png");
-		
-//		context.write(
-//				("HTTP/1.1 200 OK\r\n"+
-//				"Server: simple java server\r\n"+
-//				"Content-Type: " + (result % 2 == 0 ? "image/jpg" : "image/png") + "\r\n"+
-//				"Content-Length: "+ podaci.length+"\r\n"+
-//				"Connection: close\r\n"+
-//				"\r\n").getBytes(StandardCharsets.US_ASCII)
-//		);
-//		
-		context.write(podaci);
 	}
 }

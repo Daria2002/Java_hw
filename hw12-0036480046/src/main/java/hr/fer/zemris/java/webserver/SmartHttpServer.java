@@ -252,7 +252,7 @@ public class SmartHttpServer {
 					iww = (IWebWorker)newObject;
 					
 					if(iww != null) {
-						context = new RequestContext(ostream, params, permPrams, outputCookies);
+						context = new RequestContext(ostream, params, permPrams, outputCookies, tempParams, this);
 					
 						try {
 							iww.processRequest(context);
@@ -285,24 +285,12 @@ public class SmartHttpServer {
 								.trim());
 					}
 					
-					String pathCheck = requestedPath.substring(0, requestedPath.indexOf("?"));
-					
-					if("calc".equals(path)) {
-						path = "private/pages/" + path;
-					}
-					
-					requestedPath = documentRoot.toAbsolutePath().resolve(path).toString();
-					
-					if(!requestedPath.startsWith(documentRoot.toString())) {
-						sendError(ostream, 403, "Response status forbidden");
-						return;
-					}
+					String pathCheck = requestedPath.split("\\?")[0];
 					
 					parseParameters(paramString);
 					
-
 					if(context == null) {
-						context = new RequestContext(ostream, params, permPrams, outputCookies);
+						context = new RequestContext(ostream, params, permPrams, outputCookies, tempParams, this);
 					}
 					
 					if(workersMap.containsKey(pathCheck)) {
@@ -314,10 +302,33 @@ public class SmartHttpServer {
 						return;
 					}
 					
+					/*
+					if("calc".equals(path)) {
+						path = "private/pages/" + path + ".smscr";
+					}
+					*/
+					requestedPath = documentRoot.toAbsolutePath().resolve(path).toString();
+					
+					if(!requestedPath.startsWith(documentRoot.toString())) {
+						sendError(ostream, 403, "Response status forbidden");
+						return;
+					}
+					
+					
+					
+
+					
+					
+					if(checkSmscr(requestedPath)) {
+						return;
+					}
+					
+					
+					
 					
 				} else {
 					if(context == null) {
-						context = new RequestContext(ostream, params, permPrams, outputCookies);
+						context = new RequestContext(ostream, params, permPrams, outputCookies, tempParams, this);
 					}
 					
 					if(workersMap.containsKey(requestedPath)) {
@@ -329,32 +340,14 @@ public class SmartHttpServer {
 						return;
 					}
 					
-					if("/calc".equals(requestedPath)) {
+					if(requestedPath.startsWith("/calc")) {
 						requestedPath = "/private/pages" + requestedPath;
 					}
 					
 					requestedPath = documentRoot.toAbsolutePath().resolve(requestedPath.substring(1)).toString();
 				}
 				
-				if("smscr".equals(getExtension(requestedPath))) {
-					String documentBody = readFromDisk(requestedPath);
-
-					DocumentNode dn = new SmartScriptParser(documentBody).getDocumentNode();
-					
-					RequestContext rc = new RequestContext(ostream, params,
-							permPrams, outputCookies, tempParams, this);
-					
-					rc.setMimeType("text/html");
-					rc.setStatusText("OK");
-					rc.setStatusCode(200);
-					
-					SmartScriptEngine sse = new SmartScriptEngine(dn, rc);
-					sse.execute();
-					
-					ostream.flush();
-					csocket.close();
-					
-					//istream.close();
+				if(checkSmscr(requestedPath)) {
 					return;
 				}
 				
@@ -367,6 +360,34 @@ public class SmartHttpServer {
 				e.printStackTrace();
 				throw new IllegalArgumentException("Can't get output stream");
 			}
+		}
+		
+		private boolean checkSmscr(String requestedPath) {
+			if("smscr".equals(getExtension(requestedPath))) {
+				String documentBody = readFromDisk(requestedPath);
+
+				DocumentNode dn = new SmartScriptParser(documentBody).getDocumentNode();
+				
+				RequestContext rc = new RequestContext(ostream, params,
+						permPrams, outputCookies, tempParams, this);
+				
+				//rc.setMimeType("text/html");
+				rc.setStatusText("OK");
+				rc.setStatusCode(200);
+				
+				SmartScriptEngine sse = new SmartScriptEngine(dn, rc);
+				sse.execute();
+				
+				try {
+					ostream.flush();
+					csocket.close();
+				} catch (IOException e) {
+				}
+				
+				//istream.close();
+				return true;
+			}
+			return false;
 		}
 		
 		private void getText(OutputStream cos, Path requestedFile, String mime) throws IOException {
@@ -522,6 +543,8 @@ public class SmartHttpServer {
 			internalDispatchRequest(urlPath, false);
 		}
 
+		// TODO: promjeni ime iz calc u calc.smscr
+		
 		private void internalDispatchRequest(String requestedPath, boolean directCall)
 				throws Exception {
 			String extension;
@@ -529,6 +552,12 @@ public class SmartHttpServer {
 			if(("/private".equals(requestedPath) || requestedPath.startsWith("/private/"))
 					&& directCall) {
 				sendError(ostream, 404, "File not ok");
+				return;
+			}
+			
+			requestedPath = documentRoot.toAbsolutePath().resolve(requestedPath.substring(1)).toString();
+			
+			if(checkSmscr(requestedPath)) {
 				return;
 			}
 			
@@ -552,9 +581,12 @@ public class SmartHttpServer {
 				context = new RequestContext(ostream, params, permPrams, outputCookies);
 			}
 			
-			context.setMimeType(mimeType);
-			context.setStatusCode(200);
-			context.setStatusText("OK");
+			if(!context.headerGenerated) {
+				context.setMimeType(mimeType);
+				context.setStatusCode(200);
+				context.setStatusText("OK");
+			}
+			
 			
 			if(!"png".equals(extension)) {
 				//rc.write(Files.readString(Paths.get(requestedPath)));

@@ -14,6 +14,7 @@
     <td>a+b</td>
     <td>{$= "zbroj" "3" @tparamGet $}</td>
   </tr>
+  <img src="/home/daria/eclipse-workspace/my-hw/hw12-0036480046/webroot/images/beach.jpg"/>
 </table>
 </body>
 </html>

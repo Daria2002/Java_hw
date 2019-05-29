@@ -51,7 +51,7 @@ public class SumWorker implements IWebWorker {
 			//context.setMimeType("text/html");
 			context.write("Zbrajanje\n");
 
-			context.getDispatcher().dispatchRequest("/private/pages/calc.smscr");
+			context.getDispatcher().dispatchRequest("private/pages/calc.smscr");
 
 			BufferedImage img = ImageIO.read(
 					new File(System.getProperty("user.dir") + "/webroot/images/" +
@@ -64,11 +64,11 @@ public class SumWorker implements IWebWorker {
 			
 			
 			
-			context.write(String.format("<img src=\"%s\" width=\"400\" height=\"400\"></img>", imgsrc));
+			//context.write(String.format("<img src=\"%s\" width=\"400\" height=\"400\"></img>", imgsrc));
 			
 			/*
 			{$= "image/jpg" @setMimeType $}
-		    <img src="/home/daria/eclipse-workspace/my-hw/hw12-0036480046/webroot/images/beach.jpg"/>
+		    <img src="file:///home/daria/eclipse-workspace/my-hw/hw12-0036480046/webroot/images/beach.jpg"/>
 			*/
 			//context.write(String.format("<img src=\"%s\" width=\"400\" height=\"400\"></img>", imgsrc));
 		

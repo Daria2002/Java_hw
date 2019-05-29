@@ -362,7 +362,7 @@ public class SmartHttpServer {
 				
 				try {
 					ostream.flush();
-					csocket.close();
+					//csocket.close();
 				} catch (IOException e) {
 				}
 				
@@ -538,7 +538,9 @@ public class SmartHttpServer {
 				return;
 			}
 			
-			requestedPath = documentRoot.toAbsolutePath().resolve(requestedPath.substring(1)).toString();
+			if(!Paths.get(requestedPath).isAbsolute()) {
+				requestedPath = documentRoot.toAbsolutePath().resolve(requestedPath).toString();
+			}
 			
 			if(checkSmscr(requestedPath)) {
 				return;

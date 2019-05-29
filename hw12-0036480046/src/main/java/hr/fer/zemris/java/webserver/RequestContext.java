@@ -155,9 +155,11 @@ public class RequestContext {
 		if(!headerGenerated) {
 			createHeader();
 		}
-
+		
 		charset = Charset.forName(encoding);
+		
 		outputStream.write(data);
+		
 		return this;
 	}
 	

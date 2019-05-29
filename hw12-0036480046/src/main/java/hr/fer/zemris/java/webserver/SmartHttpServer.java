@@ -313,12 +313,6 @@ public class SmartHttpServer {
 						sendError(ostream, 403, "Response status forbidden");
 						return;
 					}
-					
-					
-					
-
-					
-					
 					if(checkSmscr(requestedPath)) {
 						return;
 					}
@@ -541,6 +535,7 @@ public class SmartHttpServer {
 		@Override
 		public void dispatchRequest(String urlPath) throws Exception {
 			internalDispatchRequest(urlPath, false);
+			
 		}
 
 		// TODO: promjeni ime iz calc u calc.smscr
@@ -594,7 +589,6 @@ public class SmartHttpServer {
 			} else {
 				getImage(ostream, ImageIO.read(new File(requestedPath)));
 			}
-			
 			ostream.flush();
 		}
 	}

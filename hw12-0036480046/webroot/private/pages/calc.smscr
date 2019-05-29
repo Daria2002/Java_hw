@@ -1,7 +1,6 @@
 {$= "text/html" @setMimeType $}
 <html>
 <body>
-<p>Simple table with header</p>
 <table border = "1">
   <tr>
     <td>a</td>

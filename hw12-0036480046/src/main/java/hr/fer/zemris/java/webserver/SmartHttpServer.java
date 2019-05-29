@@ -224,9 +224,8 @@ public class SmartHttpServer {
 				String requestedPath = firstLineArray[1];
 				version = firstLineArray[2];
 				
-				IWebWorker iww = null;
-				
 				if(requestedPath.startsWith("/ext/")) {
+					IWebWorker iww = null;
 					Class<?> referenceToClass;
 					Object newObject = null;
 					
@@ -239,28 +238,29 @@ public class SmartHttpServer {
 					try {
 						
 						String name = requestedPath.contains("?") ? 
-								requestedPath.substring(4, requestedPath.indexOf("?")) :
-									requestedPath.substring(4);
+								requestedPath.substring(5, requestedPath.indexOf("?")) :
+									requestedPath.substring(5);
 						
 						referenceToClass = this.getClass()
-								.getClassLoader().loadClass(pr.getProperty(name));
+								.getClassLoader().loadClass("hr.fer.zemris.java.webserver.workers." 
+										+ name);
 						
 						newObject = referenceToClass.newInstance();
 					} catch (Exception e) {
 					}
 					
 					iww = (IWebWorker)newObject;
-				}
-				
-				if(iww != null) {
-					context = new RequestContext(ostream, params, permPrams, outputCookies);
-				
-					try {
-						iww.processRequest(context);
-					} catch (Exception e) {
+					
+					if(iww != null) {
+						context = new RequestContext(ostream, params, permPrams, outputCookies);
+					
+						try {
+							iww.processRequest(context);
+						} catch (Exception e) {
+						}
+						ostream.flush();
+						return;
 					}
-					ostream.flush();
-					return;
 				}
 				
 				if(requestedPath.contains("?")) {

@@ -1,6 +1,7 @@
 {$= "text/html" @setMimeType $}
 <html>
 <body>
+<h1>Zbrajanje</h1>
 <table border = "1">
   <tr>
     <td>a</td>
@@ -15,5 +16,6 @@
     <td>{$= "zbroj" "3" @tparamGet $}</td>
   </tr>
 </table>
+  <img src="../../images/{$="imgName" "1" @tparamGet $}"/>
 </body>
 </html>

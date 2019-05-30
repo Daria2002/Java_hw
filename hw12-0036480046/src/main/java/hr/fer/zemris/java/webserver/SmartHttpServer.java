@@ -298,7 +298,7 @@ public class SmartHttpServer {
 					
 					String pathCheck = requestedPath.split("\\?")[0];
 					
-					// checkSession(request);
+					checkSession(request);
 					
 					parseParameters(paramString);
 					
@@ -397,10 +397,9 @@ public class SmartHttpServer {
 					outputCookies.add(new RCCookie("sid", sidCandidate, null,
 							host, "/"));
 					
+					ClientWorker.this.permPrams = SmartHttpServer.this.sessions.get(sidCandidate).map;
 				}
 			}
-			
-			ClientWorker.this.permPrams = SmartHttpServer.this.sessions.get(sidCandidate).map;
 		}
 
 		private String createNewUniquesid() {
@@ -594,8 +593,6 @@ public class SmartHttpServer {
 			internalDispatchRequest(urlPath, false);
 			
 		}
-
-		// TODO: promjeni ime iz calc u calc.smscr
 		
 		private void internalDispatchRequest(String requestedPath, boolean directCall)
 				throws Exception {

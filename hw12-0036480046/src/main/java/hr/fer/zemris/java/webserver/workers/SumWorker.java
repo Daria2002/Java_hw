@@ -47,8 +47,6 @@ public class SumWorker implements IWebWorker {
 				"beach.jpg" : "mountain.png");
 		
 		try {
-			context.write("Zbrajanje\n");
-
 			context.getDispatcher().dispatchRequest("private/pages/calc.smscr");
 
 			BufferedImage img = ImageIO.read(
@@ -56,7 +54,7 @@ public class SumWorker implements IWebWorker {
 							context.getTemporaryParameter("imgName")));
 			
 			String imgsrc = "images/" + context.getTemporaryParameter("imgName");
-			context.write(String.format("<img src=\"../../" + imgsrc + "\"/>"));
+			//context.write(String.format("<img src=\"../../" + imgsrc + "\"/>"));
 			
 		} catch(Exception ex) {
 		// Log exception to servers log...

@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import javax.imageio.ImageIO;
 
@@ -27,8 +28,19 @@ public class CircleWorker implements IWebWorker {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		try {
 			ImageIO.write(bim, "png", bos);
-			context.setMimeType("image/png");
+			
+			context.write(
+					("HTTP/1.1 200 OK\r\n"+
+					"Server: simple java server\r\n"+
+					"Content-Type: image/png\r\n"+
+					"Content-Length: "+ bos.toByteArray().length+"\r\n"+
+					"Connection: close\r\n"+
+					"\r\n").getBytes(StandardCharsets.US_ASCII)
+			);
 			context.write(bos.toByteArray());
+			/*
+			context.setMimeType("image/png");
+			context.write(bos.toByteArray());*/
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

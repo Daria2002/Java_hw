@@ -15,6 +15,7 @@ public class TextNode extends Node {
 		this.text = text;
 	}
 	
+	/** text **/
 	private String text;
 
 	/**

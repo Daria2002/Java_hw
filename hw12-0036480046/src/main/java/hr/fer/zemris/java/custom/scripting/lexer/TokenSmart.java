@@ -8,7 +8,9 @@ package hr.fer.zemris.java.custom.scripting.lexer;
  *
  */
 public class TokenSmart {
+	/** value **/
 	private Object value;
+	/** token type **/
 	private TokenSmartType type;
 	
 	/**

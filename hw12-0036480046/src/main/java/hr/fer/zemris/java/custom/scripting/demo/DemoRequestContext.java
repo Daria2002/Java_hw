@@ -8,14 +8,30 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * Demo program for testing request context.
+ * @author Daria Matković
+ *
+ */
 public class DemoRequestContext {
 	
+	/**
+	 * This method is executed when program is run
+	 * @param args takes no arguments
+	 * @throws IOException throws IOException
+	 */
 	public static void main(String[] args) throws IOException {
 		demo1("primjer1.txt", "ISO-8859-2");
 		demo1("primjer2.txt", "UTF-8");
 		demo2("primjer3.txt", "UTF-8");
 	}
 	
+	/**
+	 * This method test given request demo for given file
+	 * @param filePath data file
+	 * @param encoding encoding
+	 * @throws IOException IOException
+	 */
 	private static void demo1(String filePath, String encoding) throws IOException {
 		OutputStream os = Files.newOutputStream(Paths.get(filePath));
 		RequestContext rc = new RequestContext(os, new HashMap<String, String>(),
@@ -29,6 +45,12 @@ public class DemoRequestContext {
 		os.close();
 	}
 	
+	/**
+	 * This method test given request demo for given file
+	 * @param filePath data file
+	 * @param encoding encoding
+	 * @throws IOException IOException
+	 */
 	private static void demo2(String filePath, String encoding) throws IOException {
 		OutputStream os = Files.newOutputStream(Paths.get(filePath));
 		RequestContext rc = new RequestContext(os, new HashMap<String, String>(),

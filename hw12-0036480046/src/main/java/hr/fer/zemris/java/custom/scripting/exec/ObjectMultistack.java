@@ -6,7 +6,7 @@ import java.util.Objects;
 
 /**
  * ObjectMultistack represents implementation similar to Map, but a special kind of Map.
- * While Map allows to store for each key only a single value, ObjectMultistack allow to
+ * While Map allows to store for each key only a single value, ObjectMultistack allows to
  * store multiple values for same key and it provide a stack-like abstraction. Keys for
  * ObjectMultistack are instances of the class String. Values associated with those keys are 
  * instances of class ValueWrapper.

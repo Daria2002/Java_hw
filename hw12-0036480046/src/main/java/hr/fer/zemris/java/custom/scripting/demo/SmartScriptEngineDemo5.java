@@ -13,8 +13,17 @@ import hr.fer.zemris.java.custom.scripting.parser.SmartScriptParser;
 import hr.fer.zemris.java.webserver.RequestContext;
 import hr.fer.zemris.java.webserver.RequestContext.RCCookie;
 
+/**
+ * This class is demo program for smart script engine
+ * @author Daria Matković
+ *
+ */
 public class SmartScriptEngineDemo5 {
 	
+	/**
+	 * This method is executed when program is run
+	 * @param args takes no args
+	 */
 	public static void main(String[] args) {
 		String documentBody = readFromDisk("fibonaccih.smscr");
 		Map<String,String> parameters = new HashMap<String, String>();
@@ -27,6 +36,11 @@ public class SmartScriptEngineDemo5 {
 		).execute();
 	}
 	
+	/**
+	 * This method read file data to string
+	 * @param fileName file to read
+	 * @return string with file contents
+	 */
 	private static String readFromDisk(String fileName) {
 		try {
 			String filePath = System.getProperty("user.dir") + 
@@ -37,5 +51,4 @@ public class SmartScriptEngineDemo5 {
 			return null;
 		}
 	}
-	
 }

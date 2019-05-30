@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import javax.imageio.ImageIO;
@@ -369,6 +370,7 @@ public class SmartHttpServer {
 		
 		private synchronized void checkSession(List<String> request) {
 			String sidCandidate = null;
+			boolean set = false;
 			
 			for(String line : request) {
 				if(!line.startsWith("Cookie")) {
@@ -391,34 +393,45 @@ public class SmartHttpServer {
 							// sid is not found
 							if(sme.validUtil < System.currentTimeMillis()) {
 								SmartHttpServer.this.sessions.remove(sidCandidate);
+							} else {
+								set = true;
+								this.permPrams = sme.map;
+								continue;
 							}
+							
 						}
 					} 
-					
+					//sidCandidate = createNewUniquesid();
 					SessionMapEntry newSme = new SessionMapEntry();
 					newSme.validUtil = System.currentTimeMillis() + sessionTimeout * 1000;
 					newSme.host = this.host;
+					newSme.map = new ConcurrentHashMap<String, String>();
 					
 					SmartHttpServer.this.sessions.put(sidCandidate, newSme);
 					
 					outputCookies.add(new RCCookie("SID", sidCandidate, null,
 							host, "/"));
-					ClientWorker.this.permPrams = SmartHttpServer.this.sessions.get(sidCandidate).map;
-					//ClientWorker.this.permPrams = this.context.getPersistentParameters();
+					this.permPrams = newSme.map;
+					set = true;
 				}
 				return;
 			}
-			// TODO:
-			sidCandidate = createNewUniquesid();
 			
-			SessionMapEntry newSme = new SessionMapEntry();
-			newSme.validUtil = System.currentTimeMillis() + sessionTimeout * 1000;
-			newSme.sid = sidCandidate;
+			if(!set) {
+				sidCandidate = createNewUniquesid();
+				
+				SessionMapEntry newSme = new SessionMapEntry();
+				newSme.validUtil = System.currentTimeMillis() + sessionTimeout * 1000;
+				newSme.sid = sidCandidate;
+				newSme.map = new ConcurrentHashMap<String, String>();
+				
+				SmartHttpServer.this.sessions.put(sidCandidate, newSme);
+				
+				outputCookies.add(new RCCookie("SID", sidCandidate, null,
+						host, "/"));
+				this.permPrams = newSme.map;
+			}
 			
-			SmartHttpServer.this.sessions.put(sidCandidate, newSme);
-			
-			outputCookies.add(new RCCookie("SID", sidCandidate, null,
-					host, "/"));
 		}
 
 		private String createNewUniquesid() {

@@ -156,9 +156,7 @@ public class LinkedListIndexedCollection implements List {
 					+ " from 0 to size-1.");
 		}
 		
-		ListNode node = getNode(index);
-		
-		return node.value;
+		return getNode(index).value;
 	}
 	
 	/**
@@ -175,6 +173,7 @@ public class LinkedListIndexedCollection implements List {
 			for(int i = 0; i < index; i++) {
 				node = node.next;
 			}
+			
 		} else {
 			node = this.last;
 			for(int i = size-1; i > index; i--) {
@@ -217,20 +216,15 @@ public class LinkedListIndexedCollection implements List {
 		if(position < 0 || position > size) {
 			throw new IndexOutOfBoundsException("Position is out of range.");
 		}
-		// null value can't be inserted
-		if(value == null) {
-			throw new NullPointerException();
-		}
 		
-		Objects.requireNonNull(value, "Null reference can't be inserted in"
-				+ " linked list indeced collection.");
+		Objects.requireNonNull(value, "Can't insert null in linked list indeced collection.");
 		
 		ListNode newNode = new ListNode(null, null, value);
 		// if list is empty
 		if(this.size == 0) {
 			this.first = newNode;
 			this.last = newNode;
-			this.size += 1;
+			this.size++;
 			return;
 		}
 		
@@ -257,7 +251,7 @@ public class LinkedListIndexedCollection implements List {
 			helpNode.previous = newNode;
 		}
 		modificationCount++;
-		this.size += 1;
+		this.size++;
 	}
 	
 	/**
@@ -274,10 +268,12 @@ public class LinkedListIndexedCollection implements List {
 		
 		ListNode node = new ListNode(this.first.previous, this.first.next,
 				this.first.value);
+		
 		for(int i = 0; i < this.size; i++) {
 			if(node.value.equals(value)) {
 				return i;
 			}
+			
 			node = node.next;
 		}
 		
@@ -297,7 +293,7 @@ public class LinkedListIndexedCollection implements List {
 		removeObject(currentNode);
 		
 		modificationCount++;
-		this.size -= 1;
+		this.size--;
 	}
 	
 	@Override
@@ -318,7 +314,7 @@ public class LinkedListIndexedCollection implements List {
 		}
 		
 		removeObject(currentNode);
-		size -= 1;
+		size--;
 		modificationCount++;
 		return true;
 	}

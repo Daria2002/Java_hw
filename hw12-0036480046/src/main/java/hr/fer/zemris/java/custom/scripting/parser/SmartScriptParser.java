@@ -22,7 +22,7 @@ import hr.fer.zemris.java.custom.scripting.nodes.Node;
 import hr.fer.zemris.java.custom.scripting.nodes.TextNode;
 
 /**
- * Represents smart parser
+ * Represents smart parser for given script. There are
  * @author Daria Matković
  *
  */
@@ -33,9 +33,14 @@ public class SmartScriptParser {
 	private DocumentNode documentNode;
 	/** Stack for nodes, so nesting is possible **/
 	private ObjectStack stack;
-	
+	/** lexer **/
 	LexerSmart lexer;
 	
+	/**
+	 * Parser+s mode
+	 * @author Daria Matković
+	 *
+	 */
 	enum ParserMode {
 		FOR_LOOP_TAG,
 		ECHO_TAG, 
@@ -43,6 +48,9 @@ public class SmartScriptParser {
 		TEXT
 	}
 	
+	/**
+	 * This method makes document node for given document body
+	 */
 	private void buildDocumentModel() {
 		
 		lexer = new LexerSmart(documentBody);
@@ -132,6 +140,9 @@ public class SmartScriptParser {
 		
 	}
 
+	/**
+	 * Formats echo node
+	 */
 	private void echoTag() {
 		List<Element> elementList = new ArrayList<Element>();
 		
@@ -174,6 +185,11 @@ public class SmartScriptParser {
 		return tokenValue;
 	}
 
+	/**
+	 * Checks if given value is operator
+	 * @param str value to check
+	 * @return true if value is operator, otherwise false
+	 */
 	private boolean isOperator(String str) {
 		if(str.equals("+") || str.equals("-") || str.equals("*") || str.equals("/")
 				|| str.equals("^")) {
@@ -183,6 +199,11 @@ public class SmartScriptParser {
 		return false;
 	}
 	
+	/**
+	 * Check if given string is number
+	 * @param str value to check
+	 * @return true if given value is number, otherwise false
+	 */
 	private boolean isNumeric(String str) { 
 		try {  
 			Double.parseDouble(str);  
@@ -193,6 +214,10 @@ public class SmartScriptParser {
 		}  
 	}
 	
+	/**
+	 * This method format for loop node
+	 * @return returns true if for loop node has four elements and false if it has three elements
+	 */
 	private boolean forTag() {
 		if(isNumeric(lexer.nextToken().getValue().toString())) {
 			throw new SmartScriptParserException("Variable name can't be number");
@@ -218,25 +243,33 @@ public class SmartScriptParser {
 		return fourArgs;
 	}
 
+	/**
+	 *	Removes top value from stack, and adds that value like child to next top value
+	 */
 	private void endTag() {
 		Node child = (Node)stack.pop();
 		Node parent = (Node)stack.peek();
 		parent.addChildNode(child);
 	}
 
+	/**
+	 * Sets parser mode depending on given value
+	 * @param value value
+	 * @return parser mode
+	 */
 	private ParserMode setParserMode(String value) {
 		switch (value.toUpperCase()) {
-		case "END":
-			return ParserMode.END_TAG;
-			
-		case "FOR":
-			return ParserMode.FOR_LOOP_TAG;
-
-		case "=":
-			return ParserMode.ECHO_TAG;
-			
-		default:
-			throw new IllegalArgumentException("Tag name can be =, END, FOR");
+			case "END":
+				return ParserMode.END_TAG;
+				
+			case "FOR":
+				return ParserMode.FOR_LOOP_TAG;
+	
+			case "=":
+				return ParserMode.ECHO_TAG;
+				
+			default:
+				throw new IllegalArgumentException("Tag name can be =, END, FOR");
 		}
 	}
 

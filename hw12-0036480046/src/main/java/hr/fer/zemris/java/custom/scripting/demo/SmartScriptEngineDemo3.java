@@ -13,8 +13,17 @@ import hr.fer.zemris.java.custom.scripting.parser.SmartScriptParser;
 import hr.fer.zemris.java.webserver.RequestContext;
 import hr.fer.zemris.java.webserver.RequestContext.RCCookie;
 
+/**
+ * This is demo program for testing smart script engine
+ * @author Daria Matković
+ *
+ */
 public class SmartScriptEngineDemo3 {
 	
+	/**
+	 * This method is executed when program is run
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		String documentBody = readFromDisk("brojPoziva.smscr");
 		Map<String,String> parameters = new HashMap<String, String>();
@@ -29,6 +38,11 @@ public class SmartScriptEngineDemo3 {
 		System.out.println("Vrijednost u mapi: "+rc.getPersistentParameter("brojPoziva"));
 	}
 	
+	/**
+	 * This method read file data to string
+	 * @param fileName file to read
+	 * @return string with file contents
+	 */
 	private static String readFromDisk(String fileName) {
 		try {
 			String filePath = System.getProperty("user.dir") + 
@@ -38,6 +52,5 @@ public class SmartScriptEngineDemo3 {
 			System.out.println("Can't open file");
 			return null;
 		}
-	}
-	
+	}	
 }

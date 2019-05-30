@@ -8,7 +8,7 @@ import hr.fer.zemris.java.custom.collections.ArrayIndexedCollection;
  *
  */
 public class Node {
-	
+	/** collection **/
 	ArrayIndexedCollection collection;
 	
 	/**
@@ -39,6 +39,10 @@ public class Node {
 		return (Node)collection.get(index);
 	}
 	
+	/**
+	 * Accept method
+	 * @param visitor visitor
+	 */
 	public void accept(INodeVisitor visitor) {
 		return;
 	}

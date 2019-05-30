@@ -23,7 +23,7 @@ public class ObjectStack {
 	 * @return true if stack is empty, otherwise false.
 	 */
 	public boolean isEmpty() {
-		return size() < 0;
+		return size() <= 0;
 	}
 	
 	/**

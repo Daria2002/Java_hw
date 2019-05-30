@@ -1,6 +1,16 @@
 package hr.fer.zemris.java.custom.scripting.lexer;
 
+/**
+ * Demo program for lexer
+ * @author Daria Matković
+ *
+ */
 public class LexerDemo {
+	
+	/**
+	 * This method is executed when program is run
+	 * @param args takes no args
+	 */
 	public static void main(String[] args) {
 	
 		LexerSmart l = new LexerSmart("This is sample text.\n" + 

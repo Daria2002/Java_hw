@@ -430,7 +430,7 @@ public class SmartHttpServer {
 				
 				try {
 					ostream.flush();
-					//csocket.close();
+					csocket.close();
 				} catch (IOException e) {
 				}
 				

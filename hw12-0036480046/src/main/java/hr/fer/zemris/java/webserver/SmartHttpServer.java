@@ -22,9 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,15 +30,11 @@ import java.util.Properties;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import javax.imageio.ImageIO;
-
 import hr.fer.zemris.java.custom.scripting.exec.SmartScriptEngine;
 import hr.fer.zemris.java.custom.scripting.nodes.DocumentNode;
-import hr.fer.zemris.java.custom.scripting.nodes.EchoNode;
 import hr.fer.zemris.java.custom.scripting.parser.SmartScriptParser;
 import hr.fer.zemris.java.webserver.RequestContext.RCCookie;
-import hr.fer.zemris.java.webserver.workers.EchoParams;
 
 public class SmartHttpServer {
 
@@ -55,6 +49,8 @@ public class SmartHttpServer {
 	private Path documentRoot;
 	private Map<String,IWebWorker> workersMap = new HashMap<String, IWebWorker>();
 	private Properties prop;
+	
+	private static final int SID_LEN = 20;
 	
 	/** map where sid is key and SessionMapEntry is value **/
 	private Map<String, SessionMapEntry> sessions =
@@ -302,7 +298,7 @@ public class SmartHttpServer {
 					
 					String pathCheck = requestedPath.split("\\?")[0];
 					
-					checkSession(request);
+					// checkSession(request);
 					
 					parseParameters(paramString);
 					
@@ -362,43 +358,60 @@ public class SmartHttpServer {
 			}
 		}
 		
-		private void checkSession(List<String> request) {
+		private synchronized void checkSession(List<String> request) {
 			String sidCandidate = null;
 			
 			for(String line : request) {
-				if(line.startsWith("Cookie")) {
+				if(!line.startsWith("Cookie")) {
 					continue;
 				}
 				
-				if("sid".equals(line)) {
-					sidCandidate = line;
-				}
+				String cookiesString = line.replaceFirst(".*(?=Cookie:)", "");
 				
-				if(!SmartHttpServer.this.sessions.containsKey(sidCandidate)) {
-					SmartHttpServer.this.sessions.put(sidCandidate, new
-							SessionMapEntry());
-					continue;
-				}
+				// sid found
+				if(cookiesString.contains("sid")) {
+					String afterSid = cookiesString.split("sid")[0];
+					sidCandidate = afterSid.split("\"")[1];
+					
+					if(SmartHttpServer.this.sessions.containsKey(sidCandidate)) {
+						SessionMapEntry sme = SmartHttpServer.this.sessions.get(sidCandidate);
+						
+						// if stored host match with calculated host
+						if(sme.host.equals(this.host)) {
+							// check if valid field is too old, remove and proceed just as
+							// sid is not found
+							if(sme.validUtil < System.currentTimeMillis()) {
+								SmartHttpServer.this.sessions.remove(sidCandidate);
+							}
+						}
+					} 
+					
+					sidCandidate = createNewUniquesid();
+					
+					SessionMapEntry newSme = new SessionMapEntry();
+					newSme.validUtil = System.currentTimeMillis() + sessionTimeout * 1000;
+					
+					
+					SmartHttpServer.this.sessions.put(sidCandidate, new SessionMapEntry());
 				
-				if(SmartHttpServer.this.sessions.get(sidCandidate).host.equals(host)) {
-					SmartHttpServer.this.sessions.put(sidCandidate, new
-							SessionMapEntry());
-					continue;
+					outputCookies.add(new RCCookie("sid", sidCandidate, null,
+							host, "/"));
+					
 				}
-				/*
-				if() {
-					SmartHttpServer.this.sessions.remove(sidCandidate);
-					SmartHttpServer.this.sessions.put(sidCandidate, new
-							SessionMapEntry());
-					continue;
-				}*/
-				// TODO: check if sidCandidate is valid
-				
-				LocalDateTime time = LocalDateTime.now();
-				time.minusHours(2);
-				// TODO: update its property validUntil by setting it to now + session.timeout
-				//SmartHttpServer.this.sessions.get(sidCandidate).validUtil = ;
 			}
+			
+			ClientWorker.this.permPrams = SmartHttpServer.this.sessions.get(sidCandidate).map;
+		}
+
+		private String createNewUniquesid() {
+			StringBuilder sb = new StringBuilder();
+			
+			for(int i = 0; i < SID_LEN; i++) {
+				char help = (char)(sessionRandom.nextInt(26) + 'A');
+				sb.append(help);
+			}
+			
+			return sb.toString();
 		}
 
 		private boolean checkSmscr(String requestedPath) {

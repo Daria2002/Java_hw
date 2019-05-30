@@ -9,7 +9,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Random;
 import java.util.Set;
 
 public class RequestContext {
@@ -334,20 +333,13 @@ public class RequestContext {
 		private String domain;
 		private String path;
 		private Integer maxAge;
-		private String sessionId;
 		
-		public RCCookie(String name, String value, Integer maxAge, String domain,
-				String path, String sid) {
+		public RCCookie(String name, String value, Integer maxAge, String domain, String path) {
 			this.name = name;
 			this.value = value;
-			this.maxAge = null;
+			this.maxAge = maxAge;
 			this.domain = domain;
-			this.path = "/";
-			this.sessionId = sid;
-		}
-		
-		public String getSessionId() {
-			return sessionId;
+			this.path = path;
 		}
 		
 		public String getName() {

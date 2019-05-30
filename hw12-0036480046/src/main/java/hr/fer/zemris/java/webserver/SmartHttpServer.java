@@ -1,13 +1,10 @@
 package hr.fer.zemris.java.webserver;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -17,7 +14,6 @@ import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketAddress;
-import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -235,6 +231,19 @@ public class SmartHttpServer {
 				String requestedPath = firstLineArray[1];
 				version = firstLineArray[2];
 				
+				for(int i = 1; i < request.size(); i++) {
+					if(request.get(i).contains("Host:")) {
+						this.host = checkName(request.get(i).substring(request.indexOf(":")+1)
+								.trim());
+						continue;
+					}
+					
+					domainName = checkName(request.get(i).substring(request.indexOf(":")+1)
+							.trim());
+				}
+				
+				checkSession(request);
+				
 				if(requestedPath.startsWith("/ext/")) {
 					IWebWorker iww = null;
 					Class<?> referenceToClass;
@@ -298,7 +307,7 @@ public class SmartHttpServer {
 					
 					String pathCheck = requestedPath.split("\\?")[0];
 					
-					checkSession(request);
+					// checkSession(request);
 					
 					parseParameters(paramString);
 					
@@ -366,18 +375,18 @@ public class SmartHttpServer {
 					continue;
 				}
 				
-				String cookiesString = line.replaceFirst(".*(?=Cookie:)", "");
+				String cookiesString = line.replaceFirst("(Cookie:)*", "");
 				
 				// sid found
-				if(cookiesString.contains("sid")) {
-					String afterSid = cookiesString.split("sid")[0];
+				if(cookiesString.contains("SID")) {
+					String afterSid = cookiesString.split("SID")[1];
 					sidCandidate = afterSid.split("\"")[1];
 					
 					if(SmartHttpServer.this.sessions.containsKey(sidCandidate)) {
 						SessionMapEntry sme = SmartHttpServer.this.sessions.get(sidCandidate);
 						
 						// if stored host match with calculated host
-						if(sme.host.equals(this.host)) {
+						if(sme.host != null && sme.host.equals(this.host)) {
 							// check if valid field is too old, remove and proceed just as
 							// sid is not found
 							if(sme.validUtil < System.currentTimeMillis()) {
@@ -386,20 +395,30 @@ public class SmartHttpServer {
 						}
 					} 
 					
-					sidCandidate = createNewUniquesid();
-					
 					SessionMapEntry newSme = new SessionMapEntry();
 					newSme.validUtil = System.currentTimeMillis() + sessionTimeout * 1000;
+					newSme.host = this.host;
 					
+					SmartHttpServer.this.sessions.put(sidCandidate, newSme);
 					
-					SmartHttpServer.this.sessions.put(sidCandidate, new SessionMapEntry());
-				
-					outputCookies.add(new RCCookie("sid", sidCandidate, null,
+					outputCookies.add(new RCCookie("SID", sidCandidate, null,
 							host, "/"));
-					
 					ClientWorker.this.permPrams = SmartHttpServer.this.sessions.get(sidCandidate).map;
+					//ClientWorker.this.permPrams = this.context.getPersistentParameters();
 				}
+				return;
 			}
+			// TODO:
+			sidCandidate = createNewUniquesid();
+			
+			SessionMapEntry newSme = new SessionMapEntry();
+			newSme.validUtil = System.currentTimeMillis() + sessionTimeout * 1000;
+			newSme.sid = sidCandidate;
+			
+			SmartHttpServer.this.sessions.put(sidCandidate, newSme);
+			
+			outputCookies.add(new RCCookie("SID", sidCandidate, null,
+					host, "/"));
 		}
 
 		private String createNewUniquesid() {
@@ -427,7 +446,6 @@ public class SmartHttpServer {
 				
 				SmartScriptEngine sse = new SmartScriptEngine(dn, rc);
 				sse.execute();
-				
 				try {
 					ostream.flush();
 					csocket.close();

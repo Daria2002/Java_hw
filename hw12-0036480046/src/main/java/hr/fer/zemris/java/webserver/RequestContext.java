@@ -193,13 +193,12 @@ public class RequestContext {
 		
 		if(appendCharset()) {
 			header.append("; charset=" + encoding);
+			header.append("\r\n");
 		}
 		
-		header.append("\r\n");
-		header.append("\r\n");
-		
 		if(contentLength != null) {
-			header.append(" Content-Length: " + contentLength + "\r\n");
+			header.append(" Content-Length: " + contentLength);
+			header.append("\r\n");
 		}
 		
 		if(!outputCookies.isEmpty()) {
@@ -225,11 +224,9 @@ public class RequestContext {
 				if(element.maxAge != null) {
 					header.append((separate ? ";" : "") + "Max-Age=" + element.maxAge);
 				}
-				
-				header.append("\r\n");
 			}
 		}
-		
+		header.append("\r\n");
 		byte[] b = header.toString().getBytes(Charset.forName("ISO_8859_1"));
 		try {
 			this.outputStream.write(b);

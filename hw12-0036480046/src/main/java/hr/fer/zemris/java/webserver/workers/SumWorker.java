@@ -1,22 +1,5 @@
 package hr.fer.zemris.java.webserver.workers;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Set;
-
-import javax.imageio.ImageIO;
-
 import hr.fer.zemris.java.webserver.IWebWorker;
 import hr.fer.zemris.java.webserver.RequestContext;
 
@@ -48,13 +31,6 @@ public class SumWorker implements IWebWorker {
 		
 		try {
 			context.getDispatcher().dispatchRequest("private/pages/calc.smscr");
-
-			BufferedImage img = ImageIO.read(
-					new File(System.getProperty("user.dir") + "/webroot/images/" +
-							context.getTemporaryParameter("imgName")));
-			
-			String imgsrc = "images/" + context.getTemporaryParameter("imgName");
-			//context.write(String.format("<img src=\"../../" + imgsrc + "\"/>"));
 			
 		} catch(Exception ex) {
 		// Log exception to servers log...

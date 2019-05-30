@@ -46,7 +46,7 @@ public class SmartHttpServer {
 	private Path documentRoot;
 	private Map<String,IWebWorker> workersMap = new HashMap<String, IWebWorker>();
 	private Properties prop;
-	
+	private DaemonThread cleanerThread = new DaemonThread();
 	private static final int SID_LEN = 20;
 	
 	/** map where sid is key and SessionMapEntry is value **/
@@ -60,6 +60,28 @@ public class SmartHttpServer {
 		SmartHttpServer shs = new SmartHttpServer(args[0]);
 		shs.start();
 	}
+	
+	public class DaemonThread extends Thread {
+		
+	    public void run() {
+	    	
+	    	try {
+	    		while(true) {
+		    		Thread.sleep(5*60*1000);
+					
+		    		for(String ses : sessions.keySet()) {
+		    			if(System.currentTimeMillis() - sessions.get(ses).validUtil > sessionTimeout * 1000) {
+		    				sessions.remove(ses);
+		    			}
+		    		}
+		    	}
+
+			} catch (Exception e) {
+			}
+	    }
+	}
+	
+	
 	
 	public static class SessionMapEntry {
 		String sid;
@@ -120,7 +142,9 @@ public class SmartHttpServer {
 		threadPool = Executors.newFixedThreadPool(workerThreads);
 		serverThread = new ServerThread();
 		serverThread.run();
-		// TODO:session cleaner
+		
+		cleanerThread.setDaemon(true);
+        cleanerThread.start();
 	}
 	
 	protected synchronized void stop() {
@@ -128,6 +152,7 @@ public class SmartHttpServer {
 	// ... shutdown threadpool ...
 		threadPool.shutdown();
 		serverThread.finish();
+		cleanerThread.interrupt();
 	}
 	
 	protected class ServerThread extends Thread {
@@ -391,7 +416,7 @@ public class SmartHttpServer {
 						if(sme.host != null && sme.host.equals(this.host)) {
 							// check if valid field is too old, remove and proceed just as
 							// sid is not found
-							if(sme.validUtil < System.currentTimeMillis()) {
+							if(System.currentTimeMillis() - sme.validUtil > sessionTimeout * 1000) {
 								SmartHttpServer.this.sessions.remove(sidCandidate);
 							} else {
 								set = true;

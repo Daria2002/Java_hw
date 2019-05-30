@@ -14,6 +14,8 @@ public class HelloWorker implements IWebWorker {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date now = new Date();
 		context.setMimeType("text/html");
+		context.setStatusCode(200);
+		context.setStatusText("OK");
 		String name = context.getParameter("name");
 		
 		try {

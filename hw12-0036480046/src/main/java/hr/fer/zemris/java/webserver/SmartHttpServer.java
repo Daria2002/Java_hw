@@ -373,6 +373,7 @@ public class SmartHttpServer {
 						} catch (Exception e) {
 						}
 						ostream.flush();
+						//csocket.close();
 						return;
 					}
 					requestedPath = documentRoot.toAbsolutePath().resolve(requestedPath.substring(1)).toString();
@@ -391,9 +392,12 @@ public class SmartHttpServer {
 				e.printStackTrace();
 				throw new IllegalArgumentException("Can't get output stream");
 			}
+			
 		}
 		
+		
 		private synchronized void checkSession(List<String> request) {
+			
 			String sidCandidate = null;
 			boolean set = false;
 			

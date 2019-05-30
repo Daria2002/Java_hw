@@ -22,12 +22,14 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -54,10 +56,23 @@ public class SmartHttpServer {
 	private Map<String,IWebWorker> workersMap = new HashMap<String, IWebWorker>();
 	private Properties prop;
 	
+	/** map where sid is key and SessionMapEntry is value **/
+	private Map<String, SessionMapEntry> sessions =
+			new HashMap<String, SmartHttpServer.SessionMapEntry>();
+	
+	private Random sessionRandom = new Random();
+	
 	// /home/daria/eclipse-workspace/my-hw/hw12-0036480046/config/server.properties
 	public static void main(String[] args) {
 		SmartHttpServer shs = new SmartHttpServer(args[0]);
 		shs.start();
+	}
+	
+	public static class SessionMapEntry {
+		String sid;
+		String host;
+		long validUtil;
+		Map<String, String> map;
 	}
 	
 	public SmartHttpServer(String configFileName) {
@@ -287,6 +302,8 @@ public class SmartHttpServer {
 					
 					String pathCheck = requestedPath.split("\\?")[0];
 					
+					checkSession(request);
+					
 					parseParameters(paramString);
 					
 					if(context == null) {
@@ -345,6 +362,45 @@ public class SmartHttpServer {
 			}
 		}
 		
+		private void checkSession(List<String> request) {
+			String sidCandidate = null;
+			
+			for(String line : request) {
+				if(line.startsWith("Cookie")) {
+					continue;
+				}
+				
+				if("sid".equals(line)) {
+					sidCandidate = line;
+				}
+				
+				if(!SmartHttpServer.this.sessions.containsKey(sidCandidate)) {
+					SmartHttpServer.this.sessions.put(sidCandidate, new
+							SessionMapEntry());
+					continue;
+				}
+				
+				if(SmartHttpServer.this.sessions.get(sidCandidate).host.equals(host)) {
+					SmartHttpServer.this.sessions.put(sidCandidate, new
+							SessionMapEntry());
+					continue;
+				}
+				/*
+				if() {
+					SmartHttpServer.this.sessions.remove(sidCandidate);
+					SmartHttpServer.this.sessions.put(sidCandidate, new
+							SessionMapEntry());
+					continue;
+				}*/
+				// TODO: check if sidCandidate is valid
+				
+				LocalDateTime time = LocalDateTime.now();
+				time.minusHours(2);
+				// TODO: update its property validUntil by setting it to now + session.timeout
+				//SmartHttpServer.this.sessions.get(sidCandidate).validUtil = ;
+			}
+		}
+
 		private boolean checkSmscr(String requestedPath) {
 			if("smscr".equals(getExtension(requestedPath))) {
 				String documentBody = readFromDisk(requestedPath);

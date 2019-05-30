@@ -43,14 +43,26 @@ public class LinkedListIndexedCollection implements List {
 	private ListNode first;
 	/** last node **/
 	private ListNode last;
-	
+	/** count modifications **/
 	private long modificationCount = 0;
 	
+	/**
+	 * Nested class that represents getter for elements list
+	 * @author Daria Matković
+	 *
+	 */
 	private static class ElementsGetterList implements ElementsGetter {
+		/** last visited node **/
 		private ListNode lastVisitedNode;
+		/** modification count **/
 		private long savedModificationCount;
+		/** collection **/
 		LinkedListIndexedCollection list;
 		
+		/**
+		 * Constructor for elements getter list that initialize local variables
+		 * @param list
+		 */
 		public ElementsGetterList(LinkedListIndexedCollection list) {
 			this.list = list;
 			savedModificationCount = list.modificationCount;
@@ -62,6 +74,7 @@ public class LinkedListIndexedCollection implements List {
 			if(list.modificationCount != savedModificationCount) {
 				throw new ConcurrentModificationException("List is modified.");
 			}
+			
 			return lastVisitedNode != null;
 		}
 		
@@ -70,9 +83,11 @@ public class LinkedListIndexedCollection implements List {
 			if(list.modificationCount != savedModificationCount) {
 				throw new ConcurrentModificationException("List is modified.");
 			}
+			
 			if(!hasNextElement()) {
 				throw new NoSuchElementException("No more elements");
 			}
+			
 			Object value = lastVisitedNode.value;
 			lastVisitedNode = lastVisitedNode.next;
 			
@@ -113,13 +128,7 @@ public class LinkedListIndexedCollection implements List {
 	 * @param value value added to collection
 	 */
 	public void add(Object value) {
-		// null reference is not allowed
-		if(value == null) {
-			throw new NullPointerException();
-		}
-		
-		Objects.requireNonNull(value, 
-				"Null reference can't be added in linked list indexed collection.");
+		Objects.requireNonNull(value, "Can't add null in linked list indexed collection.");
 		
 		ListNode node = new ListNode(null, null, value);
 		
@@ -129,9 +138,10 @@ public class LinkedListIndexedCollection implements List {
 			node.previous = this.last;
 			this.last.next = node;
 		}
+		
 		this.modificationCount++;
 		this.last = node;
-		this.size += 1;
+		this.size++;
 	}
 	
 	/**

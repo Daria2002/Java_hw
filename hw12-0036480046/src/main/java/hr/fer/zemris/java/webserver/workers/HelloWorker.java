@@ -8,32 +8,18 @@ import java.util.Date;
 import hr.fer.zemris.java.webserver.IWebWorker;
 import hr.fer.zemris.java.webserver.RequestContext;
 
+/**
+ * This class represents hello worker
+ * @author Daria Matković
+ *
+ */
 public class HelloWorker implements IWebWorker {
 
 	@Override
 	public void processRequest(RequestContext context) {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date now = new Date();
-		/*
-		context.setMimeType("text/html");
-		context.setStatusCode(200);
-		context.setStatusText("OK");
-		String name = context.getParameter("name");
 		
-		try {
-			context.write("<html><body>");
-			context.write("<h1>Hello!!!</h1>");
-			context.write("<p>Now is: "+sdf.format(now)+"</p>");
-			
-			if(name==null || name.trim().isEmpty()) {
-				context.write("<p>You did not send me your name!</p>");
-			} else {
-				context.write("<p>Your name has "+name.trim().length()
-				+" letters.</p>");
-			}
-			
-			context.write("</body></html>");
-			*/
 		try {
 			
 			StringBuilder sb = new StringBuilder();
@@ -51,8 +37,6 @@ public class HelloWorker implements IWebWorker {
 			
 			sb.append("</body></html>");
 			
-			
-			
 			context.write(
 					("HTTP/1.1 200 OK\r\n"+
 					"Server: simple java server\r\n"+
@@ -61,11 +45,10 @@ public class HelloWorker implements IWebWorker {
 					"Connection: close\r\n"+
 					"\r\n").getBytes(StandardCharsets.US_ASCII)
 				);
+			
 			context.write(sb.toString());
 			
 		} catch(IOException ex) {
-		// Log exception to servers log...
-		ex.printStackTrace();
 		}
 	}
 }

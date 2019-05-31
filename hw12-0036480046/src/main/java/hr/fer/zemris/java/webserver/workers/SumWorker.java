@@ -3,8 +3,13 @@ package hr.fer.zemris.java.webserver.workers;
 import hr.fer.zemris.java.webserver.IWebWorker;
 import hr.fer.zemris.java.webserver.RequestContext;
 
+/**
+ * This class represents sum worker
+ * @author Daria Matković
+ *
+ */
 public class SumWorker implements IWebWorker {
-
+	/** result **/
 	private int result = 0;
 	
 	@Override
@@ -33,8 +38,6 @@ public class SumWorker implements IWebWorker {
 			context.getDispatcher().dispatchRequest("private/pages/calc.smscr");
 			
 		} catch(Exception ex) {
-		// Log exception to servers log...
-			ex.printStackTrace();
 		}
 	}
 }

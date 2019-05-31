@@ -12,6 +12,11 @@ import javax.imageio.ImageIO;
 import hr.fer.zemris.java.webserver.IWebWorker;
 import hr.fer.zemris.java.webserver.RequestContext;
 
+/**
+ * This class represents circle worker
+ * @author Daria Matković
+ *
+ */
 public class CircleWorker implements IWebWorker {
 
 	@Override
@@ -38,11 +43,7 @@ public class CircleWorker implements IWebWorker {
 					"\r\n").getBytes(StandardCharsets.US_ASCII)
 			);
 			context.write(bos.toByteArray());
-			/*
-			context.setMimeType("image/png");
-			context.write(bos.toByteArray());*/
 		} catch (IOException e) {
-			e.printStackTrace();
 		}
 	}
 }

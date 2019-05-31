@@ -11,26 +11,46 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+/**
+ * This class represents request context
+ * @author Daria Matković
+ *
+ */
 public class RequestContext {
-	
+	/** output stream **/
 	private OutputStream outputStream;
+	/** charset **/
 	private Charset charset;
-	
+	/** encoding **/
 	public String encoding = "UTF-8";
+	/** status code **/
 	public int statusCode = 200;
+	/** status text **/
 	public String statusText = "OK";
+	/** mime type **/
 	public String mimeType = "text/html";
+	/** content length **/
 	public Long contentLength = null;
-	
-	/** readonly **/
+	/** readonly dispatcher **/
 	private IDispatcher dispatcher;
-	
+	/** parameters **/
 	private Map<String, String> parameters;
+	/** temporary parameters **/
 	private Map<String, String> temporaryParameters = new HashMap<String, String>();
+	/** persistent params **/
 	private Map<String, String> persistentParameters;
+	/** output cookies **/
 	private List<RCCookie> outputCookies;
+	/** header generated **/
 	boolean headerGenerated = false;
 	
+	/**
+	 * Request context constructor that initialize local variables
+	 * @param outputStream output stream
+	 * @param parameters parameters
+	 * @param persistentParameters persistent parameters
+	 * @param outputCookies output cookies
+	 */
 	public RequestContext(OutputStream outputStream, Map<String,String> parameters,
 			Map<String,String> persistentParameters, List<RCCookie> outputCookies) {
 		
@@ -43,6 +63,15 @@ public class RequestContext {
 		this.outputCookies = outputCookies == null ? new ArrayList<RequestContext.RCCookie>() : outputCookies;
 	}
 	
+	/**
+	 * RequestContext constructor that initalize local variables
+	 * @param outputStream output stream
+	 * @param parameters params
+	 * @param persistentParameters persistent params
+	 * @param outputCookies output cookies
+	 * @param temporaryParameters temporaray params
+	 * @param dispatcher dispatcher
+	 */
 	public RequestContext(OutputStream outputStream, Map<String,String> parameters,
 			Map<String,String> persistentParameters, List<RCCookie> outputCookies, 
 			Map<String, String> temporaryParameters, IDispatcher dispatcher) {
@@ -53,6 +82,10 @@ public class RequestContext {
 		this.dispatcher = dispatcher;
 	}
 	
+	/**
+	 * Gets dispatcher
+	 * @return dispatcher
+	 */
 	public IDispatcher getDispatcher() {
 		return dispatcher;
 	}
@@ -236,6 +269,10 @@ public class RequestContext {
 		headerGenerated = true;
 	}
 
+	/**
+	 * Appends charset
+	 * @return true if appendable, otherwise false
+	 */
 	private boolean appendCharset() {
 		if("text".equals(mimeType.trim().split("/")[0])) {
 			return true;

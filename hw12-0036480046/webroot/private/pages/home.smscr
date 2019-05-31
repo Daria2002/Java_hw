@@ -2,7 +2,7 @@
 <html>
 <head>
 <style>
-body {background-color: {$= "background" "#00FF00" @tparamGet $};}
+body {background-color: {$= "background" "00FF00" @tparamGet $};}
 </style>
 
 <body>
@@ -26,6 +26,7 @@ Second param:<br>
 <OPTION value="FFFFFF">White</OPTION>
 <OPTION value="00FF00">Green</OPTION>
 <OPTION value="0000FF">Blue</OPTION>
+<INPUT type="submit" value="Set">
 </FORM>
 </head>
 </body>

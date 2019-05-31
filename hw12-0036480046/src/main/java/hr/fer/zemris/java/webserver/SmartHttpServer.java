@@ -33,36 +33,64 @@ import hr.fer.zemris.java.custom.scripting.nodes.DocumentNode;
 import hr.fer.zemris.java.custom.scripting.parser.SmartScriptParser;
 import hr.fer.zemris.java.webserver.RequestContext.RCCookie;
 
+/** 
+ * This class represents smart http server.
+ * @author Daria Matković
+ *
+ */
 public class SmartHttpServer {
-
+	/** address **/
 	private String address;
+	/** domain name **/
 	private String domainName;
+	/** port **/
 	private int port;
+	/** worker threads **/
 	private int workerThreads;
+	/** session timeout **/
 	private int sessionTimeout;
+	/** mime types **/
 	private Map<String,String> mimeTypes = new HashMap<String, String>();
+	/** server thread **/
 	private ServerThread serverThread;
+	/** thread pool **/
 	private ExecutorService threadPool;
+	/** document root **/
 	private Path documentRoot;
+	/** workers map **/
 	private Map<String,IWebWorker> workersMap = new HashMap<String, IWebWorker>();
+	/** properties **/
 	private Properties prop;
+	/** daemon thread **/
 	private DaemonThread cleanerThread = new DaemonThread();
+	/** sid len **/
 	private static final int SID_LEN = 20;
-	
+	/** help **/
+	private String help;
 	/** map where sid is key and SessionMapEntry is value **/
 	private Map<String, SessionMapEntry> sessions =
 			new HashMap<String, SmartHttpServer.SessionMapEntry>();
-	
+	/** session random **/
 	private Random sessionRandom = new Random();
 	
-	// /home/daria/eclipse-workspace/my-hw/hw12-0036480046/config/server.properties
+	/**
+	 * Creates and start smarthttpserver
+	 * @param args config file
+	 */
 	public static void main(String[] args) {
 		SmartHttpServer shs = new SmartHttpServer(args[0]);
 		shs.start();
 	}
 	
+	/**
+	 * Daemon thread for saving memory
+	 * @author Daria Matković
+	 *
+	 */
 	public class DaemonThread extends Thread {
-		
+		/**
+		 * Method for running thread
+		 */
 	    public void run() {
 	    	
 	    	try {
@@ -81,15 +109,26 @@ public class SmartHttpServer {
 	    }
 	}
 	
-	
-	
+	/**
+	 * Session map entry
+	 * @author Daria Matković
+	 *
+	 */
 	public static class SessionMapEntry {
+		/** sid **/
 		String sid;
+		/** host **/
 		String host;
+		/** valid time **/
 		long validUtil;
+		/** map **/
 		Map<String, String> map;
 	}
 	
+	/**
+	 * Constructor for smart http server that runs some initialization operations
+	 * @param configFileName config file
+	 */
 	public SmartHttpServer(String configFileName) {
 	// ... do stuff here ...
 		prop = new Properties();
@@ -134,6 +173,9 @@ public class SmartHttpServer {
 		
 	}
 	
+	/**
+	 * Method executed at the beginning
+	 */
 	protected synchronized void start() {
 		if(serverThread != null && serverThread.isAlive()) {
 			return;
@@ -147,6 +189,9 @@ public class SmartHttpServer {
         cleanerThread.start();
 	}
 	
+	/**
+	 * method executed at the end
+	 */
 	protected synchronized void stop() {
 	// ... signal server thread to stop running ...
 	// ... shutdown threadpool ...
@@ -155,8 +200,15 @@ public class SmartHttpServer {
 		cleanerThread.interrupt();
 	}
 	
+	/**
+	 * This class represents server thread
+	 * @author Daria Matković
+	 *
+	 */
 	protected class ServerThread extends Thread {
+		/** flag to  check if operations are running **/
 		boolean running = true;
+		/** server socket **/
 		ServerSocket serverSocket;
 		
 		@Override
@@ -191,6 +243,9 @@ public class SmartHttpServer {
 			}
 		}
 		
+		/**
+		 * Operations executed at the end
+		 */
 		public void finish() {
 			running = false;
 			try {
@@ -199,22 +254,38 @@ public class SmartHttpServer {
 			}
 		}
 	}
-	
+	/**
+	 * This class represents client worker
+	 * @author Daria Matković
+	 *
+	 */
 	private class ClientWorker implements Runnable, IDispatcher {
+		/** request context **/
 		private RequestContext context = null;
-		
+		/** socket **/
 		private Socket csocket;
+		/** input stream **/
 		private PushbackInputStream istream;
+		/** output stream **/
 		private OutputStream ostream;
+		/** version **/
 		private String version;
+		/** method **/
 		private String method;
+		/** host **/
 		private String host;
+		/** params **/
 		private Map<String,String> params = new HashMap<String, String>();
+		/** temp params **/
 		private Map<String,String> tempParams = new HashMap<String, String>();
+		/** perm params **/
 		private Map<String,String> permPrams = new HashMap<String, String>();
+		/** output cookies **/
 		private List<RCCookie> outputCookies = new ArrayList<RequestContext.RCCookie>();
+		/** sid **/
 		private String SID;
 		
+		/** client worker **/
 		public ClientWorker(Socket csocket) {
 			super();
 		
@@ -347,6 +418,8 @@ public class SmartHttpServer {
 							workersMap.get(pathCheck).processRequest(context);
 						} catch (Exception e) {
 						}
+						help = context.getPersistentParameter("bgcolor");
+
 						ostream.flush();
 						return;
 					}
@@ -368,11 +441,17 @@ public class SmartHttpServer {
 					}
 					
 					if(workersMap.containsKey(requestedPath)) {
+						if(help != null) {
+							context.setPersistentParameter("bgcolor", help);
+						}
+						
 						try {
 							workersMap.get(requestedPath).processRequest(context);
 						} catch (Exception e) {
 						}
 						ostream.flush();
+						
+						System.out.println(help);
 						//csocket.close();
 						return;
 					}
@@ -395,7 +474,10 @@ public class SmartHttpServer {
 			
 		}
 		
-		
+		/**
+		 * Checks session
+		 * @param request list of strings that represents request
+		 */
 		private synchronized void checkSession(List<String> request) {
 			
 			String sidCandidate = null;
@@ -463,6 +545,10 @@ public class SmartHttpServer {
 			
 		}
 
+		/**
+		 * Creates new unique id
+		 * @return unique id
+		 */
 		private String createNewUniquesid() {
 			StringBuilder sb = new StringBuilder();
 			
@@ -474,6 +560,11 @@ public class SmartHttpServer {
 			return sb.toString();
 		}
 
+		/**
+		 * Checks smscr files 
+		 * @param requestedPath requested path
+		 * @return true if file has extension smscr, otherwise false
+		 */
 		private boolean checkSmscr(String requestedPath) {
 			if("smscr".equals(getExtension(requestedPath))) {
 				String documentBody = readFromDisk(requestedPath);
@@ -500,6 +591,13 @@ public class SmartHttpServer {
 			return false;
 		}
 		
+		/**
+		 * Gets text
+		 * @param cos output stream
+		 * @param requestedFile requested path
+		 * @param mime mime type 
+		 * @throws IOException exception
+		 */
 		private void getText(OutputStream cos, Path requestedFile, String mime) throws IOException {
 			long len = Files.size(requestedFile);
 			try(InputStream fis = new BufferedInputStream(Files.newInputStream(requestedFile))) {
@@ -525,6 +623,12 @@ public class SmartHttpServer {
 			}
 		}
 		
+		/** 
+		 * Gets image 
+		 * @param cos output stream
+		 * @param img image
+		 * @throws IOException exception
+		 */
 		private void getImage(OutputStream cos, BufferedImage img) throws IOException {
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
 			ImageIO.write(img, "png", bos);
@@ -542,6 +646,11 @@ public class SmartHttpServer {
 			cos.write(podaci);
 		}
 		
+		/**
+		 * Gets extension
+		 * @param fileName file name
+		 * @return extension
+		 */
 		private String getExtension(String fileName) {
 			String fileExtension="";
 			
@@ -553,6 +662,10 @@ public class SmartHttpServer {
 			return fileExtension;
 	    }
 
+		/**
+		 * Parse given string
+		 * @param paramString string to parse
+		 */
 		private void parseParameters(String paramString) {
 			String[] paramsArray = paramString.split("&");
 			
@@ -563,6 +676,11 @@ public class SmartHttpServer {
 			}
 		}
 
+		/**
+		 * Checks name
+		 * @param name name
+		 * @return part of name
+		 */
 		private String checkName(String name) {
 			if(name.contains(":") && isNumeric(name.substring(name.indexOf(":")+1))) {
 				return name.substring(0, name.indexOf(":"));
@@ -570,8 +688,11 @@ public class SmartHttpServer {
 			return name;
 		}
 		
-		// Zaglavlje predstavljeno kao jedan string splita po enterima
-		// pazeći na višeretčane atribute...
+		/**
+		 * Extract headers splits request header string in list of strings
+		 * @param requestHeader
+		 * @return
+		 */
 		private List<String> extractHeaders(String requestHeader) {
 			List<String> headers = new ArrayList<String>();
 			String currentLine = null;
@@ -594,6 +715,11 @@ public class SmartHttpServer {
 			return headers;
 		}
 		
+		/**
+		 * Check if given value is number
+		 * @param str value to check
+		 * @return true if given value is number, otherwise false
+		 */
 		private boolean isNumeric(String str) { 
 			try {  
 			  Double.parseDouble(str);  
@@ -603,20 +729,32 @@ public class SmartHttpServer {
 		  	}  
 		}
 		
+		/**
+		 * Sends error
+		 * @param cos output stream
+		 * @param statusCode status code
+		 * @param statusText status text
+		 * @throws IOException exception
+		 */
 		private void sendError(OutputStream cos, int statusCode, String statusText) throws IOException {
 
-				/*cos.write(
+				cos.write(
 					("HTTP/1.1 " + statusCode + " " + statusText + "\r\n"+
 					"Server: simple java server\r\n"+
 					"Content-Type: text/plain;charset=UTF-8\r\n"+
 					"Content-Length: 0\r\n"+
 					"Connection: close\r\n"+
 					"\r\n").getBytes(StandardCharsets.US_ASCII)
-				);*/
+				);
 				cos.flush();
 		}
-
-		// Jednostavan automat koji čita zaglavlje HTTP zahtjeva...
+		
+		/**
+		 * Read request
+		 * @param is input stream
+		 * @return byte array 
+		 * @throws IOException exception
+		 */
 		private byte[] readRequest(InputStream is) throws IOException {
 
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -654,6 +792,12 @@ public class SmartHttpServer {
 			
 		}
 		
+		/**
+		 * Internal dispatching method called by dispatch request
+		 * @param requestedPath requested path
+		 * @param directCall direct call
+		 * @throws Exception exception
+		 */
 		private void internalDispatchRequest(String requestedPath, boolean directCall)
 				throws Exception {
 			String extension;
@@ -709,6 +853,11 @@ public class SmartHttpServer {
 		}
 	}
 	
+	/**
+	 * Reads from disk
+	 * @param filePath file path
+	 * @return String with file contents
+	 */
 	private static String readFromDisk(String filePath) {
 		try {
 			return new String(Files.readAllBytes(Paths.get(filePath)));

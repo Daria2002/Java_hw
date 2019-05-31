@@ -7,6 +7,11 @@ import java.util.Date;
 import hr.fer.zemris.java.webserver.IWebWorker;
 import hr.fer.zemris.java.webserver.RequestContext;
 
+/**
+ * This class represents echo params, and implements IWebWorker interface
+ * @author Daria Matković
+ *
+ */
 public class EchoParams implements IWebWorker {
 
 	@Override
@@ -41,7 +46,6 @@ public class EchoParams implements IWebWorker {
 			context.write(sb.toString());
 			
 		} catch(IOException ex) {
-			ex.printStackTrace();
 		}
 	}
 }

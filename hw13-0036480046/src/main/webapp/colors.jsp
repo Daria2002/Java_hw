@@ -3,8 +3,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <%
-	String myColor = (String)request.getSession().getAttribute("pickedBgCol");
- 
+	String myColor = (String)session.getAttribute("pickedBgCol");	
+
 	if (myColor == null){
 		myColor = "white";
 	}

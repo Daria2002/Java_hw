@@ -4,7 +4,7 @@
 <!-- Primjer bloka u kojem možemo deklarirati funkcije -->
 
 <%
-	String myColor = (String)request.getSession().getAttribute("pickedBgCol");
+	String myColor = (String)session.getAttribute("pickedBgCol");
  
 	if (myColor == null){
 		myColor = "white";

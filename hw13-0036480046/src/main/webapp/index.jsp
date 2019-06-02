@@ -14,11 +14,14 @@
 <html>
    <body bgcolor="<%=myColor%>">
    	 <a href="colors.jsp">Background color chooser</a>
+   	 
    	 <form action="trigonometric" method="GET">
 		Početni kut:<br><input type="number" name="a" min="0" max="360" step="1" value="0"><br>
 		Završni kut:<br><input type="number" name="b" min="0" max="360" step="1" value="360"><br>
 		<input type="submit" value="Tabeliraj"><input type="reset" value="Reset">
 	</form>
+	
+	<a href="/trigonometric?a=0&b=90">Sin and cos for angle = [0, 90]</a>
    </body>
 </html>
 

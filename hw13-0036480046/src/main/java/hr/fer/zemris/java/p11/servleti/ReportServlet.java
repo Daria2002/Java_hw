@@ -32,6 +32,7 @@ public class ReportServlet extends HttpServlet {
 		int height = 350;
 		request.getSession().setAttribute("image", chart);
 		//ChartUtilities.writeChartAsPNG(outputStream, chart, width, height);
+		//response.getOutputStream().close(); 
 		request.getRequestDispatcher("/WEB-INF/pages/report.jsp").forward(request, response);
 
 	}

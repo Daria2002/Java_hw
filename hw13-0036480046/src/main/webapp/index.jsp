@@ -22,6 +22,8 @@
 	</form>
 	
 	<a href="/trigonometric?a=0&b=90">Sin and cos for angle = [0, 90]</a>
+	<p></p>
+	<a href="/funny">Story</a>
    </body>
 </html>
 

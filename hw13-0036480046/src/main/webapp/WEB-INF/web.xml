@@ -17,9 +17,19 @@
 	<servlet-class>hr.fer.zemris.java.p11.servleti.ColorsServlet</servlet-class>
 </servlet>
 
+<servlet>
+	<servlet-name>trigonometric-servlet</servlet-name>
+	<servlet-class>hr.fer.zemris.java.p11.servleti.TrigonometricServlet</servlet-class>
+</servlet>
+
 <servlet-mapping>
 	<servlet-name>colors-servlet</servlet-name>
 	<url-pattern>/setcolor</url-pattern>
+</servlet-mapping>
+
+<servlet-mapping>
+	<servlet-name>trigonometric-servlet</servlet-name>
+	<url-pattern>/trigonometric</url-pattern>
 </servlet-mapping>
 
 </web-app>

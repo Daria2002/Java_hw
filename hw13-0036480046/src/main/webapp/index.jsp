@@ -17,7 +17,8 @@
    	 <form action="trigonometric" method="GET">
 		Početni kut:<br><input type="number" name="a" min="0" max="360" step="1" value="0"><br>
 		Završni kut:<br><input type="number" name="b" min="0" max="360" step="1" value="360"><br>
-		<input type="submit" value="Tabeliraj" name="table"><input type="reset" value="Reset">
+		<input href="pages/trigonometric.jsp" type="submit" value="Tabeliraj"><input type="reset" value="Reset">
 	</form>
    </body>
 </html>
+

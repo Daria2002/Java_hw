@@ -20,7 +20,6 @@
 		
 		<tbody>
 			<%
-				String query = request.getParameter("item");
 				for(int i = 0; i < sinA.length; i++) {   
 				    %>
 				    <tr>

@@ -3,33 +3,35 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <%
-	Double[] sinA = (Double[]) session.getAttribute("sinA");	
-	Double[] cosA = (Double[]) session.getAttribute("cosA");
+	Double[] sin = (Double[]) session.getAttribute("sin");	
+	Double[] cos = (Double[]) session.getAttribute("cos");
 	Integer a = (Integer) session.getAttribute("a");
 %>
   
 <html>
-   	<table border="1">
-		<thead>
-		    <tr>
-		        <th>value</th>
-		        <th>sin</th>
-		        <th>cos</th>
-		    </tr>
-		</thead>
-		
-		<tbody>
-			<%
-				for(int i = 0; i < sinA.length; i++) {   
-				    %>
-				    <tr>
-				    <td><%= a+i %></td>
-				    <td><%= sinA[i] %></td>
-				    <td><%= cosA[i] %></td>
-				   </tr>
-				   <%
-				}
-			%>
-		</tbody>
-	</table>
+	<body>
+	   	<table border="1">
+			<thead>
+			    <tr>
+			        <th>x</th>
+			        <th>sin(x)</th>
+			        <th>cos(x)</th>
+			    </tr>
+			</thead>
+			
+			<tbody>
+				<%
+					for(int i = 0; i < sin.length; i++) {   
+					    %>
+					    <tr>
+					    <td><%= a+i %></td>
+					    <td><%= sin[i] %></td>
+					    <td><%= cos[i] %></td>
+					   </tr>
+					   <%
+					}
+				%>
+			</tbody>
+		</table>
+	</body>
 </html>

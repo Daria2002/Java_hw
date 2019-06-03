@@ -1,4 +1,4 @@
-package hr.fer.zemris.java.p11.servleti;
+package hr.fer.zemris.java.servlets;
 
 import java.awt.BasicStroke;
 import java.awt.Color;

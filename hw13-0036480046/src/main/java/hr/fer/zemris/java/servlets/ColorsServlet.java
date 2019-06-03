@@ -1,4 +1,4 @@
-package hr.fer.zemris.java.p11.servleti;
+package hr.fer.zemris.java.servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -8,11 +8,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class FunnyServlet extends HttpServlet {
+public class ColorsServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		
-	    req.getRequestDispatcher("/WEB-INF/stories/funny.jsp").forward(req, resp);
+	    String color = (String)req.getParameter("color");
+	    req.getSession().setAttribute("pickedBgCol", color);
+	    req.getRequestDispatcher("/index.jsp").forward(req, resp);
 	}
 }

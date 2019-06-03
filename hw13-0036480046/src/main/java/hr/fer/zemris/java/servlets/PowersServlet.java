@@ -1,4 +1,4 @@
-package hr.fer.zemris.java.p11.servleti;
+package hr.fer.zemris.java.servlets;
 
 import java.io.File;
 import java.io.FileOutputStream;

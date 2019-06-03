@@ -9,7 +9,7 @@ public class AppListener implements ServletContextListener {
 	
 	@Override
 	public void contextInitialized(ServletContextEvent sce) {
-		startTime = System.currentTimeMillis()/1000;
+		startTime = System.currentTimeMillis();
 		sce.getServletContext().setAttribute("startTime", startTime);
 	}
 

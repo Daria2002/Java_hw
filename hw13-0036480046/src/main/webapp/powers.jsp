@@ -17,16 +17,6 @@
 		b:<br><input type="number" name="b" step="1" value="2"><br>
 		n:<br><input type="number" name="n" step="1" value="1"><br>
 		<input type="submit" value="Create xls"><input type="reset" value="Reset">
-		
-		<%
-			if(request.getAttribute("mess") != null) {
-				%>
-				<p><% request.getAttribute("mess"); %></a></p>
-			   <%
-			}
-		%>
-		
-		
 	</form>
 	</body>
 </html>

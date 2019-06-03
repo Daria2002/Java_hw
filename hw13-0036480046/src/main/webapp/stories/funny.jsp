@@ -2,6 +2,14 @@
     pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 
+<%
+	String myColor = (String)session.getAttribute("pickedBgCol");
+ 
+	if (myColor == null){
+		myColor = "white";
+	}
+%>  
+
 <script type="text/javascript">
 function setFontColor() {
 	window.setTimeout( "setFontColor()", 5000); // 5000 milliseconds delay
@@ -15,7 +23,7 @@ function setFontColor() {
 	if(index == 2)
 	ColorValue = "0000FF"; // blue
 	if(index == 3)
-	ColorValue = "008000"; // green
+	ColorValue = "00FF00"; // green
 	if(index == 4)
 	ColorValue = "4B0082"; // purple
 	if(index == 5)
@@ -39,7 +47,7 @@ function setFontColor() {
 <meta charset="UTF-8">
 <title>Story</title>
 </head>
-<body>
+<body bgcolor="<%=myColor%>">
 	<b><p>
 	
 	One bright day in late autumn a family of Ants were bustling about in the warm 

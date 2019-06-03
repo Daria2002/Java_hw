@@ -37,6 +37,21 @@
 	<servlet-class>hr.fer.zemris.java.servlets.PowersServlet</servlet-class>
 </servlet>
 
+<servlet>
+	<servlet-name>glasanje-servlet</servlet-name>
+	<servlet-class>hr.fer.zemris.java.servlets.GlasanjeServlet</servlet-class>
+</servlet>
+
+<servlet>
+	<servlet-name>glasanjeGlasaj-servlet</servlet-name>
+	<servlet-class>hr.fer.zemris.java.servlets.GlasanjeGlasajServlet</servlet-class>
+</servlet>
+
+<servlet>
+	<servlet-name>glasanjeRezultati-servlet</servlet-name>
+	<servlet-class>hr.fer.zemris.java.servlets.GlasanjeRezultatiServlet</servlet-class>
+</servlet>
+
 <servlet-mapping>
 	<servlet-name>colors-servlet</servlet-name>
 	<url-pattern>/setcolor</url-pattern>
@@ -67,6 +82,21 @@
 		hr.fer.zemris.java.listeners.AppListener
 	</listener-class>
 </listener>
+
+<servlet-mapping>
+	<servlet-name>glasanje-servlet</servlet-name>
+	<url-pattern>/glasanje</url-pattern>
+</servlet-mapping>
+
+<servlet-mapping>
+	<servlet-name>glasanjeGlasaj-servlet</servlet-name>
+	<url-pattern>/glasanje-glasaj</url-pattern>
+</servlet-mapping>
+
+<servlet-mapping>
+	<servlet-name>glasanjeRezultati-servlet</servlet-name>
+	<url-pattern>/glasanje-rezultati</url-pattern>
+</servlet-mapping>
 
 </web-app>
 

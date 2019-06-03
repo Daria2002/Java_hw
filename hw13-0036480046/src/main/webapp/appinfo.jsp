@@ -19,16 +19,25 @@ public String getTime(Long milliseconds) {
 }
 %>
 
+<%
+	String myColor = (String)session.getAttribute("pickedBgCol");
+ 
+	if (myColor == null){
+		myColor = "white";
+	}
+%>
+
 <html>
-	<head>
-	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-	<title>Application running time</title>
-	</head>
-	<body>
-	<td width="100%"><b>&nbsp;Application running time:&nbsp;
-	<font>
-	<%= getTime(new java.util.Date().getTime() - (Long)request.getServletContext().getAttribute("startTime")) %>
-	</font></b></td>
+	<body bgcolor="<%= myColor %>">
+		<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+		<title>Application running time</title>
+		</head>
+		
+		<td width="100%"><b>&nbsp;Application running time:&nbsp;
+		<font>
+		<%= getTime(new java.util.Date().getTime() - (Long)request.getServletContext().getAttribute("startTime")) %>
+		</font></b></td>
 	</body>
 </html>
 

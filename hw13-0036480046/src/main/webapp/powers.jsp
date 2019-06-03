@@ -9,8 +9,8 @@
 <html>
 	<body>
 	   	<form action="powers" method="GET">
-		a:<br><input type="number" name="a" step="1" value="2"><br>
-		b:<br><input type="number" name="b" step="1" value="3"><br>
+		a:<br><input type="number" name="a" step="1" value="1"><br>
+		b:<br><input type="number" name="b" step="1" value="2"><br>
 		n:<br><input type="number" name="n" step="1" value="1"><br>
 		<input type="submit" value="Create xls"><input type="reset" value="Reset">
 		

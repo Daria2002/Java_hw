@@ -51,14 +51,15 @@ public class PowersServlet extends HttpServlet {
     	if(a > 100 || a < -100 || b > 100 || b < -100 || n  > 5 || n < 1) {
     		req.setAttribute("mess", "Parameters are not ok");
 			System.out.println("Your excel file has been generated!");
-			req.getRequestDispatcher("/WEB-INF/pages/powers.jsp").forward(req, resp);
-    	}
-    	
-    	req.setAttribute("mess", null);
-    	
-    	createExelFile(a, b, n);
+			req.getRequestDispatcher("/powers.jsp").forward(req, resp);
+    	} else {
+        	
+        	req.setAttribute("mess", null);
+        	
+        	createExelFile(a, b, n);
 
-	    req.getRequestDispatcher("/WEB-INF/pages/powers.jsp").forward(req, resp);
+    	    req.getRequestDispatcher("/powers.jsp").forward(req, resp);
+    	}
 	}
 
 	private void createExelFile(int a, int b, int n) {

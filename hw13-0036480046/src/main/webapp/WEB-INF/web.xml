@@ -62,6 +62,12 @@
 	<url-pattern>/powers</url-pattern>
 </servlet-mapping>
 
+<listener>
+	<listener-class>
+             hr.fer.zemris.java.listeners.AppListeners 
+        </listener-class>
+   </listener>
+
 </web-app>
 
 

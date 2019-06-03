@@ -3,35 +3,26 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <%
-	Double[] sin = (Double[]) session.getAttribute("sin");	
-	Double[] cos = (Double[]) session.getAttribute("cos");
-	Integer a = (Integer) session.getAttribute("a");
+	
 %>
   
 <html>
 	<body>
-	   	<table border="1">
-			<thead>
-			    <tr>
-			        <th>x</th>
-			        <th>sin(x)</th>
-			        <th>cos(x)</th>
-			    </tr>
-			</thead>
-			
-			<tbody>
-				<%
-					for(int i = 0; i < sin.length; i++) {   
-					    %>
-					    <tr>
-					    <td><%= a+i %></td>
-					    <td><%= sin[i] %></td>
-					    <td><%= cos[i] %></td>
-					   </tr>
-					   <%
-					}
+	   	<form action="powers" method="GET">
+		a:<br><input type="number" name="a" min="-100" max="100" step="1" value="2"><br>
+		b:<br><input type="number" name="b" min="-100" max="100" step="1" value="3"><br>
+		n:<br><input type="number" name="n" min="1" max="5" step="1" value="1"><br>
+		<input type="submit" value="Create xls"><input type="reset" value="Reset">
+		
+		<%
+			if(request.getAttribute("mess") != null) {
 				%>
-			</tbody>
-		</table>
+				<p><% request.getAttribute("mess"); %></a></p>
+			   <%
+			}
+		%>
+		
+		
+	</form>
 	</body>
 </html>

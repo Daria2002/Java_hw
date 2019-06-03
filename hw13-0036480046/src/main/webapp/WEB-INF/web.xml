@@ -23,11 +23,6 @@
 </servlet>
 
 <servlet>
-	<servlet-name>funny-servlet</servlet-name>
-	<servlet-class>hr.fer.zemris.java.servlets.FunnyServlet</servlet-class>
-</servlet>
-
-<servlet>
 	<servlet-name>report-servlet</servlet-name>
 	<servlet-class>hr.fer.zemris.java.servlets.ReportServlet</servlet-class>
 </servlet>
@@ -60,11 +55,6 @@
 <servlet-mapping>
 	<servlet-name>trigonometric-servlet</servlet-name>
 	<url-pattern>/trigonometric</url-pattern>
-</servlet-mapping>
-
-<servlet-mapping>
-	<servlet-name>funny-servlet</servlet-name>
-	<url-pattern>/funny</url-pattern>
 </servlet-mapping>
 
 <servlet-mapping>

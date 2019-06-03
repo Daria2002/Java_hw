@@ -28,38 +28,28 @@ public class ReportServlet extends HttpServlet {
 		response.setContentType("image/png");
 
 		JFreeChart chart = getChart();
-		int width = 500;
-		int height = 350;
-		request.getSession().setAttribute("image", chart);
-		/*
-		OutputStream outputStream = response.getOutputStream();
-		ChartUtilities.writeChartAsPNG(outputStream, chart, width, height);
-		//response.getOutputStream().close(); 
-		//request.getRequestDispatcher("/WEB-INF/pages/report.jsp").forward(request, response);
-		outputStream.flush();
-		outputStream.close();
-		*/
+		
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		ChartUtilities.writeChartAsPNG(bos, chart, 500, 270);
-		request.getSession().setAttribute("im", bos);
 		OutputStream os = new BufferedOutputStream(response.getOutputStream());
 		os.write(bos.toByteArray());
-		os.flush();
 		os.close();
-		request.getRequestDispatcher("/WEB-INF/pages/report.jsp").forward(request, response);
+		
+		request.setAttribute("reportImage", bos.toByteArray());
+		request.getRequestDispatcher("/report.jsp").forward(request, response);
 	}
 
 	public JFreeChart getChart() {
 		DefaultPieDataset dataset = new DefaultPieDataset();
-		dataset.setValue("Ford", 23.3);
-		dataset.setValue("Chevy", 32.4);
-		dataset.setValue("Yugo", 44.2);
+		dataset.setValue("Usage1", 23.3);
+		dataset.setValue("Usage2", 32.4);
+		dataset.setValue("Usage3", 44.2);
 
 		boolean legend = true;
 		boolean tooltips = false;
 		boolean urls = false;
 
-		JFreeChart chart = ChartFactory.createPieChart("Cars", dataset, legend, tooltips, urls);
+		JFreeChart chart = ChartFactory.createPieChart("Usage", dataset, legend, tooltips, urls);
 
 		chart.setBorderPaint(Color.GREEN);
 		chart.setBorderStroke(new BasicStroke(5.0f));

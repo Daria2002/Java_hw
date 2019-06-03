@@ -1,3 +1,5 @@
+<%@page import="java.io.OutputStream"%>
+<%@page import="java.util.Base64"%>
 <%@ page session="true" %>
 <%@page import="org.jfree.chart.JFreeChart"%>
 <%@ page session="true" %>
@@ -8,5 +10,6 @@
 <html>	
 	<h1>OS usage</h1>
 	<p>Here are the results of OS usage in survey that we completed.</p>
-	<img src = "/reportImage" />
+	<img src="/webapp2/reportImage">
+
 </html>

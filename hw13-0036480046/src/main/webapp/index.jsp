@@ -25,6 +25,8 @@
 	<p></p>
 	<a href="/webapp2/stories/funny.jsp">Story</a>
 	<p></p>
+	<a href="/webapp2/powers.jsp">Power functionality</a>
+	<p></p>
 	<a href="/webapp2/powers?a=1&b=100&n=3">a=1 , b=100 , n=3</a>
    </body>
 </html>

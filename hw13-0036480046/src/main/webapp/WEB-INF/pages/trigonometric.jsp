@@ -6,10 +6,16 @@
 	Double[] sin = (Double[]) session.getAttribute("sin");	
 	Double[] cos = (Double[]) session.getAttribute("cos");
 	Integer a = (Integer) session.getAttribute("a");
+	
+	String myColor = (String)session.getAttribute("pickedBgCol");
+	 
+	if (myColor == null){
+		myColor = "white";
+	}
 %>
   
 <html>
-	<body>
+	<body bgcolor="<%=myColor%>">
 	   	<table border="1">
 			<thead>
 			    <tr>

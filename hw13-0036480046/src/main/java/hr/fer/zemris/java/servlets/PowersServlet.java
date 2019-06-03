@@ -28,30 +28,23 @@ public class PowersServlet extends HttpServlet {
     	try {
     		a = Integer.valueOf(req.getParameter("a"));
 		} catch (Exception e) {
-			req.setAttribute("mess", "Parameters are not ok");
-			System.out.println("Your excel file has been generated!");
-			req.getRequestDispatcher("/WEB-INF/pages/powers.jsp").forward(req, resp);
+			req.getRequestDispatcher("/error.jsp").forward(req, resp);
 		}
     	
     	try {
     		b = Integer.valueOf(req.getParameter("b"));
 		} catch (Exception e) {
-			req.setAttribute("mess", "Parameters are not ok");
-			System.out.println("Your excel file has been generated!");
-			req.getRequestDispatcher("/WEB-INF/pages/powers.jsp").forward(req, resp);
+			req.getRequestDispatcher("/error.jsp").forward(req, resp);
 		}
     	
     	try {
     		n = Integer.valueOf(req.getParameter("n"));
 		} catch (Exception e) {
-			req.setAttribute("mess", "Parameters are not ok");
-			req.getRequestDispatcher("/WEB-INF/pages/powers.jsp").forward(req, resp);
+			req.getRequestDispatcher("/error.jsp").forward(req, resp);
 		}
     	
     	if(a > 100 || a < -100 || b > 100 || b < -100 || n  > 5 || n < 1) {
-    		req.setAttribute("mess", "Parameters are not ok");
-			System.out.println("Your excel file has been generated!");
-			req.getRequestDispatcher("/powers.jsp").forward(req, resp);
+    		req.getRequestDispatcher("/error.jsp").forward(req, resp);
     	} else {
         	
         	req.setAttribute("mess", null);
@@ -74,11 +67,11 @@ public class PowersServlet extends HttpServlet {
 
 				HSSFRow rowhead = sheet.createRow((short)0);
 				rowhead.createCell((short) 0).setCellValue(a);
-				rowhead.createCell((short) 1).setCellValue(a^i);
+				rowhead.createCell((short) 1).setCellValue(Math.pow(a, i));
 				
 				HSSFRow row=   sheet.createRow((short)1);
 				row.createCell((short) 0).setCellValue(b);
-				row.createCell((short) 1).setCellValue(b^i);
+				row.createCell((short) 1).setCellValue(Math.pow(b, i));
 			}
 			
 			FileOutputStream fileOut =  new FileOutputStream(filename);

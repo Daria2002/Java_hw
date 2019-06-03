@@ -3,6 +3,8 @@ package hr.fer.zemris.java.p11.servleti;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -25,16 +27,26 @@ public class ReportServlet extends HttpServlet {
 
 		response.setContentType("image/png");
 
-		OutputStream outputStream = response.getOutputStream();
-
 		JFreeChart chart = getChart();
 		int width = 500;
 		int height = 350;
 		request.getSession().setAttribute("image", chart);
-		//ChartUtilities.writeChartAsPNG(outputStream, chart, width, height);
+		/*
+		OutputStream outputStream = response.getOutputStream();
+		ChartUtilities.writeChartAsPNG(outputStream, chart, width, height);
 		//response.getOutputStream().close(); 
+		//request.getRequestDispatcher("/WEB-INF/pages/report.jsp").forward(request, response);
+		outputStream.flush();
+		outputStream.close();
+		*/
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		ChartUtilities.writeChartAsPNG(bos, chart, 500, 270);
+		request.getSession().setAttribute("im", bos);
+		OutputStream os = new BufferedOutputStream(response.getOutputStream());
+		os.write(bos.toByteArray());
+		os.flush();
+		os.close();
 		request.getRequestDispatcher("/WEB-INF/pages/report.jsp").forward(request, response);
-
 	}
 
 	public JFreeChart getChart() {

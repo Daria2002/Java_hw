@@ -1,19 +1,12 @@
+<%@ page session="true" %>
 <%@page import="org.jfree.chart.JFreeChart"%>
 <%@ page session="true" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+    
 <!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<h1>OS usage</h1>
-<p>Here are the results of OS usage in survey that we completed.</p>
-<title>Insert title here</title>
-
-
-</head>
-
-<body>
-
-</body>
+<html>	
+	<h1>OS usage</h1>
+	<p>Here are the results of OS usage in survey that we completed.</p>
+	<img src = "/reportImage" />
 </html>

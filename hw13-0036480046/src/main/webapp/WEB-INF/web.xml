@@ -32,6 +32,11 @@
 	<servlet-class>hr.fer.zemris.java.p11.servleti.ReportServlet</servlet-class>
 </servlet>
 
+<servlet>
+	<servlet-name>powers-servlet</servlet-name>
+	<servlet-class>hr.fer.zemris.java.p11.servleti.PowersServlet</servlet-class>
+</servlet>
+
 <servlet-mapping>
 	<servlet-name>colors-servlet</servlet-name>
 	<url-pattern>/setcolor</url-pattern>
@@ -50,6 +55,11 @@
 <servlet-mapping>
 	<servlet-name>report-servlet</servlet-name>
 	<url-pattern>/reportImage</url-pattern>
+</servlet-mapping>
+
+<servlet-mapping>
+	<servlet-name>powers-servlet</servlet-name>
+	<url-pattern>/powers</url-pattern>
 </servlet-mapping>
 
 </web-app>

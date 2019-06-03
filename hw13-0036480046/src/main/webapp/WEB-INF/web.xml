@@ -64,9 +64,9 @@
 
 <listener>
 	<listener-class>
-             hr.fer.zemris.java.listeners.AppListeners 
-        </listener-class>
-   </listener>
+		hr.fer.zemris.java.listeners.AppListener
+	</listener-class>
+</listener>
 
 </web-app>
 

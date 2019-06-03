@@ -3,24 +3,19 @@
 <!DOCTYPE html>
 <html>
 <body>
-	<table>
-		<tr><td>varA</td><td><%= request.getAttribute("varA")%></td></tr>
-		<tr><td>varB</td><td><%Double b = (Double)request.getAttribute("varB"); out.print(b);%></td></tr>
-		<tr><td>zbroj</td><td><%= request.getAttribute("zbroj")%></td></tr>
-	</table>
-	
-	
-	<table>
-		<tr><td>varA</td><td><c:out value="${varA}"/></td></tr>
-		<tr><td>varB</td><td><c:out value="${varB}"/></td></tr>
-		<tr><td>zbroj</td><c:out value="${zbroj}"/></td></tr>
-	</table>
-	
-	<table>
-		<tr><td>varA</td><td>${requestScope.varA}</tr>
-		<tr><td>varB</td><td>${requestScope.varB}</tr>
-		<tr><td>zbroj</td>${requestScope.zbroj}</td></tr>
-	</table>
-	
+<h1>Glasanje za omiljeni bend:</h1>
+<p>Od sljedećih bendova, koji Vam je bend najdraži? Kliknite na link kako biste
+glasali!</p>
+
+<ol>
+	<%
+		String[] ids = (String[])request.getAttribute("ids");
+		String[] names = (String[])request.getAttribute("names");
+		
+		for(int i = 0; i < ids.length; i++) {
+			%><li value="<%=ids[i]%>"><a href="glasanje-glasaj?id=<%=ids[i]%>"><%=names[i]%></a></li><%
+		}
+	%>
+</ol>
 </body>
 </html>

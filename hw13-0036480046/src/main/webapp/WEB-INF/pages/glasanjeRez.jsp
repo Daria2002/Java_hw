@@ -25,8 +25,8 @@ table.rez td {text-align: center;}
 			<thead><tr><th>Bend</th><th>Broj glasova</th></tr></thead>
 			<tbody>
 			<%
-				Map<String, String> mapNamesAndId = (Map<String, String>)request.getAttribute("mapNamesAndId");
-				Map<String, String> mapIdAndPoints = (Map<String, String>)request.getAttribute("map");
+				Map<String, String> mapNamesAndId = (Map<String, String>)request.getSession().getAttribute("mapIdAndNames");
+				Map<String, String> mapIdAndPoints = (Map<String, String>)request.getSession().getAttribute("map");
 				
 				if(mapIdAndPoints != null) {
 					for(String id:mapNamesAndId.keySet()) {
@@ -34,11 +34,9 @@ table.rez td {text-align: center;}
 							%><tr><td><%=mapNamesAndId.get(id)%></td><td><%=mapIdAndPoints.get(id)%></td></tr><%
 						}
 					}
-				} else {
+				} else if(mapNamesAndId != null) {
 					for(String id:mapNamesAndId.keySet()) {
-						if(mapIdAndPoints.get(id) != null) {
-							%><tr><td><%=mapNamesAndId.get(id)%></td><td>"0"</td></tr><%
-						}
+						%><tr><td><%=mapNamesAndId.get(id)%></td><td>"0"</td></tr><%
 					}
 				}
 				

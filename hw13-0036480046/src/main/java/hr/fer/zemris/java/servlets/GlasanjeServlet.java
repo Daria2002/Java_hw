@@ -50,9 +50,6 @@ public class GlasanjeServlet extends HttpServlet {
 		// If you want to convert to a String[]
 		String[] data = lines.toArray(new String[]{});
 		
-		String[] names = new String[data.length];
-		String[] ids = new String[data.length];
-
 		Map<String, String> map = new HashMap<String, String>();
 		
 		for(int i = 0; i < data.length; i++) {

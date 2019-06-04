@@ -24,6 +24,7 @@ public class GlasanjeGlasajServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// Zabiljezi glas...
+		
 		String fileName = req.getServletContext().getRealPath("/WEB-INF/glasanje-rezultati.txt");
 		// Napravi datoteku ako je potrebno; ažuriraj podatke koji su u njoj...
 		
@@ -51,14 +52,10 @@ public class GlasanjeGlasajServlet extends HttpServlet {
 		
 		// take ide 
 		String key = req.getParameter("id");
-		if(map.containsKey(key)) {
-			map.put(key, map.get(key) + 1);
-		}
+		String newValue = map.get(key) != null ? map.get(key)+1:String.valueOf(1);
+		map.put(key, newValue);
 		
-		Map<String, String> mapNamesAndId = (Map<String, String>)req.getAttribute("mapNamesAndId");
-		
-		req.setAttribute("mapNamesAndId", mapNamesAndId);
-		req.setAttribute("map", map);
+		req.getSession().setAttribute("map", map);
 		
 		StringBuilder fileContent = new StringBuilder();
 		for(String keyEl:map.keySet()) {
@@ -70,6 +67,31 @@ public class GlasanjeGlasajServlet extends HttpServlet {
 		                   
 		fileStream.write(fileContent.toString().getBytes());
 		fileStream.close();
+		
+		String fileName2 = req.getServletContext()
+				.getRealPath("/WEB-INF/glasanje-definicija.txt");
+		
+		BufferedReader abc2 = new BufferedReader(new FileReader(fileName2));
+		List<String> lines2 = new ArrayList<String>();
+
+		String line2 = abc2.readLine();
+		while(line2 != null) {
+		    lines2.add(line2);
+		    line2 = abc2.readLine();
+		}
+		abc2.close();
+
+		// If you want to convert to a String[]
+		String[] data2 = lines2.toArray(new String[]{});
+		
+		Map<String, String> map2 = new HashMap<String, String>();
+		
+		for(int i = 0; i < data2.length; i++) {
+			String[] lineData = data2[i].split("\t");
+			map2.put(lineData[0], lineData[1]);
+		}
+		req.getSession().setAttribute("mapIdAndNames", map2);
+		
 		
 		// Kad je gotovo, pošalji redirect pregledniku I dalje NE generiraj odgovor
 		resp.sendRedirect(req.getContextPath() + "/glasanje-rezultati");

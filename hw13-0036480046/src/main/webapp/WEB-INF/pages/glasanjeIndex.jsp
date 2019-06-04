@@ -23,7 +23,7 @@ glasali!</p>
 	<%
 		Map<String, String> map = new HashMap<String, String>();
 	
-		request.setAttribute("mapNamesAndId", map);
+		map = (Map<String, String>)request.getAttribute("map");
 		
 		for(String idEl:map.keySet()) {
 			%><li value="<%=idEl%>"><a href="glasanje-glasaj?id=<%=idEl%>"><%=map.get(idEl)%></a></li><%

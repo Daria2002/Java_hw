@@ -5,7 +5,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -50,15 +52,14 @@ public class GlasanjeServlet extends HttpServlet {
 		
 		String[] names = new String[data.length];
 		String[] ids = new String[data.length];
+
+		Map<String, String> map = new HashMap<String, String>();
 		
 		for(int i = 0; i < data.length; i++) {
 			String[] lineData = data[i].split("\t");
-			ids[i] = lineData[0];
-			names[i] = lineData[1];
+			map.put(lineData[0], lineData[1]);
 		}
-		
-		req.setAttribute("names", names);
-		req.setAttribute("ids", ids);
+		req.setAttribute("map", map);
 		
 		// Pošalji ih JSP-u...
 		req.getRequestDispatcher("/WEB-INF/pages/glasanjeIndex.jsp")

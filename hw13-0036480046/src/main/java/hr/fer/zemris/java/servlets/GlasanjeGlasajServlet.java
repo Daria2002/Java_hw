@@ -3,6 +3,7 @@ package hr.fer.zemris.java.servlets;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -39,10 +40,8 @@ public class GlasanjeGlasajServlet extends HttpServlet {
 		// If you want to convert to a String[]
 		String[] data = lines.toArray(new String[]{});
 		
+		// map where ids are keys and values are bend points
 		Map<String, String> map = new HashMap<String, String>();
-		
-		String[] names = new String[data.length];
-		String[] ids = new String[data.length];
 		
 		for(int i = 0; i < data.length; i++) {
 			String[] lineData = data[i].split("\t");
@@ -50,12 +49,27 @@ public class GlasanjeGlasajServlet extends HttpServlet {
 			map.put(lineData[0], lineData[1]);
 		}
 		
-		String key = "1";
+		// take ide 
+		String key = req.getParameter("id");
 		if(map.containsKey(key)) {
 			map.put(key, map.get(key) + 1);
 		}
 		
+		Map<String, String> mapNamesAndId = (Map<String, String>)req.getAttribute("mapNamesAndId");
+		
+		req.setAttribute("mapNamesAndId", mapNamesAndId);
 		req.setAttribute("map", map);
+		
+		StringBuilder fileContent = new StringBuilder();
+		for(String keyEl:map.keySet()) {
+			fileContent.append(keyEl + "\t" + map.get(keyEl) + "\n");
+		}
+		
+		File destFile = new File(fileName);
+		FileOutputStream fileStream = new FileOutputStream(destFile, false); // true to append
+		                   
+		fileStream.write(fileContent.toString().getBytes());
+		fileStream.close();
 		
 		// Kad je gotovo, pošalji redirect pregledniku I dalje NE generiraj odgovor
 		resp.sendRedirect(req.getContextPath() + "/glasanje-rezultati");

@@ -1,3 +1,4 @@
+<%@page import="java.util.Map"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
     
@@ -23,14 +24,26 @@ table.rez td {text-align: center;}
 		<table border="1" cellspacing="0" class="rez">
 			<thead><tr><th>Bend</th><th>Broj glasova</th></tr></thead>
 			<tbody>
+			<%
+				Map<String, String> mapNamesAndId = (Map<String, String>)request.getAttribute("mapNamesAndId");
+				Map<String, String> mapIdAndPoints = (Map<String, String>)request.getAttribute("map");
 				
-				<tr><td>The Beach Boys</td><td>150</td></tr>
-				<tr><td>The Beatles</td><td>150</td></tr>
-				<tr><td>The Platters</td><td>60</td></tr>
-				<tr><td>The Marcels</td><td>33</td></tr>
-				<tr><td>The Mamas And The Papas</td><td>28</td></tr>
-				<tr><td>The Everly Brothers</td><td>25</td></tr>
-				<tr><td>The Four Seasons</td><td>20</td></tr>
+				if(mapIdAndPoints != null) {
+					for(String id:mapNamesAndId.keySet()) {
+						if(mapIdAndPoints.get(id) != null) {
+							%><tr><td><%=mapNamesAndId.get(id)%></td><td><%=mapIdAndPoints.get(id)%></td></tr><%
+						}
+					}
+				} else {
+					for(String id:mapNamesAndId.keySet()) {
+						if(mapIdAndPoints.get(id) != null) {
+							%><tr><td><%=mapNamesAndId.get(id)%></td><td>"0"</td></tr><%
+						}
+					}
+				}
+				
+				
+			%>
 			</tbody>
 		</table>
 		<h2>Grafički prikaz rezultata</h2>

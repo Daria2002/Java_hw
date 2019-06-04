@@ -1,3 +1,5 @@
+<%@page import="java.util.HashMap"%>
+<%@page import="java.util.Map"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
     
@@ -5,7 +7,7 @@
 <%
 	String myColor = (String)session.getAttribute("pickedBgCol");	
 
-	if (myColor == null){
+	if (myColor == null) {
 		myColor = "white";
 	}
 %>
@@ -19,11 +21,12 @@ glasali!</p>
 
 <ol>
 	<%
-		String[] ids = (String[])request.getAttribute("ids");
-		String[] names = (String[])request.getAttribute("names");
+		Map<String, String> map = new HashMap<String, String>();
+	
+		request.setAttribute("mapNamesAndId", map);
 		
-		for(int i = 0; i < ids.length; i++) {
-			%><li value="<%=ids[i]%>"><a href="glasanje-glasaj?id=<%=ids[i]%>"><%=names[i]%></a></li><%
+		for(String idEl:map.keySet()) {
+			%><li value="<%=idEl%>"><a href="glasanje-glasaj?id=<%=idEl%>"><%=map.get(idEl)%></a></li><%
 		}
 	%>
 </ol>

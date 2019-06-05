@@ -28,8 +28,6 @@ public class GlasanjeXlsServlet extends HttpServlet {
 		
 		String[] data = readFile(req, fileName);
 		createExelFile(req, resp, data);
-		
-		//req.getRequestDispatcher("/WEB-INF/pages/glasanjeRez.jsp").forward(req, resp);
 	}
 
 	private void createExelFile(HttpServletRequest request, HttpServletResponse response, String[] data) {
@@ -60,9 +58,7 @@ public class GlasanjeXlsServlet extends HttpServlet {
 	
 	private String[] readFile(HttpServletRequest req, String fileName) {
 		try {
-			BufferedReader abc;
-			
-				abc = new BufferedReader(new FileReader(fileName));
+			BufferedReader abc = new BufferedReader(new FileReader(fileName));
 			
 			List<String> lines = new ArrayList<String>();
 		

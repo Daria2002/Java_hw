@@ -1,3 +1,4 @@
+<%@page import="java.util.Stack"%>
 <%@page import="java.util.Collections"%>
 <%@page import="java.util.LinkedHashMap"%>
 <%@page import="java.util.Comparator"%>
@@ -64,8 +65,16 @@ table.rez td {text-align: center;}
 				
 				Map<String, String> sortdMap = sortByValue((HashMap)mapIdAndPoints);
 				
+				List<String> bestIds = new ArrayList<String>();
+				Integer bestId = 0;
+				
 				if(mapIdAndPoints != null) {
 					for(String id:sortdMap.keySet()) {
+						if(Integer.valueOf(sortdMap.get(id)) > bestId) {
+							bestId = Integer.valueOf(sortdMap.get(id));
+							bestIds.add(id);
+						}
+						
 						if(mapIdAndPoints.get(id) != null) {
 							%><tr><td><%=mapNamesAndId.get(id)%></td><td><%=mapIdAndPoints.get(id)%></td></tr><%
 						} else {
@@ -83,16 +92,20 @@ table.rez td {text-align: center;}
 			</tbody>
 		</table>
 		<h2>Grafički prikaz rezultata</h2>
-		<img alt="Pie-chart" src="/glasanje-grafika" width="400" height="400" />
+		<img alt="Pie-chart" src="<%=request.getContextPath()%>/glasanje-grafika" width="400" height="400" />
 		<h2>Rezultati u XLS formatu</h2>
 		<p>Rezultati u XLS formatu dostupni su <a href="<%=request.getContextPath()%>/glasanje-xls">ovdje</a></p>
 		<h2>Razno</h2>
 		<p>Primjeri pjesama pobjedničkih bendova:</p>
 		<ul>
-			<li><a href="https://www.youtube.com/watch?v=z9ypq6_5bsg" target="_blank">The
-			Beatles</a></li>
-			<li><a href="https://www.youtube.com/watch?v=H2di83WAOhU" target="_blank">The
-			Platters</a></li>
+			<%
+				Map<String, String> mapIdAndLinks = 
+				(Map<String, String>)request.getSession().getAttribute("mapIdAndLinks");
+
+				for(String id : bestIds) {
+					%><li><a href="<%=mapIdAndLinks.get(id)%>" target="_blank"><%=mapNamesAndId.get(id)%></a></li><%
+				}
+			%>
 		</ul>
 	</body>
 </html>

@@ -84,14 +84,17 @@ public class GlasanjeGlasajServlet extends HttpServlet {
 		// If you want to convert to a String[]
 		String[] data2 = lines2.toArray(new String[]{});
 		
-		Map<String, String> map2 = new HashMap<String, String>();
+		Map<String, String> mapIdAndNames = new HashMap<String, String>();
+		Map<String, String> mapIdAndLinks = new HashMap<String, String>();
 		
 		for(int i = 0; i < data2.length; i++) {
 			String[] lineData = data2[i].split("\t");
-			map2.put(lineData[0], lineData[1]);
+			mapIdAndNames.put(lineData[0], lineData[1]);
+			mapIdAndLinks.put(lineData[0], lineData[2]);
 		}
-		req.getSession().setAttribute("mapIdAndNames", map2);
 		
+		req.getSession().setAttribute("mapIdAndNames", mapIdAndNames);
+		req.getSession().setAttribute("mapIdAndLinks", mapIdAndLinks);
 		
 		// Kad je gotovo, pošalji redirect pregledniku I dalje NE generiraj odgovor
 		resp.sendRedirect(req.getContextPath() + "/glasanje-rezultati");

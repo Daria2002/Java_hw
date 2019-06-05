@@ -50,9 +50,9 @@ public class GlasanjeGlasajServlet extends HttpServlet {
 			map.put(lineData[0], lineData[1]);
 		}
 		
-		// take ide 
 		String key = req.getParameter("id");
-		String newValue = map.get(key) != null ? map.get(key)+1:String.valueOf(1);
+		String newValue = map.get(key) != null ? String.valueOf(Integer.valueOf(map.get(key))+1)
+				: String.valueOf(1);
 		map.put(key, newValue);
 		
 		req.getSession().setAttribute("map", map);

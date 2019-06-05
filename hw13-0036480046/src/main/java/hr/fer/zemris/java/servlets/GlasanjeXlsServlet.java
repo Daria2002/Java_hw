@@ -26,7 +26,7 @@ public class GlasanjeXlsServlet extends HttpServlet {
 		
 		// Napravi datoteku ako je potrebno; inače je samo pročitaj...
 		
-		String[] data = readFile(req);
+		String[] data = readFile(req, fileName);
 		createExelFile(req, resp, data);
 		
 		//req.getRequestDispatcher("/WEB-INF/pages/glasanjeRez.jsp").forward(req, resp);
@@ -58,11 +58,8 @@ public class GlasanjeXlsServlet extends HttpServlet {
 		}
 	}
 	
-	private String[] readFile(HttpServletRequest req) {
+	private String[] readFile(HttpServletRequest req, String fileName) {
 		try {
-			String fileName = req.getServletContext().getRealPath("/WEB-INF/glasanje-rezultati.txt");
-			// Napravi datoteku ako je potrebno; ažuriraj podatke koji su u njoj...
-			
 			BufferedReader abc;
 			
 				abc = new BufferedReader(new FileReader(fileName));

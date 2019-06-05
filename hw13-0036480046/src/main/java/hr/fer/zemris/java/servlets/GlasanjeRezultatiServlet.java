@@ -1,23 +1,26 @@
 package hr.fer.zemris.java.servlets;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-
+/**
+ * This class represents servlet that reads file.
+ * @author Daria Matković
+ *
+ */
 public class GlasanjeRezultatiServlet extends HttpServlet {
+
+	/**
+	 * default serial version
+	 */
+	private static final long serialVersionUID = 1L;
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -36,6 +39,11 @@ public class GlasanjeRezultatiServlet extends HttpServlet {
 		req.getRequestDispatcher("/WEB-INF/pages/glasanjeRez.jsp").forward(req, resp);
 	}
 	
+	/**
+	 * This method reads file
+	 * @param req request
+	 * @return string array with data from glasanje-rezultati.txt
+	 */
 	private String[] readFile(HttpServletRequest req) {
 		try {
 			String fileName = req.getServletContext().getRealPath("/WEB-INF/glasanje-rezultati.txt");

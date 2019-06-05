@@ -23,8 +23,20 @@ import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.general.DefaultPieDataset;
 
+/**
+ * This class generates pie chart for votes. This bar chart displays in /webapp2/glasanje-rezultati
+ * after voting.
+ * @author Daria Matković
+ *
+ */
 public class GlasanjeGrafikaServlet extends HttpServlet {
 
+	/**
+	 * default serial version id
+	 */
+	private static final long serialVersionUID = 1L;
+
+	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
 		response.setContentType("image/png");
@@ -39,6 +51,14 @@ public class GlasanjeGrafikaServlet extends HttpServlet {
 		request.setAttribute("/glasanje-grafika", bos.toByteArray());
 	}
 
+	/**
+	 * This method is used for generating and setting pie chart
+	 * @param req request
+	 * @param resp response
+	 * @return chart
+	 * @throws ServletException exception 
+	 * @throws IOException exception
+	 */
 	public JFreeChart getChart(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		DefaultPieDataset dataset = new DefaultPieDataset();
 		
@@ -71,7 +91,11 @@ public class GlasanjeGrafikaServlet extends HttpServlet {
 		return chart;
 	}
 	
-	// returns map, where key is id and values are points
+	/**
+	 * This method reads file glasanje-rezultati.txt and makes map with points and ids
+	 * @param req request
+	 * @return returns map, where key is id and values are points
+	 */
 	private Map<String, String> readPointsAndIds(HttpServletRequest req) {
 		try {
 			String fileName = req.getServletContext().getRealPath("/WEB-INF/glasanje-rezultati.txt");
@@ -105,6 +129,11 @@ public class GlasanjeGrafikaServlet extends HttpServlet {
 		}
 	}
 	
+	/**
+	 * This method reads glasanje-definicija.txt file and makes map with names and ids
+	 * @param req request
+	 * @return returns map, where key is id and values are names
+	 */
 	private Map<String, String> readNamesAndIds(HttpServletRequest req) {
 		try {
 			String fileName2 = req.getServletContext()

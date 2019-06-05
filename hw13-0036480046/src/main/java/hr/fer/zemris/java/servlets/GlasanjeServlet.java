@@ -3,32 +3,28 @@ package hr.fer.zemris.java.servlets;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * This class represents servlet that sets attribute with map where key is id, and 
+ * value is bend name
+ * @author Daria Matković
+ *
+ */
 public class GlasanjeServlet extends HttpServlet {
 
-	private static class bendData {
-		private Integer id;
-		private String bendName;
-		private String link;
-		
-		public bendData(Integer id, String bendName, String link) {
-			super();
-			this.id = id;
-			this.bendName = bendName;
-			this.link = link;
-		}
-	}
-	
+	/**
+	 * default serial version id
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {

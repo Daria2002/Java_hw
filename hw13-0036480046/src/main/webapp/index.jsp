@@ -30,5 +30,9 @@
 	<a href="/webapp2/powers?a=1&b=100&n=3">Power(a=1 , b=100 , n=3)</a>
 	<p></p>
 	<a href="/webapp2/glasanje">Glasanje</a>
+	<p></p>
+	<a href="/webapp2/appinfo.jsp">Application running time</a>
+	<p></p>
+	<a href="/webapp2/report.jsp">OS usage</a>
    </body>
 </html>

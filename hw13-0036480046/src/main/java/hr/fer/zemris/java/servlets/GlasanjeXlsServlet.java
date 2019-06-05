@@ -1,23 +1,30 @@
 package hr.fer.zemris.java.servlets;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
+/**
+ * This servlet creates xls file with votes. File downloads when user click on
+ * link.
+ * @author Daria Matković
+ *
+ */
 public class GlasanjeXlsServlet extends HttpServlet {
+
+	/**
+	 * deafult serial version id
+	 */
+	private static final long serialVersionUID = 1L;
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -26,11 +33,20 @@ public class GlasanjeXlsServlet extends HttpServlet {
 		
 		// Napravi datoteku ako je potrebno; inače je samo pročitaj...
 		
-		String[] data = readFile(req, fileName);
-		createExelFile(req, resp, data);
+		String[] data = readFile(fileName);
+		createXlsFile(req, resp, data);
 	}
 
-	private void createExelFile(HttpServletRequest request, HttpServletResponse response, String[] data) throws ServletException, IOException {
+	/**
+	 * This method creates xls file with votes.
+	 * @param request request
+	 * @param response response
+	 * @param data data
+	 * @throws ServletException exception
+	 * @throws IOException exception
+	 */
+	private void createXlsFile(HttpServletRequest request, HttpServletResponse response,
+			String[] data) throws ServletException, IOException {
 		try{
 			HSSFWorkbook hwb = new HSSFWorkbook();
 			
@@ -55,7 +71,12 @@ public class GlasanjeXlsServlet extends HttpServlet {
 		}
 	}
 	
-	private String[] readFile(HttpServletRequest req, String fileName) {
+	/**
+	 * This method reads given file
+	 * @param fileName file to read
+	 * @return string array where every array element represents one line in file
+	 */
+	private String[] readFile(String fileName) {
 		try {
 			BufferedReader abc = new BufferedReader(new FileReader(fileName));
 			

@@ -1,26 +1,25 @@
 package hr.fer.zemris.java.servlets;
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.jfree.chart.ChartUtilities;
 
+/**
+ * This class creates xls file that contains power of parameters user enetered.
+ * @author Daria Matković
+ *
+ */
 public class PowersServlet extends HttpServlet {
+
+	/**
+	 * default serial version id
+	 */
+	private static final long serialVersionUID = 1L;
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -51,10 +50,20 @@ public class PowersServlet extends HttpServlet {
     		req.getRequestDispatcher("/error.jsp").forward(req, resp);
     	}
     	
-    	createExelFile(a, b, n, resp, req);
+    	createXlsFile(a, b, n, resp, req);
 	}
 
-	private void createExelFile(int a, int b, int n, HttpServletResponse response, 
+	/**
+	 * This method creates xls file
+	 * @param a a
+	 * @param b b
+	 * @param n number of pages
+	 * @param response response
+	 * @param request request
+	 * @throws ServletException exception
+	 * @throws IOException exception
+	 */
+	private void createXlsFile(int a, int b, int n, HttpServletResponse response, 
 			HttpServletRequest request) throws ServletException, IOException {
 		try{
 			HSSFWorkbook hwb = new HSSFWorkbook();

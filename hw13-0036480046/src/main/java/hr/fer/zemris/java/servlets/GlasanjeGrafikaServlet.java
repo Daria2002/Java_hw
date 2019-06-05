@@ -62,16 +62,11 @@ public class GlasanjeGrafikaServlet extends HttpServlet {
 	public JFreeChart getChart(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		DefaultPieDataset dataset = new DefaultPieDataset();
 		
-		int totalSum = 0;
 		Map<String, String> points = readPointsAndIds(req);
 		Map<String, String> names = readNamesAndIds(req);
 		
 		if(points == null || names == null) {
 			req.getRequestDispatcher("/error.jsp").forward(req, resp);
-		}
-		
-		for(String id:points.keySet()) {
-			totalSum += Integer.valueOf(points.get(id));
 		}
 		
 		for(String id:points.keySet()) {

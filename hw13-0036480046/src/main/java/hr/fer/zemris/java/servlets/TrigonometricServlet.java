@@ -1,14 +1,23 @@
 package hr.fer.zemris.java.servlets;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * This class represents trigonometric servlet for calculation sin and cos for
+ * given range
+ * @author Daria Matković
+ *
+ */
 public class TrigonometricServlet extends HttpServlet {
+
+	/**
+	 * default serial version id
+	 */
+	private static final long serialVersionUID = 1L;
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -51,6 +60,5 @@ public class TrigonometricServlet extends HttpServlet {
 	    req.getSession().setAttribute("a", a);
 	    
 	    req.getRequestDispatcher("/WEB-INF/pages/trigonometric.jsp").forward(req, resp);
-
 	}
 }

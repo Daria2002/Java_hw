@@ -16,8 +16,19 @@ import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.general.DefaultPieDataset;
 
+/**
+ * This class creates pie chart for usage.
+ * @author Daria Matković
+ *
+ */
 public class ReportServlet extends HttpServlet {
 
+	/**
+	 * default serial version
+	 */
+	private static final long serialVersionUID = 1L;
+
+	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
 		response.setContentType("image/png");
@@ -34,6 +45,10 @@ public class ReportServlet extends HttpServlet {
 		request.getRequestDispatcher("/report.jsp").forward(request, response);
 	}
 
+	/**
+	 * This method creates pie chart
+	 * @return chart
+	 */
 	public JFreeChart getChart() {
 		DefaultPieDataset dataset = new DefaultPieDataset();
 		dataset.setValue("Usage1", 23.3);

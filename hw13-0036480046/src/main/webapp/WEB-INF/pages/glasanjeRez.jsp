@@ -70,7 +70,7 @@ table.rez td {text-align: center;}
 				
 				if(mapIdAndPoints != null) {
 					for(String id:sortdMap.keySet()) {
-						if(Integer.valueOf(sortdMap.get(id)) > bestId) {
+						if(Integer.valueOf(sortdMap.get(id)) >= bestId) {
 							bestId = Integer.valueOf(sortdMap.get(id));
 							bestIds.add(id);
 						}

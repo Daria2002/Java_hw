@@ -30,7 +30,7 @@ public class GlasanjeXlsServlet extends HttpServlet {
 		createExelFile(req, resp, data);
 	}
 
-	private void createExelFile(HttpServletRequest request, HttpServletResponse response, String[] data) {
+	private void createExelFile(HttpServletRequest request, HttpServletResponse response, String[] data) throws ServletException, IOException {
 		try{
 			HSSFWorkbook hwb = new HSSFWorkbook();
 			
@@ -51,8 +51,7 @@ public class GlasanjeXlsServlet extends HttpServlet {
 			hwb.close();
 	
 		} catch ( Exception ex ) {
-		    System.out.println(ex);
-	
+			request.getRequestDispatcher("/error.jsp").forward(request, response);
 		}
 	}
 	

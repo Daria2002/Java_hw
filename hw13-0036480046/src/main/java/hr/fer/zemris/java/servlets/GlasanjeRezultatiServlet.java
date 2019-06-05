@@ -27,8 +27,10 @@ public class GlasanjeRezultatiServlet extends HttpServlet {
 		// Napravi datoteku ako je potrebno; inače je samo pročitaj...
 		
 		String[] data = readFile(req);
-		//makePieChart(req);
 		
+		if(data == null) {
+			req.getRequestDispatcher("/error.jsp").forward(req, resp);
+		}
 		
 		// Pošalji ih JSP-u...
 		req.getRequestDispatcher("/WEB-INF/pages/glasanjeRez.jsp").forward(req, resp);
@@ -39,9 +41,7 @@ public class GlasanjeRezultatiServlet extends HttpServlet {
 			String fileName = req.getServletContext().getRealPath("/WEB-INF/glasanje-rezultati.txt");
 			// Napravi datoteku ako je potrebno; ažuriraj podatke koji su u njoj...
 			
-			BufferedReader abc;
-			
-				abc = new BufferedReader(new FileReader(fileName));
+			BufferedReader abc = new BufferedReader(new FileReader(fileName));
 			
 			List<String> lines = new ArrayList<String>();
 		

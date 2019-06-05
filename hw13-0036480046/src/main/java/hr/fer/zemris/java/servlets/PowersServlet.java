@@ -55,7 +55,7 @@ public class PowersServlet extends HttpServlet {
 	}
 
 	private void createExelFile(int a, int b, int n, HttpServletResponse response, 
-			HttpServletRequest request) {
+			HttpServletRequest request) throws ServletException, IOException {
 		try{
 			HSSFWorkbook hwb = new HSSFWorkbook();
 			
@@ -78,8 +78,7 @@ public class PowersServlet extends HttpServlet {
 			hwb.close();
 
 		} catch ( Exception ex ) {
-		    System.out.println(ex);
-
+			request.getRequestDispatcher("/error.jsp").forward(request, response);
 		}
 	}
 }

@@ -29,7 +29,7 @@ public class GlasanjeGrafikaServlet extends HttpServlet {
 
 		response.setContentType("image/png");
 
-		JFreeChart chart = getChart(request);
+		JFreeChart chart = getChart(request, response);
 		
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		ChartUtilities.writeChartAsPNG(bos, chart, 500, 270);
@@ -39,12 +39,16 @@ public class GlasanjeGrafikaServlet extends HttpServlet {
 		request.setAttribute("/glasanje-grafika", bos.toByteArray());
 	}
 
-	public JFreeChart getChart(HttpServletRequest req) {
+	public JFreeChart getChart(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		DefaultPieDataset dataset = new DefaultPieDataset();
 		
 		int totalSum = 0;
 		Map<String, String> points = readPointsAndIds(req);
 		Map<String, String> names = readNamesAndIds(req);
+		
+		if(points == null || names == null) {
+			req.getRequestDispatcher("/error.jsp").forward(req, resp);
+		}
 		
 		for(String id:points.keySet()) {
 			totalSum += Integer.valueOf(points.get(id));

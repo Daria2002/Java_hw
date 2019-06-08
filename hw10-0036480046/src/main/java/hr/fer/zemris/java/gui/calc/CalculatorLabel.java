@@ -16,6 +16,11 @@ import hr.fer.zemris.java.gui.calc.model.CalcValueListener;
 public class CalculatorLabel extends JLabel implements CalcValueListener {
 
 	/**
+	 * add default serial version
+	 */
+	private static final long serialVersionUID = 1L;
+
+	/**
 	 * This method represents constructor for calculator label, that initialize
 	 * color for calculator label.
 	 */
@@ -41,5 +46,4 @@ public class CalculatorLabel extends JLabel implements CalcValueListener {
 		Integer val = Integer.valueOf(intgr);
 		setText(val.toString());
 	}
-
 }

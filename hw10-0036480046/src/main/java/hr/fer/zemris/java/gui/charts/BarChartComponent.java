@@ -16,6 +16,10 @@ import javax.swing.JComponent;
  *
  */
 public class BarChartComponent extends JComponent {
+	/**
+	 * default serial version
+	 */
+	private static final long serialVersionUID = 1L;
 	/** bar chart **/
 	BarChart barChart;
 	/** arrow size **/
@@ -38,7 +42,6 @@ public class BarChartComponent extends JComponent {
 		
 		int yPadding = 40 + g.getFontMetrics().stringWidth(String.valueOf(
 				barChart.yMax));
-		int xPadding = 40;
 		
 		Graphics2D g2D = (Graphics2D)g;
 		

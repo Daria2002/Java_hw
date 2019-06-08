@@ -1,15 +1,10 @@
 package hr.fer.zemris.java.gui.calc;
 
 import static org.junit.jupiter.api.Assertions.*;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import hr.fer.zemris.java.gui.calc.model.CalcModel;
-import hr.fer.zemris.java.gui.calc.model.CalcValueListener;
 import hr.fer.zemris.java.gui.calc.model.CalculatorInputException;
-
-import java.util.function.DoubleBinaryOperator;
 
 public class CalcModelTest {
 	
@@ -293,97 +288,5 @@ public class CalcModelTest {
 		
 		assertEquals(72.0, model.getValue(), 1E-10); 
 		assertEquals("72.0", model.toString()); 
-	}
-
-	private static class DummyCalcModel implements CalcModel {
-
-		@Override
-		public void addCalcValueListener(CalcValueListener l) {
-			notimp();
-		}
-
-		@Override
-		public void removeCalcValueListener(CalcValueListener l) {
-			notimp();
-		}
-
-		@Override
-		public boolean isEditable() {
-			notimp();
-			return false;
-		}
-		
-		@Override
-		public double getValue() {
-			notimp();
-			return 0;
-		}
-		
-		@Override
-		public void setValue(double value) {
-			notimp();
-		}
-
-		@Override
-		public void clear() {
-			notimp();
-		}
-
-		@Override
-		public void clearAll() {
-			notimp();
-		}
-		
-		@Override
-		public void swapSign() {
-			notimp();
-		}
-
-		@Override
-		public void insertDecimalPoint() {
-			notimp();
-		}
-
-		@Override
-		public void insertDigit(int digit) {
-			notimp();
-		}
-
-		@Override
-		public boolean isActiveOperandSet() {
-			notimp();
-			return false;
-		}
-
-		@Override
-		public double getActiveOperand() {
-			notimp();
-			return 0;
-		}
-
-		@Override
-		public void setActiveOperand(double activeOperand) {
-			notimp();
-		}
-
-		@Override
-		public void clearActiveOperand() {
-			notimp();
-		}
-		
-		@Override
-		public DoubleBinaryOperator getPendingBinaryOperation() {
-			notimp();
-			return null;
-		}
-		
-		@Override
-		public void setPendingBinaryOperation(DoubleBinaryOperator op) {
-			notimp();
-		}
-		
-		private void notimp() {
-			throw new UnsupportedOperationException("Method is not implemented yet!");
-		}
 	}
 }

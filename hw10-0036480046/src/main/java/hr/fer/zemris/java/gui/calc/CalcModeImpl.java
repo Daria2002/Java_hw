@@ -15,7 +15,7 @@ import hr.fer.zemris.java.gui.calc.model.CalculatorInputException;
  *
  */
 public class CalcModeImpl implements CalcModel {
-	/** fleg if model is editable **/
+	/** flag if model is editable **/
 	boolean editableModel;
 	/** positive number **/
 	boolean positiveNumber;

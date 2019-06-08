@@ -23,6 +23,11 @@ import javax.swing.WindowConstants;
 public class BarChartDemo extends JFrame {
 	
 	/**
+	 * default serial version
+	 */
+	private static final long serialVersionUID = 1L;
+
+	/**
 	 * This method represents constructor for bar chart, that sets properties
 	 * and size
 	 */

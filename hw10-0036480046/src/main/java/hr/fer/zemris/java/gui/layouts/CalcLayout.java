@@ -8,6 +8,9 @@ import java.awt.LayoutManager2;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -62,15 +65,24 @@ public class CalcLayout implements LayoutManager2 {
 		components.remove(comp);
 	}
 
-	@Override
-	public Dimension preferredLayoutSize(Container parent) {
-		Dimension preferredDimension = new Dimension(0, 0);
+	private Dimension getWantedDimension(Set<Component> components, Function<Component, Dimension> f1, 
+			Function<Component, Boolean> f2) {
+		Dimension dim = new Dimension(0, 0);
 		
-		for(Component comp : components.keySet()) {
-			if(comp.isPreferredSizeSet()) {
-				preferredDimension = getDimension(comp, preferredDimension, comp.getPreferredSize());
+		for(Component comp : components) {
+			if(f2.apply(comp)) {
+				dim = getDimension(comp, dim, f1.apply(comp));
 			}
 		}
+		
+		return dim;
+	}
+	
+	@Override
+	public Dimension preferredLayoutSize(Container parent) {
+		Dimension preferredDimension = getWantedDimension(components.keySet(),
+				(t) -> {return t.getPreferredSize(); },
+				(t) -> {return t.isPreferredSizeSet();});
 		
 		if(preferredDimension.height == 0 && preferredDimension.width == 0) {
 			if(parent.getWidth() != 0 && parent.getHeight() != 0) {
@@ -187,7 +199,7 @@ public class CalcLayout implements LayoutManager2 {
 	 * @param divisor value to divide by
 	 * @return round up result of dividing num by divisor
 	 */
-	public static int roundUp(int num, int divisor) {
+	private static int roundUp(int num, int divisor) {
 	    int sign = (num > 0 ? 1 : -1) * (divisor > 0 ? 1 : -1);
 	    return sign * (Math.abs(num) + Math.abs(divisor) - 1) / Math.abs(divisor);
 	}
@@ -271,44 +283,35 @@ public class CalcLayout implements LayoutManager2 {
 		return new Dimension(maxWidth, maxHeight);
 	}
 
-	@Override
-	public Dimension minimumLayoutSize(Container parent) {
-		Dimension minimumDimension = new Dimension(0, 0);
+	
+	/**
+	 * 
+	 * @param f1
+	 * @param f2
+	 * @return
+	 */
+	private Dimension getLayoutSize(Function<Component, Dimension> f1, 
+			Function<Component, Boolean> f2) {
+		Dimension dim = getWantedDimension(components.keySet(), f1, f2);
 		
-		for(Component comp : components.keySet()) {
-			if(comp.isMinimumSizeSet()) {
-				minimumDimension = getDimension(comp, minimumDimension, comp.getMinimumSize());
-			}
-		}
-
-		if(minimumDimension.height == 0 && minimumDimension.width == 0) {
+		if(dim.height == 0 && dim.width == 0) {
 			return new Dimension(0, 0);
 		}
 		
-		return new Dimension(minimumDimension.width * NUMBER_OF_COLUMNS +
+		return new Dimension(dim.width * NUMBER_OF_COLUMNS +
 				(NUMBER_OF_COLUMNS - 1) * spaceBetweenRowsAndColumns, 
-				minimumDimension.height * NUMBER_OF_ROWS +
+				dim.height * NUMBER_OF_ROWS +
 				(NUMBER_OF_ROWS - 1) * spaceBetweenRowsAndColumns);
 	}
-
+	
+	@Override
+	public Dimension minimumLayoutSize(Container parent) {
+		return getLayoutSize((t) -> {return t.getMinimumSize();}, (t) -> {return t.isMinimumSizeSet();});
+	}
+	
 	@Override
 	public Dimension maximumLayoutSize(Container target) {
-		Dimension maximumDimension = new Dimension(0, 0);
-		
-		for(Component comp : components.keySet()) {
-			if(comp.isMaximumSizeSet()) {
-				maximumDimension = getDimension(comp, maximumDimension, comp.getMaximumSize());
-			}
-		}
-
-		if(maximumDimension.height == 0 && maximumDimension.width == 0) {
-			return new Dimension(0, 0);
-		}
-		
-		return new Dimension(maximumDimension.width * NUMBER_OF_COLUMNS +
-				(NUMBER_OF_COLUMNS - 1) * spaceBetweenRowsAndColumns, 
-				maximumDimension.height * NUMBER_OF_ROWS +
-				(NUMBER_OF_ROWS - 1) * spaceBetweenRowsAndColumns);
+		return getLayoutSize((t) -> {return t.getMaximumSize();}, (t) -> {return t.isMaximumSizeSet();});
 	}
 
 	@Override

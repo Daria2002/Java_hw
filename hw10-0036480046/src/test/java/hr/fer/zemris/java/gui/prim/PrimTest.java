@@ -2,12 +2,6 @@ package hr.fer.zemris.java.gui.prim;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
-
 import org.junit.jupiter.api.Test;
 
 class PrimTest {

@@ -22,6 +22,7 @@ class PrimTest {
 		assertEquals(7, plm.prim.get(4));
 	}
 	
+	@Test
 	void GetSizeTest() {
 		PrimListModel plm = new PrimListModel();
 		
@@ -34,6 +35,7 @@ class PrimTest {
 		assertEquals(5, plm.getSize());
 	}
 
+	@Test
 	void GetElementAtIndex() {
 		PrimListModel plm = new PrimListModel();
 		

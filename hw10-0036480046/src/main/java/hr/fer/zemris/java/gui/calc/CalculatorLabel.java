@@ -3,6 +3,7 @@ package hr.fer.zemris.java.gui.calc;
 import java.awt.Color;
 
 import javax.swing.JLabel;
+import javax.swing.SwingConstants;
 
 import hr.fer.zemris.java.gui.calc.model.CalcModel;
 import hr.fer.zemris.java.gui.calc.model.CalcValueListener;
@@ -26,6 +27,7 @@ public class CalculatorLabel extends JLabel implements CalcValueListener {
 	 */
 	public CalculatorLabel() {
 		setOpaque(true);
+		setHorizontalAlignment(SwingConstants.RIGHT);
         setBackground(Color.YELLOW);
 	}
 	

@@ -7,9 +7,9 @@ package hr.fer.zemris.java.gui.charts;
  */
 public class XYValue {
 	/** value on x axis **/
-	private int x;
+	private final int x;
 	/** value on y axis **/
-	private int y;
+	private final int y;
 	
 	/**
 	 * This method represents constructor for x and y

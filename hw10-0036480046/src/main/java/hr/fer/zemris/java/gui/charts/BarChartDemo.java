@@ -42,7 +42,36 @@ public class BarChartDemo extends JFrame {
 	 * @param args path to file where data for bar chart is written.
 	 */
 	public static void main(String[] args) {
+		if(args.length != 1) {
+			System.out.println("Enter one argument that represents file name");
+			System.exit(0);
+		}
+		
 		String fileName = args[0];
+		List<String> result = read(fileName);
+		
+		String xDescription = result.get(0);
+		String yDescription = result.get(1);
+		
+		int yMin = Integer.valueOf(result.get(3));
+		int yMax = Integer.valueOf(result.get(4));
+		int space = Integer.valueOf(result.get(5));
+
+		JPanel content = new JPanel();
+        content.setLayout(new BorderLayout());
+        content.add(new JLabel(fileName, SwingConstants.CENTER), BorderLayout.NORTH);
+        content.add(new BarChartComponent(new BarChart(parse(result.get(2).split(" ")),
+        		xDescription, yDescription, yMin, yMax, space)), BorderLayout.CENTER);
+        
+        BarChartDemo bcd = new BarChartDemo();
+		bcd.setLayout(new BoxLayout(bcd.getContentPane(), BoxLayout.Y_AXIS));
+        bcd.setContentPane(content);
+        
+		SwingUtilities.invokeLater(() -> {bcd.setVisible(true);});
+		
+	}
+	
+	private static List<String> read(String fileName) {
 		List<String> result = new ArrayList<String>();
 		
 		try {
@@ -52,11 +81,10 @@ public class BarChartDemo extends JFrame {
 			System.exit(0);
 		}
 		
-		String xDescription = result.get(0);
-		String yDescription = result.get(1);
+		return result;
+	}
 	
-		String[] points = result.get(2).split(" ");
-		
+	private static List<XYValue> parse(String[] points) {
 		List<XYValue> xyValueList = new ArrayList<XYValue>();
 		
 		for(String point : points) {
@@ -66,29 +94,6 @@ public class BarChartDemo extends JFrame {
 					Integer.valueOf(point.substring(commaIndex + 1))));
 		}
 		
-		int yMin = Integer.valueOf(result.get(3));
-		int yMax = Integer.valueOf(result.get(4));
-		
-		int space = Integer.valueOf(result.get(5));
-		
-		BarChart bc = new BarChart(xyValueList, xDescription, yDescription,
-				yMin, yMax, space);
-		
-		BarChartComponent bcc = new BarChartComponent(bc);	
-		BarChartDemo bcd = new BarChartDemo();
-		
-		bcd.setLayout(new BoxLayout(bcd.getContentPane(), BoxLayout.Y_AXIS));
-
-		JLabel lab = new JLabel(fileName, SwingConstants.CENTER);
-		
-		JPanel content = new JPanel();
-        content.setLayout(new BorderLayout());
-        content.add(lab , BorderLayout.NORTH);
-        content.add(bcc, BorderLayout.CENTER);
-        
-        bcd.setContentPane(content);
-        
-		SwingUtilities.invokeLater(() -> {bcd.setVisible(true);});
-		
+		return xyValueList;
 	}
-}
+} 

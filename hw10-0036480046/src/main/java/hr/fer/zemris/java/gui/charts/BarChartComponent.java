@@ -76,7 +76,8 @@ public class BarChartComponent extends JComponent {
 		int rowsHeight = (height - 50 - 50) / (barChart.getyMax() - barChart.getyMin());
 		// draw lines for rows
 		for(int i = barChart.getyMin(); i <= barChart.getyMax(); i = i + barChart.getSpace()) {
-			g2D.drawLine(width - yPadding, height - 50-5 - i * rowsHeight, yPadding, height - 50-5 - i * rowsHeight);
+			g2D.drawLine(width - yPadding, height - 50-5 - i * rowsHeight,
+					yPadding, height - 50-5 - i * rowsHeight);
 		}
 		
 		g2D.setPaint(Color.BLACK);
@@ -99,7 +100,8 @@ public class BarChartComponent extends JComponent {
 		// write numbers for y axis
 		for(int i = barChart.getyMin(); i <= barChart.getyMax(); i = i + barChart.getSpace()) {
 			String help = String.format("%" + spaceLength + "d", i);
-			g2D.drawString(help, yPadding-g2D.getFontMetrics().stringWidth(help), height - 50 + 5 - i * rowsHeight-letterHeight/2);
+			g2D.drawString(help, yPadding-g2D.getFontMetrics().stringWidth(help),
+					height - 50 + 5 - (i-barChart.getyMin()) * rowsHeight-letterHeight/2);
 		}
 		
 		g2D.setColor(Color.ORANGE);

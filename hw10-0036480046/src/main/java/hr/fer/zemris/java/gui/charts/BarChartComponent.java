@@ -127,7 +127,7 @@ public class BarChartComponent extends JComponent {
 	 * @param x2 stop x value
 	 * @param y2 stop y value
 	 */
-	void drawArrow(Graphics g1, int x1, int y1, int x2, int y2) {
+	private void drawArrow(Graphics g1, int x1, int y1, int x2, int y2) {
         Graphics2D g = (Graphics2D) g1.create();
 
         double dx = x2 - x1, dy = y2 - y1;

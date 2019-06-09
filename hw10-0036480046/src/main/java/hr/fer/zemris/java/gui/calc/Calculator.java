@@ -230,8 +230,9 @@ public class Calculator extends JFrame {
 	private static ActionListener popListener = (e) -> {
 		if(stack.isEmpty()) {
 			System.out.println("Stack is empty");
-			System.exit(1);
+			return;
 		}
+		
 		Double val = stack.pop();
 		cmi.setEnteredNumberDecimal(val);
 		cmi.setEnteredNumberString(String.valueOf(val));

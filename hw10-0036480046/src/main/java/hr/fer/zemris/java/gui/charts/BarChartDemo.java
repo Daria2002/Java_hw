@@ -43,7 +43,7 @@ public class BarChartDemo extends JFrame {
 	 */
 	public static void main(String[] args) {
 		if(args.length != 1) {
-			System.out.println("Enter one argument that represents file name");
+			System.out.println("Add one argument that represents file name");
 			System.exit(0);
 		}
 		

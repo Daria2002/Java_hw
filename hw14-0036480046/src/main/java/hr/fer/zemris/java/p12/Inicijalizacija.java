@@ -63,7 +63,7 @@ public class Inicijalizacija implements ServletContextListener {
 			}
 			if(polls <= 0) {
 				addBendData(con);
-				addLaptopData();
+				addLaptopData(con);
 			}
 			
 			if (tableExists(con, "PollOptions") <= 0) {
@@ -76,17 +76,36 @@ public class Inicijalizacija implements ServletContextListener {
 		}
 	}
 	
-	private void addBendData(Connection con) throws SQLException {
-		int pollId = 1;
+	private void addLaptopData(Connection con) throws SQLException {
+		int pollId = 2;
+		addPoll(con, pollId, "Voting for favourite laptop:", "What is your favourite laptop?");
 		
+		String insertPollOptions = "INSERT INTO PollOptions (id, OptionTitle,"
+				+ " optionLink, pollID) VALUES (?, ?, ?, ?)";
+		PreparedStatement ps = con.prepareStatement(insertPollOptions);
+		
+		addRowInPollOptions(ps, 1, "Lenovo", "https://www.lenovo.com/hr/hr/", pollId);
+		addRowInPollOptions(ps, 2, "Hp", 
+				"https://store.hp.com/id-id/default/laptops-tablets.html", pollId);
+		addRowInPollOptions(ps, 3, "Dell", "https://www.dell.com/", pollId);
+		addRowInPollOptions(ps, 4, "Toshiba", "http://www.toshiba.com/tai/", pollId);
+	}
+
+	private void addPoll(Connection con, int pollId, String title, String message) 
+			throws SQLException {
 		String insertPolls = "INSERT INTO Polls (ID, Title, Message) VALUES (?, ?, ?)";
 		PreparedStatement preparedStatement = con.prepareStatement(insertPolls);
 		preparedStatement.setInt(1, pollId);
-		preparedStatement.setString(2, "Glasanje za omiljeni bend:");
-		preparedStatement.setString(3, "Od sljedećih bendova,"
+		preparedStatement.setString(2, title);
+		preparedStatement.setString(3, message);
+		preparedStatement.executeUpdate();
+	}
+
+	private void addBendData(Connection con) throws SQLException {
+		int pollId = 1;
+		addPoll(con, pollId, "Glasanje za omiljeni bend:", "Od sljedećih bendova,"
 				+ " koji Vam je bend najdraži? Kliknite na link kako " + 
 				"biste glasali!");
-		preparedStatement.executeUpdate();
 		
 		String insertPollOptions = "INSERT INTO PollOptions (id, OptionTitle,"
 				+ " optionLink, pollID) VALUES (?, ?, ?, ?)";

@@ -2,8 +2,10 @@ package hr.fer.zemris.java.p12;
 
 import java.beans.PropertyVetoException;
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
@@ -31,7 +33,12 @@ public class Inicijalizacija implements ServletContextListener {
 		ServletContext context = sce.getServletContext();
 		String fullPath = context.getRealPath("/WEB-INF/dbsettings.properties");
 
-		String connectionURL = getConnectionURL(fullPath);
+		String connectionURL;
+		try {
+			connectionURL = getConnectionURL(fullPath);
+		} catch (Exception e2) {
+			return;
+		}
 		
 		if(connectionURL == null) {
 			System.out.println("Path is not ok.");
@@ -52,9 +59,7 @@ public class Inicijalizacija implements ServletContextListener {
 
 		sce.getServletContext().setAttribute("hr.fer.zemris.dbpool", cpds);
 		
-		DatabaseMetaData dbmd;
 		try {
-			dbmd = cpds.getConnection().getMetaData();
 			Connection con = cpds.getConnection();
 			
 			int polls = tableExists(con, "Polls");
@@ -71,9 +76,11 @@ public class Inicijalizacija implements ServletContextListener {
 			}
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		cpds.setJdbcUrl(connectionURL);
+		sce.getServletContext().setAttribute("hr.fer.zemris.dbpool", cpds);
 	}
 	
 	private void addLaptopData(Connection con) throws SQLException {
@@ -180,9 +187,12 @@ public class Inicijalizacija implements ServletContextListener {
 	 * Gets connection url
 	 * @param fullPath path to properties file
 	 * @return connectoion url
+	 * @throws IOException 
+	 * @throws FileNotFoundException 
 	 */
-	private String getConnectionURL(String fullPath) {
+	private String getConnectionURL(String fullPath) throws FileNotFoundException, IOException {
 		Properties p = new Properties();
+		p.load(new FileInputStream(fullPath));
 		StringBuilder sb = new StringBuilder();
 		
 		sb.append("jdbc:derby://");

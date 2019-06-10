@@ -3,10 +3,12 @@ package hr.fer.zemris.java.p12.dao.sql;
 import hr.fer.zemris.java.p12.dao.DAO;
 import hr.fer.zemris.java.p12.dao.DAOException;
 //import hr.fer.zemris.java.p12.model.Unos;
+import hr.fer.zemris.java.p12.model.Unos;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +24,41 @@ import java.util.List;
  * @author marcupic
  */
 public class SQLDAO implements DAO {
+
+	@Override
+	public Unos getEntry(long id) {
+		Connection con = SQLConnectionProvider.getConnection();
+		PreparedStatement pst = null;
+		Unos unos = null;
+		
+		try {
+			pst = con.prepareStatement("select id, title from Poruke order by id");
+			try {
+				ResultSet rs = pst.executeQuery();
+				try {
+					if(rs!=null && rs.next()) {
+						unos = new Unos();
+						unos.setId(rs.getLong(1));
+						unos.setTitle(rs.getString(2));
+						unos.setDesc(rs.getString(3));
+						unos.setPollId(rs.getInt(4));
+						unos.setVotes(rs.getInt(5));
+					}
+				} finally {
+					try { rs.close(); } catch(Exception ignorable) {}
+				}
+			} finally {
+				try { pst.close(); } catch(Exception ignorable) {}
+			}
+		} catch(Exception ex) {
+			throw new DAOException("Pogreška prilikom dohvata liste korisnika.", ex);
+		}
+		
+		return unos;
+	}
+	
+	
+	
 //
 //	@Override
 //	public List<Unos> dohvatiOsnovniPopisUnosa() throws DAOException {

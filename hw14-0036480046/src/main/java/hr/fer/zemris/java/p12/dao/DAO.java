@@ -4,6 +4,8 @@ package hr.fer.zemris.java.p12.dao;
 
 import java.util.List;
 
+import hr.fer.zemris.java.p12.model.Unos;
+
 /**
  * Sučelje prema podsustavu za perzistenciju podataka.
  * 
@@ -11,6 +13,9 @@ import java.util.List;
  *
  */
 public interface DAO {
+	
+	public Unos getEntry(long id);
+	
 //
 //	/**
 //	 * Dohvaća sve postojeće unose u bazi, ali puni samo dva podatka:

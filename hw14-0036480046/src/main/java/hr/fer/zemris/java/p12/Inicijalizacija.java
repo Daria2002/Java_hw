@@ -68,15 +68,15 @@ public class Inicijalizacija implements ServletContextListener {
 			if (polls < 0) {
 				createPolls(con);
 			}
+			
+			if (tableExists(con, "PollOptions") < 0) {
+				createPollOptions(con);
+			}
+
 			if(polls <= 0) {
 				addBendData(con);
 				addLaptopData(con);
 			}
-			
-			if (tableExists(con, "PollOptions") <= 0) {
-				createPollOptions(con);
-			}
-			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -89,24 +89,25 @@ public class Inicijalizacija implements ServletContextListener {
 		int pollId = 2;
 		addPoll(con, pollId, "Voting for favourite laptop:", "What is your favourite laptop?");
 		
-		String insertPollOptions = "INSERT INTO PollOptions (id, OptionTitle,"
-				+ " optionLink, pollID) VALUES (?, ?, ?, ?)";
+		String insertPollOptions = "INSERT INTO PollOptions (optionTitle,"
+				+ " optionLink, pollID) VALUES (?, ?, ?)";
 		PreparedStatement ps = con.prepareStatement(insertPollOptions);
 		
-		addRowInPollOptions(ps, 1, "Lenovo", "https://www.lenovo.com/hr/hr/", pollId);
+		addRowInPollOptions(ps, 1, "Lenovo", "https://www.lenovo.com/hr/hr/", pollId, 0);
 		addRowInPollOptions(ps, 2, "Hp", 
-				"https://store.hp.com/id-id/default/laptops-tablets.html", pollId);
-		addRowInPollOptions(ps, 3, "Dell", "https://www.dell.com/", pollId);
-		addRowInPollOptions(ps, 4, "Toshiba", "http://www.toshiba.com/tai/", pollId);
+				"https://store.hp.com/id-id/default/laptops-tablets.html", pollId, 0);
+		addRowInPollOptions(ps, 3, "Dell", "https://www.dell.com/", pollId, 0);
+		addRowInPollOptions(ps, 4, "Toshiba", "http://www.toshiba.com/tai/", pollId, 0);
 	}
 
 	private void addPoll(Connection con, int pollId, String title, String message) 
 			throws SQLException {
-		String insertPolls = "INSERT INTO Polls (ID, Title, Message) VALUES (?, ?, ?)";
+		String insertPolls = "INSERT INTO Polls (title, message) VALUES (?, ?)";
 		PreparedStatement preparedStatement = con.prepareStatement(insertPolls);
-		preparedStatement.setInt(1, pollId);
-		preparedStatement.setString(2, title);
-		preparedStatement.setString(3, message);
+		preparedStatement.getGeneratedKeys();
+		//preparedStatement.setInt(1, pollId);
+		preparedStatement.setString(1, title);
+		preparedStatement.setString(2, message);
 		preparedStatement.executeUpdate();
 	}
 
@@ -116,45 +117,46 @@ public class Inicijalizacija implements ServletContextListener {
 				+ " koji Vam je bend najdraži? Kliknite na link kako " + 
 				"biste glasali!");
 		
-		String insertPollOptions = "INSERT INTO PollOptions (id, OptionTitle,"
-				+ " optionLink, pollID) VALUES (?, ?, ?, ?)";
+		String insertPollOptions = "INSERT INTO PollOptions (optionTitle,"
+				+ " optionLink, pollID) VALUES (?, ?, ?)";
 		PreparedStatement ps = con.prepareStatement(insertPollOptions);
 		
 		addRowInPollOptions(ps, 1, "The Beatles", 
-				"https://www.youtube.com/watch?v=z9ypq6_5bsg", pollId);
+				"https://www.youtube.com/watch?v=z9ypq6_5bsg", pollId, 0);
 		addRowInPollOptions(ps, 2, "The Platters", 
-				"https://www.youtube.com/watch?v=H2di83WAOhU", pollId);
+				"https://www.youtube.com/watch?v=H2di83WAOhU", pollId, 0);
 		addRowInPollOptions(ps, 3, "The Beach Boys", 
-				"https://www.youtube.com/watch?v=2s4slliAtQU", pollId);
+				"https://www.youtube.com/watch?v=2s4slliAtQU", pollId, 0);
 		addRowInPollOptions(ps, 4, "The Four Seasons", 
-				"https://www.youtube.com/watch?v=y8yvnqHmFds", pollId);
+				"https://www.youtube.com/watch?v=y8yvnqHmFds", pollId, 0);
 		addRowInPollOptions(ps, 5, "The Marcels", 
-				"https://www.youtube.com/watch?v=qoi3TH59ZEs", pollId);
+				"https://www.youtube.com/watch?v=qoi3TH59ZEs", pollId, 0);
 		addRowInPollOptions(ps, 6, "The Everly Brothers", 
-				"https://www.youtube.com/watch?v=tbU3zdAgiX8", pollId);
+				"https://www.youtube.com/watch?v=tbU3zdAgiX8", pollId, 0);
 		addRowInPollOptions(ps, 7, "The Mamas And The Papas", 
-				"https://www.youtube.com/watch?v=N-aK6JnyFmk", pollId);
+				"https://www.youtube.com/watch?v=N-aK6JnyFmk", pollId, 0);
 	}
 
 	private void addRowInPollOptions(PreparedStatement ps, int id,
-			String optionTitle, String optionLink, int pollId) throws SQLException {
+			String optionTitle, String optionLink, int pollId, int votesCount)
+					throws SQLException {
 		//ps.setInt(1, id);
-		ps.getGeneratedKeys();
-		ps.setString(2, optionTitle);
-		ps.setString(3, optionLink);
-		ps.setInt(4, pollId);
+		ps.setString(1, optionTitle);
+		ps.setString(2, optionLink);
+		ps.setInt(3, pollId);
+		ps.setInt(4, votesCount);
 		ps.executeUpdate();
 	}
 	
 	private void createPollOptions(Connection con) throws SQLException {
-		String pollOptionsTable = "CREATE TABLE PollOptions\n" + 
-				"(id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,\n" + 
-				"optionTitle VARCHAR(100) NOT NULL,\n" + 
-				"optionLink VARCHAR(150) NOT NULL,\n" + 
-				"pollID BIGINT,\n" + 
-				"votesCount BIGINT,\n" + 
-				"FOREIGN KEY (pollID) REFERENCES Polls(id)\n" + 
-				");";
+		String pollOptionsTable = "CREATE TABLE PollOptions " + 
+				"(id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY," + 
+				"optionTitle VARCHAR(100) NOT NULL," + 
+				"optionLink VARCHAR(150) NOT NULL," + 
+				"pollID BIGINT," + 
+				"votesCount BIGINT," + 
+				"FOREIGN KEY (pollID) REFERENCES Polls(id)" + 
+				")";
 		
 		PreparedStatement ps = con.prepareStatement(pollOptionsTable);
 		ps.executeUpdate();
@@ -162,11 +164,11 @@ public class Inicijalizacija implements ServletContextListener {
 	}
 
 	private void createPolls(Connection con) throws SQLException {
-		String pollsTable = "CREATE TABLE Polls\n" + 
-				"(id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,\n" + 
-				"title VARCHAR(150) NOT NULL,\n" + 
-				"message CLOB(2048) NOT NULL\n" + 
-				");";
+		String pollsTable = "CREATE TABLE Polls " + 
+				"(id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY," + 
+				"title VARCHAR(150) NOT NULL," + 
+				"message CLOB(2048) NOT NULL" + 
+				")";
 		
 		PreparedStatement ps = con.prepareStatement(pollsTable);
 		ps.executeUpdate();

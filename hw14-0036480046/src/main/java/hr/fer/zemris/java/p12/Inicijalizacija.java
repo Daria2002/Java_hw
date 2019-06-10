@@ -33,22 +33,22 @@ public class Inicijalizacija implements ServletContextListener {
 		ServletContext context = sce.getServletContext();
 		String fullPath = context.getRealPath("/WEB-INF/dbsettings.properties");
 
-		String connectionURL;
-		try {
-			connectionURL = getConnectionURL(fullPath);
-		} catch (Exception e2) {
-			return;
-		}
+//		String connectionURL;
+//		try {
+//			connectionURL = getConnectionURL(fullPath);
+//		} catch (Exception e2) {
+//			return;
+//		}
 		
-		if(connectionURL == null) {
-			System.out.println("Path is not ok.");
-			return;
-		}
+//		if(connectionURL == null) {
+//			System.out.println("Path is not ok.");
+//			return;
+//		}
 		
-		/*
-		String dbName="baza1DB";
-		String connectionURL = "jdbc:derby://localhost:1527/" + dbName + ";user=perica;password=pero";
-		*/
+		
+		String dbName="votingDB";
+		String connectionURL = "jdbc:derby://localhost:1527/" + dbName;// + ";user=perica;password=pero";
+		
 		ComboPooledDataSource cpds = new ComboPooledDataSource();
 		try {
 			cpds.setDriverClass("org.apache.derby.jdbc.ClientDriver");
@@ -56,7 +56,9 @@ public class Inicijalizacija implements ServletContextListener {
 			throw new RuntimeException("Pogreška prilikom inicijalizacije poola.", e1);
 		}
 		cpds.setJdbcUrl(connectionURL);
-
+		cpds.setUser("ivica");
+		cpds.setPassword("ivo");
+		
 		sce.getServletContext().setAttribute("hr.fer.zemris.dbpool", cpds);
 		
 		try {
@@ -136,7 +138,8 @@ public class Inicijalizacija implements ServletContextListener {
 
 	private void addRowInPollOptions(PreparedStatement ps, int id,
 			String optionTitle, String optionLink, int pollId) throws SQLException {
-		ps.setInt(1, id);
+		//ps.setInt(1, id);
+		ps.getGeneratedKeys();
 		ps.setString(2, optionTitle);
 		ps.setString(3, optionLink);
 		ps.setInt(4, pollId);

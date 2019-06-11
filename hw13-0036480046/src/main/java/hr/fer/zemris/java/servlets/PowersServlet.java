@@ -1,4 +1,4 @@
-package hr.fer.zemris.java.servleti;
+package hr.fer.zemris.java.servlets;
 
 import java.io.IOException;
 import javax.servlet.ServletException;
@@ -70,14 +70,12 @@ public class PowersServlet extends HttpServlet {
 			
 			for(int i = 0; i < n; i++) {
 				HSSFSheet sheet =  hwb.createSheet("sheet" + String.valueOf(i));
-
-				HSSFRow rowhead = sheet.createRow((short)0);
-				rowhead.createCell((short) 0).setCellValue(a);
-				rowhead.createCell((short) 1).setCellValue(Math.pow(a, i+1));
 				
-				HSSFRow row = sheet.createRow((short)1);
-				row.createCell((short) 0).setCellValue(b);
-				row.createCell((short) 1).setCellValue(Math.pow(b, i+1));
+				for(int j = a; j <= b; j++) {
+					HSSFRow rowhead = sheet.createRow((short)j-a);
+					rowhead.createCell((short) 0).setCellValue(j);
+					rowhead.createCell((short) 1).setCellValue(Math.pow(j, i+1));
+				}
 			}
 			
 			response.setContentType("application/ms-excel");

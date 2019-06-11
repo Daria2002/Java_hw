@@ -19,6 +19,6 @@
 	<body bgcolor="<%=myColor%>">
 	<h1>OS usage</h1>
 	<p>Here are the results of OS usage in survey that we completed.</p>
-	<img src="/webapp2/reportImage">
+	<img src="reportImage">
 	</body>
 </html>

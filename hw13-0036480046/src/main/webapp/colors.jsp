@@ -12,9 +12,9 @@
   
 <html>
    <body bgcolor="<%=myColor%>">
-   	 <a href="/webapp2/setcolor?color=white">WHITE</a>
-   	 <a href="/webapp2/setcolor?color=red">RED</a>
-   	 <a href="/webapp2/setcolor?color=green">GREEN</a>
-   	 <a href="/webapp2/setcolor?color=cyan">CYAN</a>
+   	 <a href="setcolor?color=white">WHITE</a>
+   	 <a href="setcolor?color=red">RED</a>
+   	 <a href="setcolor?color=green">GREEN</a>
+   	 <a href="setcolor?color=cyan">CYAN</a>
    </body>
 </html>

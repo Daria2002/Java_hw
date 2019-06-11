@@ -14,6 +14,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import hr.fer.zemris.java.p12.dao.sql.SQLDAO;
+import hr.fer.zemris.java.p12.model.Unos;
+
 /**
  * This class represents servlet that is called after voting. It refreshes data in
  * glasanje-rezultati file. This class sets attributes with data about name, data and ids.
@@ -29,39 +32,60 @@ public class GlasanjeGlasajServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		// Zabiljezi glas...
+//		// Zabiljezi glas...
+//		
+//		String fileName = req.getServletContext().getRealPath("/WEB-INF/glasanje-rezultati.txt");
+//		// Napravi datoteku ako je potrebno; ažuriraj podatke koji su u njoj...
+//		
+//		BufferedReader abc = new BufferedReader(new FileReader(fileName));
+//		List<String> lines = new ArrayList<String>();
+//
+//		String line = abc.readLine();
+//		while(line != null) {
+//		    lines.add(line);
+//		    line = abc.readLine();
+//		}
+//		abc.close();
+//
+//		// If you want to convert to a String[]
+//		String[] data = lines.toArray(new String[]{});
+//		
+//		// map where ids are keys and values are bend points
+//		Map<String, String> map = new HashMap<String, String>();
+//		
+//		for(int i = 0; i < data.length; i++) {
+//			String[] lineData = data[i].split("\t");
+//			map.put(lineData[0], lineData[1]);
+//		}
+//		
+//		String key = req.getParameter("id");
+//		String newValue = map.get(key) != null ? String.valueOf(Integer.valueOf(map.get(key))+1)
+//				: String.valueOf(1);
+//		map.put(key, newValue);
+//		
+//		req.getSession().setAttribute("map", map);
 		
-		String fileName = req.getServletContext().getRealPath("/WEB-INF/glasanje-rezultati.txt");
-		// Napravi datoteku ako je potrebno; ažuriraj podatke koji su u njoj...
+		// povecaj broj glasova i setaj atribut map
 		
-		BufferedReader abc = new BufferedReader(new FileReader(fileName));
-		List<String> lines = new ArrayList<String>();
-
-		String line = abc.readLine();
-		while(line != null) {
-		    lines.add(line);
-		    line = abc.readLine();
+		SQLDAO sqlDao = new SQLDAO();
+		
+		long pollId = (long) req.getAttribute("pollId");
+		long id = Long.valueOf(req.getParameter("id"));
+		
+		sqlDao.increaseVotes(id);
+		
+		List<Unos> entries = new ArrayList<Unos>();
+		Map<Long, Long> map = new HashMap<Long, Long>();
+		
+		for(int i = 0; i < entries.size(); i++) {
+			map.put(entries.get(i).getId(), entries.get(i).getVotes());
 		}
-		abc.close();
-
-		// If you want to convert to a String[]
-		String[] data = lines.toArray(new String[]{});
-		
-		// map where ids are keys and values are bend points
-		Map<String, String> map = new HashMap<String, String>();
-		
-		for(int i = 0; i < data.length; i++) {
-			String[] lineData = data[i].split("\t");
-			map.put(lineData[0], lineData[1]);
-		}
-		
-		String key = req.getParameter("id");
-		String newValue = map.get(key) != null ? String.valueOf(Integer.valueOf(map.get(key))+1)
-				: String.valueOf(1);
-		map.put(key, newValue);
 		
 		req.getSession().setAttribute("map", map);
 		
+		
+		/// nova dz
+			
 		StringBuilder fileContent = new StringBuilder();
 		for(String keyEl:map.keySet()) {
 			fileContent.append(keyEl + "\t" + map.get(keyEl) + "\n");

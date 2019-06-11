@@ -5,14 +5,14 @@ public class Unos {
 	private long id;
 	private String title;
 	private String desc;
-	private int pollId;
-	private int votes;
+	private long pollId;
+	private long votes;
 	
 	public Unos() {
 		
 	}
 	
-	public Unos(long id, String title, String desc, int pollId, int votes) {
+	public Unos(long id, String title, String desc, long pollId, long votes) {
 		super();
 		this.id = id;
 		this.title = title;
@@ -39,16 +39,16 @@ public class Unos {
 	public void setDesc(String desc) {
 		this.desc = desc;
 	}
-	public int getPollId() {
+	public long getPollId() {
 		return pollId;
 	}
 	public void setPollId(int pollId) {
 		this.pollId = pollId;
 	}
-	public int getVotes() {
+	public long getVotes() {
 		return votes;
 	}
-	public void setVotes(int votes) {
+	public void setVotes(long votes) {
 		this.votes = votes;
 	}
 }

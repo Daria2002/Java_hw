@@ -31,6 +31,15 @@
 		<servlet-name>glasanje-servlet</servlet-name>
 		<url-pattern>/servleti/glasanje</url-pattern>
 	</servlet-mapping>
-  
+
+	<servlet>
+		<servlet-name>glasanjeGlasaj-servlet</servlet-name>
+		<servlet-class>hr.fer.zemris.java.servlets.GlasanjeGlasajServlet</servlet-class>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>glasanjeGlasaj-servlet</servlet-name>
+		<url-pattern>/glasanje-glasaj</url-pattern>
+	</servlet-mapping>
 
 </web-app>

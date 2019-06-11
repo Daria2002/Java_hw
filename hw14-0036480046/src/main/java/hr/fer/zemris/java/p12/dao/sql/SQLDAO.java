@@ -3,13 +3,10 @@ package hr.fer.zemris.java.p12.dao.sql;
 import hr.fer.zemris.java.p12.dao.DAO;
 import hr.fer.zemris.java.p12.dao.DAOException;
 import hr.fer.zemris.java.p12.model.Poll;
-//import hr.fer.zemris.java.p12.model.Unos;
 import hr.fer.zemris.java.p12.model.Unos;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -121,6 +118,11 @@ public class SQLDAO implements DAO {
 		}
 		
 		return entries;
+	}
+
+	public void increaseVotes(long id) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 //

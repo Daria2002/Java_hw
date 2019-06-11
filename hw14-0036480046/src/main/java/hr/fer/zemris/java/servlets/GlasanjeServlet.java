@@ -29,7 +29,9 @@ public class GlasanjeServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		
-		Long pollId = Long.valueOf(req.getParameter("pollID"));
+		//Long pollId = Long.valueOf(req.getParameter("pollID"));
+		long pollId = 1;
+		
 		SQLDAO sqlDao = new SQLDAO();
 		List<Unos> entries = sqlDao.getOptions(pollId);
 		

@@ -91,7 +91,7 @@ public class SQLDAO implements DAO {
 		Unos unos = null;
 		
 		try {
-			pst = con.prepareStatement("select * from PollOptions order by pollID=?");
+			pst = con.prepareStatement("select * from PollOptions where pollID=?");
 			pst.setLong(1, pollId);
 			
 			try {
@@ -141,7 +141,7 @@ public class SQLDAO implements DAO {
 		PreparedStatement pst = null;
 		
 		try {
-			pst = con.prepareStatement("select * from PollOptions order by id=?");
+			pst = con.prepareStatement("select * from PollOptions where id=?");
 			pst.setLong(1, id);
 			try {
 				ResultSet rs = pst.executeQuery();

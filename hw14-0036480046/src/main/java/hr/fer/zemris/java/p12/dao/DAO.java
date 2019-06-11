@@ -17,6 +17,7 @@ public interface DAO {
 	
 	public Unos getEntry(long id);
 	public List<Poll> getDefinedPolls();
+	public List<Unos> getOptions(long id);
 	
 //
 //	/**

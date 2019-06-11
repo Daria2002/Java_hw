@@ -33,7 +33,8 @@ public class SQLDAO implements DAO {
 		Unos unos = null;
 		
 		try {
-			pst = con.prepareStatement("select * from PollOptions order by id");
+			pst = con.prepareStatement("select * from PollOptions order by id=?");
+			pst.setLong(1, id);
 			try {
 				ResultSet rs = pst.executeQuery();
 				try {
@@ -84,8 +85,43 @@ public class SQLDAO implements DAO {
 		
 		return polls;
 	}
-	
-	
+
+	@Override
+	public List<Unos> getOptions(long pollId) {
+		Connection con = SQLConnectionProvider.getConnection();
+		PreparedStatement pst = null;
+		List<Unos> entries = new ArrayList<Unos>();
+		Unos unos = null;
+		
+		try {
+			pst = con.prepareStatement("select * from PollOptions order by pollID=?");
+			pst.setLong(1, pollId);
+			
+			try {
+				ResultSet rs = pst.executeQuery();
+				try {
+					
+					while(rs!=null && rs.next()) {
+						unos = new Unos();
+						unos.setId(rs.getLong(1));
+						unos.setTitle(rs.getString(2));
+						unos.setDesc(rs.getString(3));
+						unos.setPollId(rs.getInt(4));
+						unos.setVotes(rs.getInt(5));
+						entries.add(unos);
+					}
+				} finally {
+					try { rs.close(); } catch(Exception ignorable) {}
+				}
+			} finally {
+				try { pst.close(); } catch(Exception ignorable) {}
+			}
+		} catch(Exception ex) {
+			throw new DAOException("Pogreška prilikom dohvata liste korisnika.", ex);
+		}
+		
+		return entries;
+	}
 	
 //
 //	@Override

@@ -86,7 +86,7 @@ public class Inicijalizacija implements ServletContextListener {
 	}
 	
 	private void addLaptopData(Connection con) throws SQLException {
-		int pollId = addPoll(con, "Voting for favourite laptop:", "What is your favourite laptop?");
+		long pollId = addPoll(con, "Voting for favourite laptop:", "What is your favourite laptop?");
 		
 		String insertPollOptions = "INSERT INTO PollOptions (optionTitle,"
 				+ " optionLink, pollID) VALUES (?, ?, ?)";
@@ -124,8 +124,9 @@ public class Inicijalizacija implements ServletContextListener {
 				+ " koji Vam je bend najdraži? Kliknite na link kako " + 
 				"biste glasali!");
 		
-		String insertPollOptions = "INSERT INTO PollOptions (optionTitle,"
-				+ " optionLink, pollID) VALUES (?, ?, ?)";
+		 String insertPollOptions = "INSERT INTO PollOptions (optionTitle,"
+				+ " optionLink, pollID, votesCount) VALUES (?, ?, ?, ?)";
+		
 		PreparedStatement ps = con.prepareStatement(insertPollOptions);
 		
 		addRowInPollOptions(ps, 1, "The Beatles", 
@@ -144,14 +145,14 @@ public class Inicijalizacija implements ServletContextListener {
 				"https://www.youtube.com/watch?v=N-aK6JnyFmk", pollId, 0);
 	}
 
-	private void addRowInPollOptions(PreparedStatement ps, int id,
-			String optionTitle, String optionLink, int pollId, int votesCount)
+	private void addRowInPollOptions(PreparedStatement ps, long id,
+			String optionTitle, String optionLink, long pollId, long votesCount)
 					throws SQLException {
 		//ps.setInt(1, id);
 		ps.setString(1, optionTitle);
 		ps.setString(2, optionLink);
-		ps.setInt(3, pollId);
-		ps.setInt(4, votesCount);
+		ps.setLong(3, pollId);
+		ps.setLong(4, votesCount);
 		ps.executeUpdate();
 	}
 	

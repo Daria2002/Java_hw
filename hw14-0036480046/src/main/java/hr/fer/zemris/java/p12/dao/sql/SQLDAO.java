@@ -30,7 +30,7 @@ public class SQLDAO implements DAO {
 		Unos unos = null;
 		
 		try {
-			pst = con.prepareStatement("select * from PollOptions order by id=?");
+			pst = con.prepareStatement("select * from PollOptions where id=?");
 			pst.setLong(1, id);
 			try {
 				ResultSet rs = pst.executeQuery();
@@ -63,7 +63,7 @@ public class SQLDAO implements DAO {
 		List<Poll> polls = new ArrayList<Poll>();
 		
 		try {
-			pst = con.prepareStatement("select * from Polls order by id");
+			pst = con.prepareStatement("select * from Polls where id=?");
 			try {
 				ResultSet rs = pst.executeQuery();
 				try {
@@ -127,7 +127,7 @@ public class SQLDAO implements DAO {
 		long votes = getVotes(id);
 		
 		try {
-			pst = con.prepareStatement("UPDATE PollOptions SET votesCount = ? , WHERE id = ?");
+			pst = con.prepareStatement("UPDATE PollOptions SET votesCount=? WHERE id=?");
 			pst.setLong(1, votes + 1);
 			pst.setLong(2, id);
 			

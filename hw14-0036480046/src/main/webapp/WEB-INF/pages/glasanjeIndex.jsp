@@ -25,9 +25,6 @@ glasali!</p>
 	
 		map = (Map<String, String>)request.getAttribute("map");
 		
-		long pollId = (long)request.getAttribute("pollId");
-		
-		request.setAttribute("pollId", pollId);
 		
 		for(String idEl:map.keySet()) {
 			%><li value="<%=idEl%>"><a href="glasanje-glasaj?id=<%=idEl%>"><%=map.get(idEl)%></a></li><%

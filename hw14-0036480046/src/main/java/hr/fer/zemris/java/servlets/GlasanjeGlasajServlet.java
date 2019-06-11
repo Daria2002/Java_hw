@@ -28,8 +28,8 @@ public class GlasanjeGlasajServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		SQLDAO sqlDao = new SQLDAO();
 		
-		long pollId = (long) req.getAttribute("pollId");
 		long id = Long.valueOf(req.getParameter("id"));
+		long pollId = (long) sqlDao.getEntry(id).getPollId();
 		
 		sqlDao.increaseVotes(id);
 		

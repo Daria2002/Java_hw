@@ -42,7 +42,6 @@ public class GlasanjeServlet extends HttpServlet {
 		}
 		
 		req.setAttribute("map", entriesIdAndName);
-		req.setAttribute("pollId", pollId);
 		
 		// Pošalji ih JSP-u...
 		req.getRequestDispatcher("/WEB-INF/pages/glasanjeIndex.jsp")

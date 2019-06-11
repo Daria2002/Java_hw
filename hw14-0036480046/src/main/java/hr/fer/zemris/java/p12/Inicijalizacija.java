@@ -102,7 +102,7 @@ public class Inicijalizacija implements ServletContextListener {
 	private int addPoll(Connection con, String title, String message) 
 			throws SQLException {
 		String insertPolls = "INSERT INTO Polls (title, message) VALUES (?, ?)";
-		PreparedStatement preparedStatement = con.prepareStatement(insertPolls);
+		PreparedStatement preparedStatement = con.prepareStatement(insertPolls, Statement.RETURN_GENERATED_KEYS);
 		
 		ResultSet rs = preparedStatement.getGeneratedKeys();
 		int id = 0;

@@ -70,7 +70,7 @@ public class SQLDAO implements DAO {
 				ResultSet rs = pst.executeQuery();
 				try {
 					if(rs!=null && rs.next()) {
-						polls.add(new Poll(rs.getInt(1), rs.getString(2), rs.getString(3)));
+						polls.add(new Poll(rs.getLong(1), rs.getString(2), rs.getString(3)));
 					}
 				} finally {
 					try { rs.close(); } catch(Exception ignorable) {}

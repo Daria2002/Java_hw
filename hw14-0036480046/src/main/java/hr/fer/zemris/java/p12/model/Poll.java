@@ -2,7 +2,7 @@ package hr.fer.zemris.java.p12.model;
 
 public class Poll {
 
-	private int pollId;
+	private long pollId;
 	private String title;
 	private String message;
 	
@@ -10,18 +10,18 @@ public class Poll {
 		
 	}
 
-	public Poll(int pollId, String title, String message) {
+	public Poll(long pollId, String title, String message) {
 		super();
 		this.pollId = pollId;
 		this.title = title;
 		this.message = message;
 	}
 
-	public int getPollId() {
+	public long getPollId() {
 		return pollId;
 	}
 
-	public void setPollId(int pollId) {
+	public void setPollId(long pollId) {
 		this.pollId = pollId;
 	}
 

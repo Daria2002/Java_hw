@@ -59,8 +59,6 @@ public class Inicijalizacija implements ServletContextListener {
 		cpds.setUser("ivica");
 		cpds.setPassword("ivo");
 		
-		sce.getServletContext().setAttribute("hr.fer.zemris.dbpool", cpds);
-		
 		try {
 			Connection con = cpds.getConnection();
 			

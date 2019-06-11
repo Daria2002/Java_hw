@@ -25,7 +25,7 @@ glasali!</p>
 	
 		map = (Map<String, String>)request.getAttribute("map");
 		
-		long pollId = Long.valueOf(request.getParameter("pollId"));
+		long pollId = (long)request.getAttribute("pollId");
 		
 		request.setAttribute("pollId", pollId);
 		

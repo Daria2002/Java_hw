@@ -199,7 +199,7 @@ public class Inicijalizacija implements ServletContextListener {
 	/**
 	 * Gets connection url
 	 * @param fullPath path to properties file
-	 * @return connectoion url
+	 * @return connection url
 	 * @throws IOException 
 	 * @throws FileNotFoundException 
 	 */

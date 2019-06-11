@@ -121,8 +121,45 @@ public class SQLDAO implements DAO {
 	}
 
 	public void increaseVotes(long id) {
-		// TODO Auto-generated method stub
+		Connection con = SQLConnectionProvider.getConnection();
+		PreparedStatement pst = null;
 		
+		long votes = getVotes(id);
+		
+		try {
+			pst = con.prepareStatement("UPDATE PollOptions SET votesCount = ? , WHERE id = ?");
+			pst.setLong(1, votes + 1);
+			pst.setLong(2, id);
+			
+		} catch(Exception ex) {
+			throw new DAOException("Pogreška prilikom dohvata liste korisnika.", ex);
+		}
+	}
+
+	private long getVotes(long id) {
+		Connection con = SQLConnectionProvider.getConnection();
+		PreparedStatement pst = null;
+		
+		try {
+			pst = con.prepareStatement("select * from PollOptions order by id=?");
+			pst.setLong(1, id);
+			try {
+				ResultSet rs = pst.executeQuery();
+				try {
+					if(rs!=null && rs.next()) {
+						return rs.getLong(5);
+					}
+				} finally {
+					try { rs.close(); } catch(Exception ignorable) {}
+				}
+			} finally {
+				try { pst.close(); } catch(Exception ignorable) {}
+			}
+		} catch(Exception ex) {
+			throw new DAOException("Pogreška prilikom dohvata liste korisnika.", ex);
+		}
+		
+		return -1;
 	}
 	
 //

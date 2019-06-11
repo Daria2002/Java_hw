@@ -89,7 +89,7 @@ public class Inicijalizacija implements ServletContextListener {
 		long pollId = addPoll(con, "Voting for favourite laptop:", "What is your favourite laptop?");
 		
 		String insertPollOptions = "INSERT INTO PollOptions (optionTitle,"
-				+ " optionLink, pollID) VALUES (?, ?, ?)";
+				+ " optionLink, pollID, votesCount) VALUES (?, ?, ?, ?)";
 		PreparedStatement ps = con.prepareStatement(insertPollOptions);
 		
 		addRowInPollOptions(ps, 1, "Lenovo", "https://www.lenovo.com/hr/hr/", pollId, 0);
@@ -103,19 +103,23 @@ public class Inicijalizacija implements ServletContextListener {
 			throws SQLException {
 		String insertPolls = "INSERT INTO Polls (title, message) VALUES (?, ?)";
 		PreparedStatement preparedStatement = con.prepareStatement(insertPolls, Statement.RETURN_GENERATED_KEYS);
-		
+		/*
 		ResultSet rs = preparedStatement.getGeneratedKeys();
 		int id = 0;
         while(rs.next()){
         	id = rs.getInt(1);
         }
-		
+		*/
 		//preparedStatement.getGeneratedKeys();
 		//preparedStatement.setInt(1, id);
 		preparedStatement.setString(1, title);
 		preparedStatement.setString(2, message);
 		preparedStatement.executeUpdate();
-		
+		ResultSet rs = preparedStatement.getGeneratedKeys();
+		int id = 0;
+        while(rs.next()){
+        	id = rs.getInt(1);
+        }
 		return id;
 	}
 

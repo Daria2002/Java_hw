@@ -2,6 +2,7 @@ package hr.fer.zemris.java.p12.dao.sql;
 
 import hr.fer.zemris.java.p12.dao.DAO;
 import hr.fer.zemris.java.p12.dao.DAOException;
+import hr.fer.zemris.java.p12.model.Poll;
 //import hr.fer.zemris.java.p12.model.Unos;
 import hr.fer.zemris.java.p12.model.Unos;
 
@@ -32,7 +33,7 @@ public class SQLDAO implements DAO {
 		Unos unos = null;
 		
 		try {
-			pst = con.prepareStatement("select id, title from Poruke order by id");
+			pst = con.prepareStatement("select * from PollOptions order by id");
 			try {
 				ResultSet rs = pst.executeQuery();
 				try {
@@ -55,6 +56,33 @@ public class SQLDAO implements DAO {
 		}
 		
 		return unos;
+	}
+
+	@Override
+	public List<Poll> getDefinedPolls() {
+		Connection con = SQLConnectionProvider.getConnection();
+		PreparedStatement pst = null;
+		List<Poll> polls = new ArrayList<Poll>();
+		
+		try {
+			pst = con.prepareStatement("select * from Polls order by id");
+			try {
+				ResultSet rs = pst.executeQuery();
+				try {
+					if(rs!=null && rs.next()) {
+						polls.add(new Poll(rs.getInt(1), rs.getString(2), rs.getString(3)));
+					}
+				} finally {
+					try { rs.close(); } catch(Exception ignorable) {}
+				}
+			} finally {
+				try { pst.close(); } catch(Exception ignorable) {}
+			}
+		} catch(Exception ex) {
+			throw new DAOException("Pogreška prilikom dohvata liste korisnika.", ex);
+		}
+		
+		return polls;
 	}
 	
 	

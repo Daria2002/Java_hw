@@ -1,4 +1,4 @@
-package hr.fer.zemris.java.servlets;
+package hr.fer.zemris.java.servleti;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

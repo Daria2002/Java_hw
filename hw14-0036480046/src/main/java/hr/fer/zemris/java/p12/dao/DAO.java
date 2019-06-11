@@ -4,6 +4,7 @@ package hr.fer.zemris.java.p12.dao;
 
 import java.util.List;
 
+import hr.fer.zemris.java.p12.model.Poll;
 import hr.fer.zemris.java.p12.model.Unos;
 
 /**
@@ -15,6 +16,7 @@ import hr.fer.zemris.java.p12.model.Unos;
 public interface DAO {
 	
 	public Unos getEntry(long id);
+	public List<Poll> getDefinedPolls();
 	
 //
 //	/**

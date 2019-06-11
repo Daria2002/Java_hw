@@ -12,4 +12,15 @@
      Prva aplikacija
   </description>
 
+	<servlet>
+		<servlet-name>db-servlet</servlet-name>
+		<servlet-class>hr.fer.zemris.java.servlets.DbServlet</servlet-class>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>db-servlet</servlet-name>
+		<url-pattern>/servleti/index.html</url-pattern>
+	</servlet-mapping>
+  
+
 </web-app>

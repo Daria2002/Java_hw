@@ -86,8 +86,7 @@ public class Inicijalizacija implements ServletContextListener {
 	}
 	
 	private void addLaptopData(Connection con) throws SQLException {
-		int pollId = 2;
-		addPoll(con, pollId, "Voting for favourite laptop:", "What is your favourite laptop?");
+		int pollId = addPoll(con, "Voting for favourite laptop:", "What is your favourite laptop?");
 		
 		String insertPollOptions = "INSERT INTO PollOptions (optionTitle,"
 				+ " optionLink, pollID) VALUES (?, ?, ?)";
@@ -100,20 +99,28 @@ public class Inicijalizacija implements ServletContextListener {
 		addRowInPollOptions(ps, 4, "Toshiba", "http://www.toshiba.com/tai/", pollId, 0);
 	}
 
-	private void addPoll(Connection con, int pollId, String title, String message) 
+	private int addPoll(Connection con, String title, String message) 
 			throws SQLException {
 		String insertPolls = "INSERT INTO Polls (title, message) VALUES (?, ?)";
 		PreparedStatement preparedStatement = con.prepareStatement(insertPolls);
-		preparedStatement.getGeneratedKeys();
-		//preparedStatement.setInt(1, pollId);
+		
+		ResultSet rs = preparedStatement.getGeneratedKeys();
+		int id = 0;
+        while(rs.next()){
+        	id = rs.getInt(1);
+        }
+		
+		//preparedStatement.getGeneratedKeys();
+		//preparedStatement.setInt(1, id);
 		preparedStatement.setString(1, title);
 		preparedStatement.setString(2, message);
 		preparedStatement.executeUpdate();
+		
+		return id;
 	}
 
 	private void addBendData(Connection con) throws SQLException {
-		int pollId = 1;
-		addPoll(con, pollId, "Glasanje za omiljeni bend:", "Od sljedećih bendova,"
+		int pollId = addPoll(con, "Glasanje za omiljeni bend:", "Od sljedećih bendova,"
 				+ " koji Vam je bend najdraži? Kliknite na link kako " + 
 				"biste glasali!");
 		

@@ -1,4 +1,4 @@
-package hr.fer.zemris.java.servlets;
+package hr.fer.zemris.java.servleti;
 
 import java.io.IOException;
 import javax.servlet.ServletException;

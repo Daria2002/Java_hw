@@ -23,12 +23,12 @@
 	</servlet-mapping>
 	
 	<servlet>
-		<servlet-name>pollOptions-servlet</servlet-name>
-		<servlet-class>hr.fer.zemris.java.servlets.PollOptionsServlet</servlet-class>
+		<servlet-name>glasanje-servlet</servlet-name>
+		<servlet-class>hr.fer.zemris.java.servlets.GlasanjeServlet</servlet-class>
 	</servlet>
 	
 	<servlet-mapping>
-		<servlet-name>pollOptions-servlet</servlet-name>
+		<servlet-name>glasanje-servlet</servlet-name>
 		<url-pattern>/servleti/glasanje</url-pattern>
 	</servlet-mapping>
   

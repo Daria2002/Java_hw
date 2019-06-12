@@ -42,7 +42,7 @@ public class ReportServlet extends HttpServlet {
 		os.close();
 		
 		request.setAttribute("reportImage", bos.toByteArray());
-		request.getRequestDispatcher("/report.jsp").forward(request, response);
+		//request.getRequestDispatcher("/report.jsp").forward(request, response);
 	}
 
 	/**

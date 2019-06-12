@@ -87,4 +87,14 @@
 		<servlet-name>powers-servlet</servlet-name>
 		<url-pattern>/powers</url-pattern>
 	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>trigonometric-servlet</servlet-name>
+		<servlet-class>hr.fer.zemris.java.servlets.TrigonometricServlet</servlet-class>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>trigonometric-servlet</servlet-name>
+		<url-pattern>/trigonometric</url-pattern>
+	</servlet-mapping>
 </web-app>

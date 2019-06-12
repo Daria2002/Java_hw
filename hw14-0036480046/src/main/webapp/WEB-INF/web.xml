@@ -59,7 +59,7 @@
 	
 	<servlet-mapping>
 		<servlet-name>glasanjeRezultati-servlet</servlet-name>
-		<url-pattern>/glasanje-rezultati</url-pattern>
+		<url-pattern>/servleti/glasanje-rezultati</url-pattern>
 	</servlet-mapping>
 
 	<servlet>

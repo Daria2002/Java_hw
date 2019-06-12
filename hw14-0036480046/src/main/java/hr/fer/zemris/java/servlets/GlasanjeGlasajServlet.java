@@ -59,6 +59,6 @@ public class GlasanjeGlasajServlet extends HttpServlet {
 		req.getSession().setAttribute("mapIdAndLinks", mapIdAndLinks);
 		
 		// Kad je gotovo, pošalji redirect pregledniku I dalje NE generiraj odgovor
-		resp.sendRedirect(req.getContextPath() + "/glasanje-rezultati");
+		resp.sendRedirect(req.getContextPath() + "/servleti/glasanje-rezultati");
 	}
 }

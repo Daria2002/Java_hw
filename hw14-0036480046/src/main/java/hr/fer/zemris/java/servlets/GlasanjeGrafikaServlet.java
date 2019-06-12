@@ -52,7 +52,7 @@ public class GlasanjeGrafikaServlet extends HttpServlet {
 		OutputStream os = new BufferedOutputStream(response.getOutputStream());
 		os.write(bos.toByteArray());
 		os.close();
-		request.setAttribute("/glasanje-grafika", bos.toByteArray());
+		request.setAttribute("servleti/glasanje-grafika", bos.toByteArray());
 	}
 
 	/**

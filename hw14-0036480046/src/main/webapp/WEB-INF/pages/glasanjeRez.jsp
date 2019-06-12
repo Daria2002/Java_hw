@@ -90,7 +90,7 @@ table.rez td {text-align: center;}
 			</tbody>
 		</table>
 		<h2>Grafički prikaz rezultata</h2>
-		<img alt="Pie-chart" src="<%=request.getContextPath()%>/glasanje-grafika" width="400" height="400" />
+		<img alt="Pie-chart" src="<%=request.getContextPath()%>/servleti/glasanje-grafika" width="400" height="400" />
 		<h2>Rezultati u XLS formatu</h2>
 		<p>Rezultati u XLS formatu dostupni su <a href="<%=request.getContextPath()%>/glasanje-xls">ovdje</a></p>
 		<h2>Razno</h2>

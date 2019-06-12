@@ -115,7 +115,7 @@
 	
 	<servlet-mapping>
 		<servlet-name>glasanjeGrafika-servlet</servlet-name>
-		<url-pattern>/glasanje-grafika</url-pattern>
+		<url-pattern>/servleti/glasanje-grafika</url-pattern>
 	</servlet-mapping>
 
 </web-app>

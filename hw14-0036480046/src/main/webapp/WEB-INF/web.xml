@@ -62,4 +62,14 @@
 		<url-pattern>/glasanje-rezultati</url-pattern>
 	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>colors-servlet</servlet-name>
+		<servlet-class>hr.fer.zemris.java.servlets.ColorsServlet</servlet-class>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>colors-servlet</servlet-name>
+		<url-pattern>/setcolor</url-pattern>
+	</servlet-mapping>
+
 </web-app>

@@ -62,6 +62,7 @@ public class Inicijalizacija implements ServletContextListener {
 		try {
 			Connection con = cpds.getConnection();
 			
+			// create if doesn't exists
 			try {
 				createPolls(con);
 				createPollOptions(con);
@@ -181,22 +182,6 @@ public class Inicijalizacija implements ServletContextListener {
 		PreparedStatement ps = con.prepareStatement(pollsTable);
 		ps.executeUpdate();
 		ps.close();
-	}
-	
-	private static int createTableIfNotExists(Connection con, String table) {
-	      int numRows = 0;
-	      try {
-	         DatabaseMetaData dbmd = con.getMetaData();
-	         // Note the args to getTables are case-sensitive!
-	         ResultSet rs = dbmd.getTables(null, "ivica", table, null);
-	         if(rs.next()) {
-	        	 ++numRows;
-		         while(rs.next()) ++numRows;
-	         }
-	         return numRows;
-	      } catch (SQLException e) {
-	    	  return -1;
-	      }
 	}
 
 	/**

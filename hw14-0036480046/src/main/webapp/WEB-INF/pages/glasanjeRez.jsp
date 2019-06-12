@@ -60,7 +60,6 @@ table.rez td {text-align: center;}
 			<thead><tr><th>Bend</th><th>Broj glasova</th></tr></thead>
 			<tbody>
 			<%
-				String x = "bok";
 				Map<Long, String> mapNamesAndId = (Map<Long, String>)request.getSession().getAttribute("mapIdAndNames");
 				Map<Long, Long> mapIdAndPoints = (Map<Long, Long>)request.getSession().getAttribute("map");
 				

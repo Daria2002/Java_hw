@@ -100,7 +100,8 @@ public class Inicijalizacija implements ServletContextListener {
 	private int addPoll(Connection con, String title, String message) 
 			throws SQLException {
 		String insertPolls = "INSERT INTO Polls (title, message) VALUES (?, ?)";
-		PreparedStatement preparedStatement = con.prepareStatement(insertPolls, Statement.RETURN_GENERATED_KEYS);
+		PreparedStatement preparedStatement = con.prepareStatement(insertPolls,
+				Statement.RETURN_GENERATED_KEYS);
 		/*
 		ResultSet rs = preparedStatement.getGeneratedKeys();
 		int id = 0;
@@ -184,7 +185,7 @@ public class Inicijalizacija implements ServletContextListener {
 		ps.executeUpdate();
 		ps.close();
 	}
-
+	
 	private static int tableExists(Connection con, String table) {
 	      int numRows = 0;
 	      try {
@@ -226,7 +227,8 @@ public class Inicijalizacija implements ServletContextListener {
 
 	@Override
 	public void contextDestroyed(ServletContextEvent sce) {
-		ComboPooledDataSource cpds = (ComboPooledDataSource)sce.getServletContext().getAttribute("hr.fer.zemris.dbpool");
+		ComboPooledDataSource cpds = (ComboPooledDataSource)sce.getServletContext()
+				.getAttribute("hr.fer.zemris.dbpool");
 		if(cpds!=null) {
 			try {
 				DataSources.destroy(cpds);

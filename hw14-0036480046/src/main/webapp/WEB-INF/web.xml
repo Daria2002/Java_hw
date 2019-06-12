@@ -97,4 +97,14 @@
 		<servlet-name>trigonometric-servlet</servlet-name>
 		<url-pattern>/trigonometric</url-pattern>
 	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>report-servlet</servlet-name>
+		<servlet-class>hr.fer.zemris.java.servlets.ReportServlet</servlet-class>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>report-servlet</servlet-name>
+		<url-pattern>/reportImage</url-pattern>
+	</servlet-mapping>
 </web-app>

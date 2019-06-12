@@ -30,9 +30,6 @@ public class ReportServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-
-		response.setContentType("image/png");
-
 		JFreeChart chart = getChart();
 		
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -40,9 +37,10 @@ public class ReportServlet extends HttpServlet {
 		OutputStream os = new BufferedOutputStream(response.getOutputStream());
 		os.write(bos.toByteArray());
 		os.close();
-		
+
+		response.setContentType("image/png");
 		request.setAttribute("reportImage", bos.toByteArray());
-		request.getRequestDispatcher("/report.jsp").forward(request, response);
+		//request.getRequestDispatcher("/report.jsp").forward(request, response);
 	}
 
 	/**

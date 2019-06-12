@@ -40,7 +40,6 @@ public class ReportServlet extends HttpServlet {
 
 		response.setContentType("image/png");
 		request.setAttribute("reportImage", bos.toByteArray());
-		//request.getRequestDispatcher("/report.jsp").forward(request, response);
 	}
 
 	/**

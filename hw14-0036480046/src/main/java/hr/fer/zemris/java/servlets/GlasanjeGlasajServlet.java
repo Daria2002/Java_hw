@@ -43,6 +43,8 @@ public class GlasanjeGlasajServlet extends HttpServlet {
 		
 		req.getSession().setAttribute("map", map);
 
+		req.getSession().setAttribute("pollId", pollId);
+		
 		// map with key:id, value:names
 		Map<Long, String> mapIdAndNames = new HashMap<Long, String>();
 		// map with key:id, value:links

@@ -66,8 +66,10 @@ public class GlasanjeGrafikaServlet extends HttpServlet {
 	public JFreeChart getChart(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		DefaultPieDataset dataset = new DefaultPieDataset();
 		
-		Map<Long, Long> points = readPointsAndIds(req);
-		Map<Long, String> names = readNamesAndIds(req);
+		Long pollId = Long.valueOf(req.getParameter("pollID"));
+		
+		Map<Long, Long> points = readPointsAndIds(req, pollId);
+		Map<Long, String> names = readNamesAndIds(req, pollId);
 		
 		if(points == null || names == null) {
 			req.getRequestDispatcher("/error.jsp").forward(req, resp);
@@ -95,7 +97,7 @@ public class GlasanjeGrafikaServlet extends HttpServlet {
 	 * @param req request
 	 * @return returns map, where key is id and values are points
 	 */
-	private Map<Long, Long> readPointsAndIds(HttpServletRequest req) {
+	private Map<Long, Long> readPointsAndIds(HttpServletRequest req, Long pollId) {
 		try {
 			Map<Long, Long> mapIdAndVotes = new HashMap<Long, Long>();
 			
@@ -103,12 +105,16 @@ public class GlasanjeGrafikaServlet extends HttpServlet {
 			List<Poll> polls = sqlDao.getDefinedPolls();
 			
 			for(int i = 0; i < polls.size(); i++) {
-				Long pollId = polls.get(i).getPollId();
+				if(polls.get(i).getPollId() != pollId) {
+					continue;
+				}
 				
 				List<Unos> entries = sqlDao.getOptions(pollId);
 				for(int j = 0; j < entries.size(); j++) {
 					mapIdAndVotes.put(entries.get(j).getId(), entries.get(j).getVotes());
 				}	
+				
+				break;
 			}
 			
 			return mapIdAndVotes;
@@ -122,7 +128,7 @@ public class GlasanjeGrafikaServlet extends HttpServlet {
 	 * @param req request
 	 * @return returns map, where key is id and values are names
 	 */
-	private Map<Long, String> readNamesAndIds(HttpServletRequest req) {
+	private Map<Long, String> readNamesAndIds(HttpServletRequest req, Long pollId) {
 		try {
 			Map<Long, String> mapIdAndNames = new HashMap<Long, String>();
 			
@@ -130,12 +136,16 @@ public class GlasanjeGrafikaServlet extends HttpServlet {
 			List<Poll> polls = sqlDao.getDefinedPolls();
 			
 			for(int i = 0; i < polls.size(); i++) {
-				Long pollId = polls.get(i).getPollId();
+				if(polls.get(i).getPollId() != pollId) {
+					continue;
+				}
 				
 				List<Unos> entries = sqlDao.getOptions(pollId);
 				for(int j = 0; j < entries.size(); j++) {
 					mapIdAndNames.put(entries.get(j).getId(), entries.get(j).getTitle());
-				}	
+				}
+				
+				break;	
 			}
 			
 			return mapIdAndNames;

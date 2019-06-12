@@ -1,3 +1,5 @@
+<%@page import="hr.fer.zemris.java.p12.dao.sql.SQLDAO"%>
+<%@page import="hr.fer.zemris.java.p12.model.Unos"%>
 <%@page import="java.util.Stack"%>
 <%@page import="java.util.Collections"%>
 <%@page import="java.util.LinkedHashMap"%>
@@ -70,6 +72,7 @@ table.rez td {text-align: center;}
 				
 				if(mapIdAndPoints != null) {
 					for(long id:sortdMap.keySet()) {
+						
 						if(sortdMap.get(id) >= bestId) {
 							bestId = sortdMap.get(id);
 							bestIds.add(id);
@@ -90,7 +93,7 @@ table.rez td {text-align: center;}
 			</tbody>
 		</table>
 		<h2>Grafički prikaz rezultata</h2>
-		<img alt="Pie-chart" src="<%=request.getContextPath()%>/servleti/glasanje-grafika" width="400" height="400" />
+		<img alt="Pie-chart" src="<%=request.getContextPath()%>/servleti/glasanje-grafika?pollID=<%=request.getSession().getAttribute("pollId")%>" width="400" height="400" />
 		<h2>Rezultati u XLS formatu</h2>
 		<p>Rezultati u XLS formatu dostupni su <a href="<%=request.getContextPath()%>/glasanje-xls">ovdje</a></p>
 		<h2>Razno</h2>

@@ -95,7 +95,7 @@ table.rez td {text-align: center;}
 		<h2>Grafički prikaz rezultata</h2>
 		<img alt="Pie-chart" src="<%=request.getContextPath()%>/servleti/glasanje-grafika?pollID=<%=request.getSession().getAttribute("pollId")%>" width="400" height="400" />
 		<h2>Rezultati u XLS formatu</h2>
-		<p>Rezultati u XLS formatu dostupni su <a href="<%=request.getContextPath()%>/glasanje-xls">ovdje</a></p>
+		<p>Rezultati u XLS formatu dostupni su <a href="<%=request.getContextPath()%>/servleti/glasanje-xls?pollID=<%=request.getSession().getAttribute("pollId")%>">ovdje</a></p>
 		<h2>Razno</h2>
 		<p>Primjeri pjesama pobjedničkih bendova:</p>
 		<ul>

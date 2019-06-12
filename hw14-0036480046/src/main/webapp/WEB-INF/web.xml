@@ -118,4 +118,14 @@
 		<url-pattern>/servleti/glasanje-grafika</url-pattern>
 	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>glasanjeXls-servlet</servlet-name>
+		<servlet-class>hr.fer.zemris.java.servlets.GlasanjeXlsServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>glasanjeXls-servlet</servlet-name>
+		<url-pattern>/servleti/glasanje-xls</url-pattern>
+	</servlet-mapping>
+	
 </web-app>

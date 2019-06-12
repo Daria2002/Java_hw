@@ -36,23 +36,15 @@ public class GlasanjeXlsServlet extends HttpServlet {
 		SQLDAO sqlDao = new SQLDAO();
 		
 		List<Poll> polls = sqlDao.getDefinedPolls();
-		List<Long> pollIds = new ArrayList<Long>();
-		
-		// make list of all poll id's
-		for(int i = 0; i < pollIds.size(); i++) {
-			pollIds.add(polls.get(i).getPollId());
-		}
+		Long pollId = Long.valueOf(req.getParameter("pollID"));
 		
 		List<Unos> entries = new ArrayList<Unos>();
 		
-		// make list of all entries
-		for(int i = 0; i < pollIds.size(); i++) {
-			List<Unos> help = sqlDao.getOptions(pollIds.get(i));
-			
-			// add all entries with pollId = pollIds.get(i) 
-			for(int j = 0; j < help.size(); j++) {
-				entries.add(help.get(j));
-			}
+		List<Unos> help = sqlDao.getOptions(pollId);
+		
+		// add all entries with pollId = pollIds.get(i) 
+		for(int j = 0; j < help.size(); j++) {
+			entries.add(help.get(j));
 		}
 		
 		createXlsFile(req, resp, entries);

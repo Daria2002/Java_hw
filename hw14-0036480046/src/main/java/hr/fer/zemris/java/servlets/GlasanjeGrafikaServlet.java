@@ -102,20 +102,11 @@ public class GlasanjeGrafikaServlet extends HttpServlet {
 			Map<Long, Long> mapIdAndVotes = new HashMap<Long, Long>();
 			
 			SQLDAO sqlDao = new SQLDAO();
-			List<Poll> polls = sqlDao.getDefinedPolls();
 			
-			for(int i = 0; i < polls.size(); i++) {
-				if(polls.get(i).getPollId() != pollId) {
-					continue;
-				}
-				
-				List<Unos> entries = sqlDao.getOptions(pollId);
-				for(int j = 0; j < entries.size(); j++) {
-					mapIdAndVotes.put(entries.get(j).getId(), entries.get(j).getVotes());
-				}	
-				
-				break;
-			}
+			List<Unos> entries = sqlDao.getOptions(pollId);
+			for(int j = 0; j < entries.size(); j++) {
+				mapIdAndVotes.put(entries.get(j).getId(), entries.get(j).getVotes());
+			}	
 			
 			return mapIdAndVotes;
 		} catch (Exception e) {
@@ -133,21 +124,11 @@ public class GlasanjeGrafikaServlet extends HttpServlet {
 			Map<Long, String> mapIdAndNames = new HashMap<Long, String>();
 			
 			SQLDAO sqlDao = new SQLDAO();
-			List<Poll> polls = sqlDao.getDefinedPolls();
 			
-			for(int i = 0; i < polls.size(); i++) {
-				if(polls.get(i).getPollId() != pollId) {
-					continue;
-				}
-				
-				List<Unos> entries = sqlDao.getOptions(pollId);
-				for(int j = 0; j < entries.size(); j++) {
-					mapIdAndNames.put(entries.get(j).getId(), entries.get(j).getTitle());
-				}
-				
-				break;	
+			List<Unos> entries = sqlDao.getOptions(pollId);
+			for(int j = 0; j < entries.size(); j++) {
+				mapIdAndNames.put(entries.get(j).getId(), entries.get(j).getTitle());
 			}
-			
 			return mapIdAndNames;
 			
 		} catch (Exception e) {

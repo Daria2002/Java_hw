@@ -11,6 +11,12 @@ import javax.servlet.http.HttpServletResponse;
 import hr.fer.zemris.java.p12.dao.sql.SQLDAO;
 import hr.fer.zemris.java.p12.model.Poll;
 
+/**
+ * This class represents database servlet that calls choosePoll.jsp where user can
+ * choose poll for voting.
+ * @author Daria Matković
+ *
+ */
 public class DbServlet extends HttpServlet {
 
 	/**

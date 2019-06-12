@@ -114,6 +114,13 @@ public class SQLDAO implements DAO {
 		return null;
 	}
 	
+	/**
+	 * Converts clob to string
+	 * @param clb clob to convert
+	 * @return string value of given clob
+	 * @throws IOException exception
+	 * @throws SQLException exception
+	 */
 	private static String clobStringConversion(Clob clb) throws IOException, SQLException {
 	     if (clb == null)
 	    	 return  "";
@@ -167,6 +174,10 @@ public class SQLDAO implements DAO {
 		return entries;
 	}
 
+	/**
+	 * Increase votes for entry with given id
+	 * @param id entry's id
+	 */
 	public void increaseVotes(long id) {
 		Connection con = SQLConnectionProvider.getConnection();
 		PreparedStatement pst = null;
@@ -184,6 +195,11 @@ public class SQLDAO implements DAO {
 		}
 	}
 
+	/**
+	 * Returns votes for entry with given id 
+	 * @param id entry's id
+	 * @return entry's votes
+	 */
 	private long getVotes(long id) {
 		Connection con = SQLConnectionProvider.getConnection();
 		PreparedStatement pst = null;
@@ -209,65 +225,4 @@ public class SQLDAO implements DAO {
 		
 		return -1;
 	}
-	
-//
-//	@Override
-//	public List<Unos> dohvatiOsnovniPopisUnosa() throws DAOException {
-//		List<Unos> unosi = new ArrayList<>();
-//		Connection con = SQLConnectionProvider.getConnection();
-//		PreparedStatement pst = null;
-//		try {
-//			pst = con.prepareStatement("select id, title from Poruke order by id");
-//			try {
-//				ResultSet rs = pst.executeQuery();
-//				try {
-//					while(rs!=null && rs.next()) {
-//						Unos unos = new Unos();
-//						unos.setId(rs.getLong(1));
-//						unos.setTitle(rs.getString(2));
-//						unosi.add(unos);
-//					}
-//				} finally {
-//					try { rs.close(); } catch(Exception ignorable) {}
-//				}
-//			} finally {
-//				try { pst.close(); } catch(Exception ignorable) {}
-//			}
-//		} catch(Exception ex) {
-//			throw new DAOException("Pogreška prilikom dohvata liste korisnika.", ex);
-//		}
-//		return unosi;
-//	}
-//
-//	@Override
-//	public Unos dohvatiUnos(long id) throws DAOException {
-//		Unos unos = null;
-//		Connection con = SQLConnectionProvider.getConnection();
-//		PreparedStatement pst = null;
-//		try {
-//			pst = con.prepareStatement("select id, title, message, createdOn, userEMail from Poruke where id=?");
-//			pst.setLong(1, Long.valueOf(id));
-//			try {
-//				ResultSet rs = pst.executeQuery();
-//				try {
-//					if(rs!=null && rs.next()) {
-//						unos = new Unos();
-//						unos.setId(rs.getLong(1));
-//						unos.setTitle(rs.getString(2));
-//						unos.setMessage(rs.getString(3));
-//						unos.setCreatedOn(rs.getTimestamp(4));
-//						unos.setUserEMail(rs.getString(5));
-//					}
-//				} finally {
-//					try { rs.close(); } catch(Exception ignorable) {}
-//				}
-//			} finally {
-//				try { pst.close(); } catch(Exception ignorable) {}
-//			}
-//		} catch(Exception ex) {
-//			throw new DAOException("Pogreška prilikom dohvata korisnika.", ex);
-//		}
-//		return unos;
-//	}
-
 }

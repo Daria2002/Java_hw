@@ -19,23 +19,4 @@ public interface DAO {
 	public List<Poll> getDefinedPolls();
 	public List<Unos> getOptions(long id);
 	Poll getPoll(long pollId);
-	
-//
-//	/**
-//	 * Dohvaća sve postojeće unose u bazi, ali puni samo dva podatka:
-//	 * id i title.
-//	 * 
-//	 * @return listu unosa
-//	 * @throws DAOException u slučaju pogreške
-//	 */
-//	public List<Unos> dohvatiOsnovniPopisUnosa() throws DAOException;
-//	
-//	/**
-//	 * Dohvaća Unos za zadani id. Ako unos ne postoji, vraća <code>null</code>.
-//	 * @param id
-//	 * @return
-//	 * @throws DAOException
-//	 */
-//	public Unos dohvatiUnos(long id) throws DAOException;
-//	
 }

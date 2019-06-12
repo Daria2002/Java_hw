@@ -6,6 +6,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * Index servlet redirects to /servleti/index.html
+ * @author Daria Matković
+ *
+ */
 public class IndexServlet extends HttpServlet {
 
 	/**

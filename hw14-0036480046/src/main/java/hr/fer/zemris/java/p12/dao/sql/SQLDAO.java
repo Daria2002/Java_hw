@@ -88,6 +88,32 @@ public class SQLDAO implements DAO {
 		return polls;
 	}
 
+	@Override
+	public Poll getPoll(long pollId) {
+		Connection con = SQLConnectionProvider.getConnection();
+		PreparedStatement pst = null;
+		
+		try {
+			pst = con.prepareStatement("select * from Polls where id=?");
+			pst.setLong(1, pollId);
+			try {
+				ResultSet rs = pst.executeQuery();
+				try {
+					if(rs!=null && rs.next()) {
+						return new Poll(rs.getLong(1), rs.getString(2), clobStringConversion(rs.getClob(3)));
+					}
+				} finally {
+					try { rs.close(); } catch(Exception ignorable) {}
+				}
+			} finally {
+				try { pst.close(); } catch(Exception ignorable) {}
+			}
+		} catch(Exception ex) {
+			throw new DAOException("Pogreška prilikom dohvata liste korisnika.", ex);
+		}
+		return null;
+	}
+	
 	private static String clobStringConversion(Clob clb) throws IOException, SQLException {
 	     if (clb == null)
 	    	 return  "";

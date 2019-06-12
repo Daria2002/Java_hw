@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import hr.fer.zemris.java.p12.dao.sql.SQLDAO;
+import hr.fer.zemris.java.p12.model.Poll;
 import hr.fer.zemris.java.p12.model.Unos;
 
 /**
@@ -40,7 +41,11 @@ public class GlasanjeServlet extends HttpServlet {
 			entriesIdAndName.put(String.valueOf(entries.get(i).getId()), entries.get(i).getTitle());
 		}
 		
+		Poll poll = sqlDao.getPoll(pollId);
+		
 		req.setAttribute("map", entriesIdAndName);
+		req.setAttribute("title", poll.getTitle());
+		req.setAttribute("desc", poll.getMessage());
 		
 		// Pošalji ih JSP-u...
 		req.getRequestDispatcher("/WEB-INF/pages/glasanjeIndex.jsp")

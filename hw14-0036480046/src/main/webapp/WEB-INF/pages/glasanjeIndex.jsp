@@ -15,9 +15,12 @@
 <!DOCTYPE html>
 <html>
 <body bgcolor="<%=myColor%>">
-<h1>Glasanje za omiljeni bend:</h1>
-<p>Od sljedećih bendova, koji Vam je bend najdraži? Kliknite na link kako biste
-glasali!</p>
+<h1><%=request.getAttribute("title")%></h1>
+<!-- <h1>Glasanje za omiljeni bend:</h1>  -->
+<!-- <p>Od sljedećih bendova, koji Vam je bend najdraži? Kliknite na link kako biste
+glasali!</p> -->
+
+<p><%=request.getAttribute("desc")%></p>
 
 <ol>
 	<%

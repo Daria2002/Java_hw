@@ -61,17 +61,16 @@ public class Inicijalizacija implements ServletContextListener {
 		
 		try {
 			Connection con = cpds.getConnection();
+			int polls = 0;
 			
-			int polls = tableExists(con, "Polls");
-			if (polls < 0) {
-				createPolls(con);
-			}
-			
-			if (tableExists(con, "PollOptions") < 0) {
-				createPollOptions(con);
+			try {
+				polls = tableExists(con, "Polls");
+			} catch (Exception e) {
 			}
 
 			if(polls <= 0) {
+				createPolls(con);
+				createPollOptions(con);
 				addBendData(con);
 				addLaptopData(con);
 			}
@@ -102,6 +101,8 @@ public class Inicijalizacija implements ServletContextListener {
 		String insertPolls = "INSERT INTO Polls (title, message) VALUES (?, ?)";
 		PreparedStatement preparedStatement = con.prepareStatement(insertPolls,
 				Statement.RETURN_GENERATED_KEYS);
+		
+		//PreparedStatement preparedStatement = con.prepareStatement(insertPolls);
 		/*
 		ResultSet rs = preparedStatement.getGeneratedKeys();
 		int id = 0;
@@ -116,7 +117,7 @@ public class Inicijalizacija implements ServletContextListener {
 		preparedStatement.executeUpdate();
 		ResultSet rs = preparedStatement.getGeneratedKeys();
 		int id = 0;
-        while(rs.next()){
+        while(rs!=null && rs.next()){
         	id = rs.getInt(1);
         }
 		return id;
@@ -191,12 +192,15 @@ public class Inicijalizacija implements ServletContextListener {
 	      try {
 	         DatabaseMetaData dbmd = con.getMetaData();
 	         // Note the args to getTables are case-sensitive!
-	         ResultSet rs = dbmd.getTables( null, "APP", table.toUpperCase(), null);
-	         while(rs.next()) ++numRows;
+	         ResultSet rs = dbmd.getTables(null, "ivica", table.toUpperCase(), null);
+	         if(rs.next()) {
+	        	 ++numRows;
+		         while(rs.next()) ++numRows;
+	         }
+	         return numRows;
 	      } catch (SQLException e) {
 	    	  return -1;
 	      }
-	      return numRows;
 	}
 
 	/**

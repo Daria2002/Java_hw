@@ -33,31 +33,31 @@ public class Inicijalizacija implements ServletContextListener {
 		ServletContext context = sce.getServletContext();
 		String fullPath = context.getRealPath("/WEB-INF/dbsettings.properties");
 
-//		String connectionURL;
-//		try {
-//			connectionURL = getConnectionURL(fullPath);
-//		} catch (Exception e2) {
-//			return;
-//		}
+		String connectionURL;
+		try {
+			connectionURL = getConnectionURL(fullPath);
+		} catch (Exception e2) {
+			return;
+		}
 		
-//		if(connectionURL == null) {
-//			System.out.println("Path is not ok.");
-//			return;
-//		}
+		if(connectionURL == null) {
+			System.out.println("Path is not ok.");
+			return;
+		}
 		
-		
-		String dbName="votingDB";
-		String connectionURL = "jdbc:derby://localhost:1527/" + dbName;// + ";user=perica;password=pero";
-		
+//		
+//		String dbName="votingDB";
+//		String connectionURL = "jdbc:derby://localhost:1527/" + dbName;// + ";user=perica;password=pero";
+//		
 		ComboPooledDataSource cpds = new ComboPooledDataSource();
 		try {
 			cpds.setDriverClass("org.apache.derby.jdbc.ClientDriver");
 		} catch (PropertyVetoException e1) {
 			throw new RuntimeException("Pogreška prilikom inicijalizacije poola.", e1);
 		}
-		cpds.setJdbcUrl(connectionURL);
+		cpds.setJdbcUrl(connectionURL);/*
 		cpds.setUser("ivica");
-		cpds.setPassword("ivo");
+		cpds.setPassword("ivo");*/
 		
 		try {
 			Connection con = cpds.getConnection();

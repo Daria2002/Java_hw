@@ -72,4 +72,11 @@
 		<url-pattern>/setcolor</url-pattern>
 	</servlet-mapping>
 
+	<listener>
+		<listener-class>
+			hr.fer.zemris.java.listeners.AppListener
+		</listener-class>
+	</listener>
+	
+
 </web-app>

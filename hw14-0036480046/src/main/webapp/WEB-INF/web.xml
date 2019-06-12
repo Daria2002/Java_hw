@@ -95,7 +95,7 @@
 	
 	<servlet-mapping>
 		<servlet-name>trigonometric-servlet</servlet-name>
-		<url-pattern>/trigonometric</url-pattern>
+		<url-pattern>/servleti/trigonometric</url-pattern>
 	</servlet-mapping>
 	
 	<servlet>

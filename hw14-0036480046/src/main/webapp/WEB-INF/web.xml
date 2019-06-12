@@ -107,4 +107,15 @@
 		<servlet-name>report-servlet</servlet-name>
 		<url-pattern>/reportImage</url-pattern>
 	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>glasanjeGrafika-servlet</servlet-name>
+		<servlet-class>hr.fer.zemris.java.servlets.GlasanjeGrafikaServlet</servlet-class>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>glasanjeGrafika-servlet</servlet-name>
+		<url-pattern>/glasanje-grafika</url-pattern>
+	</servlet-mapping>
+
 </web-app>

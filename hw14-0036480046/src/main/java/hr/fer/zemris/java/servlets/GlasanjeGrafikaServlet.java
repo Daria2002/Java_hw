@@ -23,6 +23,10 @@ import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.general.DefaultPieDataset;
 
+import hr.fer.zemris.java.p12.dao.sql.SQLDAO;
+import hr.fer.zemris.java.p12.model.Poll;
+import hr.fer.zemris.java.p12.model.Unos;
+
 /**
  * This class generates pie chart for votes. This bar chart displays in /webapp2/glasanje-rezultati
  * after voting.
@@ -62,15 +66,15 @@ public class GlasanjeGrafikaServlet extends HttpServlet {
 	public JFreeChart getChart(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		DefaultPieDataset dataset = new DefaultPieDataset();
 		
-		Map<String, String> points = readPointsAndIds(req);
-		Map<String, String> names = readNamesAndIds(req);
+		Map<Long, Long> points = readPointsAndIds(req);
+		Map<Long, String> names = readNamesAndIds(req);
 		
 		if(points == null || names == null) {
 			req.getRequestDispatcher("/error.jsp").forward(req, resp);
 		}
 		
-		for(String id:points.keySet()) {
-			dataset.setValue(names.get(id), Integer.valueOf(points.get(id)));
+		for(Long id:points.keySet()) {
+			dataset.setValue(names.get(id), Long.valueOf(points.get(id)));
 		}
 
 		boolean legend = true;
@@ -91,34 +95,23 @@ public class GlasanjeGrafikaServlet extends HttpServlet {
 	 * @param req request
 	 * @return returns map, where key is id and values are points
 	 */
-	private Map<String, String> readPointsAndIds(HttpServletRequest req) {
+	private Map<Long, Long> readPointsAndIds(HttpServletRequest req) {
 		try {
-			String fileName = req.getServletContext().getRealPath("/WEB-INF/glasanje-rezultati.txt");
-			// Napravi datoteku ako je potrebno; ažuriraj podatke koji su u njoj...
+			Map<Long, Long> mapIdAndVotes = new HashMap<Long, Long>();
 			
-			BufferedReader abc;
+			SQLDAO sqlDao = new SQLDAO();
+			List<Poll> polls = sqlDao.getDefinedPolls();
 			
-				abc = new BufferedReader(new FileReader(fileName));
-			
-			List<String> lines = new ArrayList<String>();
-		
-			String line = abc.readLine();
-			while(line != null) {
-			    lines.add(line);
-			    line = abc.readLine();
-			}
-			abc.close();
-		
-			// If you want to convert to a String[]
-			String[] data = lines.toArray(new String[]{});
-			
-			Map<String, String> map = new HashMap<String, String>();
-			for(int i = 0;  i < data.length; i++) {
-				String[] row = data[i].split("\t");
-				map.put(row[0], row[1]);
+			for(int i = 0; i < polls.size(); i++) {
+				Long pollId = polls.get(i).getPollId();
+				
+				List<Unos> entries = sqlDao.getOptions(pollId);
+				for(int j = 0; j < entries.size(); j++) {
+					mapIdAndVotes.put(entries.get(j).getId(), entries.get(j).getVotes());
+				}	
 			}
 			
-			return map;
+			return mapIdAndVotes;
 		} catch (Exception e) {
 			return null;
 		}
@@ -129,29 +122,20 @@ public class GlasanjeGrafikaServlet extends HttpServlet {
 	 * @param req request
 	 * @return returns map, where key is id and values are names
 	 */
-	private Map<String, String> readNamesAndIds(HttpServletRequest req) {
+	private Map<Long, String> readNamesAndIds(HttpServletRequest req) {
 		try {
-			String fileName2 = req.getServletContext()
-					.getRealPath("/WEB-INF/glasanje-definicija.txt");
+			Map<Long, String> mapIdAndNames = new HashMap<Long, String>();
 			
-			BufferedReader abc2 = new BufferedReader(new FileReader(fileName2));
-			List<String> lines2 = new ArrayList<String>();
-
-			String line2 = abc2.readLine();
-			while(line2 != null) {
-			    lines2.add(line2);
-			    line2 = abc2.readLine();
-			}
-			abc2.close();
-
-			// If you want to convert to a String[]
-			String[] data2 = lines2.toArray(new String[]{});
+			SQLDAO sqlDao = new SQLDAO();
+			List<Poll> polls = sqlDao.getDefinedPolls();
 			
-			Map<String, String> mapIdAndNames = new HashMap<String, String>();
-			
-			for(int i = 0; i < data2.length; i++) {
-				String[] lineData = data2[i].split("\t");
-				mapIdAndNames.put(lineData[0], lineData[1]);
+			for(int i = 0; i < polls.size(); i++) {
+				Long pollId = polls.get(i).getPollId();
+				
+				List<Unos> entries = sqlDao.getOptions(pollId);
+				for(int j = 0; j < entries.size(); j++) {
+					mapIdAndNames.put(entries.get(j).getId(), entries.get(j).getTitle());
+				}	
 			}
 			
 			return mapIdAndNames;

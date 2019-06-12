@@ -131,6 +131,7 @@ public class SQLDAO implements DAO {
 			pst.setLong(1, votes + 1);
 			pst.setLong(2, id);
 			
+			pst.execute();
 		} catch(Exception ex) {
 			throw new DAOException("Pogreška prilikom dohvata liste korisnika.", ex);
 		}

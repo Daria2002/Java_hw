@@ -21,22 +21,22 @@
     
 <%!
 
-private HashMap<String, String> sortByValue(HashMap<String, String> hm) { 
+private HashMap<Long, Long> sortByValue(HashMap<Long, Long> hm) { 
     // Create a list from elements of HashMap 
-    List<Map.Entry<String, String> > list = 
-           new LinkedList<Map.Entry<String, String> >(hm.entrySet()); 
+    List<Map.Entry<Long, Long> > list = 
+           new LinkedList<Map.Entry<Long, Long> >(hm.entrySet()); 
 
     // Sort the list 
-    Collections.sort(list, new Comparator<Map.Entry<String, String> >() { 
-        public int compare(Map.Entry<String, String> o1,  
-                           Map.Entry<String, String> o2) { 
-            return (Integer.valueOf(o2.getValue())).compareTo(Integer.valueOf(o1.getValue())); 
+    Collections.sort(list, new Comparator<Map.Entry<Long, Long> >() { 
+        public int compare(Map.Entry<Long, Long> o1,  
+                           Map.Entry<Long, Long> o2) { 
+            return (Long.valueOf(o2.getValue())).compareTo(Long.valueOf(o1.getValue())); 
         } 
     }); 
     
     // put data from sorted list to hashmap  
-    HashMap<String, String> temp = new LinkedHashMap<String, String>(); 
-    for (Map.Entry<String, String> aa : list) { 
+    HashMap<Long, Long> temp = new LinkedHashMap<Long, Long>(); 
+    for (Map.Entry<Long, Long> aa : list) { 
         temp.put(aa.getKey(), aa.getValue()); 
     } 
     return temp; 
@@ -60,18 +60,19 @@ table.rez td {text-align: center;}
 			<thead><tr><th>Bend</th><th>Broj glasova</th></tr></thead>
 			<tbody>
 			<%
-				Map<String, String> mapNamesAndId = (Map<String, String>)request.getSession().getAttribute("mapIdAndNames");
-				Map<String, String> mapIdAndPoints = (Map<String, String>)request.getSession().getAttribute("map");
+				String x = "bok";
+				Map<Long, String> mapNamesAndId = (Map<Long, String>)request.getSession().getAttribute("mapIdAndNames");
+				Map<Long, Long> mapIdAndPoints = (Map<Long, Long>)request.getSession().getAttribute("map");
 				
-				Map<String, String> sortdMap = sortByValue((HashMap)mapIdAndPoints);
+				Map<Long, Long> sortdMap = sortByValue((HashMap)mapIdAndPoints);
 				
-				List<String> bestIds = new ArrayList<String>();
-				Integer bestId = 0;
+				List<Long> bestIds = new ArrayList<Long>();
+				Long bestId = Long.valueOf(1);
 				
 				if(mapIdAndPoints != null) {
-					for(String id:sortdMap.keySet()) {
-						if(Integer.valueOf(sortdMap.get(id)) >= bestId) {
-							bestId = Integer.valueOf(sortdMap.get(id));
+					for(long id:sortdMap.keySet()) {
+						if(sortdMap.get(id) >= bestId) {
+							bestId = sortdMap.get(id);
 							bestIds.add(id);
 						}
 						
@@ -82,13 +83,11 @@ table.rez td {text-align: center;}
 						}
 					}
 				} else if(mapNamesAndId != null) {
-					for(String id:mapNamesAndId.keySet()) {
+					for(Long id:mapNamesAndId.keySet()) {
 						%><tr><td><%=mapNamesAndId.get(id)%></td><td>0</td></tr><%
 					}
 				}
-				
-				
-			%>
+				%>
 			</tbody>
 		</table>
 		<h2>Grafički prikaz rezultata</h2>
@@ -99,10 +98,10 @@ table.rez td {text-align: center;}
 		<p>Primjeri pjesama pobjedničkih bendova:</p>
 		<ul>
 			<%
-				Map<String, String> mapIdAndLinks = 
-				(Map<String, String>)request.getSession().getAttribute("mapIdAndLinks");
+				Map<Long, String> mapIdAndLinks = 
+				(Map<Long, String>)request.getSession().getAttribute("mapIdAndLinks");
 
-				for(String id : bestIds) {
+				for(Long id : bestIds) {
 					%><li><a href="<%=mapIdAndLinks.get(id)%>" target="_blank"><%=mapNamesAndId.get(id)%></a></li><%
 				}
 			%>

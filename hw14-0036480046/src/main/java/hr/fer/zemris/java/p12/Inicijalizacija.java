@@ -61,19 +61,15 @@ public class Inicijalizacija implements ServletContextListener {
 		
 		try {
 			Connection con = cpds.getConnection();
-			int polls = 0;
 			
 			try {
-				polls = tableExists(con, "Polls");
-			} catch (Exception e) {
-			}
-
-			if(polls <= 0) {
 				createPolls(con);
 				createPollOptions(con);
 				addBendData(con);
 				addLaptopData(con);
+			} catch (Exception e) {
 			}
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -187,12 +183,12 @@ public class Inicijalizacija implements ServletContextListener {
 		ps.close();
 	}
 	
-	private static int tableExists(Connection con, String table) {
+	private static int createTableIfNotExists(Connection con, String table) {
 	      int numRows = 0;
 	      try {
 	         DatabaseMetaData dbmd = con.getMetaData();
 	         // Note the args to getTables are case-sensitive!
-	         ResultSet rs = dbmd.getTables(null, "ivica", table.toUpperCase(), null);
+	         ResultSet rs = dbmd.getTables(null, "ivica", table, null);
 	         if(rs.next()) {
 	        	 ++numRows;
 		         while(rs.next()) ++numRows;

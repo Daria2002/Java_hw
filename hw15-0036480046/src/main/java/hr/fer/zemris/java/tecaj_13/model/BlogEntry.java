@@ -10,6 +10,10 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
@@ -18,6 +22,9 @@ import javax.persistence.TemporalType;
 
 @Entity
 @Table(name = "blog_entries")
+@NamedQueries({
+	@NamedQuery(name="BlogEntry.upit1",query="select b from BlogComment as b where b.blogEntry=:be and b.postedOn>:when")
+})
 public class BlogEntry {
 
 	private Long id;
@@ -26,7 +33,18 @@ public class BlogEntry {
 	private Date lastModifiedAt;
 	private String title;
 	private String text;
-	
+	private BlogUser creator;
+
+	@ManyToOne
+	@JoinColumn(nullable=false)
+	public BlogUser getCreator() {
+		return creator;
+	}
+
+	public void setCreator(BlogUser creator) {
+		this.creator = creator;
+	}
+
 	@Id
 	@GeneratedValue
 	public Long getId() {

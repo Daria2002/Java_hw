@@ -51,4 +51,10 @@ public class SQLDAO implements DAO {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public List<BlogEntry> getEntries(String nick) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

@@ -19,4 +19,5 @@ public interface DAO {
 	public void addNewUser(String firstName, String lastName, String email,
 			String nickName, String password); 
 	public BlogUser getBlogUser(String nickName);
+	public List<BlogEntry> getEntries(String nick);
 }

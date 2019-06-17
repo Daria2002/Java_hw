@@ -42,4 +42,14 @@
 		<url-pattern>/servleti/register</url-pattern>
 	</servlet-mapping>
 	
+	<servlet>
+		<servlet-name>author-servlet</servlet-name>
+		<servlet-class>hr.fer.zemris.java.servlets.AuthorServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>author-servlet</servlet-name>
+		<url-pattern>/servleti/author/*</url-pattern>
+	</servlet-mapping>
+	
 </web-app>

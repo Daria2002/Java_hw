@@ -3,6 +3,8 @@ package hr.fer.zemris.java.p12.dao.sql;
 import hr.fer.zemris.java.p12.dao.DAO;
 import hr.fer.zemris.java.p12.dao.DAOException;
 import hr.fer.zemris.java.tecaj_13.model.BlogEntry;
+import hr.fer.zemris.java.tecaj_13.model.BlogUser;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.sql.Clob;
@@ -36,5 +38,17 @@ public class SQLDAO implements DAO {
 	public boolean correctPassword(String nickName, String passwordHash) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public void addNewUser(String firstName, String lastName, String email, String nickName, String password) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public BlogUser getBlogUser(String nickName) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

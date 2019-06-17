@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import hr.fer.zemris.java.p12.dao.sql.SQLDAO;
+import hr.fer.zemris.java.tecaj_13.model.BlogUser;
 
 public class MainServlet extends HttpServlet {
 
@@ -29,12 +30,19 @@ public class MainServlet extends HttpServlet {
         if(sqlDao.userExists(nickName)) {
         	
         	if(sqlDao.correctPassword(nickName, makePasswordHash(password))) {
-        		//openBlogEntries();
-        	
+        		BlogUser blogUser = sqlDao.getBlogUser(nickName);
+        		
+        		req.setAttribute("current.user.id", blogUser.getId());
+        		req.setAttribute("current.user.nick", blogUser.getNick());
+        		req.setAttribute("current.user.fn", blogUser.getFirstName());
+        		req.setAttribute("current.user.ln", blogUser.getLastName());
+        		
+        		resp.sendRedirect("/servleti/author" + nickName);
+        		
         	} else {
             	displayErrorMessage();
             	req.setAttribute("username", nickName);
-            	req.getRequestDispatcher("/WEB-INF/login.jsp").forward(req, resp);
+            	req.getRequestDispatcher("/WEB-INF/index.jsp").forward(req, resp);
         	}
         	
         } else {

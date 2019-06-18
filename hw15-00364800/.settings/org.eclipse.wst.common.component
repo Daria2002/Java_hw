@@ -1,10 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
-    <wb-module deploy-name="hw15-0036480046">
-        <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
+            
+    
+    <wb-module deploy-name="hw15-00364800">
+                        
+        
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
+                        
+        
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
+                        
+        
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/test/java"/>
-        <property name="context-root" value="hw15-0036480046"/>
-        <property name="java-output-path" value="/hw15-0036480046/target/classes"/>
+                        
+        
+        <property name="java-output-path" value="/hw15-00364800/target/classes"/>
+        <property name="context-root" value="hw15-00364800"/>
+                    
+    
     </wb-module>
+        
+
 </project-modules>

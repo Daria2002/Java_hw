@@ -22,7 +22,8 @@ public class BlogComment {
 	private String message;
 	private Date postedOn;
 	
-	@Id @GeneratedValue
+	@Id
+	@GeneratedValue
 	public Long getId() {
 		return id;
 	}

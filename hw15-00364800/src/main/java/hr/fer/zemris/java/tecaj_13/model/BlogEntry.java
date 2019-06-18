@@ -1,17 +1,17 @@
 package hr.fer.zemris.java.tecaj_13.model;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -20,13 +20,12 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+@Entity
+@Table(name = "blog_entries")
 @NamedQueries({
 	@NamedQuery(name="BlogEntry.upit1",query="select b from BlogComment as b where b.blogEntry=:be and b.postedOn>:when")
 })
-@Entity
-@Table(name="blog_entries")
-@Cacheable(false)
-public class BlogEntry implements Serializable {
+public class BlogEntry {
 
 	private Long id;
 	private List<BlogComment> comments = new ArrayList<>();
@@ -34,8 +33,20 @@ public class BlogEntry implements Serializable {
 	private Date lastModifiedAt;
 	private String title;
 	private String text;
-	
-	@Id @GeneratedValue
+	private BlogUser creator;
+
+	@ManyToOne
+	@JoinColumn(nullable=false)
+	public BlogUser getCreator() {
+		return creator;
+	}
+
+	public void setCreator(BlogUser creator) {
+		this.creator = creator;
+	}
+
+	@Id
+	@GeneratedValue
 	public Long getId() {
 		return id;
 	}

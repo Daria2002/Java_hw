@@ -39,7 +39,6 @@ public class AuthorServlet extends HttpServlet {
 			newEntry.setComments(null);
 			newEntry.setCreatedAt(new Date());
 			newEntry.setCreator(sqlDao.getBlogUser(req.getPathInfo().split("/")[3]));
-			// newEntry.setId(id);
 			newEntry.setLastModifiedAt(new Date());
 			newEntry.setText(req.getParameter("text"));
 			newEntry.setTitle(req.getParameter("title"));

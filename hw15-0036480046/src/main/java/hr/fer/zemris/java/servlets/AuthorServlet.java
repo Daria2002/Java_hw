@@ -1,6 +1,8 @@
 package hr.fer.zemris.java.servlets;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -26,15 +28,36 @@ public class AuthorServlet extends HttpServlet {
 			
 			req.setAttribute("title", entry.getTitle());
 			req.setAttribute("text", entry.getText());
+			req.setAttribute("comments", entry.getComments());
 			req.getRequestDispatcher("/WEB-INF/entry.jsp");
 			
 			return;
 		
 		} else if(numberOfArgs == 3 && "new".equals(req.getPathInfo().split("/")[4])) {
 			
+			BlogEntry newEntry = new BlogEntry();
+			
+			newEntry.setComments(null);
+			newEntry.setCreatedAt(new Date());
+			newEntry.setCreator(sqlDao.getBlogUser(req.getPathInfo().split("/")[3]));
+			newEntry.setId(id);
+			newEntry.setLastModifiedAt(new Date());
+			newEntry.setText(text);
+			newEntry.setTitle(title);
+
+			req.getRequestDispatcher("/WEB-INF/entry.jsp");
+			
 			return;
 			
 		} else if(numberOfArgs == 3 && "edit".equals(req.getPathInfo().split("/")[4])) {
+		
+			
+
+			req.getRequestDispatcher("/WEB-INF/entry.jsp");
+			
+			return;
+		
+		} else if(numberOfArgs == 3 && "addComment".equals(req.getPathInfo().split("/")[4])) {
 		
 			return;
 		}

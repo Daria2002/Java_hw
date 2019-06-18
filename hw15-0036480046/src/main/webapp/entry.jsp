@@ -1,3 +1,5 @@
+<%@page import="hr.fer.zemris.java.tecaj_13.model.BlogComment"%>
+<%@page import="java.util.List"%>
 <%@page import="hr.fer.zemris.java.tecaj_13.model.BlogEntry"%>
 <%@page import="hr.fer.zemris.java.tecaj_13.model.BlogUser"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
@@ -17,16 +19,27 @@
 				<form action="/servleti/<%=request.getAttribute("current.user.nick")%>/edit" method="post">
 					<input type="submit" value="edit entry" /> <br>
 				</form>
-				
-				<form action="/servleti/<%=request.getAttribute("current.user.nick")%>/new" method="post">
-					<input type="submit" value="new entry" /> <br>
-				</form>
 				<%
 			}
 		
 			String title = (String)request.getAttribute("title");
 			String text = (String)request.getAttribute("text");
+			List<BlogComment> comments = (List<BlogComment>)request.getAttribute("comments");
 		%>
+		
+		<ul>
+			<%
+				for(int i = 0; i < comments.size(); i++) {
+			  		%>
+			  		<li><%=comments.get(i).getMessage()%></li>
+			    	<%		
+			  	}
+			%>
+		</ul>
+		
+		<form action="/servleti/<%=request.getAttribute("current.user.nick")%>/addComment" method="post">
+			<input type="submit" value="add comment" /> <br>
+		</form>
 		
 		<h1><%=title%></h1>
 		<p><%=text%></p>

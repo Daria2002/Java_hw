@@ -1,27 +1,18 @@
 package hr.fer.zemris.java.tecaj_13.dao.jpa;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 
 import hr.fer.zemris.java.p12.dao.DAO;
+import hr.fer.zemris.java.tecaj_13.model.BlogComment;
 import hr.fer.zemris.java.tecaj_13.model.BlogEntry;
 import hr.fer.zemris.java.tecaj_13.model.BlogUser;
 
 public class JPADAOImpl implements DAO {
 
-	/* predavanje
-	
-	public BlogEntry getBlogEntry(Long id) throws DAOException {
-		BlogEntry blogEntry = JPAEMProvider.getEntityManager().find(BlogEntry.class, id);
-		return blogEntry;
-	}
-	
-	
-	 */
-	
-	
 	@Override
 	public boolean userExists(String username) {
 		BlogUser blogUser = JPAEMProvider.getEntityManager().find(BlogUser.class, username);
@@ -68,4 +59,23 @@ public class JPADAOImpl implements DAO {
 		return JPAEMProvider.getEntityManager().find(BlogEntry.class, id);
 	}
 
+	@Override
+	public void addCommentToBlogUser(Long id, String commentText, String email) {
+		EntityManager em = JPAEMProvider.getEntityManager();
+		BlogEntry entry = (BlogEntry)em.find(BlogEntry.class , id);
+		 
+		List<BlogComment> comments = entry.getComments();
+		 
+		BlogComment newComment = new BlogComment();
+		newComment.setBlogEntry(entry);
+		newComment.setId(id);
+		newComment.setMessage(commentText);
+		newComment.setPostedOn(new Date());
+		newComment.setUsersEMail(email);
+		 
+		comments.add(new BlogComment());
+		 
+		em.createQuery("update BlogEntry set comments = " + 
+		newComment + " where id=" + id).executeUpdate();
+	}
 }

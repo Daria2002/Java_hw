@@ -38,6 +38,7 @@
 		</ul>
 		
 		<form action="/servleti/<%=request.getAttribute("current.user.nick")%>/addComment" method="post">
+			Comment:<br><input type="text" name="comment"><br>
 			<input type="submit" value="add comment" /> <br>
 		</form>
 		

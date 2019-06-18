@@ -48,15 +48,21 @@ public class AuthorServlet extends HttpServlet {
 			return;
 			
 		} else if(numberOfArgs == 3 && "edit".equals(req.getPathInfo().split("/")[4])) {
-		
-			
 
 			req.getRequestDispatcher("/WEB-INF/entry.jsp");
 			
 			return;
 		
 		} else if(numberOfArgs == 3 && "addComment".equals(req.getPathInfo().split("/")[4])) {
-		
+
+			String newComment = req.getParameter("comment");
+			Long id = Long.valueOf(req.getPathInfo().split("/")[4]);
+			String nick = String.valueOf(req.getPathInfo().split("/")[3]);
+			
+			sqlDao.addCommentToBlogUser(id, newComment, sqlDao.getBlogUser(nick).getEmail());
+			
+			req.getRequestDispatcher("/WEB-INF/entry.jsp");
+			
 			return;
 		}
 		

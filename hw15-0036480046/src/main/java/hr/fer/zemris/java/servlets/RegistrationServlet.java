@@ -6,8 +6,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import hr.fer.zemris.java.p12.dao.sql.SQLDAO;
+import hr.fer.zemris.java.tecaj_13.dao.jpa.JPADAOImpl;
 
 public class RegistrationServlet extends HttpServlet {
 
@@ -26,7 +25,7 @@ public class RegistrationServlet extends HttpServlet {
 	    	return;
 	    }	
 	    
-    	SQLDAO sqlDao = new SQLDAO();
+	    JPADAOImpl sqlDao = new JPADAOImpl();
     	sqlDao.addNewUser(firstName, lastName, email, nickName, password);
     	req.getRequestDispatcher("/WEB-INF/index.jsp");
 	}

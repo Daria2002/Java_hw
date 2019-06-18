@@ -1,6 +1,6 @@
 package hr.fer.zemris.java.p12.dao;
 
-import hr.fer.zemris.java.p12.dao.sql.SQLDAO;
+import hr.fer.zemris.java.tecaj_13.dao.jpa.JPADAOImpl;
 
 /**
  * Singleton razred koji zna koga treba vratiti kao pružatelja
@@ -16,7 +16,7 @@ import hr.fer.zemris.java.p12.dao.sql.SQLDAO;
  */
 public class DAOProvider {
 
-	private static DAO dao = new SQLDAO();
+	private static DAO dao = new JPADAOImpl();
 	
 	/**
 	 * Dohvat primjerka.

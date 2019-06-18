@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import hr.fer.zemris.java.p12.dao.sql.SQLDAO;
+import hr.fer.zemris.java.tecaj_13.dao.jpa.JPADAOImpl;
 import hr.fer.zemris.java.tecaj_13.model.BlogUser;
 
 public class MainServlet extends HttpServlet {
@@ -25,7 +25,7 @@ public class MainServlet extends HttpServlet {
 		String nickName = req.getParameter("username");
         String password = req.getParameter("password");
         
-        SQLDAO sqlDao = new SQLDAO();
+        JPADAOImpl sqlDao = new JPADAOImpl();
         
         if(sqlDao.userExists(nickName)) {
         	

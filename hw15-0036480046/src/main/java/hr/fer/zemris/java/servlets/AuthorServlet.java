@@ -8,8 +8,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import hr.fer.zemris.java.p12.dao.sql.SQLDAO;
+import hr.fer.zemris.java.tecaj_13.dao.jpa.JPADAOImpl;
 import hr.fer.zemris.java.tecaj_13.model.BlogEntry;
 import hr.fer.zemris.java.tecaj_13.model.BlogUser;
 
@@ -17,7 +16,7 @@ public class AuthorServlet extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		SQLDAO sqlDao = new SQLDAO();
+		JPADAOImpl sqlDao = new JPADAOImpl();
 		
 		int numberOfArgs = req.getPathInfo().length() -
 				req.getPathInfo().replace("/", "").length();
@@ -40,10 +39,10 @@ public class AuthorServlet extends HttpServlet {
 			newEntry.setComments(null);
 			newEntry.setCreatedAt(new Date());
 			newEntry.setCreator(sqlDao.getBlogUser(req.getPathInfo().split("/")[3]));
-			newEntry.setId(id);
+			// newEntry.setId(id);
 			newEntry.setLastModifiedAt(new Date());
-			newEntry.setText(text);
-			newEntry.setTitle(title);
+			newEntry.setText(req.getParameter("text"));
+			newEntry.setTitle(req.getParameter("title"));
 
 			req.getRequestDispatcher("/WEB-INF/entry.jsp");
 			

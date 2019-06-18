@@ -4,10 +4,11 @@
 	version="2.1">
 	<persistence-unit name="baza.podataka.za.blog" transaction-type="RESOURCE_LOCAL">
 		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-
+		
 		<class>hr.fer.zemris.java.tecaj_13.model.BlogEntry</class>
   		<class>hr.fer.zemris.java.tecaj_13.model.BlogComment</class>
-
+  		
+		
 		<properties>
 
 			<!-- Generalne postavke Hibernate-a -->			

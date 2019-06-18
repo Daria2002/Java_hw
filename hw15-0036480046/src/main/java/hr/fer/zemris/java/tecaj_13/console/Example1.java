@@ -13,8 +13,7 @@ import javax.persistence.Persistence;
 public class Example1 {
 
 	public static void main(String[] args) { 
-		EntityManagerFactory emf = Persistence.createEntityManagerFactory("baza.podataka.za.blog");  
-
+		EntityManagerFactory emf = Persistence.createEntityManagerFactory("baza.podataka.za.blog"); 
 		// 1. korak - stvaranje novog blog zapisa...
 		// -----------------------------------------
 		System.out.println("Dodajem blog zapis.");

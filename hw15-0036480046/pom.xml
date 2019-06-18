@@ -42,20 +42,19 @@
 	<dependency>
 	    <groupId>org.hibernate</groupId>
 	    <artifactId>hibernate-core</artifactId>
-	    <version>${hibernateVersion}</version>
+	    <version>5.2.10.Final</version>
 	</dependency>
-        <!-- podrška za connection pooling -->
 	<dependency>
 	    <groupId>org.hibernate</groupId>
 	    <artifactId>hibernate-c3p0</artifactId>
-	    <version>${hibernateVersion}</version>
+	    <version>5.2.10.Final</version>
 	</dependency>
-        <!-- podrška za 2nd-level cache -->
 	<dependency>
 	    <groupId>org.hibernate</groupId>
-	    <artifactId>hibernate-jcache</artifactId>
-	    <version>${hibernateVersion}</version>
+	    <artifactId>hibernate-ehcache</artifactId>
+	    <version>5.2.10.Final</version>
 	</dependency>
+
 	<!-- Ehcache 3.x -->
 	<dependency>
 		<groupId>org.ehcache</groupId>

@@ -15,6 +15,11 @@ import hr.fer.zemris.java.tecaj_13.model.BlogUser;
 public class AuthorServlet extends HttpServlet {
 
 	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		System.out.println("hello");
+	}
+	
+	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		JPADAOImpl sqlDao = new JPADAOImpl();
 		

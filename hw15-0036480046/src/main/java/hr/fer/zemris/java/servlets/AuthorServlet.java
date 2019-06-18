@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import hr.fer.zemris.java.p12.dao.sql.SQLDAO;
+import hr.fer.zemris.java.tecaj_13.model.BlogEntry;
 import hr.fer.zemris.java.tecaj_13.model.BlogUser;
 
 public class AuthorServlet extends HttpServlet {
@@ -16,13 +17,44 @@ public class AuthorServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		SQLDAO sqlDao = new SQLDAO();
 		
+		int numberOfArgs = req.getPathInfo().length() -
+				req.getPathInfo().replace("/", "").length();
+		
+		// id in url
+		if(numberOfArgs == 3 && isNumeric(req.getPathInfo().split("/")[4])) {
+			BlogEntry entry = sqlDao.getEntry(Integer.valueOf(req.getPathInfo().split("/")[4]));
+			
+			req.setAttribute("title", entry.getTitle());
+			req.setAttribute("text", entry.getText());
+			req.getRequestDispatcher("/WEB-INF/entry.jsp");
+			
+			return;
+		
+		} else if(numberOfArgs == 3 && "new".equals(req.getPathInfo().split("/")[4])) {
+			
+			return;
+			
+		} else if(numberOfArgs == 3 && "edit".equals(req.getPathInfo().split("/")[4])) {
+		
+			return;
+		}
+		
 		BlogUser blogUser = sqlDao.getBlogUser(
-				req.getPathInfo().substring(1).split("/")[0]);
+				req.getPathInfo().split("/")[1]);
 		
 		req.setAttribute("nickEntries", 
 				sqlDao.getEntries(blogUser.getNick()));
 		req.setAttribute("nickName", blogUser.getNick());
 		
 		req.getRequestDispatcher("blogEntriesListPage.jsp");
+	}
+	
+	private boolean isNumeric(String str) { 
+	  try {  
+	    Double.parseDouble(str);  
+	    return true;
+	  } catch(NumberFormatException e){  
+	    return false;  
+	  }  
 	}
 }

@@ -20,4 +20,5 @@ public interface DAO {
 			String nickName, String password); 
 	public BlogUser getBlogUser(String nickName);
 	public List<BlogEntry> getEntries(String nick);
+	public BlogEntry getEntry(int id);
 }

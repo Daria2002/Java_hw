@@ -15,6 +15,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.criteria.CriteriaBuilder.In;
+
 /**
  * Ovo je implementacija podsustava DAO uporabom tehnologije SQL. Ova
  * konkretna implementacija očekuje da joj veza stoji na raspolaganju
@@ -54,6 +56,12 @@ public class SQLDAO implements DAO {
 
 	@Override
 	public List<BlogEntry> getEntries(String nick) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public BlogEntry getEntry(int id) {
 		// TODO Auto-generated method stub
 		return null;
 	}

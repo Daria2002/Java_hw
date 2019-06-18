@@ -12,6 +12,8 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -25,7 +27,7 @@ import javax.persistence.TemporalType;
 })
 @Entity
 @Table(name="blog_entries")
-@Cacheable(false)
+@Cacheable(true)
 public class BlogEntry implements Serializable {
 
 	private Long id;
@@ -34,6 +36,17 @@ public class BlogEntry implements Serializable {
 	private Date lastModifiedAt;
 	private String title;
 	private String text;
+	private BlogUser creator;
+
+	@ManyToOne
+	@JoinColumn(nullable=true)
+	public BlogUser getCreator() {
+		return creator;
+	}
+
+	public void setCreator(BlogUser creator) {
+		this.creator = creator;
+	}
 	
 	@Id @GeneratedValue
 	public Long getId() {
@@ -45,7 +58,7 @@ public class BlogEntry implements Serializable {
 	}
 
 	@OneToMany(mappedBy="blogEntry",fetch=FetchType.LAZY, cascade=CascadeType.PERSIST, orphanRemoval=true)
-	@OrderBy("postedOn")
+	@OrderBy("postedOn DESC")
 	public List<BlogComment> getComments() {
 		return comments;
 	}

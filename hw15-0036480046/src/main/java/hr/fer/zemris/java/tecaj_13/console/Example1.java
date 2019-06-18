@@ -62,7 +62,7 @@ public class Example1 {
 		blogEntry.setLastModifiedAt(blogEntry.getCreatedAt());
 		blogEntry.setTitle("Moj prvi blog");
 		blogEntry.setText("Ovo je moj prvi blog zapis.");
-		
+
 		em.persist(blogEntry);
 		
 		em.getTransaction().commit();

@@ -17,8 +17,8 @@
 			String nick = (String)request.getSession().getAttribute("current.user.nick");
 			if(nick != null && nick.equals(((String)request.getAttribute("nick")))) {
 				%>
-				<form action="/servleti/<%=request.getAttribute("nick")%>/edit" method="post">
-					<input type="submit" value="edit entry" /> <br>
+				<form action="" method="post">
+					<input type="submit" name = "edit" value="edit" /> <br>
 				</form>
 				<%
 			}
@@ -50,7 +50,7 @@
 		<form action="" method="post">
 			Comment:<br><input type="text" name="comment"><br>
 			
-			<%if(request.getSession().getAttribute("current.user.nick") != null) { %>
+			<%if(request.getSession().getAttribute("current.user.nick") == null) { %>
 				Email:<br><input type="text" name="email"><br>
 			<%} %>
 			

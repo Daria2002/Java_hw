@@ -18,7 +18,6 @@ public class AuthorServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		System.out.println("hello");
 		doPost(req, resp);
 	}
 	
@@ -43,6 +42,18 @@ public class AuthorServlet extends HttpServlet {
 			
 			resp.sendRedirect(req.getContextPath()+"/servleti/author/" + req.getRequestURI().split("/")[4]);
 		
+		} else if(req.getParameter("newText") != null) {
+			String newEntryText = req.getParameter("newText");
+			BlogEntry blogEntry = DAOProvider.getDao().getEntry(Long.valueOf(req.getRequestURI().split("/")[5]));
+			blogEntry.setText(newEntryText);
+		
+	    } else if(req.getParameter("edit") != null) {
+	    	req.setAttribute("exText", DAOProvider.getDao()
+	    			.getEntry(Long.valueOf(req.getRequestURI().split("/")[5])).getText());
+			req.getRequestDispatcher("/edit.jsp").forward(req, resp);;
+			
+			return;
+			
 		} else if(req.getParameter("comment") != null) {
 
 			String message = req.getParameter("comment");
@@ -79,12 +90,6 @@ public class AuthorServlet extends HttpServlet {
 		} else if(numberOfArgs == 5 && "new".equals(req.getRequestURI().split("/")[5])) {
 			
 			req.getRequestDispatcher("/newEntry.jsp").forward(req, resp);
-			
-			return;
-			
-		} else if(numberOfArgs == 6 && "edit".equals(req.getRequestURI().split("/")[4])) {
-
-			req.getRequestDispatcher("/entry.jsp");
 			
 			return;
 			

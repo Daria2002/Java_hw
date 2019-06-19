@@ -11,10 +11,9 @@
 <title>Insert title here</title>
 </head>
 <body>
-		<form action="" method="post">
-			Title:<br><input type="text" name="title"><br>
-			Text:<br><input type="text" name="text"><br>
-			<input type="submit" value="add entry" /> <br>
+		<form action="" method="post" id="edit">
+			<textarea name="newText" form="edit"><%=request.getAttribute("exText")%></textarea>
+			<input type="submit" value="edit entry" /> <br>
 		</form>
 </body>
 </html>

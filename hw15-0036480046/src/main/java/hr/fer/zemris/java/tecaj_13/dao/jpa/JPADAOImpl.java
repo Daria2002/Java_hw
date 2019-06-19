@@ -60,32 +60,29 @@ public class JPADAOImpl implements DAO {
 	}
 
 	@Override
-	public BlogEntry getEntry(int id) {
+	public BlogEntry getEntry(Long id) {
 		//return JPAEMProvider.getEntityManager().find(BlogEntry.class, id);
 		BlogEntry blogEntry = (BlogEntry) JPAEMProvider.getEntityManager()
 				.createQuery("select entry from BlogEntry as entry where entry.id=:id")
-				.setParameter("id", Long.valueOf(id)).getSingleResult();
+				.setParameter("id", id).getSingleResult();
 		return blogEntry;
 	}
 
 	@Override
 	public void addCommentToBlogUser(Long id, String commentText, String email) {
 		EntityManager em = JPAEMProvider.getEntityManager();
-		BlogEntry entry = (BlogEntry)em.find(BlogEntry.class , id);
-		 
-		List<BlogComment> comments = entry.getComments();
+		
+		BlogEntry entry = getEntry(id);
 		 
 		BlogComment newComment = new BlogComment();
 		newComment.setBlogEntry(entry);
-		newComment.setId(id);
 		newComment.setMessage(commentText);
 		newComment.setPostedOn(new Date());
 		newComment.setUsersEMail(email);
 		 
-		comments.add(new BlogComment());
+		entry.getComments().add(new BlogComment());
 		 
-		em.createQuery("update BlogEntry set comments = " + 
-		newComment + " where id=" + id).executeUpdate();
+		em.persist(newComment);
 	}
 
 	@Override

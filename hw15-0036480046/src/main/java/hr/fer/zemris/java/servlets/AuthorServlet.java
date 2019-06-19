@@ -43,20 +43,27 @@ public class AuthorServlet extends HttpServlet {
 			
 			resp.sendRedirect(req.getContextPath()+"/servleti/author/" + req.getRequestURI().split("/")[4]);
 		
-		} else if(numberOfArgs == 6 && req.getParameter("comment") != null) {
+		} else if(req.getParameter("comment") != null) {
 
-			String newComment = req.getParameter("comment");
-			Long id = Long.valueOf(req.getRequestURI().split("/")[4]);
-			String nick = String.valueOf(req.getRequestURI().split("/")[3]);
+			String message = req.getParameter("comment");
 			
-			DAOProvider.getDao().addCommentToBlogUser(id, newComment, DAOProvider.getDao().getBlogUser(nick).getEmail());
+			String email;
+			if(req.getSession().getAttribute("current.user.nick") != null) {
+				BlogUser bu = DAOProvider.getDao().getBlogUser((String)req.getSession().getAttribute("current.user.nick"));
+				email = bu.getEmail();
+			} else {
+				email = req.getParameter("email");
+			}
+			
+			Long id = Long.valueOf(req.getRequestURI().split("/")[5]);
+			DAOProvider.getDao().addCommentToBlogUser(id, message, email);
 			
 			req.getRequestDispatcher("/entry.jsp").forward(req, resp);
 		}
 		
 		// http://localhost:8080/blog/servleti/author/NICK/id
 		else if(numberOfArgs == 6 && isNumeric(req.getRequestURI().split("/")[5])) {
-			BlogEntry entry = DAOProvider.getDao().getEntry(Integer.valueOf(req.getRequestURI().split("/")[5]));
+			BlogEntry entry = DAOProvider.getDao().getEntry(Long.valueOf(req.getRequestURI().split("/")[5]));
 			
 			req.setAttribute("title", entry.getTitle());
 			req.setAttribute("text", entry.getText());

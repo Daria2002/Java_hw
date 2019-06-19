@@ -38,8 +38,13 @@
 			%>
 		</ul>
 		
-		<form action="/servleti/<%=request.getAttribute("current.user.nick")%>/<%=request.getAttribute("current.user.id")%>" method="post">
+		<form action="" method="post">
 			Comment:<br><input type="text" name="comment"><br>
+			
+			<%if(request.getSession().getAttribute("current.user.nick") != null) { %>
+				Email:<br><input type="text" name="email"><br>
+			<%} %>
+			
 			<input type="submit" value="add comment" /> <br>
 		</form>
 		

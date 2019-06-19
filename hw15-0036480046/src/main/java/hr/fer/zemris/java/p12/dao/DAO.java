@@ -20,7 +20,7 @@ public interface DAO {
 			String nickName, String password); 
 	public BlogUser getBlogUser(String nickName);
 	public List<BlogEntry> getEntries(String nick);
-	public BlogEntry getEntry(int id);
+	public BlogEntry getEntry(Long id);
 	public void addCommentToBlogUser(Long id, String newComment, String email);
 	public List<BlogUser> getRegistredUsers();
 	public void addNewEntry(BlogEntry newEntry);

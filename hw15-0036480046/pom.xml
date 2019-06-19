@@ -9,12 +9,29 @@
   <version>1.0</version>
   <packaging>jar</packaging>
 
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-maven-plugin</artifactId>
+				<version>9.4.18.v20190429</version>
+				<configuration>
+					<scanIntervalSeconds>10</scanIntervalSeconds>
+					<webApp>
+						<contextPath>/blog</contextPath>
+					</webApp>
+				</configuration>
+			</plugin>
+		</plugins>
+		<finalName>blog</finalName>
+	</build>
+	
   <!-- configuration of basic properties -->
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<maven.compiler.source>9</maven.compiler.source>
-		<maven.compiler.target>9</maven.compiler.target>
+		<maven.compiler.source>11</maven.compiler.source>
+		<maven.compiler.target>11</maven.compiler.target>
 		<maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
 		<junit.jupiter.version>5.4.0</junit.jupiter.version>
 		<hibernateVersion>5.2.10.Final</hibernateVersion>
@@ -104,7 +121,13 @@
 			<version>${junit.jupiter.version}</version>
 			<scope>test</scope>
 		</dependency>
-  	
+		<dependency>
+    <groupId>javax.servlet</groupId>
+	    <artifactId>javax.servlet-api</artifactId>
+	    <version>3.1.0</version>
+	    <scope>provided</scope>
+	</dependency>
+	  	
   	<!--Log4j2 API -->
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>

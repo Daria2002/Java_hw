@@ -13,6 +13,16 @@
   </description>
 
 	<servlet>
+		<servlet-name>logout-servlet</servlet-name>
+		<servlet-class>hr.fer.zemris.java.servlets.LogoutServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>logout-servlet</servlet-name>
+		<url-pattern>/servleti/logout</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
 		<servlet-name>main-servlet</servlet-name>
 		<servlet-class>hr.fer.zemris.java.servlets.MainServlet</servlet-class>
 	</servlet>

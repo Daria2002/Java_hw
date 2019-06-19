@@ -19,6 +19,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
+@NamedQueries({
+	@NamedQuery(name="BlogUser.nickName",query="select b from BlogUser as b where b.nick=:nickName")
+})
 @Entity
 @Table(name = "blog_users")
 public class BlogUser {

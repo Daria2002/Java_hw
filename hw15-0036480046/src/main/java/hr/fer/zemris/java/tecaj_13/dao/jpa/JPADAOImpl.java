@@ -15,23 +15,29 @@ public class JPADAOImpl implements DAO {
 
 	@Override
 	public boolean userExists(String username) {
-		BlogUser blogUser = JPAEMProvider.getEntityManager().find(BlogUser.class, username);
+		BlogUser blogUser = JPAEMProvider.getEntityManager()
+				.createNamedQuery("BlogUser.nickName", BlogUser.class)
+				.setParameter("nickName", username).getSingleResult();
 		return blogUser != null;
 	}
 
 	@Override
 	public boolean correctPassword(String nickName, String passwordHash) {
-		return passwordHash.equals(JPAEMProvider.getEntityManager()
-				.find(BlogUser.class, nickName).getPasswordHash());
+		BlogUser blogUser = JPAEMProvider.getEntityManager()
+				.createNamedQuery("BlogUser.nickName", BlogUser.class)
+				.setParameter("nickName", nickName).getSingleResult();
+		
+		return blogUser.getPasswordHash().equals(passwordHash);
 	}
 
 	@Override
 	public void addNewUser(String firstName, String lastName, String email,
 			String nickName, String passwordHash) {
 		EntityManager em = JPAEMProvider.getEntityManager();
-		
-		em.getTransaction().begin();
-		
+//		
+//		em.getTransaction()
+//		.begin();
+//		
 		BlogUser blogUser = new BlogUser();
 		blogUser.setEmail(email);
 		blogUser.setFirstName(firstName);
@@ -40,12 +46,15 @@ public class JPADAOImpl implements DAO {
 		blogUser.setPasswordHash(passwordHash);
 		
 		em.persist(blogUser);
-		em.getTransaction().commit();
+		//em.getTransaction().commit();
 	}
 
 	@Override
 	public BlogUser getBlogUser(String nickName) {
-		return JPAEMProvider.getEntityManager().find(BlogUser.class, nickName);
+		BlogUser blogUser = JPAEMProvider.getEntityManager()
+				.createNamedQuery("BlogUser.nickName", BlogUser.class)
+				.setParameter("nickName", nickName).getSingleResult();
+		return blogUser;
 	}
 
 	@Override
@@ -77,5 +86,12 @@ public class JPADAOImpl implements DAO {
 		 
 		em.createQuery("update BlogEntry set comments = " + 
 		newComment + " where id=" + id).executeUpdate();
+	}
+
+	@Override
+	public List<BlogUser> getRegistredUsers() {
+		List<BlogUser> blogUsers = (List<BlogUser>)JPAEMProvider.getEntityManager()
+				.createQuery("select user from BlogUser user").getResultList();
+		return blogUsers;
 	}
 }

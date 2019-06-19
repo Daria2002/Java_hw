@@ -1,18 +1,27 @@
 package hr.fer.zemris.java.servlets;
 
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import hr.fer.zemris.java.tecaj_13.dao.jpa.JPADAOImpl;
+import hr.fer.zemris.java.tecaj_13.model.BlogUser;
 
 public class RegistrationServlet extends HttpServlet {
 
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		this.doPost(req, resp);
+	}
+	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		
@@ -20,17 +29,28 @@ public class RegistrationServlet extends HttpServlet {
 	    String lastName = req.getParameter("lastName");
 	    String email = req.getParameter("email");
 	    String nickName = req.getParameter("nick");
+	    
+	    JPADAOImpl sqlDao = new JPADAOImpl();
+	    List<BlogUser> blogUsers = sqlDao.getRegistredUsers();
+	    
+	    for(int i = 0; i < blogUsers.size(); i++) {
+	    	if(blogUsers.get(i).getNick().equals(nickName)) {
+	    		req.setAttribute("error", "Blog user with given name already exists.");
+		    	req.getRequestDispatcher("/registration.jsp").forward(req, resp);
+		    	return;
+	    	}
+	    }
+	    
 	    String password = req.getParameter("password");
 		
 	    if(firstName == null || lastName == null || email == null || password == null) {
 	    	req.setAttribute("mess", "Please fill all gaps");
-	    	req.getRequestDispatcher("/WEB-INF/registration.jsp");
+	    	req.getRequestDispatcher("/registration.jsp").forward(req, resp);
 	    	return;
 	    }	
 	    
-	    JPADAOImpl sqlDao = new JPADAOImpl();
     	sqlDao.addNewUser(firstName, lastName, email, nickName, makePasswordHash(password));
-    	req.getRequestDispatcher("/WEB-INF/index.jsp");
+    	req.getRequestDispatcher("/start.jsp").forward(req, resp);
 	}
 	
 	private String makePasswordHash(String password) {
@@ -50,8 +70,8 @@ public class RegistrationServlet extends HttpServlet {
 	    return result;
 	}
 	
-	private static byte[] createDigest(String filename) throws Exception {
-       InputStream input =  new FileInputStream(filename);
+	private static byte[] createDigest(String value) throws Exception {
+       InputStream input = new ByteArrayInputStream(value.getBytes(StandardCharsets.UTF_8));
 
        byte[] buffer = new byte[4000];
        MessageDigest complete = MessageDigest.getInstance("SHA-256");

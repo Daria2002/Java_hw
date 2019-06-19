@@ -8,15 +8,27 @@
 </head>
 <body>
 
-	<form action="/servleti/register" method="post">
-	    <input type="text" name="firstName">
-	    <input type="text" name="lastName">
-	    <input type="text" name="email">
-	    <input type="text" name="nick">
-	    <input type="password" name="password">
+	<%if(request.getAttribute("error") != null) { %>
+	
+		<p><%=request.getAttribute("error")%><p>
+		<br>
+		
+	<%}%>
+		<form action="register" method="post">
+	    first name<input type="text" name="firstName">
+	    <br>
+	    last name<input type="text" name="lastName">
+	    <br>
+	    email<input type="text" name="email">
+	    <br>
+	    nick<input type="text" name="nick">
+	    <br>
+	    password<input type="password" name="password">
+	    <br>
 	    <input type="submit" value="register">
 	    <!-- <span class="error">${error}</span>   -->
-	</form>
+		</form>
+	
 
 </body>
 </html>

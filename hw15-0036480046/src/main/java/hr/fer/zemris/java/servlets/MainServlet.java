@@ -1,14 +1,18 @@
 package hr.fer.zemris.java.servlets;
 
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.derby.tools.sysinfo;
 
 import hr.fer.zemris.java.tecaj_13.dao.jpa.JPADAOImpl;
 import hr.fer.zemris.java.tecaj_13.model.BlogUser;
@@ -17,7 +21,7 @@ public class MainServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		req.getRequestDispatcher("/WEB-INF/login.jsp").forward(req, resp);
+		req.getRequestDispatcher("/start.jsp").forward(req, resp);
 	}
 	
 	@Override
@@ -32,21 +36,25 @@ public class MainServlet extends HttpServlet {
         	if(sqlDao.correctPassword(nickName, makePasswordHash(password))) {
         		BlogUser blogUser = sqlDao.getBlogUser(nickName);
         		
-        		req.setAttribute("current.user.id", blogUser.getId());
-        		req.setAttribute("current.user.nick", blogUser.getNick());
-        		req.setAttribute("current.user.fn", blogUser.getFirstName());
-        		req.setAttribute("current.user.ln", blogUser.getLastName());
+        		req.getSession().setAttribute("current.user.id", blogUser.getId());
+        		req.getSession().setAttribute("current.user.nick", blogUser.getNick());
+        		req.getSession().setAttribute("current.user.fn", blogUser.getFirstName());
+        		req.getSession().setAttribute("current.user.ln", blogUser.getLastName());
         		
-        		resp.sendRedirect("/servleti/author" + nickName);
+        		//req.setAttribute("registredUsers", sqlDao.getRegistredUsers());
+
+            	req.getRequestDispatcher("/start.jsp").forward(req, resp);
+            	
+        		//resp.sendRedirect(req.getContextPath()+"/servleti/author/" + nickName);
         		
         	} else {
             	displayErrorMessage();
             	req.setAttribute("username", nickName);
-            	req.getRequestDispatcher("/WEB-INF/index.jsp").forward(req, resp);
+            	req.getRequestDispatcher("/start.jsp").forward(req, resp);
         	}
         	
         } else {
-        	req.getRequestDispatcher("/WEB-INF/registration.jsp").forward(req, resp);
+        	req.getRequestDispatcher("registration.jsp").forward(req, resp);
         }
 	}
 	
@@ -61,6 +69,7 @@ public class MainServlet extends HttpServlet {
 		try {
 			return getDigest(password);
 		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return null;
 	}
@@ -74,8 +83,8 @@ public class MainServlet extends HttpServlet {
 	    return result;
 	}
 	
-	private static byte[] createDigest(String filename) throws Exception {
-       InputStream input =  new FileInputStream(filename);
+	private static byte[] createDigest(String value) throws Exception {
+       InputStream input = new ByteArrayInputStream(value.getBytes(StandardCharsets.UTF_8));
 
        byte[] buffer = new byte[4000];
        MessageDigest complete = MessageDigest.getInstance("SHA-256");

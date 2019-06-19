@@ -17,68 +17,69 @@ public class AuthorServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		System.out.println("hello");
+		doPost(req, resp);
 	}
 	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		JPADAOImpl sqlDao = new JPADAOImpl();
 		
-		int numberOfArgs = req.getPathInfo().length() -
-				req.getPathInfo().replace("/", "").length();
+		int numberOfArgs = req.getRequestURI().length() -
+				req.getRequestURI().toString().replace("/", "").length();
 		
-		// id in url
-		if(numberOfArgs == 3 && isNumeric(req.getPathInfo().split("/")[4])) {
-			BlogEntry entry = sqlDao.getEntry(Integer.valueOf(req.getPathInfo().split("/")[4]));
+		// http://localhost:8080/blog/servleti/author/NICK/id
+		if(numberOfArgs == 5 && isNumeric(req.getRequestURI().split("/")[4])) {
+			BlogEntry entry = sqlDao.getEntry(Integer.valueOf(req.getRequestURI().split("/")[4]));
 			
 			req.setAttribute("title", entry.getTitle());
 			req.setAttribute("text", entry.getText());
 			req.setAttribute("comments", entry.getComments());
-			req.getRequestDispatcher("/WEB-INF/entry.jsp");
+			req.getRequestDispatcher("/entry.jsp");
 			
 			return;
 		
-		} else if(numberOfArgs == 3 && "new".equals(req.getPathInfo().split("/")[4])) {
+		} else if(numberOfArgs == 5 && "new".equals(req.getRequestURI().split("/")[4])) {
 			
 			BlogEntry newEntry = new BlogEntry();
 			
 			newEntry.setComments(null);
 			newEntry.setCreatedAt(new Date());
-			newEntry.setCreator(sqlDao.getBlogUser(req.getPathInfo().split("/")[3]));
+			newEntry.setCreator(sqlDao.getBlogUser(req.getRequestURI().split("/")[3]));
 			newEntry.setLastModifiedAt(new Date());
 			newEntry.setText(req.getParameter("text"));
 			newEntry.setTitle(req.getParameter("title"));
 
-			req.getRequestDispatcher("/WEB-INF/entry.jsp");
+			req.getRequestDispatcher("/entry.jsp");
 			
 			return;
 			
-		} else if(numberOfArgs == 3 && "edit".equals(req.getPathInfo().split("/")[4])) {
+		} else if(numberOfArgs == 6 && "edit".equals(req.getRequestURI().split("/")[4])) {
 
-			req.getRequestDispatcher("/WEB-INF/entry.jsp");
+			req.getRequestDispatcher("/entry.jsp");
 			
 			return;
 		
-		} else if(numberOfArgs == 3 && "addComment".equals(req.getPathInfo().split("/")[4])) {
+		} else if(numberOfArgs == 6 && "addComment".equals(req.getRequestURI().split("/")[4])) {
 
 			String newComment = req.getParameter("comment");
-			Long id = Long.valueOf(req.getPathInfo().split("/")[4]);
-			String nick = String.valueOf(req.getPathInfo().split("/")[3]);
+			Long id = Long.valueOf(req.getRequestURI().split("/")[4]);
+			String nick = String.valueOf(req.getRequestURI().split("/")[3]);
 			
 			sqlDao.addCommentToBlogUser(id, newComment, sqlDao.getBlogUser(nick).getEmail());
 			
-			req.getRequestDispatcher("/WEB-INF/entry.jsp");
+			req.getRequestDispatcher("/entry.jsp");
 			
 			return;
 		}
 		
 		BlogUser blogUser = sqlDao.getBlogUser(
-				req.getPathInfo().split("/")[1]);
+				req.getRequestURI().split("/")[4]);
 		
 		req.setAttribute("nickEntries", 
 				sqlDao.getEntries(blogUser.getNick()));
 		req.setAttribute("nickName", blogUser.getNick());
 		
-		req.getRequestDispatcher("blogEntriesListPage.jsp");
+		req.getRequestDispatcher("/blogEntriesListPage.jsp");
 	}
 	
 	private boolean isNumeric(String str) { 

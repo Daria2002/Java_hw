@@ -22,4 +22,5 @@ public interface DAO {
 	public List<BlogEntry> getEntries(String nick);
 	public BlogEntry getEntry(int id);
 	public void addCommentToBlogUser(Long id, String newComment, String email);
+	public List<BlogUser> getRegistredUsers();
 }

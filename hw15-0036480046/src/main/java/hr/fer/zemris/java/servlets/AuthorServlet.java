@@ -58,7 +58,10 @@ public class AuthorServlet extends HttpServlet {
 			Long id = Long.valueOf(req.getRequestURI().split("/")[5]);
 			DAOProvider.getDao().addCommentToBlogUser(id, message, email);
 			
-			req.getRequestDispatcher("/entry.jsp").forward(req, resp);
+			req.setAttribute("nickEntries", 
+					DAOProvider.getDao().getEntries(req.getRequestURI().split("/")[4]));
+			req.setAttribute("nickName", req.getRequestURI().split("/")[4]);
+			req.getRequestDispatcher("/blogEntriesListPage.jsp").forward(req, resp);
 		}
 		
 		// http://localhost:8080/blog/servleti/author/NICK/id

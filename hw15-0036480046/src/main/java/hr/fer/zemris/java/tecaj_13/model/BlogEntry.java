@@ -31,7 +31,7 @@ import javax.persistence.TemporalType;
 public class BlogEntry implements Serializable {
 
 	private Long id;
-	private List<BlogComment> comments = new ArrayList<>();
+	private List<BlogComment> comments = new ArrayList<BlogComment>();
 	private Date createdAt;
 	private Date lastModifiedAt;
 	private String title;

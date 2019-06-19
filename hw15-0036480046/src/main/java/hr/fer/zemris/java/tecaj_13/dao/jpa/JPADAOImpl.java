@@ -47,10 +47,10 @@ public class JPADAOImpl implements DAO {
 
 	@Override
 	public BlogUser getBlogUser(String nickName) {
-		BlogUser blogUser = JPAEMProvider.getEntityManager()
+		List<BlogUser> blogUsers = JPAEMProvider.getEntityManager()
 				.createNamedQuery("BlogUser.nickName", BlogUser.class)
-				.setParameter("nickName", nickName).getSingleResult();
-		return blogUser;
+				.setParameter("nickName", nickName).getResultList();
+		return blogUsers.get(0);
 	}
 
 	@Override
@@ -62,10 +62,10 @@ public class JPADAOImpl implements DAO {
 	@Override
 	public BlogEntry getEntry(Long id) {
 		//return JPAEMProvider.getEntityManager().find(BlogEntry.class, id);
-		BlogEntry blogEntry = (BlogEntry) JPAEMProvider.getEntityManager()
+		List<BlogEntry> blogEntries = (List<BlogEntry>) JPAEMProvider.getEntityManager()
 				.createQuery("select entry from BlogEntry as entry where entry.id=:id")
-				.setParameter("id", id).getSingleResult();
-		return blogEntry;
+				.setParameter("id", id).getResultList();
+		return blogEntries.get(0);
 	}
 
 	@Override
@@ -80,7 +80,7 @@ public class JPADAOImpl implements DAO {
 		newComment.setPostedOn(new Date());
 		newComment.setUsersEMail(email);
 		 
-		entry.getComments().add(new BlogComment());
+		//entry.getComments().add(new BlogComment());
 		 
 		em.persist(newComment);
 	}

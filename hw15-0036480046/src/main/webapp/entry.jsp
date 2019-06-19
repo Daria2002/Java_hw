@@ -17,7 +17,7 @@
 			String nick = (String)request.getSession().getAttribute("current.user.nick");
 			if(nick != null && nick.equals(((String)request.getAttribute("nick")))) {
 				%>
-				<form action="/servleti/<%=request.getAttribute("current.user.nick")%>/edit" method="post">
+				<form action="/servleti/<%=request.getAttribute("nick")%>/edit" method="post">
 					<input type="submit" value="edit entry" /> <br>
 				</form>
 				<%
@@ -26,13 +26,22 @@
 			String title = (String)request.getAttribute("title");
 			String text = (String)request.getAttribute("text");
 			List<BlogComment> comments = (List<BlogComment>)request.getAttribute("comments");
-		%>
+			
+			if(comments == null || comments.size() == 0) {
+				%>
+					<p>There are no comments</p>
+					<br>
+				<% 
+			} else {%>
+					<p>Comments:</p>
+					<br>
+			<%} %>
 		
 		<ul>
 			<%
 				for(int i = 0; i < comments.size(); i++) {
 			  		%>
-			  		<li><%=comments.get(i).getMessage()%></li>
+			  		<li><%=comments.get(i).getMessage()%> by: <%=comments.get(i).getUsersEMail()%></li>
 			    	<%		
 			  	}
 			%>

@@ -48,21 +48,14 @@ public class MainServlet extends HttpServlet {
         		//resp.sendRedirect(req.getContextPath()+"/servleti/author/" + nickName);
         		
         	} else {
-            	displayErrorMessage();
+        		req.setAttribute("error", "Given password is wrong");
             	req.setAttribute("username", nickName);
             	req.getRequestDispatcher("/start.jsp").forward(req, resp);
         	}
         	
         } else {
-        	req.getRequestDispatcher("registration.jsp").forward(req, resp);
+        	req.getRequestDispatcher("/registration.jsp").forward(req, resp);
         }
-	}
-	
-	private void displayErrorMessage() {
-		String someMessage = "Wrong password!";
-		System.out.println("<script type='text/javascript'>");
-		System.out.println("alert(" + "'" + someMessage + "'" + ");</script>");
-		System.out.println("</head><body></body></html>");
 	}
 
 	private String makePasswordHash(String password) {

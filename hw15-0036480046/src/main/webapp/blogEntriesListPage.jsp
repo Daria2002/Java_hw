@@ -18,12 +18,10 @@
 
 	<%
 	
-		if(nickName.equals(request.getAttribute("current.user.nick"))) {
+		if(nickName.equals(request.getSession().getAttribute("current.user.nick"))) {
 			%>
-				<form action="/servleti/author/<%=nickName%>/new" method="post">
-					Title:<br><input type="text" name="title"><br>
-					Text:<br><input type="text" name="text"><br>
-					<input type="submit" value="new entry"><input type="reset" value="Reset">
+				<form action="<%=nickName%>/new" method="post">
+					<input type="submit" value="add new entry">
 				</form>
 			<%
 		}
@@ -35,7 +33,7 @@
 			for(int i = 0; i < entries.size(); i++) {
 		  		%>
 		  		<li>
-		  			<a href="/servleti/author/<%=nickName%>/<%=entries.get(i).getId()%>/">
+		  			<a href="<%=nickName%>/<%=entries.get(i).getId()%>/">
 		  			<%=entries.get(i).getTitle()%></a>			
 		  		</li>
 		    	<%		

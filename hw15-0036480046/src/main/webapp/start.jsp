@@ -18,8 +18,10 @@
 			<form action="main" method="post">
 			<%
 				String username = String.valueOf(request.getAttribute("username"));
-				if(username != null) {
+				if(request.getAttribute("username") != null) {
 					%>
+					<p><%=request.getAttribute("error") %></p>
+					<br>
 					username<input type="text" name="username" value="<%=username%>">
 					<%
 				} else {

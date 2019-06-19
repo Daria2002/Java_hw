@@ -8,6 +8,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import hr.fer.zemris.java.p12.dao.DAOProvider;
 import hr.fer.zemris.java.tecaj_13.dao.jpa.JPADAOImpl;
 import hr.fer.zemris.java.tecaj_13.model.BlogEntry;
 import hr.fer.zemris.java.tecaj_13.model.BlogUser;
@@ -22,34 +24,51 @@ public class AuthorServlet extends HttpServlet {
 	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		JPADAOImpl sqlDao = new JPADAOImpl();
-		
+
 		int numberOfArgs = req.getRequestURI().length() -
 				req.getRequestURI().toString().replace("/", "").length();
 		
-		// http://localhost:8080/blog/servleti/author/NICK/id
-		if(numberOfArgs == 5 && isNumeric(req.getRequestURI().split("/")[4])) {
-			BlogEntry entry = sqlDao.getEntry(Integer.valueOf(req.getRequestURI().split("/")[4]));
-			
-			req.setAttribute("title", entry.getTitle());
-			req.setAttribute("text", entry.getText());
-			req.setAttribute("comments", entry.getComments());
-			req.getRequestDispatcher("/entry.jsp");
-			
-			return;
-		
-		} else if(numberOfArgs == 5 && "new".equals(req.getRequestURI().split("/")[4])) {
-			
+		// if new entry is added
+		if(req.getParameter("title") != null) {
 			BlogEntry newEntry = new BlogEntry();
 			
 			newEntry.setComments(null);
 			newEntry.setCreatedAt(new Date());
-			newEntry.setCreator(sqlDao.getBlogUser(req.getRequestURI().split("/")[3]));
+			newEntry.setCreator(DAOProvider.getDao().getBlogUser(req.getRequestURI().split("/")[4]));
 			newEntry.setLastModifiedAt(new Date());
 			newEntry.setText(req.getParameter("text"));
 			newEntry.setTitle(req.getParameter("title"));
+			
+			DAOProvider.getDao().addNewEntry(newEntry);
+			
+			resp.sendRedirect(req.getContextPath()+"/servleti/author/" + req.getRequestURI().split("/")[4]);
+		
+		} else if(numberOfArgs == 6 && req.getParameter("comment") != null) {
 
-			req.getRequestDispatcher("/entry.jsp");
+			String newComment = req.getParameter("comment");
+			Long id = Long.valueOf(req.getRequestURI().split("/")[4]);
+			String nick = String.valueOf(req.getRequestURI().split("/")[3]);
+			
+			DAOProvider.getDao().addCommentToBlogUser(id, newComment, DAOProvider.getDao().getBlogUser(nick).getEmail());
+			
+			req.getRequestDispatcher("/entry.jsp").forward(req, resp);
+		}
+		
+		// http://localhost:8080/blog/servleti/author/NICK/id
+		else if(numberOfArgs == 6 && isNumeric(req.getRequestURI().split("/")[5])) {
+			BlogEntry entry = DAOProvider.getDao().getEntry(Integer.valueOf(req.getRequestURI().split("/")[5]));
+			
+			req.setAttribute("title", entry.getTitle());
+			req.setAttribute("text", entry.getText());
+			req.setAttribute("comments", entry.getComments());
+			req.setAttribute("nick", entry.getCreator().getNick());
+			req.getRequestDispatcher("/entry.jsp").forward(req, resp);
+			
+			return;
+		
+		} else if(numberOfArgs == 5 && "new".equals(req.getRequestURI().split("/")[5])) {
+			
+			req.getRequestDispatcher("/newEntry.jsp").forward(req, resp);
 			
 			return;
 			
@@ -58,28 +77,19 @@ public class AuthorServlet extends HttpServlet {
 			req.getRequestDispatcher("/entry.jsp");
 			
 			return;
-		
-		} else if(numberOfArgs == 6 && "addComment".equals(req.getRequestURI().split("/")[4])) {
-
-			String newComment = req.getParameter("comment");
-			Long id = Long.valueOf(req.getRequestURI().split("/")[4]);
-			String nick = String.valueOf(req.getRequestURI().split("/")[3]);
 			
-			sqlDao.addCommentToBlogUser(id, newComment, sqlDao.getBlogUser(nick).getEmail());
+		} else {
+			BlogUser blogUser = DAOProvider.getDao().getBlogUser(
+					req.getRequestURI().split("/")[4]);
 			
-			req.getRequestDispatcher("/entry.jsp");
+			req.setAttribute("nickEntries", 
+					DAOProvider.getDao().getEntries(blogUser.getNick()));
+			req.setAttribute("nickName", blogUser.getNick());
 			
-			return;
+			req.getRequestDispatcher("/blogEntriesListPage.jsp").forward(req, resp);
+			
 		}
 		
-		BlogUser blogUser = sqlDao.getBlogUser(
-				req.getRequestURI().split("/")[4]);
-		
-		req.setAttribute("nickEntries", 
-				sqlDao.getEntries(blogUser.getNick()));
-		req.setAttribute("nickName", blogUser.getNick());
-		
-		req.getRequestDispatcher("/blogEntriesListPage.jsp");
 	}
 	
 	private boolean isNumeric(String str) { 

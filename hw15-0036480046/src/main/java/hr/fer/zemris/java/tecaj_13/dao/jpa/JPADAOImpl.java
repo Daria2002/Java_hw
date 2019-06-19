@@ -15,29 +15,26 @@ public class JPADAOImpl implements DAO {
 
 	@Override
 	public boolean userExists(String username) {
-		BlogUser blogUser = JPAEMProvider.getEntityManager()
+		List<BlogUser> blogUsers = JPAEMProvider.getEntityManager()
 				.createNamedQuery("BlogUser.nickName", BlogUser.class)
-				.setParameter("nickName", username).getSingleResult();
-		return blogUser != null;
+				.setParameter("nickName", username).getResultList();
+		return blogUsers != null && blogUsers.size() > 0;
 	}
 
 	@Override
 	public boolean correctPassword(String nickName, String passwordHash) {
-		BlogUser blogUser = JPAEMProvider.getEntityManager()
+		List<BlogUser> blogUsers = JPAEMProvider.getEntityManager()
 				.createNamedQuery("BlogUser.nickName", BlogUser.class)
-				.setParameter("nickName", nickName).getSingleResult();
+				.setParameter("nickName", nickName).getResultList();
 		
-		return blogUser.getPasswordHash().equals(passwordHash);
+		return blogUsers.get(0).getPasswordHash().equals(passwordHash);
 	}
 
 	@Override
 	public void addNewUser(String firstName, String lastName, String email,
 			String nickName, String passwordHash) {
 		EntityManager em = JPAEMProvider.getEntityManager();
-//		
-//		em.getTransaction()
-//		.begin();
-//		
+		
 		BlogUser blogUser = new BlogUser();
 		blogUser.setEmail(email);
 		blogUser.setFirstName(firstName);
@@ -46,7 +43,6 @@ public class JPADAOImpl implements DAO {
 		blogUser.setPasswordHash(passwordHash);
 		
 		em.persist(blogUser);
-		//em.getTransaction().commit();
 	}
 
 	@Override
@@ -65,7 +61,11 @@ public class JPADAOImpl implements DAO {
 
 	@Override
 	public BlogEntry getEntry(int id) {
-		return JPAEMProvider.getEntityManager().find(BlogEntry.class, id);
+		//return JPAEMProvider.getEntityManager().find(BlogEntry.class, id);
+		BlogEntry blogEntry = (BlogEntry) JPAEMProvider.getEntityManager()
+				.createQuery("select entry from BlogEntry as entry where entry.id=:id")
+				.setParameter("id", Long.valueOf(id)).getSingleResult();
+		return blogEntry;
 	}
 
 	@Override
@@ -93,5 +93,13 @@ public class JPADAOImpl implements DAO {
 		List<BlogUser> blogUsers = (List<BlogUser>)JPAEMProvider.getEntityManager()
 				.createQuery("select user from BlogUser user").getResultList();
 		return blogUsers;
+	}
+
+	@Override
+	public void addNewEntry(BlogEntry newEntry) {
+		EntityManager em = JPAEMProvider.getEntityManager();
+		BlogUser creator = newEntry.getCreator();
+		creator.getBlogEntries().add(newEntry);
+		em.persist(newEntry);
 	}
 }

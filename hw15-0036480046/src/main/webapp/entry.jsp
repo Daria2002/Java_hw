@@ -13,8 +13,9 @@
 <body>
 
 		<%
-			if(request.getAttribute("current.user.nick").equals((
-					(BlogUser)request.getAttribute("nick")))) {
+		
+			String nick = (String)request.getSession().getAttribute("current.user.nick");
+			if(nick != null && nick.equals(((String)request.getAttribute("nick")))) {
 				%>
 				<form action="/servleti/<%=request.getAttribute("current.user.nick")%>/edit" method="post">
 					<input type="submit" value="edit entry" /> <br>
@@ -37,7 +38,7 @@
 			%>
 		</ul>
 		
-		<form action="/servleti/<%=request.getAttribute("current.user.nick")%>/addComment" method="post">
+		<form action="/servleti/<%=request.getAttribute("current.user.nick")%>/<%=request.getAttribute("current.user.id")%>" method="post">
 			Comment:<br><input type="text" name="comment"><br>
 			<input type="submit" value="add comment" /> <br>
 		</form>

@@ -27,6 +27,8 @@ public class ImagesDB {
 	/** key is tag, value List of images with that tag **/
 	public static Map<String, List<String>> imageMap = new HashMap<String, List<String>>();
 	
+	public static Map<String, Image> images = new HashMap<String, Image>();
+	
 	public static List<String> getImages(String tag) {
 		return imageMap.get(tag);
 	}
@@ -49,7 +51,6 @@ public class ImagesDB {
 				g2D.dispose();
 				
 				ImageIO.write(newImage, "jpg", path.resolve(imageName).toFile());
-				
 			}
 
 			FileInputStream thumbnailStream = new FileInputStream(
@@ -74,6 +75,34 @@ public class ImagesDB {
 		}
 	}
 	
+	public static void createImage(String imageName, OutputStream os, String pathBase) {
+		try {
+			FileInputStream imageStream = new FileInputStream(
+					Paths.get(pathBase + "/slike")
+					.resolve(imageName).toFile());
+			
+			byte[] buff = new byte[4096];
+			int len;
+			while(true) {
+				len = imageStream.read(buff);
+				if(len < 0) {
+					break;
+				}
+				os.write(buff, 0, len);
+			}
+			
+			imageStream.close();
+			os.close();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static Image getImageWithGivenName(String name) {
+		return images.get(name);
+	}
+	
 	public static Set<String> getTags() {
 		return tags;
 	}
@@ -81,6 +110,8 @@ public class ImagesDB {
 	public static void addImage(Image image) {
 		String[] tagArray = image.getTags();
 		List<String> imageList;
+		
+		images.put(image.getName(), image);
 		
 		for(int i = 0; i < tagArray.length; i++) {
 			tags.add(tagArray[i]);

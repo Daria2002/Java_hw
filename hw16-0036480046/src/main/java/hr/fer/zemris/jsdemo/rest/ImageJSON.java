@@ -11,10 +11,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import com.google.gson.Gson;
 
 /**
@@ -44,6 +40,12 @@ public class ImageJSON {
 		return Response.status(Status.OK).entity(new Gson().toJson(ImagesDB.getImages(tagName))).build();
 	}
 	
+	@Path("/image/{imageName}")
+	@GET
+	@Produces("application/json")
+	public Response getImage(@PathParam("imageName") String imageName) {
+		return Response.status(Status.OK).entity(new Gson().toJson(ImagesDB.getImageWithGivenName(imageName))).build();
+	}
 	
 /*
 	// Sljedeća metoda se poziva samo ako zatraženo metodom GET URL koji je konkatenacija

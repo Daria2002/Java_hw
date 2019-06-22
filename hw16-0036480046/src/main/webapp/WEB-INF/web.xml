@@ -38,4 +38,16 @@
 	</servlet-mapping>
 	
 
+	<servlet>
+		<servlet-name>images-servlet</servlet-name>
+		<servlet-class>hr.fer.zemris.jsdemo.servlets.ImageGeneratorServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>images-servlet</servlet-name>
+		<url-pattern>/servlets/images</url-pattern>
+	</servlet-mapping>
+
+
+
 </web-app>

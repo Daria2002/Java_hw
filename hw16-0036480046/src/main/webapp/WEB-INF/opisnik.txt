@@ -21,13 +21,13 @@ Grad koprivnica
 kopno, zgrada, grad
 krk.jpeg
 Otok krk
-otok, more, brodovi
+otok, more, brodovi, obala
 makarska.jpg
 Grad Makarska
-registracija, more, plaza, brodovi, grad
+registracija, more, plaza, brodovi, grad, obala
 mljet.jpeg
 Otok Mljet
-plaza, otok, more, brodovi
+plaza, otok, more, brodovi, obala
 motovun.jpg
 Grad Motovun
 tvrdjava, brdo, kopno, grad
@@ -36,7 +36,7 @@ Grad Osijek
 fontana, registracija, kopno, grad
 pula.jpg
 Grad Pula
-more, grad, registracija, brodovi
+more, grad, registracija, brodovi, obala
 samobor.jpg
 Grad Samobor
 kopno, grad
@@ -48,13 +48,13 @@ Grad Sisak
 kopno, grad, rijeka, registracija, kip
 split.jpg
 Grad Split
-more, brodovi, registracija, grad
+more, brodovi, registracija, grad, obala
 trogir.jpg
 Grad Trogir
-more, brodovi, grad
+more, brodovi, grad, obala
 zadar.jpg
 Grad Zadar
-more, brodovi, registracija, grad
+more, brodovi, registracija, grad, obala
 zagreb.jpg
 Grad Zagreb
 kopno, registracija, grad, kip

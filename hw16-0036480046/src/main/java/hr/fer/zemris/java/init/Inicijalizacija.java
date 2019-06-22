@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Stack;
+
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
@@ -28,12 +30,18 @@ public class Inicijalizacija implements ServletContextListener {
 			String imageDiscription;
 			String[] imageTags = new String[lines.size()/3];
 						
-			for(int i = 0; i+3 < lines.size(); i = i+3) {
+			for(int i = 0; i < lines.size(); i = i+3) {
 				imageName = lines.get(i);
 				imageDiscription = lines.get(i+1);
 				imageTags = lines.get(i+2).split(",");
 				
-				ImagesDB.addImage(new Image(imageName, imageDiscription, imageTags));
+				String[] imageTagsTrimed = new String[imageTags.length];
+				for(int j = 0; j < imageTags.length; j++) {
+					imageTagsTrimed[j] = imageTags[j].trim();
+				}
+				
+				
+				ImagesDB.addImage(new Image(imageName, imageDiscription, imageTagsTrimed));
 			}
 			
 		} catch (IOException e) {

@@ -4,10 +4,20 @@ import javax.persistence.EntityManager;
 
 import hr.fer.zemris.java.p12.dao.DAOException;
 
+/**
+ * THis class represents JPAEM provider
+ * @author Daria Matković
+ *
+ */
 public class JPAEMProvider {
 
+	/** locals **/
 	private static ThreadLocal<EntityManager> locals = new ThreadLocal<>();
 
+	/**
+	 * gets entity manager
+	 * @return entity manager
+	 */
 	public static EntityManager getEntityManager() {
 		EntityManager em = locals.get();
 		if(em==null) {
@@ -18,6 +28,10 @@ public class JPAEMProvider {
 		return em;
 	}
 
+	/**
+	 * close method 
+	 * @throws DAOException exception
+	 */
 	public static void close() throws DAOException {
 		EntityManager em = locals.get();
 		if(em==null) {

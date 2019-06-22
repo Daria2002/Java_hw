@@ -6,6 +6,21 @@
 <!DOCTYPE html>
 <html>
 <head>
+
+<%
+	
+		if(request.getSession().getAttribute("current.user.fn") != null) {
+			%>
+			
+			<p><%=request.getSession().getAttribute("current.user.fn")%> <%=request.getSession().getAttribute("current.user.ln") %></p>
+			<%
+		} else {
+		%>	
+			<p>not loged in</p>
+		<%}
+		
+	%>
+
 <meta charset="UTF-8">
 <title>Insert title here</title>
 </head>

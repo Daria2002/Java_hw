@@ -28,79 +28,146 @@ import javax.persistence.TemporalType;
 @Entity
 @Table(name="blog_entries")
 @Cacheable(true)
+/**
+ * This class represents one blog entry.
+ * @author Daria Matković
+ *
+ */
 public class BlogEntry implements Serializable {
-
+	/** id **/
 	private Long id;
+	/** comments **/
 	private List<BlogComment> comments = new ArrayList<BlogComment>();
+	/** date created at **/
 	private Date createdAt;
+	/** date entry last modified **/ 
 	private Date lastModifiedAt;
+	/** title **/
 	private String title;
+	/** text **/
 	private String text;
+	/** creator **/
 	private BlogUser creator;
 
 	@ManyToOne
 	@JoinColumn(nullable=true)
+	/**
+	 * gets creator
+	 * @return blog user that created blog entry
+	 */
 	public BlogUser getCreator() {
 		return creator;
 	}
 
+	/**
+	 * sets creator
+	 * @param creator blog user
+	 */
 	public void setCreator(BlogUser creator) {
 		this.creator = creator;
 	}
 	
 	@Id @GeneratedValue
+	/**
+	 * gets id
+	 * @return id
+	 */
 	public Long getId() {
 		return id;
 	}
 	
+	/**
+	 * sets id
+	 * @param id id
+	 */
 	public void setId(Long id) {
 		this.id = id;
 	}
 
 	@OneToMany(mappedBy="blogEntry",fetch=FetchType.LAZY, cascade=CascadeType.PERSIST, orphanRemoval=true)
 	@OrderBy("postedOn DESC")
+	/**
+	 * gets comments 
+	 * @return comments
+	 */
 	public List<BlogComment> getComments() {
 		return comments;
 	}
 	
+	/**
+	 * sets comments
+	 * @param comments comments
+	 */
 	public void setComments(List<BlogComment> comments) {
 		this.comments = comments;
 	}
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(nullable=false)
+	/**
+	 * gets date when entry was created
+	 * @return creation date
+	 */
 	public Date getCreatedAt() {
 		return createdAt;
 	}
 
+	/**
+	 * sets creation date
+	 * @param createdAt date entry was created at
+	 */
 	public void setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;
 	}
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(nullable=true)
+	/**
+	 * gets date entry was last modified at
+	 * @return last modification date
+	 */
 	public Date getLastModifiedAt() {
 		return lastModifiedAt;
 	}
 
+	/**
+	 * sets last modification date
+	 * @param lastModifiedAt last modification date
+	 */
 	public void setLastModifiedAt(Date lastModifiedAt) {
 		this.lastModifiedAt = lastModifiedAt;
 	}
 
 	@Column(length=200,nullable=false)
+	/**
+	 * gets title
+	 * @return title
+	 */
 	public String getTitle() {
 		return title;
 	}
 
+	/**
+	 * sets title
+	 * @param title title
+	 */
 	public void setTitle(String title) {
 		this.title = title;
 	}
 
 	@Column(length=4096,nullable=false)
+	/**
+	 * gets text
+	 * @return text
+	 */
 	public String getText() {
 		return text;
 	}
 
+	/**
+	 * sets text
+	 * @param text text
+	 */
 	public void setText(String text) {
 		this.text = text;
 	}

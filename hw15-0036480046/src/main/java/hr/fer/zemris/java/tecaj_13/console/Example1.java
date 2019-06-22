@@ -10,8 +10,17 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
+/**
+ * This class represents given demo program
+ * @author Daria Matković
+ *
+ */
 public class Example1 {
 
+	/**
+	 * This method is executed when program is run
+	 * @param args
+	 */
 	public static void main(String[] args) { 
 		EntityManagerFactory emf = Persistence.createEntityManagerFactory("baza.podataka.za.blog"); 
 		// 1. korak - stvaranje novog blog zapisa...
@@ -71,6 +80,12 @@ public class Example1 {
 		return blogEntry;
 	}
 	
+	/**
+	 * This method adds comment
+	 * @param emf entity manager factory
+	 * @param blogEntryID id
+	 * @param message message
+	 */
 	public static void dodajKomentar(EntityManagerFactory emf, Long blogEntryID, String message) {
 		EntityManager em = emf.createEntityManager();
 		em.getTransaction().begin();

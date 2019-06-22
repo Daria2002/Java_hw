@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="js/htmlescaping.js"></script>
+<script type="text/javascript"><!--
+
+		$.ajax(
+		  {
+			  url: "rest/imagej/tags",
+			  data: {
+				  dummy: Math.random()
+			  },
+			  dataType: "json",
+			  success: function(data) {
+					var tags = data; // već je JSON zbog dataType gore...
+					var html = "";
+					if(tags.length==0) {
+						html = "Nema rezultata..."
+					} else {
+						for(var i=0; i<tags.length; i++) {
+							html += "<input type='button' onclick='getThumbnailImages(\"" + htmlEscape(tags[i]) + "\")' value='" + htmlEscape(tags[i]) + "'>";
+						}
+					}
+					$("#tags").html(html);
+			  }
+		  }
+		);
+
+		function getThumbnailImages(tag) {
+			
+		}
+	
+
+//--></script>
+
+
+</head>
+
+<body>
+	
+	<h1>Cities in Croatia</h1>
+	
+	<div id="tags">&nbsp;</div>
+	
+	<button onclick="traziCitat();">Zatraži</button>
+	<p>
+	  <a href="citati2a.html">Sljedeći primjer...</a>
+	</p>
+
+</body>
+</html>

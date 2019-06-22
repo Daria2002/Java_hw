@@ -7,6 +7,24 @@
 <!DOCTYPE html>
 <html>
 <head>
+<%
+	
+		if(request.getSession().getAttribute("current.user.fn") != null) {
+			%>
+			
+			<p><%=request.getSession().getAttribute("current.user.fn")%> <%=request.getSession().getAttribute("current.user.ln") %></p>
+			
+			<form action="<%=request.getContextPath()%>/servleti/logout" method="get">
+			    <input type="submit" value="logout">
+			</form>
+			<%
+		} else {
+		%>	
+			<p>not loged in</p>
+			
+		<%}
+		
+	%>
 <meta charset="UTF-8">
 <title>Insert title here</title>
 </head>
@@ -17,7 +35,7 @@
 			String nick = (String)request.getSession().getAttribute("current.user.nick");
 			if(nick != null && nick.equals(((String)request.getAttribute("nick")))) {
 				%>
-				<form action="" method="post">
+				<form action="edit/" method="post">
 					<input type="submit" name = "edit" value="edit" /> <br>
 				</form>
 				<%

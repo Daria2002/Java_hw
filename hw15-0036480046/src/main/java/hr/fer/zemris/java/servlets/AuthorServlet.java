@@ -14,6 +14,12 @@ import hr.fer.zemris.java.tecaj_13.dao.jpa.JPADAOImpl;
 import hr.fer.zemris.java.tecaj_13.model.BlogEntry;
 import hr.fer.zemris.java.tecaj_13.model.BlogUser;
 
+/**
+ * This class represents servlet for adding new entries, editing existing entries
+ * and adding comments.
+ * @author Daria Matković
+ *
+ */
 public class AuthorServlet extends HttpServlet {
 
 	@Override
@@ -44,12 +50,23 @@ public class AuthorServlet extends HttpServlet {
 		
 		} else if(req.getParameter("newText") != null) {
 			String newEntryText = req.getParameter("newText");
+			String newEntryTitle = req.getParameter("newTitle");
 			BlogEntry blogEntry = DAOProvider.getDao().getEntry(Long.valueOf(req.getRequestURI().split("/")[5]));
+			
 			blogEntry.setText(newEntryText);
+			blogEntry.setTitle(newEntryTitle);
+			
+			Long id = Long.valueOf(req.getRequestURI().split("/")[5]);
+			
+			resp.sendRedirect(req.getServletContext().getContextPath()
+					+"/servleti/author/" + req.getRequestURI().split("/")[4]);
+			
 		
-	    } else if(req.getParameter("edit") != null) {
+	    } else if(numberOfArgs == 7 && "edit".equals(req.getRequestURI().split("/")[6])) {
 	    	req.setAttribute("exText", DAOProvider.getDao()
 	    			.getEntry(Long.valueOf(req.getRequestURI().split("/")[5])).getText());
+	    	req.setAttribute("exTitle", DAOProvider.getDao()
+	    			.getEntry(Long.valueOf(req.getRequestURI().split("/")[5])).getTitle());
 			req.getRequestDispatcher("/edit.jsp").forward(req, resp);;
 			
 			return;
@@ -72,7 +89,11 @@ public class AuthorServlet extends HttpServlet {
 			req.setAttribute("nickEntries", 
 					DAOProvider.getDao().getEntries(req.getRequestURI().split("/")[4]));
 			req.setAttribute("nickName", req.getRequestURI().split("/")[4]);
-			req.getRequestDispatcher("/blogEntriesListPage.jsp").forward(req, resp);
+			
+			resp.sendRedirect(req.getServletContext().getContextPath()
+					+"/servleti/author/" + req.getRequestURI().split("/")[4]);
+			
+			
 		}
 		
 		// http://localhost:8080/blog/servleti/author/NICK/id
@@ -87,7 +108,7 @@ public class AuthorServlet extends HttpServlet {
 			
 			return;
 		
-		} else if(numberOfArgs == 5 && "new".equals(req.getRequestURI().split("/")[5])) {
+		} else if(numberOfArgs > 4 && "new".equals(req.getRequestURI().split("/")[5])) {
 			
 			req.getRequestDispatcher("/newEntry.jsp").forward(req, resp);
 			
@@ -107,6 +128,11 @@ public class AuthorServlet extends HttpServlet {
 		
 	}
 	
+	/**
+	 * checks if given string represents number
+	 * @param str value to check 
+	 * @return true if given string represents number, otherwise false
+	 */
 	private boolean isNumeric(String str) { 
 	  try {  
 	    Double.parseDouble(str);  

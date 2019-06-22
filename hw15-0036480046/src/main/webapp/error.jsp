@@ -7,5 +7,26 @@
    
 <!DOCTYPE html>
 <html>	
+<head>
+<%
+	
+		if(request.getSession().getAttribute("current.user.fn") != null) {
+			%>
+			
+			<p><%=request.getSession().getAttribute("current.user.fn")%> <%=request.getSession().getAttribute("current.user.ln") %></p>
+			
+			<form action="<%=request.getContextPath()%>/servleti/logout" method="get">
+			    <input type="submit" value="logout">
+			</form>
+			<%
+		} else {
+		%>	
+			<p>not loged in</p>
+			
+		<%}
+		
+	%>
+
+</head>
 	<p>Error occurred.</p>
 </html>

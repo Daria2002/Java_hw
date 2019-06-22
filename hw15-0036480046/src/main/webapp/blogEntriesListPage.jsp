@@ -6,6 +6,24 @@
 <!DOCTYPE html>
 <html>
 <head>
+<%
+	
+		if(request.getSession().getAttribute("current.user.fn") != null) {
+			%>
+			
+			<p><%=request.getSession().getAttribute("current.user.fn")%> <%=request.getSession().getAttribute("current.user.ln") %></p>
+			
+			<form action="<%=request.getContextPath()%>/servleti/logout" method="get">
+			    <input type="submit" value="logout">
+			</form>
+			<%
+		} else {
+		%>	
+			<p>not loged in</p>
+			
+		<%}
+		
+	%>
 <meta charset="UTF-8">
 <title>Insert title here</title>
 </head>
@@ -14,6 +32,7 @@
 	<%
 		List<BlogEntry> entries = (List<BlogEntry>)request.getAttribute("nickEntries");
 		String nickName = String.valueOf(request.getAttribute("nickName"));
+		
 	%>
 
 	<%

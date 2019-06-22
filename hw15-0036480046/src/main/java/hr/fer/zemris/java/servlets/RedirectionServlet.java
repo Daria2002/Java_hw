@@ -7,6 +7,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * This class represents servlet that redirects to main page
+ * @author Daria Matković
+ *
+ */
 public class RedirectionServlet extends HttpServlet {
 
 	@Override

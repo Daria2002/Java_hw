@@ -11,6 +11,11 @@ import hr.fer.zemris.java.tecaj_13.model.BlogComment;
 import hr.fer.zemris.java.tecaj_13.model.BlogEntry;
 import hr.fer.zemris.java.tecaj_13.model.BlogUser;
 
+/**
+ * This class represents JPADAO implementation that implements DAO
+ * @author Daria Matković
+ *
+ */
 public class JPADAOImpl implements DAO {
 
 	@Override

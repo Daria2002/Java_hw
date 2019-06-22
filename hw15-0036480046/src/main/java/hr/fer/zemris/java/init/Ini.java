@@ -9,6 +9,11 @@ import javax.servlet.annotation.WebListener;
 import hr.fer.zemris.java.tecaj_13.dao.jpa.JPAEMFProvider;
 
 @WebListener
+/**
+ * This class represents ini file
+ * @author Daria Matković
+ *
+ */
 public class Ini implements ServletContextListener {
 
 	@Override

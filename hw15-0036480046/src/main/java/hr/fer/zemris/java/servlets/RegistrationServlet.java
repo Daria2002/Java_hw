@@ -15,6 +15,11 @@ import javax.servlet.http.HttpServletResponse;
 import hr.fer.zemris.java.tecaj_13.dao.jpa.JPADAOImpl;
 import hr.fer.zemris.java.tecaj_13.model.BlogUser;
 
+/**
+ * This class represents servlet for registration
+ * @author Daria Matković
+ *
+ */
 public class RegistrationServlet extends HttpServlet {
 
 	@Override
@@ -53,6 +58,11 @@ public class RegistrationServlet extends HttpServlet {
     	req.getRequestDispatcher("/start.jsp").forward(req, resp);
 	}
 	
+	/**
+	 * Makes password hash
+	 * @param password password
+	 * @return password hash
+	 */
 	private String makePasswordHash(String password) {
 		try {
 			return getDigest(password);
@@ -61,6 +71,12 @@ public class RegistrationServlet extends HttpServlet {
 		return null;
 	}
 	
+	/**
+	 * gets digest from given data
+	 * @param data data 
+	 * @return digest
+	 * @throws Exception exception
+	 */
 	private static String getDigest(String data) throws Exception {
 		byte[] byteArray = 
 				createDigest(data);
@@ -70,6 +86,12 @@ public class RegistrationServlet extends HttpServlet {
 	    return result;
 	}
 	
+	/**
+	 * Creates digest
+	 * @param value value
+	 * @return byte array
+	 * @throws Exception exception
+	 */
 	private static byte[] createDigest(String value) throws Exception {
        InputStream input = new ByteArrayInputStream(value.getBytes(StandardCharsets.UTF_8));
 
@@ -88,6 +110,11 @@ public class RegistrationServlet extends HttpServlet {
        return complete.digest();
 	}
 	
+	/**
+	 * converts byte to hex
+	 * @param byteArray byte array to convert
+	 * @return hex value of byte array
+	 */
 	private static String byteToHex(byte[] byteArray) {
 		String result = "";
 

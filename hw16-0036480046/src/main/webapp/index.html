@@ -30,8 +30,33 @@
 		  }
 		);
 
-		function getThumbnailImages(tag) {
-			
+		function getThumbnailImages(tag) {$.ajax(
+				  {
+					  url: "rest/imagej/thumbnails/" + tag,
+					  data: {
+						  dummy: Math.random()
+					  },
+					  dataType: "json",
+					  success: function(data) {
+							var thumbnails = data; // već je JSON zbog dataType gore...
+							var html = "";
+							if(thumbnails.length==0) {
+								html = "Nema rezultata..."
+							} else {
+								for(var i=0; i<thumbnails.length; i++) {
+									html += "<img src='servlets/thumbnails?imageName=" + 
+											htmlEscape(thumbnails[i]) + "' onclick='getImage(\"" +
+													htmlEscape(tags[i]) + "\")'>";
+								}
+							}
+							$("#thumbnails").html(html);
+							$("#images").html("");
+					  }
+				  }
+				);
+		}
+		
+		function getImage(imageName) {
 		}
 	
 
@@ -45,11 +70,8 @@
 	<h1>Cities in Croatia</h1>
 	
 	<div id="tags">&nbsp;</div>
-	
-	<button onclick="traziCitat();">Zatraži</button>
-	<p>
-	  <a href="citati2a.html">Sljedeći primjer...</a>
-	</p>
+	<div id="thumbnails">&nbsp;</div>
+	<div id="images">&nbsp;</div>
 
 </body>
 </html>

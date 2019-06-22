@@ -36,6 +36,15 @@ public class ImageJSON {
 	public Response getTags() {
 		return Response.status(Status.OK).entity(new Gson().toJson(ImagesDB.getTags())).build();
 	}
+	
+	@Path("/thumbnails/{tagName}")
+	@GET
+	@Produces("application/json")
+	public Response getThumbnails(@PathParam("tagName") String tagName) {
+		return Response.status(Status.OK).entity(new Gson().toJson(ImagesDB.getImages(tagName))).build();
+	}
+	
+	
 /*
 	// Sljedeća metoda se poziva samo ako zatraženo metodom GET URL koji je konkatenacija
 	// staze na koju je bio mapiran jerseyev servlet, staze koju smo anotirali iznad

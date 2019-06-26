@@ -9,6 +9,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * Servlet that get image with given image name when user clicks on thumbnail
+ * @author Daria Matković
+ *
+ */
 public class ImageGeneratorServlet  extends HttpServlet {
 	
 	@Override

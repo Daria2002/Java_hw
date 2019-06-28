@@ -16,6 +16,9 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
+
+import org.apache.derby.tools.sysinfo;
 
 public class Konzola {
 
@@ -42,8 +45,6 @@ public class Konzola {
 			System.out.print("Enter command > ");
 			
 			String command = scanner.nextLine();
-			System.out.println("command: " + command);
-			
 			String[] commandWords = command.split(" ");
 			
 			if(QUERY_COMMAND.equals(commandWords[0])) {
@@ -58,31 +59,32 @@ public class Konzola {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Query is: [");
 		int counter = 0;
+		
+//		for(String val : vocabulary) {
+//			System.out.println(val);
+//		}
+		
 		for(int i = 0; i < queryWords.length; i++) {
 			if(inVocabulary(queryWords[i])) {
-				if(counter % 2 == 1) {
-					sb.append(queryWords[i]);
+				if(counter != 0) {
+					sb.append(", ");
 				}
+				sb.append(queryWords[i]);
 				counter++;
 			}
 		}
 		sb.append("]");
 		System.out.println(sb.toString());
 		System.out.println("Najboljih 10 rezultata:");
-		String[] bestResults = getBestResults();
+		/*String[] bestResults = getBestResults();
 		
 		for(int i = 0; i < bestResults.length; i++) {
 			System.out.println(bestResults[i]);
-		}
+		}*/
 	}
-
-	private static String[] getBestResults() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	private static boolean inVocabulary(String string) {
-		return Arrays.asList(vocabulary).contains(string);
+	
+	private static boolean inVocabulary(String word) {
+		return vocabulary.contains(word);
 	}
 
 	private static Set<String> makeVocabulary() {

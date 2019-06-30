@@ -25,9 +25,13 @@ import org.apache.derby.tools.sysinfo;
 public class Konzola {
 
 	private static final String QUERY_COMMAND = "query";
+	private static final String TYPE_COMMAND = "type";
+	private static final String EXIT_COMMAND = "exit";
+	private static final String RESULTS_COMMAND = "results";
 	private static String[] stopWords = null;
 	static Set<String> vocabulary = new TreeSet<String>();
 	private static int numberOfFiles = 0;
+	private static List<String> bestResults = null;
 	
 	public static void main(String[] args) {
 		
@@ -80,18 +84,14 @@ public class Konzola {
 		System.out.println(sb.toString());
 		System.out.println("Najboljih 10 rezultata:");
 		
-		Set<String> bestResults = getBestResults();
-		
+		bestResults = getBestResults(queryWords);
 		for(String result : bestResults) {
-			
+			System.out.println(result);
 		}
 	}
 	
-	private static Set<String> getBestResults(String[] queryWords) {
-		Set<String> vocabulary = new TreeSet<String>();
+	private static List<String> getBestResults(String[] queryWords) {
 		List<String> bestResults = new ArrayList<String>();
-		
-		List<Double> results = new ArrayList<Double>();
 		
 		// .../hw17-0036480046-1
 		String projectPath = System.getProperty("user.dir");
@@ -102,12 +102,35 @@ public class Konzola {
 		Double[] vdi = calculateVQuery(queryWords.toString());
 		Double vdiNorm = norm(vdi);
 		
+		Double sim[] = new Double[filesInFolder.length];
+		int i = 0;
 		for (File file : filesInFolder) { //For each of the entries do:
-	        calculateSim(vdi, vdiNorm, file);
+	        sim[i++] = calculateSim(vdi, vdiNorm, file);
 	    }
 		
-		return vocabulary;
+		int[] indexes = indexesOfTopElements(sim, 10);
+		i = -1;
+		while(sim[indexes[++i]] != 0) {
+			bestResults.add("[ " + i + "] (" + sim[indexes[i]] + ") " + filesInFolder[indexes[i]].getPath());
+		}
+		
+		return bestResults;
 	}
+	
+	static int[] indexesOfTopElements(Double[] orig, int numberOfIndexes) {
+        Double[] copy = Arrays.copyOf(orig,orig.length);
+        Arrays.sort(copy);
+        Double[] honey = Arrays.copyOfRange(copy,copy.length - numberOfIndexes, copy.length);
+        int[] result = new int[numberOfIndexes];
+        int resultPos = 0;
+        for(int i = 0; i < orig.length; i++) {
+            double onTrial = orig[i];
+            int index = Arrays.binarySearch(honey,onTrial);
+            if(index < 0) continue;
+            result[resultPos++] = i;
+        }
+        return result;
+    }
 	
 	private static double calculateSim(Double[] vdi, Double vdiNorm, File file) {
 		Double[] vdj = vdj(file);
@@ -143,7 +166,7 @@ public class Konzola {
 		Double[] tfidf = new Double[vocabulary.size()];
 		int i = 0;
 		for(String word:vocabulary) {
-			tfidf[i] = tfidf(word, wordsToAnalyse);
+			tfidf[i++] = tfidf(word, wordsToAnalyse);
 		}
 		return tfidf;
 	}

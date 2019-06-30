@@ -1,6 +1,7 @@
 package hr.fer.zemris.java.hw17.trazilica;
 
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -8,20 +9,19 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.file.Path;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
-import java.util.Stack;
 import java.util.TreeSet;
-import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
-import org.apache.derby.shared.common.util.ArrayUtil;
 import org.apache.derby.tools.sysinfo;
-
 public class Konzola {
 
 	private static final String QUERY_COMMAND = "query";
@@ -32,6 +32,7 @@ public class Konzola {
 	static Set<String> vocabulary = new TreeSet<String>();
 	private static int numberOfFiles = 0;
 	private static List<String> bestResults = null;
+	static int[] bestResultsIndexes = null;
 	
 	public static void main(String[] args) {
 		
@@ -56,12 +57,41 @@ public class Konzola {
 			
 			if(QUERY_COMMAND.equals(commandWords[0])) {
 				query(Arrays.copyOfRange(commandWords, 1, commandWords.length));
-			}
-	
+			} else if(RESULTS_COMMAND.equals(commandWords[0]) && commandWords.length == 1) {
+				results();
+			} else if(EXIT_COMMAND.equals(commandWords[0]) && commandWords.length == 1) {
+				System.exit(0);
+			} else if(TYPE_COMMAND.equals(commandWords[0]) && commandWords.length == 2) {
+				type(Integer.valueOf(commandWords[1]));
+			} else {
+				System.out.println("Nepoznata naredba.");
+			}	
 		}
-		
 	}
 	
+	private static void type(int resultIndex) {
+		String projectPath = System.getProperty("user.dir");
+		File dir = new File(projectPath + "/src/main/resources/clanci");
+		int fileIndex = bestResultsIndexes[resultIndex];
+        File fileToPrint = dir.listFiles()[fileIndex];
+		
+        try {
+			System.out.println(readFile(fileToPrint.getPath().toString()));
+		} catch (Exception e) {
+			System.out.println("Not possible to print file");
+		}
+	}
+
+	private static void results() {
+		if(bestResults != null) {
+			for(int i = 0; i < bestResults.size(); i++) {
+				System.out.println(bestResults.get(i));
+			}
+			return;
+		}
+		System.out.println("Prije naredbe results nije pozvana naredba query");
+	}
+
 	private static void query(String[] queryWords) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Query is: [");
@@ -99,7 +129,7 @@ public class Konzola {
 		
 		File[] filesInFolder = dir.listFiles(); // This returns all the folders and files in your path
 		
-		Double[] vdi = calculateVQuery(queryWords.toString());
+		Double[] vdi = calculateVQuery(Arrays.toString(queryWords));
 		Double vdiNorm = norm(vdi);
 		
 		Double sim[] = new Double[filesInFolder.length];
@@ -108,10 +138,11 @@ public class Konzola {
 	        sim[i++] = calculateSim(vdi, vdiNorm, file);
 	    }
 		
-		int[] indexes = indexesOfTopElements(sim, 10);
+		bestResultsIndexes = indexesOfTopElements(sim, 10);
 		i = -1;
-		while(sim[indexes[++i]] != 0) {
-			bestResults.add("[ " + i + "] (" + sim[indexes[i]] + ") " + filesInFolder[indexes[i]].getPath());
+		while(sim[bestResultsIndexes[++i]] != 0) {
+			bestResults.add("[ " + i + "] (" + sim[bestResultsIndexes[i]] + ") " + 
+		filesInFolder[bestResultsIndexes[i]].getPath());
 		}
 		
 		return bestResults;
@@ -139,7 +170,7 @@ public class Konzola {
 
 	private static Double[] vdj(File file) {
 		try {
-			return calculateVQuery(getStringFromFile(file.getPath().toString()));
+			return calculateVQuery(readFile(file.getPath().toString()));
 		} catch (Exception e) {
 			System.out.println("Error while calculating vdj");
 		}
@@ -165,7 +196,8 @@ public class Konzola {
 	private static Double[] calculateVQuery(String wordsToAnalyse) {
 		Double[] tfidf = new Double[vocabulary.size()];
 		int i = 0;
-		for(String word:vocabulary) {
+		for(String word : vocabulary) {
+			System.out.println(word);
 			tfidf[i++] = tfidf(word, wordsToAnalyse);
 		}
 		return tfidf;
@@ -205,7 +237,7 @@ public class Konzola {
 	    for (File file : filesInFolder) { //For each of the entries do:
 	        if (!file.isDirectory()) { //check that it's not a dir
 	        	try {
-					fileText = getStringFromFile(file.getPath().toString()).trim();
+					fileText = readFile(file.getPath().toString()).trim();
 					if(containsWord(word, fileText)) {
 						numberOfOccurrances++;
 					}
@@ -222,15 +254,8 @@ public class Konzola {
 	}
 	
 	private static boolean containsWord(String word, String fileText) {
-		int lastIndex = 0;
-		
-		while(lastIndex != -1){
-
-		    lastIndex = fileText.indexOf(word,lastIndex);
-
-		    if(lastIndex != -1){
-		    	return true;
-		    }
+		if(fileText.contains(word)) {
+			return true;
 		}
 		return false;
 	}
@@ -252,46 +277,27 @@ public class Konzola {
 	}
 	
 	private static Set<String> makeVocabulary() {
-		Set<String> vocabulary = new TreeSet<String>();
+		Set<String> vocabulary = new HashSet<String>();
 		// .../hw17-0036480046-1
 		String projectPath = System.getProperty("user.dir");
 		File dir = new File(projectPath + "/src/main/resources/clanci");
         
 		String fileText;
-		String[] textArray;
-		
 		File[] filesInFolder = dir.listFiles(); // This returns all the folders and files in your path
-	    for (File file : filesInFolder) { //For each of the entries do:
+	    
+		for (File file : filesInFolder) { //For each of the entries do:
 	        if (!file.isDirectory()) { //check that it's not a dir
-	        	// 
 	        	try {
-					fileText = getStringFromFile(file.getPath().toString()).trim();
-					textArray = fileText.trim().split(" ");
+					fileText = readFile(file.getPath().toString());
 					
-					for(int i = 0; i < textArray.length; i++) {
-						if(!stopWord(textArray[i])) {
-							
-							String line = textArray[i];
-							
-							line = line.replaceAll("\\.", "");
-							line = line.replaceAll(",", "");
-							line = line.replaceAll("\\;", "");
-							line = line.replaceAll("\\:", "");
-							line = line.replaceAll("\\!", "");
-							line = line.replaceAll("\\?", "");
-							line = line.replaceAll("\"", "");
-							line = line.replaceAll("»", " ");
-					    	line = line.replaceAll("«", " ");
-					    	line = line.replaceAll("\\(", "");
-					    	line = line.replaceAll("\\)", "");
-					    	line = line.replaceAll("\\s+", "");
-					    	
-							if(line.isBlank() || line.isEmpty()) {
-								continue;
-							}
-							
-							vocabulary.add(line);
+					numberOfFiles++;
+					String[] lineArray = fileText.toLowerCase().split("\\P{L}+");
+					for(String element : lineArray) {
+						if(element.isEmpty() || element.isBlank() || stopWord(element)) {
+							continue;
 						}
+						System.out.println(element);
+						vocabulary.add(element);
 					}
 					
 				} catch (Exception e) {
@@ -302,13 +308,13 @@ public class Konzola {
 				}
 	        }
 	    }
-		
+		System.out.println("vel rje="+vocabulary.size());
 		return vocabulary;
 	}
-	
+
 	private static boolean stopWord(String string) throws FileNotFoundException, IOException {
 		for(int i = 0; i < stopWords.length; i++) {
-			if(string.equals(stopWords[i])) {
+			if(string.equals(stopWords[i].toLowerCase())) {
 				return true;
 			}
 		}
@@ -316,38 +322,12 @@ public class Konzola {
 		return false;
 	}
 
-	private static String[] getStopWords(File fileWithStopWords) throws FileNotFoundException, IOException {
-		ArrayList<String> result = new ArrayList<>();
-		 
-		try (BufferedReader br = new BufferedReader(new FileReader(fileWithStopWords))) {
-		    while (br.ready()) {
-		    	String line = br.readLine();
-		        result.add(line.trim());
-		    }
-		}
-		
-		String[] stopWords = new String[result.size()];
-		stopWords = result.toArray(stopWords);
-		return stopWords;
+	private static String[] getStopWords(File fileWithStopWords) 
+			throws FileNotFoundException, IOException {
+		return readFile(fileWithStopWords.getPath().toString()).split("\n");
 	}
 
-	public static String getStringFromFile(String filePath) throws Exception {
-	    File fl = new File(filePath);
-	    FileInputStream fin = new FileInputStream(fl);
-	    String ret = convertStreamToString(fin);
-	    //Make sure you close all streams.
-	    fin.close();        
-	    return ret;
-	}
-	
-	public static String convertStreamToString(InputStream is) throws Exception {
-	    BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-	    StringBuilder sb = new StringBuilder();
-	    String line = null;
-	    while ((line = reader.readLine()) != null) {
-	      sb.append(line).append("\n");
-	    }
-	    reader.close();
-	    return sb.toString();
+	static String readFile(String path) throws IOException {
+	  return new String(Files.readAllBytes(Paths.get(path)), StandardCharsets.UTF_8);
 	}
 }

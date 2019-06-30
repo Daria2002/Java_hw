@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -18,6 +19,7 @@ import java.util.TreeSet;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
+import org.apache.derby.shared.common.util.ArrayUtil;
 import org.apache.derby.tools.sysinfo;
 
 public class Konzola {
@@ -25,6 +27,7 @@ public class Konzola {
 	private static final String QUERY_COMMAND = "query";
 	private static String[] stopWords = null;
 	static Set<String> vocabulary = new TreeSet<String>();
+	private static int numberOfFiles = 0;
 	
 	public static void main(String[] args) {
 		
@@ -76,17 +79,155 @@ public class Konzola {
 		sb.append("]");
 		System.out.println(sb.toString());
 		System.out.println("Najboljih 10 rezultata:");
-		/*String[] bestResults = getBestResults();
 		
-		for(int i = 0; i < bestResults.length; i++) {
-			System.out.println(bestResults[i]);
-		}*/
+		Set<String> bestResults = getBestResults();
+		
+		for(String result : bestResults) {
+			
+		}
 	}
 	
+	private static Set<String> getBestResults(String[] queryWords) {
+		Set<String> vocabulary = new TreeSet<String>();
+		List<String> bestResults = new ArrayList<String>();
+		
+		List<Double> results = new ArrayList<Double>();
+		
+		// .../hw17-0036480046-1
+		String projectPath = System.getProperty("user.dir");
+		File dir = new File(projectPath + "/src/main/resources/clanci");
+		
+		File[] filesInFolder = dir.listFiles(); // This returns all the folders and files in your path
+		
+		Double[] vdi = calculateVQuery(queryWords.toString());
+		Double vdiNorm = norm(vdi);
+		
+		for (File file : filesInFolder) { //For each of the entries do:
+	        calculateSim(vdi, vdiNorm, file);
+	    }
+		
+		return vocabulary;
+	}
+	
+	private static double calculateSim(Double[] vdi, Double vdiNorm, File file) {
+		Double[] vdj = vdj(file);
+		return (dot(vdi,vdj))*(vdiNorm*norm(vdj));
+	}
+
+	private static Double[] vdj(File file) {
+		try {
+			return calculateVQuery(getStringFromFile(file.getPath().toString()));
+		} catch (Exception e) {
+			System.out.println("Error while calculating vdj");
+		}
+		return null;
+	}
+
+	private static double dot(Double[] vdi, Double[] vdj) {
+		double result = 0;
+		for(int i = 0; i < vocabulary.size(); i++) {
+			result += vdi[i] * vdj[i];
+		}
+		return result;
+	}
+
+	private static Double norm(Double[] vQuery) {
+		double norm = 0;
+		for(int i = 0; i < vQuery.length; i++) {
+			norm += Math.pow(vQuery[i], 2);
+		}
+		return Math.sqrt(norm);
+	}
+
+	private static Double[] calculateVQuery(String wordsToAnalyse) {
+		Double[] tfidf = new Double[vocabulary.size()];
+		int i = 0;
+		for(String word:vocabulary) {
+			tfidf[i] = tfidf(word, wordsToAnalyse);
+		}
+		return tfidf;
+	}
+
+	private static double tfidf(String word, String documentText) {
+		double tfidf = tf(word, documentText) * idf(word);
+		return tfidf;
+	}
+
+	private static double idf(String word) {
+		return Math.log10(numberOfFiles/numberOfDocumentsContainingWord(word));
+	}
+	// getStringFromFile(document.getPath().toString()).trim()
+	private static int tf(String word, String documentText) {
+		try {
+			return countOccurrences(documentText, word);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
 	private static boolean inVocabulary(String word) {
 		return vocabulary.contains(word);
 	}
+	
+	private static int numberOfDocumentsContainingWord(String word) {
+		int numberOfOccurrances = 0;
+		String projectPath = System.getProperty("user.dir");
+		File dir = new File(projectPath + "/src/main/resources/clanci");
+        
+		String fileText;
+		
+		File[] filesInFolder = dir.listFiles(); // This returns all the folders and files in your path
+	    for (File file : filesInFolder) { //For each of the entries do:
+	        if (!file.isDirectory()) { //check that it's not a dir
+	        	try {
+					fileText = getStringFromFile(file.getPath().toString()).trim();
+					if(containsWord(word, fileText)) {
+						numberOfOccurrances++;
+					}
+					
+				} catch (Exception e) {
+					System.out.println("Can't read file.");
+					System.out.println("Given path: " +
+					file.getPath().toString());
+					e.printStackTrace();
+				}
+	        }
+	    }
+	    return numberOfOccurrances;
+	}
+	
+	private static boolean containsWord(String word, String fileText) {
+		int lastIndex = 0;
+		
+		while(lastIndex != -1){
 
+		    lastIndex = fileText.indexOf(word,lastIndex);
+
+		    if(lastIndex != -1){
+		    	return true;
+		    }
+		}
+		return false;
+	}
+
+	private static int countOccurrences(String str, String findStr) {
+		int lastIndex = 0;
+		int count = 0;
+
+		while(lastIndex != -1){
+
+		    lastIndex = str.indexOf(findStr,lastIndex);
+
+		    if(lastIndex != -1){
+		        count ++;
+		        lastIndex += findStr.length();
+		    }
+		}
+		return count;
+	}
+	
 	private static Set<String> makeVocabulary() {
 		Set<String> vocabulary = new TreeSet<String>();
 		// .../hw17-0036480046-1
@@ -99,6 +240,7 @@ public class Konzola {
 		File[] filesInFolder = dir.listFiles(); // This returns all the folders and files in your path
 	    for (File file : filesInFolder) { //For each of the entries do:
 	        if (!file.isDirectory()) { //check that it's not a dir
+	        	// 
 	        	try {
 					fileText = getStringFromFile(file.getPath().toString()).trim();
 					textArray = fileText.trim().split(" ");

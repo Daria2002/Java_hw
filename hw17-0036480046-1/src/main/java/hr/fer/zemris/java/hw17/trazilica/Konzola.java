@@ -15,8 +15,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeSet;
@@ -33,9 +35,11 @@ public class Konzola {
 	private static int numberOfFiles = 0;
 	private static List<String> bestResults = null;
 	static int[] bestResultsIndexes = null;
+	private static Map<String, Double> idfVector = new HashMap<String, Double>();
+	private static Map<String, Integer> wordFrequency = new HashMap<String, Integer>();
+	
 	
 	public static void main(String[] args) {
-		
 		String projectPath = System.getProperty("user.dir");
 		File fileWithStopWords = new File(projectPath + "/src/main/resources/hrvatski_stoprijeci.txt");
 
@@ -43,10 +47,12 @@ public class Konzola {
 			stopWords = getStopWords(fileWithStopWords);
 		} catch (Exception e) {
 			e.printStackTrace();
-		} 
+		}
 		
 		vocabulary = makeVocabulary();
+		wordFrequency = initializeWordFrequency();
 		
+		idfVector = idfVector();
 		while(true) {
 			
 			Scanner scanner = new Scanner(System.in);
@@ -140,7 +146,7 @@ public class Konzola {
 		
 		bestResultsIndexes = indexesOfTopElements(sim, 10);
 		i = -1;
-		while(sim[bestResultsIndexes[++i]] != 0) {
+		while(i < 9 && sim[bestResultsIndexes[++i]] != 0) {
 			bestResults.add("[ " + i + "] (" + sim[bestResultsIndexes[i]] + ") " + 
 		filesInFolder[bestResultsIndexes[i]].getPath());
 		}
@@ -197,19 +203,27 @@ public class Konzola {
 		Double[] tfidf = new Double[vocabulary.size()];
 		int i = 0;
 		for(String word : vocabulary) {
-			System.out.println(word);
+			//System.out.println(word);
 			tfidf[i++] = tfidf(word, wordsToAnalyse);
 		}
 		return tfidf;
 	}
 
 	private static double tfidf(String word, String documentText) {
-		double tfidf = tf(word, documentText) * idf(word);
+		double tfidf = tf(word, documentText) * idfVector.get(word);
 		return tfidf;
 	}
 
+	private static Map<String, Double> idfVector() {
+		Map<String, Double> map = new HashMap<String, Double>();
+		for(String word : vocabulary) {
+			map.put(word, idf(word));
+		}
+		return map;
+	}
+	
 	private static double idf(String word) {
-		return Math.log10(numberOfFiles/numberOfDocumentsContainingWord(word));
+		return Math.log10(numberOfFiles/wordFrequency.get(word));
 	}
 	// getStringFromFile(document.getPath().toString()).trim()
 	private static int tf(String word, String documentText) {
@@ -226,31 +240,39 @@ public class Konzola {
 		return vocabulary.contains(word);
 	}
 	
-	private static int numberOfDocumentsContainingWord(String word) {
-		int numberOfOccurrances = 0;
+	private static Map<String, Integer> initializeWordFrequency() {
+		Map<String, Integer> map = new HashMap<String, Integer>();
+		
+		for(String word:vocabulary) {
+			map.put(word.toLowerCase(), 0);
+		}
+		
 		String projectPath = System.getProperty("user.dir");
 		File dir = new File(projectPath + "/src/main/resources/clanci");
-        
 		String fileText;
 		
 		File[] filesInFolder = dir.listFiles(); // This returns all the folders and files in your path
+		int numberOfOccurrances = 0;
 	    for (File file : filesInFolder) { //For each of the entries do:
 	        if (!file.isDirectory()) { //check that it's not a dir
-	        	try {
-					fileText = readFile(file.getPath().toString()).trim();
-					if(containsWord(word, fileText)) {
-						numberOfOccurrances++;
+	        	for(String word:vocabulary) {
+	        		numberOfOccurrances = map.get(word);
+		        	try {
+						fileText = readFile(file.getPath().toString()).trim();
+						if(containsWord(word.toLowerCase(), fileText.toLowerCase())) {
+							numberOfOccurrances++;
+						}
+						map.put(word, numberOfOccurrances);
+					} catch (Exception e) {
+						System.out.println("Can't read file.");
+						System.out.println("Given path: " +
+						file.getPath().toString());
+						e.printStackTrace();
 					}
-					
-				} catch (Exception e) {
-					System.out.println("Can't read file.");
-					System.out.println("Given path: " +
-					file.getPath().toString());
-					e.printStackTrace();
-				}
+	        	}
 	        }
 	    }
-	    return numberOfOccurrances;
+	    return map;
 	}
 	
 	private static boolean containsWord(String word, String fileText) {
@@ -284,19 +306,23 @@ public class Konzola {
         
 		String fileText;
 		File[] filesInFolder = dir.listFiles(); // This returns all the folders and files in your path
-	    
+
+		numberOfFiles = filesInFolder.length;
 		for (File file : filesInFolder) { //For each of the entries do:
 	        if (!file.isDirectory()) { //check that it's not a dir
 	        	try {
 					fileText = readFile(file.getPath().toString());
 					
-					numberOfFiles++;
-					String[] lineArray = fileText.toLowerCase().split("\\P{L}+");
+					String[] lineArray = null;
+					fileText = fileText.toLowerCase();
+					
+					lineArray = fileText.split("\\P{L}+");
 					for(String element : lineArray) {
+						//element.replaceAll("A", "-");
 						if(element.isEmpty() || element.isBlank() || stopWord(element)) {
 							continue;
 						}
-						System.out.println(element);
+						//System.out.println(element);
 						vocabulary.add(element);
 					}
 					

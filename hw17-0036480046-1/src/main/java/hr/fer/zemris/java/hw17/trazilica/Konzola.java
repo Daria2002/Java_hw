@@ -220,7 +220,8 @@ public class Konzola {
                 } 
             } 
             
-            if (j == M && !Character.isAlphabetic(txt.charAt(i+M))) {
+            if (j == M && !Character.isAlphabetic(txt.charAt(i+M)) && 
+            		(i == 0 || !Character.isAlphabetic(txt.charAt(i-1)))) {
                 res++;                 
                 j = 0;                 
             }             

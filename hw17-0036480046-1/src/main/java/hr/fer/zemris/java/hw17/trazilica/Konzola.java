@@ -15,6 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -133,20 +134,20 @@ public class Konzola {
 		File[] filesInFolder = dir.listFiles();
 		
 		Double[] vdi = calculateVQuery(Arrays.toString(queryWords));
-		Double vdiNorm = norm(vdi);
 		
 		Double sim[] = new Double[filesInFolder.length];
 		int i = 0;
 		for (File file : filesInFolder) { //For each of the entries do:
-	        sim[i++] = calculateSim(vdi, vdiNorm, file);
+	        sim[i++] = calculateSim(vdi, file);
 	    }
 		
 		bestResultsIndexes = maxKIndex(sim, 10);
 		i = -1;
 		System.out.println("best indexes:"+bestResultsIndexes[0]);
-		System.out.println("best inde best res:"+bestResultsIndexes[0]);
+		System.out.println("best inde best res:"+sim[bestResultsIndexes[0]]);
 		while(i < 9 && sim[bestResultsIndexes[++i]] != 0) {
 			System.out.println("best indexes:"+bestResultsIndexes[i]);
+			System.out.println("best inde best res:"+sim[bestResultsIndexes[i]]);
 			bestResults.add("[ " + i + "] (" + sim[bestResultsIndexes[i]] + ") " + 
 		filesInFolder[bestResultsIndexes[i]].getPath());
 		}
@@ -154,28 +155,31 @@ public class Konzola {
 		return bestResults;
 	}
 	
-	public static int[] maxKIndex(Double[] array, int top_k) {
-	    double[] max = new double[top_k];
-	    int[] maxIndex = new int[top_k];
-	    Arrays.fill(max, Double.NEGATIVE_INFINITY);
-	    Arrays.fill(maxIndex, -1);
-
-	    top: for(int i = 0; i < array.length; i++) {
-	        for(int j = 0; j < top_k; j++) {
-	            if(array[i] > max[j]) {
-	                for(int x = top_k - 1; x > j; x--) {
-	                    maxIndex[x] = maxIndex[x-1]; max[x] = max[x-1];
-	                }
-	                maxIndex[j] = i; max[j] = array[i];
-	                continue top;
-	            }
-	        }
-	    }
-	    return maxIndex;
+	public static int[] maxKIndex(Double[] array, int k) {
+		Double[] copyArray = Arrays.copyOf(array, array.length);
+		Arrays.sort(copyArray, Collections.reverseOrder());
+		
+		Double[] biggestValues = new Double[k];
+		for (int i = 0; i < k; i++) {
+			biggestValues[i] = copyArray[i]; 
+		}
+		
+		int[] indexes = new int[k];
+		int index = 0;
+		for(int i = 0; i < array.length; i++) {
+			for(int j = 0; j < biggestValues.length; j++) {
+				if(Math.abs(biggestValues[j]-array[i]) < 0.0001) {
+					indexes[index++] = i;
+					break;
+				}
+			}
+		}
+		return indexes;
 	}
 	
-	private static double calculateSim(Double[] vdi, Double vdiNorm, File file) {
+	private static double calculateSim(Double[] vdi, File file) {
 		Double[] vdj = vdj(file);
+		Double vdiNorm = norm(vdi);
 		return (dot(vdi,vdj))*(vdiNorm*norm(vdj));
 	}
 
@@ -209,19 +213,40 @@ public class Konzola {
 		int i = 0;
 		for(String word : vocabulary) {
 			//System.out.println(word);
+			Double x = tfidf(word, wordsToAnalyse);
+			if(Double.isNaN(x)) {
+				System.out.println("ovo je nan");
+			}
 			tfidf[i++] = tfidf(word, wordsToAnalyse);
 		}
 		return tfidf;
 	}
 
 	private static double tfidf(String word, String documentText) {
+		if(Double.isNaN(idfVector.get(word))) {
+			System.out.println("idf je nan");
+		}
+		if(Double.isNaN(tf(word, documentText))) {
+			System.out.println("tf je nan");
+		}
 		double tfidf = tf(word, documentText) * idfVector.get(word);
+		
+		if(Double.isNaN(tfidf)) {
+			System.out.println("tf:"+tf(word, documentText));
+			System.out.println("idf:"+idfVector.get(word));
+			System.out.println("tfidf je nan u funk");
+		}
 		return tfidf;
 	}
 
 	private static Map<String, Double> idfVector() {
 		Map<String, Double> map = new HashMap<String, Double>();
 		for(String word : vocabulary) {
+			if(Double.isInfinite(idf(word))) {
+				System.out.println("word:"+word);
+				System.out.println("wordfreq:"+wordFrequency.get(word));
+				System.out.println("idf od rijeci je inf");
+			}
 			map.put(word, idf(word));
 		}
 		return map;
@@ -234,6 +259,9 @@ public class Konzola {
 	// getStringFromFile(document.getPath().toString()).trim()
 	private static int tf(String word, String documentText) {
 		try {
+			if(Double.isNaN(countOccurrences(documentText, word))) {
+				System.out.println("Count occurrances is wrong");
+			}
 			return countOccurrences(documentText, word);
 			
 		} catch (Exception e) {
@@ -279,7 +307,12 @@ public class Konzola {
 		File[] filesInFolder = dir.listFiles(); // This returns all the folders and files in your path
 		int helpCount;
 		numberOfFiles = filesInFolder.length;
+		
 		for (File file : filesInFolder) { //For each of the entries do:
+			
+			// words that already occurred in file
+			List<String> occurredWords = new ArrayList<String>();
+			
 	        if (!file.isDirectory()) { //check that it's not a dir
 	        	try {
 					fileText = readFile(file.getPath().toString());
@@ -293,6 +326,12 @@ public class Konzola {
 							continue;
 						}
 						//System.out.println(element);
+						
+						if(occurredWords.contains(element)) {
+							continue;
+						}
+						
+						occurredWords.add(element);
 						
 						// if element is not added in map
 						if(wordFrequency.get(element) == null) {

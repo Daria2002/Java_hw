@@ -34,7 +34,7 @@ public class Konzola {
 	private static String[] stopWords = null;
 	/** vocabulary **/
 	static Set<String> vocabulary = new HashSet<String>();
-	/** number od files **/
+	/** number of files **/
 	private static int numberOfFiles = 0;
 	/** best results **/
 	private static List<String> bestResults = null;

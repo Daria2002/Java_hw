@@ -360,7 +360,6 @@ public class Konzola {
 				}
 	        }
 	    }
-		System.out.println("vel rje="+vocabulary.size());
 		return vocabulary;
 	}
 

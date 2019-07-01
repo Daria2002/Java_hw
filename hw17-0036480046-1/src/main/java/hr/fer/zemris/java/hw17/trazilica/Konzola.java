@@ -1,15 +1,8 @@
 package hr.fer.zemris.java.hw17.trazilica;
 
-import java.io.BufferedReader;
-import java.io.DataInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -24,7 +17,6 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.derby.tools.sysinfo;
 public class Konzola {
 
 	private static final String QUERY_COMMAND = "query";
@@ -32,7 +24,7 @@ public class Konzola {
 	private static final String EXIT_COMMAND = "exit";
 	private static final String RESULTS_COMMAND = "results";
 	private static String[] stopWords = null;
-	static Set<String> vocabulary = new TreeSet<String>();
+	static Set<String> vocabulary = new HashSet<String>();
 	private static int numberOfFiles = 0;
 	private static List<String> bestResults = null;
 	static int[] bestResultsIndexes = null;
@@ -132,7 +124,6 @@ public class Konzola {
 		File dir = new File(projectPath + "/src/main/resources/clanci");
 		
 		File[] filesInFolder = dir.listFiles();
-		
 		Double[] vdi = calculateVQuery(Arrays.toString(queryWords));
 		
 		Double sim[] = new Double[filesInFolder.length];
@@ -143,11 +134,7 @@ public class Konzola {
 		
 		bestResultsIndexes = maxKIndex(sim, 10);
 		i = -1;
-		System.out.println("best indexes:"+bestResultsIndexes[0]);
-		System.out.println("best inde best res:"+sim[bestResultsIndexes[0]]);
 		while(i < 9 && sim[bestResultsIndexes[++i]] != 0) {
-			System.out.println("best indexes:"+bestResultsIndexes[i]);
-			System.out.println("best inde best res:"+sim[bestResultsIndexes[i]]);
 			bestResults.add("[ " + i + "] (" + sim[bestResultsIndexes[i]] + ") " + 
 		filesInFolder[bestResultsIndexes[i]].getPath());
 		}
@@ -168,7 +155,7 @@ public class Konzola {
 		int index = 0;
 		for(int i = 0; i < array.length; i++) {
 			for(int j = 0; j < biggestValues.length; j++) {
-				if(Math.abs(biggestValues[j]-array[i]) < 0.0001) {
+				if(Math.abs(biggestValues[j]-array[i]) < 0.000000001) {
 					indexes[index++] = i;
 					break;
 				}
@@ -178,18 +165,15 @@ public class Konzola {
 	}
 	
 	private static double calculateSim(Double[] vdi, File file) {
-		Double[] vdj = vdj(file);
-		Double vdiNorm = norm(vdi);
-		return (dot(vdi,vdj))*(vdiNorm*norm(vdj));
-	}
-
-	private static Double[] vdj(File file) {
+		Double[] vdj = null;
 		try {
-			return calculateVQuery(readFile(file.getPath().toString()));
-		} catch (Exception e) {
-			System.out.println("Error while calculating vdj");
+			vdj = calculateVQuery(readFile(file.getPath().toString()).toLowerCase());
+		} catch (IOException e) {
+			System.out.println("error calculating vdj");
 		}
-		return null;
+		
+		Double sim = (dot(vdi,vdj))/(norm(vdi)*norm(vdj));
+		return sim;
 	}
 
 	private static double dot(Double[] vdi, Double[] vdj) {
@@ -212,29 +196,7 @@ public class Konzola {
 		Double[] tfidf = new Double[vocabulary.size()];
 		int i = 0;
 		for(String word : vocabulary) {
-			//System.out.println(word);
-			Double x = tfidf(word, wordsToAnalyse);
-			if(Double.isNaN(x)) {
-				System.out.println("ovo je nan");
-			}
-			tfidf[i++] = tfidf(word, wordsToAnalyse);
-		}
-		return tfidf;
-	}
-
-	private static double tfidf(String word, String documentText) {
-		if(Double.isNaN(idfVector.get(word))) {
-			System.out.println("idf je nan");
-		}
-		if(Double.isNaN(tf(word, documentText))) {
-			System.out.println("tf je nan");
-		}
-		double tfidf = tf(word, documentText) * idfVector.get(word);
-		
-		if(Double.isNaN(tfidf)) {
-			System.out.println("tf:"+tf(word, documentText));
-			System.out.println("idf:"+idfVector.get(word));
-			System.out.println("tfidf je nan u funk");
+			tfidf[i++] = tf(word, wordsToAnalyse) * idfVector.get(word);
 		}
 		return tfidf;
 	}
@@ -242,27 +204,15 @@ public class Konzola {
 	private static Map<String, Double> idfVector() {
 		Map<String, Double> map = new HashMap<String, Double>();
 		for(String word : vocabulary) {
-			if(Double.isInfinite(idf(word))) {
-				System.out.println("word:"+word);
-				System.out.println("wordfreq:"+wordFrequency.get(word));
-				System.out.println("idf od rijeci je inf");
-			}
-			map.put(word, idf(word));
+			map.put(word, Math.log10(numberOfFiles/wordFrequency.get(word)));
 		}
 		return map;
-	}
-	
-	private static double idf(String word) {
-		return Math.log10(numberOfFiles/wordFrequency.get(word));
 	}
 	
 	// getStringFromFile(document.getPath().toString()).trim()
 	private static int tf(String word, String documentText) {
 		try {
-			if(Double.isNaN(countOccurrences(documentText, word))) {
-				System.out.println("Count occurrances is wrong");
-			}
-			return countOccurrences(documentText, word);
+			return countOccurrences(word, documentText);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -273,28 +223,26 @@ public class Konzola {
 	private static boolean inVocabulary(String word) {
 		return vocabulary.contains(word);
 	}
-	
-	private static boolean containsWord(String word, String fileText) {
-		if(fileText.contains(word)) {
-			return true;
-		}
-		return false;
-	}
 
-	private static int countOccurrences(String str, String findStr) {
-		int lastIndex = 0;
-		int count = 0;
-
-		while(lastIndex != -1){
-
-		    lastIndex = str.indexOf(findStr,lastIndex);
-
-		    if(lastIndex != -1){
-		        count ++;
-		        lastIndex += findStr.length();
-		    }
-		}
-		return count;
+	private static int countOccurrences(String word, String txt) {
+		int M = word.length();         
+        int N = txt.length();         
+        int res = 0; 
+  
+        for (int i = 0; i <= N - M; i++) { 
+            int j;             
+            for (j = 0; j < M; j++) { 
+                if (txt.charAt(i + j) != word.charAt(j)) { 
+                    break; 
+                } 
+            } 
+  
+            if (j == M) {                 
+                res++;                 
+                j = 0;                 
+            }             
+        }         
+        return res;         
 	}
 	
 	private static Set<String> makeVocabularyAndInitializeWordFrequency() {
@@ -315,10 +263,9 @@ public class Konzola {
 			
 	        if (!file.isDirectory()) { //check that it's not a dir
 	        	try {
-					fileText = readFile(file.getPath().toString());
+					fileText = readFile(file.getPath().toString()).toLowerCase();
 					
 					String[] lineArray = null;
-					fileText = fileText.toLowerCase();
 					
 					lineArray = fileText.split("\\P{L}+");
 					for(String element : lineArray) {

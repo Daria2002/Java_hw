@@ -49,8 +49,7 @@ public class Konzola {
 			e.printStackTrace();
 		}
 		
-		vocabulary = makeVocabulary();
-		wordFrequency = initializeWordFrequency();
+		vocabulary = makeVocabularyAndInitializeWordFrequency();
 		
 		idfVector = idfVector();
 		while(true) {
@@ -128,12 +127,10 @@ public class Konzola {
 	
 	private static List<String> getBestResults(String[] queryWords) {
 		List<String> bestResults = new ArrayList<String>();
-		
-		// .../hw17-0036480046-1
 		String projectPath = System.getProperty("user.dir");
 		File dir = new File(projectPath + "/src/main/resources/clanci");
 		
-		File[] filesInFolder = dir.listFiles(); // This returns all the folders and files in your path
+		File[] filesInFolder = dir.listFiles();
 		
 		Double[] vdi = calculateVQuery(Arrays.toString(queryWords));
 		Double vdiNorm = norm(vdi);
@@ -144,9 +141,12 @@ public class Konzola {
 	        sim[i++] = calculateSim(vdi, vdiNorm, file);
 	    }
 		
-		bestResultsIndexes = indexesOfTopElements(sim, 10);
+		bestResultsIndexes = maxKIndex(sim, 10);
 		i = -1;
+		System.out.println("best indexes:"+bestResultsIndexes[0]);
+		System.out.println("best inde best res:"+bestResultsIndexes[0]);
 		while(i < 9 && sim[bestResultsIndexes[++i]] != 0) {
+			System.out.println("best indexes:"+bestResultsIndexes[i]);
 			bestResults.add("[ " + i + "] (" + sim[bestResultsIndexes[i]] + ") " + 
 		filesInFolder[bestResultsIndexes[i]].getPath());
 		}
@@ -154,20 +154,25 @@ public class Konzola {
 		return bestResults;
 	}
 	
-	static int[] indexesOfTopElements(Double[] orig, int numberOfIndexes) {
-        Double[] copy = Arrays.copyOf(orig,orig.length);
-        Arrays.sort(copy);
-        Double[] honey = Arrays.copyOfRange(copy,copy.length - numberOfIndexes, copy.length);
-        int[] result = new int[numberOfIndexes];
-        int resultPos = 0;
-        for(int i = 0; i < orig.length; i++) {
-            double onTrial = orig[i];
-            int index = Arrays.binarySearch(honey,onTrial);
-            if(index < 0) continue;
-            result[resultPos++] = i;
-        }
-        return result;
-    }
+	public static int[] maxKIndex(Double[] array, int top_k) {
+	    double[] max = new double[top_k];
+	    int[] maxIndex = new int[top_k];
+	    Arrays.fill(max, Double.NEGATIVE_INFINITY);
+	    Arrays.fill(maxIndex, -1);
+
+	    top: for(int i = 0; i < array.length; i++) {
+	        for(int j = 0; j < top_k; j++) {
+	            if(array[i] > max[j]) {
+	                for(int x = top_k - 1; x > j; x--) {
+	                    maxIndex[x] = maxIndex[x-1]; max[x] = max[x-1];
+	                }
+	                maxIndex[j] = i; max[j] = array[i];
+	                continue top;
+	            }
+	        }
+	    }
+	    return maxIndex;
+	}
 	
 	private static double calculateSim(Double[] vdi, Double vdiNorm, File file) {
 		Double[] vdj = vdj(file);
@@ -185,7 +190,7 @@ public class Konzola {
 
 	private static double dot(Double[] vdi, Double[] vdj) {
 		double result = 0;
-		for(int i = 0; i < vocabulary.size(); i++) {
+		for(int i = 0; i < vdi.length; i++) {
 			result += vdi[i] * vdj[i];
 		}
 		return result;
@@ -225,6 +230,7 @@ public class Konzola {
 	private static double idf(String word) {
 		return Math.log10(numberOfFiles/wordFrequency.get(word));
 	}
+	
 	// getStringFromFile(document.getPath().toString()).trim()
 	private static int tf(String word, String documentText) {
 		try {
@@ -238,41 +244,6 @@ public class Konzola {
 
 	private static boolean inVocabulary(String word) {
 		return vocabulary.contains(word);
-	}
-	
-	private static Map<String, Integer> initializeWordFrequency() {
-		Map<String, Integer> map = new HashMap<String, Integer>();
-		
-		for(String word:vocabulary) {
-			map.put(word.toLowerCase(), 0);
-		}
-		
-		String projectPath = System.getProperty("user.dir");
-		File dir = new File(projectPath + "/src/main/resources/clanci");
-		String fileText;
-		
-		File[] filesInFolder = dir.listFiles(); // This returns all the folders and files in your path
-		int numberOfOccurrances = 0;
-	    for (File file : filesInFolder) { //For each of the entries do:
-	        if (!file.isDirectory()) { //check that it's not a dir
-	        	for(String word:vocabulary) {
-	        		numberOfOccurrances = map.get(word);
-		        	try {
-						fileText = readFile(file.getPath().toString()).trim();
-						if(containsWord(word.toLowerCase(), fileText.toLowerCase())) {
-							numberOfOccurrances++;
-						}
-						map.put(word, numberOfOccurrances);
-					} catch (Exception e) {
-						System.out.println("Can't read file.");
-						System.out.println("Given path: " +
-						file.getPath().toString());
-						e.printStackTrace();
-					}
-	        	}
-	        }
-	    }
-	    return map;
 	}
 	
 	private static boolean containsWord(String word, String fileText) {
@@ -298,7 +269,7 @@ public class Konzola {
 		return count;
 	}
 	
-	private static Set<String> makeVocabulary() {
+	private static Set<String> makeVocabularyAndInitializeWordFrequency() {
 		Set<String> vocabulary = new HashSet<String>();
 		// .../hw17-0036480046-1
 		String projectPath = System.getProperty("user.dir");
@@ -306,7 +277,7 @@ public class Konzola {
         
 		String fileText;
 		File[] filesInFolder = dir.listFiles(); // This returns all the folders and files in your path
-
+		int helpCount;
 		numberOfFiles = filesInFolder.length;
 		for (File file : filesInFolder) { //For each of the entries do:
 	        if (!file.isDirectory()) { //check that it's not a dir
@@ -318,11 +289,19 @@ public class Konzola {
 					
 					lineArray = fileText.split("\\P{L}+");
 					for(String element : lineArray) {
-						//element.replaceAll("A", "-");
 						if(element.isEmpty() || element.isBlank() || stopWord(element)) {
 							continue;
 						}
 						//System.out.println(element);
+						
+						// if element is not added in map
+						if(wordFrequency.get(element) == null) {
+							wordFrequency.put(element, 1);
+						} else {
+							helpCount = wordFrequency.get(element);
+							wordFrequency.put(element, helpCount+1);
+						}
+						
 						vocabulary.add(element);
 					}
 					

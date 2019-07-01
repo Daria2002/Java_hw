@@ -16,21 +16,39 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 
+/**
+ * This class represents console for searching text files.
+ * @author Daria Matković
+ *
+ */
 public class Konzola {
-
+	/** query command name **/
 	private static final String QUERY_COMMAND = "query";
+	/** type command name **/
 	private static final String TYPE_COMMAND = "type";
+	/** exit command name **/
 	private static final String EXIT_COMMAND = "exit";
+	/** results command name **/
 	private static final String RESULTS_COMMAND = "results";
+	/** stopWords **/
 	private static String[] stopWords = null;
+	/** vocabulary **/
 	static Set<String> vocabulary = new HashSet<String>();
+	/** number od files **/
 	private static int numberOfFiles = 0;
+	/** best results **/
 	private static List<String> bestResults = null;
+	/** indexes of files with best results **/
 	static int[] bestResultsIndexes = null;
+	/** idf vector where key is word and value idf **/
 	private static Map<String, Double> idfVector = new HashMap<String, Double>();
+	/** word frequency in files **/
 	private static Map<String, Integer> wordFrequency = new HashMap<String, Integer>();
 	
-	
+	/**
+	 * This method is run when program is executed.
+	 * @param args takes no arguments
+	 */
 	public static void main(String[] args) {
 		String projectPath = System.getProperty("user.dir");
 		File fileWithStopWords = new File(projectPath + "/src/main/resources/hrvatski_stoprijeci.txt");
@@ -66,6 +84,10 @@ public class Konzola {
 		}
 	}
 	
+	/**
+	 * This method executes type command. It prints text from result file with given index
+	 * @param resultIndex index of result file to print 
+	 */
 	private static void type(int resultIndex) {
 		String projectPath = System.getProperty("user.dir");
 		File dir = new File(projectPath + "/src/main/resources/clanci");
@@ -79,6 +101,10 @@ public class Konzola {
 		}
 	}
 
+	/**
+	 * This method executes results command. It prints results, but only if command 
+	 * query was executed
+	 */
 	private static void results() {
 		if(bestResults != null) {
 			for(int i = 0; i < bestResults.size(); i++) {
@@ -89,6 +115,10 @@ public class Konzola {
 		System.out.println("Prije naredbe results nije pozvana naredba query");
 	}
 
+	/**
+	 * This method executes command query.
+	 * @param queryWords query words
+	 */
 	private static void query(String[] queryWords) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Query is: [");
@@ -113,13 +143,18 @@ public class Konzola {
 		}
 	}
 	
+	/**
+	 * This method gets best results for given query words.
+	 * @param queryWords query words
+	 * @return list of best results
+	 */
 	private static List<String> getBestResults(String[] queryWords) {
 		List<String> bestResults = new ArrayList<String>();
 		String projectPath = System.getProperty("user.dir");
 		File dir = new File(projectPath + "/src/main/resources/clanci");
 		
 		File[] filesInFolder = dir.listFiles();
-		Double[] vdi = calculateVQuery(Arrays.toString(queryWords).toLowerCase());
+		Double[] vdi = calculateTfidf(Arrays.toString(queryWords).toLowerCase());
 		
 		Double sim[] = new Double[filesInFolder.length];
 		int i = 0;
@@ -138,6 +173,12 @@ public class Konzola {
 		return bestResults;
 	}
 	
+	/**
+	 * This method gets int array that contains indexes with highest values in given array
+	 * @param array array that contains sim values for all words in dictionary
+	 * @param k number of highest elements, size of int array
+	 * @return int array containing indexes of maximum values in array
+	 */
 	public static int[] maxKIndex(Double[] array, int k) {
 		Double[] copyArray = Arrays.copyOf(array, array.length);
 		Arrays.sort(copyArray, Collections.reverseOrder());
@@ -164,16 +205,28 @@ public class Konzola {
 		return indexes;
 	}
 	
+	/**
+	 * This method calculates sim for given vdi and calculated vdj
+	 * @param vdi vdi calculated from given query
+	 * @param file file used for vdj calculation
+	 * @return calculated sim
+	 */
 	private static double calculateSim(Double[] vdi, File file) {
 		Double[] vdj = null;
 		try {
-			vdj = calculateVQuery(readFile(file.getPath().toString()).toLowerCase());
+			vdj = calculateTfidf(readFile(file.getPath().toString()).toLowerCase());
 		} catch (IOException e) {
 			System.out.println("error calculating vdj");
 		}
 		return (dot(vdi,vdj))/(norm(vdi)*norm(vdj));
 	}
 
+	/**
+	 * This method calculates dot product for given arrays
+	 * @param vdi first array
+	 * @param vdj second array
+	 * @return dot product of given arrays
+	 */
 	private static double dot(Double[] vdi, Double[] vdj) {
 		double result = 0;
 		for(int i = 0; i < vdi.length; i++) {
@@ -182,15 +235,25 @@ public class Konzola {
 		return result;
 	}
 
-	private static Double norm(Double[] vQuery) {
+	/**
+	 * Norm of given array
+	 * @param array array to normalize
+	 * @return norm of given array
+	 */
+	private static Double norm(Double[] array) {
 		double norm = 0;
-		for(int i = 0; i < vQuery.length; i++) {
-			norm += Math.pow(vQuery[i], 2);
+		for(int i = 0; i < array.length; i++) {
+			norm += Math.pow(array[i], 2);
 		}
 		return Math.sqrt(norm);
 	}
 
-	private static Double[] calculateVQuery(String wordsToAnalyse) {
+	/**
+	 * This method calculates tfidf array for given string and all words in vocabulary
+	 * @param wordsToAnalyse string to calculate tfidf for
+	 * @return double array containing tfidf values
+	 */
+	private static Double[] calculateTfidf(String wordsToAnalyse) {
 		Double[] tfidf = new Double[vocabulary.size()];
 		int i = 0;
 		for(String word : vocabulary) {
@@ -199,6 +262,10 @@ public class Konzola {
 		return tfidf;
 	}
 
+	/**
+	 * This method calculates idf vector for words in vocabulary
+	 * @return idf vector
+	 */
 	private static Map<String, Double> idfVector() {
 		Map<String, Double> map = new HashMap<String, Double>();
 		for(String word : vocabulary) {
@@ -207,6 +274,12 @@ public class Konzola {
 		return map;
 	}
 	
+	/**
+	 * This method calculates number word occurrences in text
+	 * @param word word
+	 * @param txt text
+	 * @return number of occurrences
+	 */
 	private static int countOccurrences(String word, String txt) {
 		int M = word.length();         
         int N = txt.length();         
@@ -229,6 +302,10 @@ public class Konzola {
         return res;         
 	}
 	
+	/**
+	 * This method makes vocabulary and initialize word frequency
+	 * @return returns vocabulary
+	 */
 	private static Set<String> makeVocabularyAndInitializeWordFrequency() {
 		Set<String> vocabulary = new HashSet<String>();
 		// .../hw17-0036480046-1
@@ -253,7 +330,7 @@ public class Konzola {
 					
 					lineArray = fileText.split("\\P{L}+");
 					for(String element : lineArray) {
-						if(element.isEmpty() || element.isBlank() || stopWord(element)) {
+						if(element.isEmpty() || element.isBlank() || isStopWord(element)) {
 							continue;
 						}
 						//System.out.println(element);
@@ -287,7 +364,14 @@ public class Konzola {
 		return vocabulary;
 	}
 
-	private static boolean stopWord(String string) throws FileNotFoundException, IOException {
+	/**
+	 * This method checks if given string is stop word
+	 * @param string string to check
+	 * @return true if given string is stop word, otherwise false
+	 * @throws FileNotFoundException exception
+	 * @throws IOException exception
+	 */
+	private static boolean isStopWord(String string) throws FileNotFoundException, IOException {
 		for(int i = 0; i < stopWords.length; i++) {
 			if(string.equals(stopWords[i].toLowerCase())) {
 				return true;
@@ -297,11 +381,24 @@ public class Konzola {
 		return false;
 	}
 
+	/**
+	 * Gets stop words 
+	 * @param fileWithStopWords file with stop words
+	 * @return string array with stop words
+	 * @throws FileNotFoundException exception
+	 * @throws IOException exception
+	 */
 	private static String[] getStopWords(File fileWithStopWords) 
 			throws FileNotFoundException, IOException {
 		return readFile(fileWithStopWords.getPath().toString()).split("\n");
 	}
 
+	/**
+	 * This method reads file with given path to string
+	 * @param path file path
+	 * @return string with file content
+	 * @throws IOException exception
+	 */
 	static String readFile(String path) throws IOException {
 	  return new String(Files.readAllBytes(Paths.get(path)), StandardCharsets.UTF_8);
 	}

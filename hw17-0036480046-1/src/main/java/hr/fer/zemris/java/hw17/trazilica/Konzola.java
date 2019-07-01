@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
-import java.util.TreeSet;
 
 public class Konzola {
 
@@ -95,12 +94,8 @@ public class Konzola {
 		sb.append("Query is: [");
 		int counter = 0;
 		
-//		for(String val : vocabulary) {
-//			System.out.println(val);
-//		}
-		
 		for(int i = 0; i < queryWords.length; i++) {
-			if(inVocabulary(queryWords[i])) {
+			if(vocabulary.contains(queryWords[i])) {
 				if(counter != 0) {
 					sb.append(", ");
 				}
@@ -124,7 +119,7 @@ public class Konzola {
 		File dir = new File(projectPath + "/src/main/resources/clanci");
 		
 		File[] filesInFolder = dir.listFiles();
-		Double[] vdi = calculateVQuery(Arrays.toString(queryWords));
+		Double[] vdi = calculateVQuery(Arrays.toString(queryWords).toLowerCase());
 		
 		Double sim[] = new Double[filesInFolder.length];
 		int i = 0;
@@ -134,7 +129,8 @@ public class Konzola {
 		
 		bestResultsIndexes = maxKIndex(sim, 10);
 		i = -1;
-		while(i < 9 && sim[bestResultsIndexes[++i]] != 0) {
+		while(i < 9 && bestResultsIndexes[i+1] != -1 &&
+				sim[bestResultsIndexes[++i]] != 0) {
 			bestResults.add("[ " + i + "] (" + sim[bestResultsIndexes[i]] + ") " + 
 		filesInFolder[bestResultsIndexes[i]].getPath());
 		}
@@ -153,9 +149,13 @@ public class Konzola {
 		
 		int[] indexes = new int[k];
 		int index = 0;
-		for(int i = 0; i < array.length; i++) {
-			for(int j = 0; j < biggestValues.length; j++) {
-				if(Math.abs(biggestValues[j]-array[i]) < 0.000000001) {
+		
+		for(int j = 0; j < biggestValues.length; j++) {
+			for(int i = 0; i < array.length; i++) {
+				if(Double.isNaN(biggestValues[j])) {
+					indexes[index++] = -1;
+					break;
+				} else if(Math.abs(biggestValues[j]-array[i]) < 0.000000001) {
 					indexes[index++] = i;
 					break;
 				}
@@ -171,9 +171,7 @@ public class Konzola {
 		} catch (IOException e) {
 			System.out.println("error calculating vdj");
 		}
-		
-		Double sim = (dot(vdi,vdj))/(norm(vdi)*norm(vdj));
-		return sim;
+		return (dot(vdi,vdj))/(norm(vdi)*norm(vdj));
 	}
 
 	private static double dot(Double[] vdi, Double[] vdj) {
@@ -196,7 +194,7 @@ public class Konzola {
 		Double[] tfidf = new Double[vocabulary.size()];
 		int i = 0;
 		for(String word : vocabulary) {
-			tfidf[i++] = tf(word, wordsToAnalyse) * idfVector.get(word);
+			tfidf[i++] = countOccurrences(word, wordsToAnalyse) * idfVector.get(word);
 		}
 		return tfidf;
 	}
@@ -209,21 +207,6 @@ public class Konzola {
 		return map;
 	}
 	
-	// getStringFromFile(document.getPath().toString()).trim()
-	private static int tf(String word, String documentText) {
-		try {
-			return countOccurrences(word, documentText);
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return 0;
-	}
-
-	private static boolean inVocabulary(String word) {
-		return vocabulary.contains(word);
-	}
-
 	private static int countOccurrences(String word, String txt) {
 		int M = word.length();         
         int N = txt.length();         
@@ -236,12 +219,12 @@ public class Konzola {
                     break; 
                 } 
             } 
-  
-            if (j == M) {                 
+            
+            if (j == M && !Character.isAlphabetic(txt.charAt(i+M))) {
                 res++;                 
                 j = 0;                 
             }             
-        }         
+        }      
         return res;         
 	}
 	

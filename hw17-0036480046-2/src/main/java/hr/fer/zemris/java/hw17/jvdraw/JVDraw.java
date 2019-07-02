@@ -3,29 +3,21 @@ package hr.fer.zemris.java.hw17.jvdraw;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
-import java.awt.GridLayout;
-import java.awt.LayoutManager;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.text.Collator;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.awt.Dimension;
+import java.awt.FontMetrics;
+import java.awt.Rectangle;
 
 import javax.swing.ButtonGroup;
+import javax.swing.GroupLayout;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.Timer;
 import javax.swing.WindowConstants;
-
-import com.sun.xml.bind.v2.schemagen.episode.Bindings;
 
 public class JVDraw extends JFrame {
 	
@@ -56,9 +48,28 @@ public class JVDraw extends JFrame {
 		JColorArea fgColorArea = new JColorArea(Color.RED);
 		JColorArea bgColorArea = new JColorArea(Color.YELLOW);
 		
+		fgColorArea.addColorChangeListener(new ColorChangeListener() {
+			
+			@Override
+			public void newColorSelected(IColorProvider source, Color oldColor, Color newColor) {
+				fgColorArea.setForeground(newColor);
+			}
+		});
+		
+		bgColorArea.addColorChangeListener(new ColorChangeListener() {
+			
+			@Override
+			public void newColorSelected(IColorProvider source, Color oldColor, Color newColor) {
+				bgColorArea.setForeground(newColor);
+			}
+		});
+		
 		JToggleButton lineButton = new JToggleButton("Line");
+		lineButton.setPreferredSize(new Dimension(100, 15));
 		JToggleButton circleButton = new JToggleButton("Circle");
+		circleButton.setPreferredSize(new Dimension(100, 15));
 		JToggleButton filledCircleButton = new JToggleButton("Filled circle");
+		filledCircleButton.setPreferredSize(new Dimension(100, 15));
 		
 		ButtonGroup bg = new ButtonGroup();
 		bg.add(lineButton);
@@ -66,6 +77,22 @@ public class JVDraw extends JFrame {
 		bg.add(filledCircleButton);
 		
 		ColorInfoLabel bottomColorInfo = new ColorInfoLabel(fgColorArea, bgColorArea);
+		
+		fgColorArea.addColorChangeListener(new ColorChangeListener() {
+			
+			@Override
+			public void newColorSelected(IColorProvider source, Color oldColor, Color newColor) {
+				bottomColorInfo.setText(makeInfoText(fgColorArea, bgColorArea));
+			}
+		});
+		
+		bgColorArea.addColorChangeListener(new ColorChangeListener() {
+			
+			@Override
+			public void newColorSelected(IColorProvider source, Color oldColor, Color newColor) {
+				bottomColorInfo.setText(makeInfoText(fgColorArea, bgColorArea));
+			}
+		});
 		
 		JToolBar tb = new JToolBar();
 		tb.setFloatable(true);
@@ -79,5 +106,14 @@ public class JVDraw extends JFrame {
 		cp.add(panel, BorderLayout.CENTER);
 		cp.add(bottomColorInfo, BorderLayout.PAGE_END);
 	}
+	
+	private String makeInfoText(JColorArea fgColorArea, JColorArea bgColorArea) {
+		return "Foreground color: (" +
+				fgColorArea.getCurrentColor().getRed() + ", " +
+				fgColorArea.getCurrentColor().getBlue() + ", " +
+				fgColorArea.getCurrentColor().getGreen() + "), background color: (" +
+				bgColorArea.getCurrentColor().getRed() + ", " +
+				bgColorArea.getCurrentColor().getGreen() + ", " +
+				bgColorArea.getCurrentColor().getBlue() + ").";
+	}
 }
-

@@ -22,10 +22,9 @@ public class JColorArea extends JComponent implements IColorProvider {
 	
 	public JColorArea(Color selectedColor) {
 		super();
-		
-		setBackground(selectedColor);
-		
 		this.selectedColor = selectedColor;
+		setForeground(selectedColor);
+		
 		this.addMouseListener(new MouseAdapter() {
 			
 			@Override
@@ -49,7 +48,7 @@ public class JColorArea extends JComponent implements IColorProvider {
 
 			private void callListeners() {
 				for(ColorChangeListener l:JColorArea.this.listeners) {
-					l.newColorSelected(JColorArea.this, oldColor, selectedColor);
+					l.newColorSelected(JColorArea.this, oldColor, JColorArea.this.selectedColor);
 				}
 			}
 		});

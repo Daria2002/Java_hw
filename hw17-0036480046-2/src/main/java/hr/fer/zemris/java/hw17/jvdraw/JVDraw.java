@@ -2,14 +2,27 @@ package hr.fer.zemris.java.hw17.jvdraw;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Rectangle;
+import java.awt.TextArea;
+import java.awt.TextField;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.beans.PropertyChangeListener;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.Box;
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -64,12 +77,12 @@ public class JVDraw extends JFrame {
 			}
 		});
 		
-		JToggleButton lineButton = new JToggleButton("Line");
-		lineButton.setPreferredSize(new Dimension(100, 15));
-		JToggleButton circleButton = new JToggleButton("Circle");
-		circleButton.setPreferredSize(new Dimension(100, 15));
-		JToggleButton filledCircleButton = new JToggleButton("Filled circle");
-		filledCircleButton.setPreferredSize(new Dimension(100, 15));
+		JToggleButton lineButton = new JToggleButton();
+		lineButton.add(new JLabel("Line"));
+		JToggleButton circleButton = new JToggleButton();
+		circleButton.add(new JLabel("Circle"));
+		JToggleButton filledCircleButton = new JToggleButton();
+		filledCircleButton.add(new JLabel("Filled circle"));
 		
 		ButtonGroup bg = new ButtonGroup();
 		bg.add(lineButton);
@@ -93,6 +106,11 @@ public class JVDraw extends JFrame {
 				bottomColorInfo.setText(makeInfoText(fgColorArea, bgColorArea));
 			}
 		});
+		
+		JMenuBar mb = new JMenuBar();
+		JMenu menu = new JMenu("File");
+		mb.add(menu);
+		setJMenuBar(mb);
 		
 		JToolBar tb = new JToolBar();
 		tb.setFloatable(true);

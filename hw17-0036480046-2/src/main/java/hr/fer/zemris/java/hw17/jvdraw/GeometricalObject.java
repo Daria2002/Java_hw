@@ -11,5 +11,8 @@ abstract class GeometricalObject {
 	public void removeGeometricalObjectListener(GeometricalObjectListener l) {
 		
 	}
+	
+	public abstract GeometricalObjectEditor createGeometricalObjectEditor();
+	
 // ...
 }

@@ -2,8 +2,10 @@ package hr.fer.zemris.java.hw17.jvdraw;
 
 public class FilledCircleEditor extends GeometricalObjectEditor {
 
+	FilledCircle fc;
+	
 	public FilledCircleEditor(FilledCircle filledCircle) {
-		// TODO Auto-generated constructor stub
+		fc = filledCircle;
 	}
 
 	@Override

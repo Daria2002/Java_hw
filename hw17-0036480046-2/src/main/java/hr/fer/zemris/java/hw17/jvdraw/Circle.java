@@ -40,8 +40,11 @@ public class Circle extends GeometricalObject {
 
 	@Override
 	public void accept(GeometricalObjectVisitor v) {
-		// TODO Auto-generated method stub
-		
+		v.visit(this);
 	}
 
+	@Override
+	public GeometricalObjectEditor createGeometricalObjectEditor() {
+		return new CircleEditor(this);
+	}
 }

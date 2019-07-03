@@ -47,4 +47,9 @@ public class Line extends GeometricalObject {
 	public Color getColor() {
 		return color;
 	}
+
+	@Override
+	public GeometricalObjectEditor createGeometricalObjectEditor() {
+		return new LineEditor(this);
+	}
 }

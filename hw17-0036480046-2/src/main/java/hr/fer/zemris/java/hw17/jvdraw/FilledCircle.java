@@ -28,8 +28,7 @@ public class FilledCircle extends GeometricalObject {
 	
 	@Override
 	public void accept(GeometricalObjectVisitor v) {
-		// TODO Auto-generated method stub
-		
+		v.visit(this);
 	}
 
 	public int getCenterX() {
@@ -52,6 +51,8 @@ public class FilledCircle extends GeometricalObject {
 		return fillColor;
 	}
 
-	
-	
+	@Override
+	public GeometricalObjectEditor createGeometricalObjectEditor() {
+		return new FilledCircleEditor(this);
+	}
 }

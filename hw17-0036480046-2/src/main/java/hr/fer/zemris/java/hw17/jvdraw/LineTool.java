@@ -17,12 +17,13 @@ public class LineTool implements Tool {
 	Color color;
 	boolean startCoordinatesAdded = false;
 	boolean endCoordinatesAdded = false;
-	
+	DrawingModel dm;
 	JDrawingCanvas canvas;
 	
-	public LineTool(Color color, JDrawingCanvas c) {
-		this.color = color;
+	public LineTool(DrawingModel dm, IColorProvider colorProvider, JDrawingCanvas c) {
+		this.color = colorProvider.getCurrentColor();
 		this.canvas = c;
+		this.dm = dm;
 	}
 	
 	@Override
@@ -44,12 +45,15 @@ public class LineTool implements Tool {
 			y0 = e.getY();
 			startCoordinatesAdded = true;
 			endCoordinatesAdded = false;
-		} else {
-			x1 = e.getX();
-			y1 = e.getY();
-			endCoordinatesAdded = true;
-			startCoordinatesAdded = false;
+			return;
 		}
+		
+		x1 = e.getX();
+		y1 = e.getY();
+		dm.add(new Line(x0, y0, x1, y1, color));
+		
+		endCoordinatesAdded = true;
+		startCoordinatesAdded = false;
 	}
 
 	@Override
@@ -64,7 +68,6 @@ public class LineTool implements Tool {
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override

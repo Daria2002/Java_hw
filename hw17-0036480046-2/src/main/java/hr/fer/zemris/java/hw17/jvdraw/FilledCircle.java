@@ -11,8 +11,6 @@ public class FilledCircle extends GeometricalObject {
 	Color outlineColor;
 	Color fillColor;
 	
-	
-	
 	public FilledCircle(int centerX, int centerY, int radius, Color outlineColor, Color fillColor) {
 		super();
 		this.centerX = centerX;

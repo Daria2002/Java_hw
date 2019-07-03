@@ -5,10 +5,10 @@ import java.awt.Color;
 public class Circle extends GeometricalObject {
 
 	private static final String NAME = "CIRCLE";
-	int centerX;
-	int centerY;
-	int radius;
-	Color color;
+	private int centerX;
+	private int centerY;
+	private int radius;
+	private Color color;
 	
 	public Circle(int centerX, int centerY, int radius, Color color) {
 		super();
@@ -18,6 +18,32 @@ public class Circle extends GeometricalObject {
 		this.color = color;
 	}
 	
+	
+	
+	public void setCenterX(int centerX) {
+		this.centerX = centerX;
+	}
+
+
+
+	public void setCenterY(int centerY) {
+		this.centerY = centerY;
+	}
+
+
+
+	public void setRadius(int radius) {
+		this.radius = radius;
+	}
+
+
+
+	public void setColor(Color color) {
+		this.color = color;
+	}
+
+
+
 	public int getCenterX() {
 		return centerX;
 	}

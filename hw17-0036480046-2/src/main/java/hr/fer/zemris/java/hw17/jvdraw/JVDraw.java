@@ -3,9 +3,13 @@ package hr.fer.zemris.java.hw17.jvdraw;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.beans.PropertyChangeListener;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -13,6 +17,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -20,11 +25,13 @@ import javax.swing.ButtonGroup;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.ListModel;
@@ -34,6 +41,9 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 
 public class JVDraw extends JFrame {
+	
+	private Tool selectedTool;
+	private MyDrawingModel mdm = new MyDrawingModel();
 	
 	/**
      * Constructor that is used for initializing window size, location and title
@@ -57,7 +67,6 @@ public class JVDraw extends JFrame {
 	private void initGUI() {
 		Container cp = getContentPane();
 		cp.setLayout(new BorderLayout());
-		JPanel panel = new JPanel(new BorderLayout());
 		
 		JColorArea fgColorArea = new JColorArea(Color.RED);
 		JColorArea bgColorArea = new JColorArea(Color.YELLOW);
@@ -131,9 +140,68 @@ public class JVDraw extends JFrame {
 		tb.add(circleButton);
 		tb.add(filledCircleButton);
 		
+
+		JPanel panel = new JPanel(new BorderLayout());
+		
+		JDrawingCanvas jDrawingCanvas = new JDrawingCanvas(new Supplier<Tool>() {
+			
+			@Override
+			public Tool get() {
+				return selectedTool;
+			}
+		});
+		
+		panel.add(jDrawingCanvas, BorderLayout.WEST);
+		
+		DrawingObjectListModel dolm = new DrawingObjectListModel(mdm);
+		JList<GeometricalObject> jList = new JList<GeometricalObject>(dolm);
+		
+		jList.addMouseListener(new MouseAdapter() {
+			
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				int numberOfClicks = e.getClickCount();
+				if(numberOfClicks == 2) {
+					GeometricalObject go = jList.getSelectedValue();
+					GeometricalObjectEditor goe = go.createGeometricalObjectEditor();
+					
+					editing(goe);
+				}
+			}
+		});
+		
+		JScrollPane jsp = new JScrollPane(jList);
+		
+		panel.add(jsp, BorderLayout.EAST);
+		
 		cp.add(tb, BorderLayout.PAGE_START);
+		
 		//cp.add(panel, BorderLayout.CENTER);
 		cp.add(bottomColorInfo, BorderLayout.PAGE_END);
+	}
+	
+	
+	private void editing(GeometricalObjectEditor goe) {
+
+		int result = JOptionPane.showConfirmDialog(JVDraw.this, goe,
+				"Edit", JOptionPane.OK_CANCEL_OPTION);
+		
+		if(result == JOptionPane.OK_OPTION) {
+			try {
+				goe.checkEditing();
+				try {
+					goe.acceptEditing();
+				} catch (Exception e2) {
+					JOptionPane.showMessageDialog(goe, e2.getMessage(), 
+							"accept failed", JOptionPane.ERROR_MESSAGE);
+				}
+			} catch (Exception e2) {
+				JOptionPane.showMessageDialog(goe, e2.getMessage(),
+						"wrong parameters", JOptionPane.ERROR_MESSAGE);
+				editing(goe);
+			}
+		
+		}
 	}
 	
 	private String makeInfoText(JColorArea fgColorArea, JColorArea bgColorArea) {

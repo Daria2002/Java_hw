@@ -9,26 +9,36 @@ import java.awt.Graphics2D;
  */
 public class GeometricalObjectPainter implements GeometricalObjectVisitor {
 
+	Graphics2D g2d;
+	
 	public GeometricalObjectPainter(Graphics2D g2d) {
-		// TODO Auto-generated constructor stub
+		this.g2d = g2d;
 	}
 
 	@Override
 	public void visit(Line line) {
-		// TODO Auto-generated method stub
-		
+		g2d.setColor(line.getColor());
+		g2d.drawLine(line.getX0(), line.getY0(), line.getX1(), line.getY1());
 	}
 
 	@Override
 	public void visit(Circle circle) {
-		// TODO Auto-generated method stub
-		
+		g2d.setColor(circle.getColor());
+		g2d.drawOval(circle.centerX-circle.radius/2, 
+				circle.centerY-circle.radius/2,
+				circle.radius, circle.radius);
 	}
 
 	@Override
 	public void visit(FilledCircle filledCircle) {
-		// TODO Auto-generated method stub
+		g2d.setColor(filledCircle.getFillColor());
+		g2d.fillOval(filledCircle.centerX-filledCircle.radius/2, 
+				filledCircle.centerY-filledCircle.radius/2,
+				filledCircle.radius, filledCircle.radius);
 		
+		g2d.setColor(filledCircle.getOutlineColor());
+		g2d.drawOval(filledCircle.centerX-filledCircle.radius/2, 
+				filledCircle.centerY-filledCircle.radius/2,
+				filledCircle.radius, filledCircle.radius);
 	}
-	
 }

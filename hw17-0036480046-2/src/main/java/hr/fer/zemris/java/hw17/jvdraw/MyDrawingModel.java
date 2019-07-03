@@ -9,7 +9,6 @@ public class MyDrawingModel implements DrawingModel {
 	List<DrawingModelListener> listeners = new ArrayList<DrawingModelListener>();
 	Boolean modificationFlag = false;
 	
-	
 	@Override
 	public void removeDrawingModelListener(DrawingModelListener l) {
 		listeners.remove(l);
@@ -18,7 +17,11 @@ public class MyDrawingModel implements DrawingModel {
 	@Override
 	public void remove(GeometricalObject object) {
 		modificationFlag = true;
+		int index = objects.indexOf(object);
 		objects.remove(object);
+		for(DrawingModelListener l:listeners) {
+			l.objectsRemoved(this, index, -1);
+		}
 	}
 	
 	@Override
@@ -33,8 +36,7 @@ public class MyDrawingModel implements DrawingModel {
 	
 	@Override
 	public int getSize() {
-		// TODO Auto-generated method stub
-		return 0;
+		return objects.size();
 	}
 	
 	@Override
@@ -55,8 +57,13 @@ public class MyDrawingModel implements DrawingModel {
 	
 	@Override
 	public void changeOrder(GeometricalObject object, int offset) {
-		// TODO Auto-generated method stub
-		
+		int objectIndex = objects.indexOf(object);
+		int newIndex = objectIndex + offset;
+		objects.remove(object);
+		objects.add(newIndex, object);
+		for(DrawingModelListener l:listeners) {
+			l.objectsChanged(this, objectIndex, newIndex);
+		}
 	}
 	
 	@Override
@@ -68,6 +75,9 @@ public class MyDrawingModel implements DrawingModel {
 	public void add(GeometricalObject object) {
 		modificationFlag = true;
 		objects.add(object);
+		for(DrawingModelListener l:listeners) {
+			l.objectsAdded(this, -1, objects.size()-1);
+		}
 	}
 	
 }

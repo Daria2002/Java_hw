@@ -7,8 +7,8 @@ public class SaveVisitor implements GeometricalObjectVisitor {
 
 	List<String> fileText = new ArrayList<String>();
 	
-	public List<String> getFileText() {
-		return fileText;
+	public String getFileText() {
+		return String.join("\n", fileText);
 	}
 
 	@Override

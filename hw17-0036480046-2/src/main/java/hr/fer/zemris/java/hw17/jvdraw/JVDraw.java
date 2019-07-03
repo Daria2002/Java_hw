@@ -5,21 +5,33 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.beans.PropertyChangeListener;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.ButtonGroup;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.ListModel;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
 
 public class JVDraw extends JFrame {
 	
@@ -96,20 +108,13 @@ public class JVDraw extends JFrame {
 			}
 		});
 		
+		
+		
 		JMenuBar menubar = new JMenuBar();
         setJMenuBar(menubar);
 		JMenu fileMenu = new JMenu("File");
         menubar.add(fileMenu);
         JMenuItem openMI = fileMenu.add(new JMenuItem("Open"));
-        openMI.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-		});
-        
         fileMenu.addSeparator();
         JMenuItem saveMI = fileMenu.add(new JMenuItem("Save"));
         JMenuItem saveAsMI = fileMenu.add(new JMenuItem("Save As ..."));

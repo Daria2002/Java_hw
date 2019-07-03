@@ -2,25 +2,13 @@ package hr.fer.zemris.java.hw17.jvdraw;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.FontMetrics;
-import java.awt.Rectangle;
-import java.awt.TextArea;
-import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.List;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.Box;
 import javax.swing.ButtonGroup;
-import javax.swing.GroupLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -29,6 +17,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
+import javax.swing.ListModel;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
@@ -107,11 +96,28 @@ public class JVDraw extends JFrame {
 			}
 		});
 		
-		JMenuBar mb = new JMenuBar();
-		JMenu menu = new JMenu("File");
-		mb.add(menu);
-		setJMenuBar(mb);
-		
+		JMenuBar menubar = new JMenuBar();
+        setJMenuBar(menubar);
+		JMenu fileMenu = new JMenu("File");
+        menubar.add(fileMenu);
+        JMenuItem openMI = fileMenu.add(new JMenuItem("Open"));
+        openMI.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+        
+        fileMenu.addSeparator();
+        JMenuItem saveMI = fileMenu.add(new JMenuItem("Save"));
+        JMenuItem saveAsMI = fileMenu.add(new JMenuItem("Save As ..."));
+        fileMenu.addSeparator();
+        JMenuItem exportMI = fileMenu.add(new JMenuItem("Export"));
+        fileMenu.addSeparator();
+        JMenuItem exitMI = fileMenu.add(new JMenuItem("Exit"));
+        
 		JToolBar tb = new JToolBar();
 		tb.setFloatable(true);
 		tb.add(fgColorArea);
@@ -121,7 +127,7 @@ public class JVDraw extends JFrame {
 		tb.add(filledCircleButton);
 		
 		cp.add(tb, BorderLayout.PAGE_START);
-		cp.add(panel, BorderLayout.CENTER);
+		//cp.add(panel, BorderLayout.CENTER);
 		cp.add(bottomColorInfo, BorderLayout.PAGE_END);
 	}
 	

@@ -28,9 +28,9 @@ public class SaveVisitor implements GeometricalObjectVisitor {
 	public void visit(Circle circle) {
 		fileText.add(
 			circle.getName() + " " +
-			circle.centerX + " " +
-			circle.centerY + " " +
-			circle.radius + " " +
+			circle.getCenterX() + " " +
+			circle.getCenterY() + " " +
+			circle.getRadius() + " " +
 			circle.getColor().getRed() + " " +
 			circle.getColor().getGreen() + " " +
 			circle.getColor().getBlue());

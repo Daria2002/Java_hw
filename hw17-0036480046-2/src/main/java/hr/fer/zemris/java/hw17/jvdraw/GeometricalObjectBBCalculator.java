@@ -43,15 +43,15 @@ public class GeometricalObjectBBCalculator implements GeometricalObjectVisitor {
 
 	@Override
 	public void visit(Line line) {
-		isMinMax(line.x0, line.y0, line.x1, line.y1);
+		isMinMax(line.getX0(), line.getY0(), line.getX1(), line.getY1());
 	}
 
 	@Override
 	public void visit(Circle circle) {
-		isMinMax(circle.centerX-circle.radius,
-				circle.centerY-circle.radius,
-				circle.centerX+circle.radius,
-				circle.centerY+circle.radius);
+		isMinMax(circle.getCenterX()-circle.getRadius(),
+				circle.getCenterY()-circle.getRadius(),
+				circle.getCenterX()+circle.getRadius(),
+				circle.getCenterY()+circle.getRadius());
 	}
 	
 	@Override

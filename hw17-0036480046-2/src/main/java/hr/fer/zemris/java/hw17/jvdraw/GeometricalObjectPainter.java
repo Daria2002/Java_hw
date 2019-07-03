@@ -24,9 +24,9 @@ public class GeometricalObjectPainter implements GeometricalObjectVisitor {
 	@Override
 	public void visit(Circle circle) {
 		g2d.setColor(circle.getColor());
-		g2d.drawOval(circle.centerX-circle.radius/2, 
-				circle.centerY-circle.radius/2,
-				circle.radius, circle.radius);
+		g2d.drawOval(circle.getCenterX()-circle.getRadius()/2, 
+				circle.getCenterY()-circle.getRadius()/2,
+				circle.getRadius(), circle.getRadius());
 	}
 
 	@Override

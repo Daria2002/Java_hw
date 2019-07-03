@@ -45,6 +45,7 @@ public class JVDraw extends JFrame {
 	private Tool selectedTool;
 	private MyDrawingModel mdm = new MyDrawingModel();
 	
+	
 	/**
      * Constructor that is used for initializing window size, location and title
      */
@@ -149,7 +150,9 @@ public class JVDraw extends JFrame {
 			public Tool get() {
 				return selectedTool;
 			}
-		});
+		}, mdm);
+		
+		mdm.addDrawingModelListener(jDrawingCanvas);
 		
 		panel.add(jDrawingCanvas, BorderLayout.WEST);
 		
@@ -174,9 +177,9 @@ public class JVDraw extends JFrame {
 		
 		panel.add(jsp, BorderLayout.EAST);
 		
+		cp.add(panel, BorderLayout.CENTER);
 		cp.add(tb, BorderLayout.PAGE_START);
 		
-		//cp.add(panel, BorderLayout.CENTER);
 		cp.add(bottomColorInfo, BorderLayout.PAGE_END);
 	}
 	

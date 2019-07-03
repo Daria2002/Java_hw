@@ -28,6 +28,26 @@ public class FilledCircle extends GeometricalObject {
 	public void accept(GeometricalObjectVisitor v) {
 		v.visit(this);
 	}
+	
+	public void setCenterX(int centerX) {
+		this.centerX = centerX;
+	}
+
+	public void setCenterY(int centerY) {
+		this.centerY = centerY;
+	}
+
+	public void setRadius(int radius) {
+		this.radius = radius;
+	}
+
+	public void setOutlineColor(Color outlineColor) {
+		this.outlineColor = outlineColor;
+	}
+
+	public void setFillColor(Color fillColor) {
+		this.fillColor = fillColor;
+	}
 
 	public int getCenterX() {
 		return centerX;

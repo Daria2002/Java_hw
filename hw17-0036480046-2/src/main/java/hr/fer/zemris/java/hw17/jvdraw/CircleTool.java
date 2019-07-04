@@ -47,7 +47,8 @@ public class CircleTool implements Tool {
 		radius = (int) Math.sqrt(Math.pow(Math.abs(xCenter-e.getX()), 2) +
 				Math.pow(Math.abs(yCenter-e.getY()), 2));
 		Color c = colorProvider.getCurrentColor();
-		dm.add(new Circle(xCenter, yCenter, radius, c));
+		Circle circle = new Circle(xCenter, yCenter, radius, c);
+		dm.add(circle);
 		
 		radiusAdded = true;
 		centerAdded = false;

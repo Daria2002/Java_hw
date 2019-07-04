@@ -12,6 +12,7 @@ public class JDrawingCanvas extends JComponent implements DrawingModelListener {
 
 	private Tool tool;
 	private DrawingModel dm;
+	private String textFile;
 	
 	public JDrawingCanvas(Supplier<Tool> supplierTool, DrawingModel dm) {
 		super();
@@ -28,12 +29,22 @@ public class JDrawingCanvas extends JComponent implements DrawingModelListener {
 		g2d.fillRect(0, 0, getWidth(), getHeight());
 		
 		GeometricalObjectVisitor v = new GeometricalObjectPainter(g2d);
+		SaveVisitor sv = new SaveVisitor();
+		
 		for(int i = 0; i < this.dm.getSize(); i++) {
-			dm.getObject(i).accept(v);;
+			dm.getObject(i).accept(v);
+			dm.getObject(i).accept(sv);
 		}
+		
+		textFile = sv.getFileText();
+		
 		if(tool != null) {
 			this.tool.paint(g2d);
 		}
+	}
+	
+	public String getTextFile() {
+		return textFile;
 	}
 	
 	@Override

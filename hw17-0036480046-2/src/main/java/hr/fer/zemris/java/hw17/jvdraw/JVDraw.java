@@ -296,6 +296,26 @@ public class JVDraw extends JFrame {
         JMenuItem exportMI = fileMenu.add(new JMenuItem("Export"));
         fileMenu.addSeparator();
         JMenuItem exitMI = fileMenu.add(new JMenuItem("Exit"));
+        exitMI.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(mdm.isModified()) {
+					int result = JOptionPane.showConfirmDialog(JVDraw.this,
+							"Do you want to save changes before exit?", 
+						      "question",      
+						      JOptionPane.YES_NO_CANCEL_OPTION, 
+						      JOptionPane.QUESTION_MESSAGE);
+					
+					if(result == JOptionPane.YES_OPTION) {
+						save();
+					} else if(result == JOptionPane.CANCEL_OPTION) {
+						return;
+					}
+				}
+				System.exit(0);
+			}
+		});
         
 		JToolBar tb = new JToolBar();
 		tb.setFloatable(true);
@@ -309,6 +329,10 @@ public class JVDraw extends JFrame {
 		cp.add(tb, BorderLayout.PAGE_START);
 		
 		cp.add(bottomColorInfo, BorderLayout.PAGE_END);
+	}
+	
+	private void save() {
+		System.out.println(jDrawingCanvas.getTextFile());
 	}
 	
 	@Override

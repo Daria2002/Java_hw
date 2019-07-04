@@ -1,7 +1,6 @@
 package hr.fer.zemris.java.hw17.jvdraw;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.ScrollPane;
 

@@ -1,12 +1,11 @@
 package hr.fer.zemris.java.hw17.jvdraw;
 
-import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
-import java.awt.geom.Line2D;
+import java.sql.Time;
 
-import org.apache.derby.tools.sysinfo;
+import org.apache.derby.client.am.DateTime;
 
 /**
  * This class represents tool for line
@@ -79,7 +78,6 @@ public class LineTool implements Tool {
 		if(startCoordinatesAdded) {
 			x1 = e.getX();
 			y1 = e.getY();
-			Color c = colorProvider.getCurrentColor();
 			this.paint((Graphics2D)canvas.getGraphics());
 
 		}

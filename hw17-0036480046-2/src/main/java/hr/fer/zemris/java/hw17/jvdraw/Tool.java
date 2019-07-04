@@ -1,6 +1,5 @@
 package hr.fer.zemris.java.hw17.jvdraw;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
 

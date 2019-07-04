@@ -4,8 +4,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.util.function.Supplier;
-
 import javax.swing.JComponent;
 
 public class JDrawingCanvas extends JComponent implements DrawingModelListener {
@@ -13,6 +13,7 @@ public class JDrawingCanvas extends JComponent implements DrawingModelListener {
 	private Tool tool;
 	private DrawingModel dm;
 	private String textFile;
+	private Rectangle boundingBox;
 	
 	public JDrawingCanvas(Supplier<Tool> supplierTool, DrawingModel dm) {
 		super();
@@ -30,17 +31,24 @@ public class JDrawingCanvas extends JComponent implements DrawingModelListener {
 		
 		GeometricalObjectVisitor v = new GeometricalObjectPainter(g2d);
 		SaveVisitor sv = new SaveVisitor();
+		GeometricalObjectBBCalculator calc = new GeometricalObjectBBCalculator();
 		
 		for(int i = 0; i < this.dm.getSize(); i++) {
 			dm.getObject(i).accept(v);
 			dm.getObject(i).accept(sv);
+			dm.getObject(i).accept(calc);
 		}
 		
+		boundingBox = calc.getBoundingBox();
 		textFile = sv.getFileText();
 		
 		if(tool != null) {
 			this.tool.paint(g2d);
 		}
+	}
+	
+	public Rectangle getBoundingBox() {
+		return boundingBox;
 	}
 	
 	public String getTextFile() {

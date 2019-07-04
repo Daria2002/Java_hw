@@ -4,7 +4,9 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Graphics2D;
 import java.awt.GridLayout;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -14,6 +16,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -27,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
+import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ButtonGroup;
@@ -322,6 +326,36 @@ public class JVDraw extends JFrame {
         fileMenu.addSeparator();
         
         JMenuItem exportMI = fileMenu.add(new JMenuItem("Export"));
+        exportMI.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Rectangle box = jDrawingCanvas.getBoundingBox();
+				BufferedImage image = new BufferedImage(
+						box.width, box.height, BufferedImage.TYPE_3BYTE_BGR
+				);
+				
+				Graphics2D g = image.createGraphics();
+				g.translate(box.y, box.y);
+				
+				GeometricalObjectPainter gop = new GeometricalObjectPainter(g);
+				
+				for(int i = 0; i < JVDraw.this.mdm.getSize(); i++) {
+					if(mdm.getObject(i).getClass() == Line.class) {
+						gop.visit((Line)mdm.getObject(i));
+					} else if(mdm.getObject(i).getClass() == Circle.class) {
+						gop.visit((Circle)mdm.getObject(i));
+					} else if(mdm.getObject(i).getClass() == FilledCircle.class) {
+						gop.visit((FilledCircle)mdm.getObject(i));
+					} 
+				}
+				
+				g.dispose();
+				File file = ...;
+				ImageIO.write(image, “png”, file);
+				Tell-user-that-images-is-exported.
+			}
+		});
         
         fileMenu.addSeparator();
         
@@ -365,8 +399,6 @@ public class JVDraw extends JFrame {
 	}
 	
 	private boolean saveAs() {
-		System.out.println(jDrawingCanvas.getTextFile());
-		
 		JFileChooser fileChooser = new JFileChooser();
 		fileChooser.setDialogTitle("Specify a file to save");   
 		 

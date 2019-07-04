@@ -16,6 +16,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -56,6 +57,7 @@ public class JVDraw extends JFrame {
 	private Tool circleTool;
 	private Tool filledCircleTool;
 	private JDrawingCanvas jDrawingCanvas;
+	private File fileToSave = null;
 	
 	/**
      * Constructor that is used for initializing window size, location and title
@@ -292,12 +294,37 @@ public class JVDraw extends JFrame {
 		JMenu fileMenu = new JMenu("File");
         menubar.add(fileMenu);
         JMenuItem openMI = fileMenu.add(new JMenuItem("Open"));
+        
         fileMenu.addSeparator();
+        
         JMenuItem saveMI = fileMenu.add(new JMenuItem("Save"));
+        saveMI.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					save(fileToSave);
+				} catch (Exception e2) {
+					saveAs();
+				}
+			}
+		});
+        
         JMenuItem saveAsMI = fileMenu.add(new JMenuItem("Save As ..."));
+        saveAsMI.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				saveAs();
+			}
+		});
+        
         fileMenu.addSeparator();
+        
         JMenuItem exportMI = fileMenu.add(new JMenuItem("Export"));
+        
         fileMenu.addSeparator();
+        
         JMenuItem exitMI = fileMenu.add(new JMenuItem("Exit"));
         exitMI.addActionListener(new ActionListener() {
 			
@@ -311,7 +338,7 @@ public class JVDraw extends JFrame {
 						      JOptionPane.QUESTION_MESSAGE);
 					
 					if(result == JOptionPane.YES_OPTION) {
-						if(save()) {
+						if(saveAs()) {
 							System.exit(0);
 						}
 						return;
@@ -337,7 +364,7 @@ public class JVDraw extends JFrame {
 		cp.add(bottomColorInfo, BorderLayout.PAGE_END);
 	}
 	
-	private boolean save() {
+	private boolean saveAs() {
 		System.out.println(jDrawingCanvas.getTextFile());
 		
 		JFileChooser fileChooser = new JFileChooser();
@@ -350,7 +377,7 @@ public class JVDraw extends JFrame {
 		}
 		
 		if (userSelection == JFileChooser.APPROVE_OPTION) {
-		    File fileToSave = fileChooser.getSelectedFile();
+		    fileToSave = fileChooser.getSelectedFile();
 		    
 		    String filePath = fileToSave.getAbsolutePath();
 		    if(!isExtensionJVD(filePath)) {
@@ -362,22 +389,26 @@ public class JVDraw extends JFrame {
 		    	if(result == JOptionPane.CANCEL_OPTION) {
 		    		return false;
 		    	}
-		    	if(!save()) {
+		    	if(!saveAs()) {
 		    		return false;
 		    	}
 		    }
 		    
-		    try {
-			    FileOutputStream out = new FileOutputStream(fileToSave.getAbsolutePath());
-				out.write(jDrawingCanvas.getTextFile().getBytes(Charset.forName("UTF-8")));
-			    out.close();
-			    return true;
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		    save(fileToSave);
+		    return true;
 		}
 		return false;
+	}
+	
+	private void save(File fileToSave) {
+		FileOutputStream out;
+		try {
+			out = new FileOutputStream(fileToSave.getAbsolutePath());
+			out.write(jDrawingCanvas.getTextFile().getBytes(Charset.forName("UTF-8")));
+		    out.close();
+		} catch (Exception e) {
+			throw new IllegalArgumentException("Error occurred while saving");
+		}
 	}
 	
 	private boolean isExtensionJVD(String absolutePath) {

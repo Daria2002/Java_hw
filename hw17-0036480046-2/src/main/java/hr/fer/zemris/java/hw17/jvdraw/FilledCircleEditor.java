@@ -36,14 +36,19 @@ public class FilledCircleEditor extends GeometricalObjectEditor {
 		JPanel help3 = new JPanel(new GridLayout(1, 2));
 		
 		help1.add(new JLabel("Radius:"));
+		radius.setText(String.valueOf(filledCircle.getRadius()));
 		help1.add(radius);
 		help1.add(new JLabel("x center:"));
+		x.setText(String.valueOf(filledCircle.getCenterX()));
 		help1.add(x);
 		help1.add(new JLabel("y center:"));
+		y.setText(String.valueOf(filledCircle.getCenterY()));
 		help1.add(y);
 		help2.add(new JLabel("fill color:"));
+		fillColor.setColor(filledCircle.getFillColor());
 		help2.add(fillColor);
 		help3.add(new JLabel("outline color:"));
+		outlineColor.setColor(filledCircle.getOutlineColor());
 		help3.add(outlineColor);
 		
 		editingPanel.add(help1);

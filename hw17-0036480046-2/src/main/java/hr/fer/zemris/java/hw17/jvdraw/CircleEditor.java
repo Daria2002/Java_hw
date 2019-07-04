@@ -71,9 +71,9 @@ public class CircleEditor extends GeometricalObjectEditor {
 
 	@Override
 	public void acceptEditing() {
-		circle.setCenterX(newXCenter);
-		circle.setCenterY(newYCenter);
-		circle.setRadius(newRadius);
-		circle.setColor(newColor);
+		this.circle.setCenterX(newXCenter);
+		this.circle.setCenterY(newYCenter);
+		this.circle.setRadius(newRadius);
+		this.circle.setColor(newColor);
 	}
 }

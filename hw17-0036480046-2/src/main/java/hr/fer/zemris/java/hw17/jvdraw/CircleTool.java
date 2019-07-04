@@ -51,10 +51,12 @@ public class CircleTool implements Tool {
 		
 		radiusAdded = true;
 		centerAdded = false;
+		canvas.repaint();
 	}
 
 	@Override
 	public void mouseMoved(MouseEvent e) {
+		canvas.repaint();
 	}
 
 	@Override

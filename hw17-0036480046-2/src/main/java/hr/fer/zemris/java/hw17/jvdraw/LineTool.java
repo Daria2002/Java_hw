@@ -32,16 +32,26 @@ public class LineTool implements Tool {
 	
 	@Override
 	public void mousePressed(MouseEvent e) {
-		x1 = e.getX();
-		y1 = e.getY();
-		canvas.repaint();
+		if(startCoordinatesAdded) {
+			x1 = e.getX();
+			y1 = e.getY();
+			Color c = colorProvider.getCurrentColor();
+			this.paint((Graphics2D)canvas.getGraphics());
+			//dm.add(new Line(x0, y0, x1, y1, c));
+		}
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		canvas.repaint();
+		if(startCoordinatesAdded) {
+			x1 = e.getX();
+			y1 = e.getY();
+			Color c = colorProvider.getCurrentColor();
+			this.paint((Graphics2D)canvas.getGraphics());
+			//dm.add(new Line(x0, y0, x1, y1, c));
+		}
 	}
-
+	
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if(!startCoordinatesAdded) {
@@ -49,7 +59,7 @@ public class LineTool implements Tool {
 			y0 = e.getY();
 			startCoordinatesAdded = true;
 			endCoordinatesAdded = false;
-			canvas.repaint();
+			this.paint((Graphics2D)canvas.getGraphics());
 			return;
 		}
 		
@@ -57,27 +67,31 @@ public class LineTool implements Tool {
 		y1 = e.getY();
 		Color c = colorProvider.getCurrentColor();
 		dm.add(new Line(x0, y0, x1, y1, c));
-		
+
+		this.paint((Graphics2D)canvas.getGraphics());
 		endCoordinatesAdded = true;
 		startCoordinatesAdded = false;
-		canvas.repaint();
 	}
 
 	@Override
 	public void mouseMoved(MouseEvent e) {
-		x1 = e.getX();
-		y1 = e.getY();
-		Color c = colorProvider.getCurrentColor();
-		//dm.add(new Line(x0, y0, x1, y1, c));
-		canvas.repaint();
+		if(startCoordinatesAdded) {
+			x1 = e.getX();
+			y1 = e.getY();
+			Color c = colorProvider.getCurrentColor();
+			//dm.add(new Line(x0, y0, x1, y1, c));
+			this.paint((Graphics2D)canvas.getGraphics());
+		}
 	}
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		
 	}
 	
 	@Override
 	public void paint(Graphics2D g2d) {
+		canvas.repaint();
+		g2d.setColor(colorProvider.getCurrentColor());
+		g2d.drawLine(x0, y0, x1, y1);
 	}
 }

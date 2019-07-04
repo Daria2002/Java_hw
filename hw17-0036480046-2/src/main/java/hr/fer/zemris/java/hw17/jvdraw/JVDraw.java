@@ -7,7 +7,9 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -128,8 +130,6 @@ public class JVDraw extends JFrame {
 			}
 		});
 		
-		
-		
 		mdm.addDrawingModelListener(jDrawingCanvas);
 		
 		panel.add(jDrawingCanvas, BorderLayout.CENTER);
@@ -137,6 +137,60 @@ public class JVDraw extends JFrame {
 		
 		DrawingObjectListModel dolm = new DrawingObjectListModel(mdm);
 		JList<GeometricalObject> jList = new JList<GeometricalObject>(dolm);
+		
+		jList.addKeyListener(new KeyAdapter() {
+			
+			@Override
+	        public void keyPressed(KeyEvent ke) {
+				GeometricalObject selectedObject = jList.getSelectedValue();
+				
+				if(selectedObject != null) {
+					if(ke.getKeyCode() == KeyEvent.VK_DELETE) {
+		                mdm.remove(selectedObject);
+		                
+		            } else if(ke.getKeyCode() == KeyEvent.VK_PLUS) {
+		                selectedObject.accept(new GeometricalObjectVisitor() {
+							
+							@Override
+							public void visit(FilledCircle filledCircle) {
+								filledCircle.centerY--;
+							}
+							
+							@Override
+							public void visit(Circle circle) {
+								circle.setCenterY(circle.getCenterY()-1);
+							}
+							
+							@Override
+							public void visit(Line line) {
+								line.setY0(line.getY0()-1);
+								line.setY1(line.getY1()-1);
+							}
+						});
+		                
+		            }  else if(ke.getKeyCode() == KeyEvent.VK_MINUS) {
+		                selectedObject.accept(new GeometricalObjectVisitor() {
+							
+							@Override
+							public void visit(FilledCircle filledCircle) {
+								filledCircle.centerY++;
+							}
+							
+							@Override
+							public void visit(Circle circle) {
+								circle.setCenterY(circle.getCenterY()+1);
+							}
+							
+							@Override
+							public void visit(Line line) {
+								line.setY0(line.getY0()+1);
+								line.setY1(line.getY1()+1);
+							}
+						});
+		            }
+				}
+	        }
+		});
 		
 		jList.addMouseListener(new MouseAdapter() {
 			

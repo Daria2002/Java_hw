@@ -10,6 +10,7 @@ public class FilledCircle extends GeometricalObject {
 	int radius;
 	Color outlineColor;
 	Color fillColor;
+	private static int objectsCounter = 0;
 	
 	public FilledCircle(int centerX, int centerY, int radius, Color outlineColor, Color fillColor) {
 		super();
@@ -18,6 +19,7 @@ public class FilledCircle extends GeometricalObject {
 		this.radius = radius;
 		this.outlineColor = outlineColor;
 		this.fillColor = fillColor;
+		objectsCounter++;
 	}
 
 	public static String getName() {
@@ -72,5 +74,10 @@ public class FilledCircle extends GeometricalObject {
 	@Override
 	public GeometricalObjectEditor createGeometricalObjectEditor() {
 		return new FilledCircleEditor(this);
+	}
+	
+	@Override
+	public String toString() {
+		return "Filled circle " + objectsCounter;
 	}
 }

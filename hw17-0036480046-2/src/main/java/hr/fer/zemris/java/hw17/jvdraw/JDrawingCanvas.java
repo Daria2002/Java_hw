@@ -1,5 +1,7 @@
 package hr.fer.zemris.java.hw17.jvdraw;
 
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.function.Supplier;
@@ -12,6 +14,7 @@ public class JDrawingCanvas extends JComponent implements DrawingModelListener {
 	private DrawingModel dm;
 	
 	public JDrawingCanvas(Supplier<Tool> supplierTool, DrawingModel dm) {
+		super();
 		this.tool = supplierTool.get();
 		this.dm = dm;
 	}
@@ -20,6 +23,10 @@ public class JDrawingCanvas extends JComponent implements DrawingModelListener {
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		Graphics2D g2d = (Graphics2D) g;
+		
+		g2d.setColor(Color.WHITE);
+		g2d.fillRect(0, 0, getWidth(), getHeight());
+		
 		GeometricalObjectVisitor v = new GeometricalObjectPainter(g2d);
 		for(int i = 0; i < this.dm.getSize(); i++) {
 			dm.getObject(i).accept(v);;
@@ -28,7 +35,7 @@ public class JDrawingCanvas extends JComponent implements DrawingModelListener {
 			this.tool.paint(g2d);
 		}
 	}
-
+	
 	@Override
 	public void objectsAdded(DrawingModel source, int index0, int index1) {
 		repaint();

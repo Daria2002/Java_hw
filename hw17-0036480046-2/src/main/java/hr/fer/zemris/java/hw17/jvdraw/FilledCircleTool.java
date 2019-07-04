@@ -6,8 +6,8 @@ import java.awt.event.MouseEvent;
 
 public class FilledCircleTool implements Tool {
 
-	Color outlineColor;
-	Color fillCollor;
+	IColorProvider outlineColorProvider;
+	IColorProvider fillColorProvider;
 	DrawingModel dm;
 	JDrawingCanvas canvas;
 	
@@ -22,8 +22,8 @@ public class FilledCircleTool implements Tool {
 			IColorProvider outlineColorProvider,
 			JDrawingCanvas c, DrawingModel dm) {
 		this.canvas = c;
-		this.outlineColor = outlineColorProvider.getCurrentColor();
-		this.fillCollor = outlineColorProvider.getCurrentColor();
+		this.outlineColorProvider = outlineColorProvider;
+		this.fillColorProvider = outlineColorProvider;
 		this.dm = dm;
 	}
 	
@@ -50,8 +50,10 @@ public class FilledCircleTool implements Tool {
 		}
 		radius = (int) Math.sqrt(Math.pow(centerX-e.getX(), 2) + 
 				Math.pow(centerY-e.getY(), 2));
+		
 		centerAdded = false;
 		radiusAdded = true;
+		canvas.repaint();
 	}
 
 	@Override
@@ -59,9 +61,8 @@ public class FilledCircleTool implements Tool {
 		if(!radiusAdded && centerAdded) {
 			radius = (int) Math.sqrt(Math.pow(Math.abs(centerX-e.getX()), 2) +
 					Math.pow(Math.abs(centerY-e.getY()), 2));
-			
-			canvas.repaint();
 		}
+		canvas.repaint();
 	}
 
 	@Override
@@ -72,13 +73,13 @@ public class FilledCircleTool implements Tool {
 
 	@Override
 	public void paint(Graphics2D g2d) {
-		if(radiusAdded) {
-			g2d.setColor(fillCollor);
-			int d = radius*2;
-			g2d.fillOval(centerX, centerY, d, d);
-			g2d.setColor(outlineColor);
-			g2d.drawOval(centerX, centerY, d, d);
-			
-		}
+		g2d.setColor(fillColorProvider.getCurrentColor());
+		int d = radius*2;
+		System.out.println("centerx:"+centerX);
+		System.out.println("cy:"+centerY);
+		System.out.println("r:"+d);
+		g2d.fillOval(centerX, centerY, d, d);
+		g2d.setColor(outlineColorProvider.getCurrentColor());
+		g2d.drawOval(centerX, centerY, d, d);	
 	}
 }

@@ -10,6 +10,7 @@ public class Line extends GeometricalObject {
 	private int x1;
 	private int y1;
 	private Color color;
+	private static int objectCounter = 0;
 
 	public Line(int x0, int y0, int x1, int y1, Color color) {
 		this.x0 = x0;
@@ -17,6 +18,7 @@ public class Line extends GeometricalObject {
 		this.x1 = x1;
 		this.y1 = y1;
 		this.color = color;
+		objectCounter++;
 	}
 
 	public static String getName() {
@@ -71,5 +73,10 @@ public class Line extends GeometricalObject {
 	@Override
 	public GeometricalObjectEditor createGeometricalObjectEditor() {
 		return new LineEditor(this);
+	}
+	
+	@Override
+	public String toString() {
+		return "Line " + objectCounter;
 	}
 }

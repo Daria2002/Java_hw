@@ -10,6 +10,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.beans.PropertyChangeListener;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -22,6 +23,7 @@ import java.util.function.Supplier;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ButtonGroup;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -44,7 +46,10 @@ public class JVDraw extends JFrame {
 	
 	private Tool selectedTool;
 	private MyDrawingModel mdm = new MyDrawingModel();
-	
+	private Tool lineTool;
+	private Tool circleTool;
+	private Tool filledCircleTool;
+	private JDrawingCanvas jDrawingCanvas;
 	
 	/**
      * Constructor that is used for initializing window size, location and title
@@ -72,6 +77,83 @@ public class JVDraw extends JFrame {
 		JColorArea fgColorArea = new JColorArea(Color.RED);
 		JColorArea bgColorArea = new JColorArea(Color.YELLOW);
 		
+		JPanel panel = new JPanel(new BorderLayout());
+		
+		jDrawingCanvas = new JDrawingCanvas(new Supplier<Tool>() {
+			
+			@Override
+			public Tool get() {
+				return selectedTool;
+			}
+		}, mdm);
+		
+		jDrawingCanvas.addMouseMotionListener(new MouseMotionListener() {
+			
+			@Override
+			public void mouseMoved(MouseEvent e) {
+				if(selectedTool != null) {
+					selectedTool.mouseMoved(e);
+				}
+			}
+			
+			@Override
+			public void mouseDragged(MouseEvent e) {
+				if(selectedTool != null) {
+					selectedTool.mouseDragged(e);
+				}
+			}
+		});
+		
+		jDrawingCanvas.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				if(selectedTool != null) {
+					selectedTool.mouseReleased(e);
+				}
+			}
+			
+			@Override
+			public void mousePressed(MouseEvent e) {
+				if(selectedTool != null) {
+					selectedTool.mousePressed(e);
+				}
+			}
+			
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if(selectedTool != null) {
+					selectedTool.mouseClicked(e);
+				}
+			}
+		});
+		
+		
+		
+		mdm.addDrawingModelListener(jDrawingCanvas);
+		
+		panel.add(jDrawingCanvas, BorderLayout.CENTER);
+		
+		
+		DrawingObjectListModel dolm = new DrawingObjectListModel(mdm);
+		JList<GeometricalObject> jList = new JList<GeometricalObject>(dolm);
+		
+		jList.addMouseListener(new MouseAdapter() {
+			
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				int numberOfClicks = e.getClickCount();
+				if(numberOfClicks == 2) {
+					GeometricalObject go = jList.getSelectedValue();
+					GeometricalObjectEditor goe = go.createGeometricalObjectEditor();
+					editing(goe);
+				}
+			}
+		});
+		
+		JScrollPane jsp = new JScrollPane(jList);
+		
+		panel.add(jsp, BorderLayout.EAST);
+		
 		fgColorArea.addColorChangeListener(new ColorChangeListener() {
 			
 			@Override
@@ -88,12 +170,39 @@ public class JVDraw extends JFrame {
 			}
 		});
 		
+		lineTool = new LineTool(mdm, fgColorArea, jDrawingCanvas);
+		circleTool = new CircleTool(mdm, jDrawingCanvas, fgColorArea);
+		filledCircleTool = new FilledCircleTool(bgColorArea, fgColorArea, jDrawingCanvas, mdm);
+		
 		JToggleButton lineButton = new JToggleButton();
 		lineButton.add(new JLabel("Line"));
+		lineButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JVDraw.this.selectedTool = lineTool;
+			}
+		});
+		
 		JToggleButton circleButton = new JToggleButton();
 		circleButton.add(new JLabel("Circle"));
+		circleButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JVDraw.this.selectedTool = circleTool;
+			}
+		});
+		
 		JToggleButton filledCircleButton = new JToggleButton();
 		filledCircleButton.add(new JLabel("Filled circle"));
+		filledCircleButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JVDraw.this.selectedTool = filledCircleTool;
+			}
+		});
 		
 		ButtonGroup bg = new ButtonGroup();
 		bg.add(lineButton);
@@ -140,42 +249,6 @@ public class JVDraw extends JFrame {
 		tb.add(lineButton);
 		tb.add(circleButton);
 		tb.add(filledCircleButton);
-		
-
-		JPanel panel = new JPanel(new BorderLayout());
-		
-		JDrawingCanvas jDrawingCanvas = new JDrawingCanvas(new Supplier<Tool>() {
-			
-			@Override
-			public Tool get() {
-				return selectedTool;
-			}
-		}, mdm);
-		
-		mdm.addDrawingModelListener(jDrawingCanvas);
-		
-		panel.add(jDrawingCanvas, BorderLayout.WEST);
-		
-		DrawingObjectListModel dolm = new DrawingObjectListModel(mdm);
-		JList<GeometricalObject> jList = new JList<GeometricalObject>(dolm);
-		
-		jList.addMouseListener(new MouseAdapter() {
-			
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				int numberOfClicks = e.getClickCount();
-				if(numberOfClicks == 2) {
-					GeometricalObject go = jList.getSelectedValue();
-					GeometricalObjectEditor goe = go.createGeometricalObjectEditor();
-					
-					editing(goe);
-				}
-			}
-		});
-		
-		JScrollPane jsp = new JScrollPane(jList);
-		
-		panel.add(jsp, BorderLayout.EAST);
 		
 		cp.add(panel, BorderLayout.CENTER);
 		cp.add(tb, BorderLayout.PAGE_START);

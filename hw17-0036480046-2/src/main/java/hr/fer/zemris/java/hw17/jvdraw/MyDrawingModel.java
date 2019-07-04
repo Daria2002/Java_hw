@@ -17,10 +17,9 @@ public class MyDrawingModel implements DrawingModel {
 	@Override
 	public void remove(GeometricalObject object) {
 		modificationFlag = true;
-		int index = objects.indexOf(object);
 		objects.remove(object);
 		for(DrawingModelListener l:listeners) {
-			l.objectsRemoved(this, index, -1);
+			l.objectsRemoved(this, objects.size(), objects.size());
 		}
 	}
 	
@@ -57,12 +56,17 @@ public class MyDrawingModel implements DrawingModel {
 	
 	@Override
 	public void changeOrder(GeometricalObject object, int offset) {
-		int objectIndex = objects.indexOf(object);
-		int newIndex = objectIndex + offset;
+		int oldIndex = objects.indexOf(object);
+		
+		if(oldIndex+offset < 0 || oldIndex + offset > objects.size()-1) {
+			return;
+		}
+		
 		objects.remove(object);
-		objects.add(newIndex, object);
+		objects.add(oldIndex + offset, object);
+		
 		for(DrawingModelListener l:listeners) {
-			l.objectsChanged(this, objectIndex, newIndex);
+			l.objectsChanged(this, oldIndex, objects.indexOf(object));
 		}
 	}
 	
@@ -76,7 +80,7 @@ public class MyDrawingModel implements DrawingModel {
 		modificationFlag = true;
 		objects.add(object);
 		for(DrawingModelListener l:listeners) {
-			l.objectsAdded(this, -1, objects.size()-1);
+			l.objectsAdded(this, objects.size(), objects.size());
 		}
 	}
 	

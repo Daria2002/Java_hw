@@ -9,16 +9,16 @@ public class CircleTool implements Tool {
 	int xCenter;
 	int yCenter;
 	int radius;
-	Color color;
+	IColorProvider colorProvider;
 	boolean centerAdded = false;
 	boolean radiusAdded = false;
 	DrawingModel dm;
 	JDrawingCanvas canvas;
 	
 	public CircleTool(DrawingModel dm, JDrawingCanvas canvas, IColorProvider colorProvider) {
-		this.canvas = canvas;
-		this.color = colorProvider.getCurrentColor();
 		this.dm = dm;
+		this.canvas = canvas;
+		this.colorProvider = colorProvider;
 	}
 	
 	@Override
@@ -43,10 +43,11 @@ public class CircleTool implements Tool {
 			radiusAdded = false;
 			return;
 		}
+
 		radius = (int) Math.sqrt(Math.pow(Math.abs(xCenter-e.getX()), 2) +
 				Math.pow(Math.abs(yCenter-e.getY()), 2));
-		
-		dm.add(new Circle(xCenter, yCenter, radius, color));
+		Color c = colorProvider.getCurrentColor();
+		dm.add(new Circle(xCenter, yCenter, radius, c));
 		
 		radiusAdded = true;
 		centerAdded = false;
@@ -55,8 +56,6 @@ public class CircleTool implements Tool {
 	@Override
 	public void mouseMoved(MouseEvent e) {
 		if(centerAdded && !radiusAdded) {
-			radius = (int) Math.sqrt(Math.pow(Math.abs(xCenter-e.getX()), 2) +
-					Math.pow(Math.abs(yCenter-e.getY()), 2));
 			
 			canvas.repaint();
 		}
@@ -71,7 +70,8 @@ public class CircleTool implements Tool {
 	@Override
 	public void paint(Graphics2D g2d) {
 		if(radiusAdded && !centerAdded) {
-			g2d.setColor(color);
+			Color c = colorProvider.getCurrentColor();
+			g2d.setColor(c);
 			int d = radius*2;
 			g2d.drawOval(xCenter-radius, yCenter-radius, d, d);
 		}

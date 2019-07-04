@@ -55,10 +55,6 @@ public class CircleTool implements Tool {
 
 	@Override
 	public void mouseMoved(MouseEvent e) {
-		if(centerAdded && !radiusAdded) {
-			
-			canvas.repaint();
-		}
 	}
 
 	@Override
@@ -69,12 +65,6 @@ public class CircleTool implements Tool {
 
 	@Override
 	public void paint(Graphics2D g2d) {
-		if(radiusAdded && !centerAdded) {
-			Color c = colorProvider.getCurrentColor();
-			g2d.setColor(c);
-			int d = radius*2;
-			g2d.drawOval(xCenter-radius, yCenter-radius, d, d);
-		}
 	}
 
 }

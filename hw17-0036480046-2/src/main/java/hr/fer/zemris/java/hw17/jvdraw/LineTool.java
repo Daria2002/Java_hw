@@ -6,6 +6,8 @@ import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Line2D;
 
+import org.apache.derby.tools.sysinfo;
+
 public class LineTool implements Tool {
 	/** start x */
 	int x0;
@@ -66,7 +68,7 @@ public class LineTool implements Tool {
 		x1 = e.getX();
 		y1 = e.getY();
 		Color c = colorProvider.getCurrentColor();
-		dm.add(new Line(x0, y0, x1, y1, c));
+		//dm.add(new Line(x0, y0, x1, y1, c));
 		canvas.repaint();
 	}
 
@@ -77,8 +79,5 @@ public class LineTool implements Tool {
 	
 	@Override
 	public void paint(Graphics2D g2d) {
-		Color c = colorProvider.getCurrentColor();
-		g2d.setColor(c);
-		g2d.drawLine(x0, y0, x1, y1);
 	}
 }

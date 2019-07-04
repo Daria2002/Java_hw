@@ -34,7 +34,7 @@ public class GeometricalObjectPainter implements GeometricalObjectVisitor {
 		g2d.setColor(filledCircle.getFillColor());
 		g2d.fillOval(filledCircle.centerX-filledCircle.radius, 
 				filledCircle.centerY-filledCircle.radius,
-				filledCircle.radius, filledCircle.radius);
+				filledCircle.radius*2, filledCircle.radius*2);
 		
 		g2d.setColor(filledCircle.getOutlineColor());
 		g2d.drawOval(filledCircle.centerX-filledCircle.radius, 

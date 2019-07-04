@@ -10,21 +10,39 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+/**
+ * This class represents editor for geometrical object line
+ * @author Daria Matković
+ *
+ */
 public class LineEditor extends GeometricalObjectEditor {
-
+	/** line */
 	Line line;
+	/** x0 */
 	JTextField x0 = new JTextField();
+	/** y0 */
 	JTextField y0 = new JTextField();
+	/** x1 */
 	JTextField x1 = new JTextField();
+	/** y1 */
 	JTextField y1 = new JTextField();
+	/** color chooser */
 	JColorChooser colorChooser = new JColorChooser();
-	
+	/** new x0 */
 	private int newX0;
+	/** new y0 */
 	private int newY0;
+	/** new x1 */
 	private int newX1;
+	/** new y1 */
 	private int newY1;
+	/** new color */
 	private Color newColor;
 	
+	/**
+	 * Constructor for line editor
+	 * @param line line
+	 */
 	public LineEditor(Line line) {
 		ScrollPane sp = new ScrollPane();
 		sp.setSize(800, 800);

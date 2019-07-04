@@ -3,11 +3,21 @@ package hr.fer.zemris.java.hw17.jvdraw;
 import javax.swing.AbstractListModel;
 import javax.swing.JList;
 
+/**
+ * This class represents drawing object list model
+ * @author Daria Matković
+ *
+ */
 public class DrawingObjectListModel extends AbstractListModel<GeometricalObject>
 	implements DrawingModelListener {
 
+	/** drawing model */
 	DrawingModel drawingModel;
 	
+	/**
+	 * Constructor for drawing object list model
+	 * @param drawingModel
+	 */
 	public DrawingObjectListModel(DrawingModel drawingModel) {
 		this.drawingModel = drawingModel;
 		drawingModel.addDrawingModelListener(this);

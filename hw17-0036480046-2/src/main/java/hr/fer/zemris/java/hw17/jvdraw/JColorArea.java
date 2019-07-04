@@ -12,14 +12,27 @@ import java.util.List;
 import javax.swing.JColorChooser;
 import javax.swing.JComponent;
 
+/**
+ * Color area that represents color manager
+ * @author Daria Matković
+ *
+ */
 public class JColorArea extends JComponent implements IColorProvider {
-
+	/** width */
 	private static final int WIDTH = 15;
+	/** height */
 	private static final int HEIGHT = 15;
+	/** selected color */
 	private Color selectedColor;
+	/** old color */
 	private Color oldColor = null;
+	/** listeners */
 	private List<ColorChangeListener> listeners = new ArrayList<>();
 	
+	/**
+	 * Constructor that initialize selected color
+	 * @param selectedColor selected color
+	 */
 	public JColorArea(Color selectedColor) {
 		super();
 		this.selectedColor = selectedColor;

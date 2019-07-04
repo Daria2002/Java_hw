@@ -3,10 +3,17 @@ package hr.fer.zemris.java.hw17.jvdraw;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class represents implementation of drawing model
+ * @author Daria Matković
+ *
+ */
 public class MyDrawingModel implements DrawingModel {
-	
+	/** list of objects */
 	List<GeometricalObject> objects = new ArrayList<GeometricalObject>();
+	/** list of listeners */
 	List<DrawingModelListener> listeners = new ArrayList<DrawingModelListener>();
+	/** modification flag */
 	Boolean modificationFlag = false;
 	
 	@Override

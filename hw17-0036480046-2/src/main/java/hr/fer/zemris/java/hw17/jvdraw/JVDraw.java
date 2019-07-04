@@ -54,15 +54,25 @@ import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-
+/**
+ * This class represents frame for paint
+ * @author Daria Matković
+ *
+ */
 public class JVDraw extends JFrame {
-	
+	/** selected tool */
 	private Tool selectedTool;
+	/** implementation of drawing model */
 	private MyDrawingModel mdm = new MyDrawingModel();
+	/** line tool */
 	private Tool lineTool;
+	/** circle tool */
 	private Tool circleTool;
+	/** filled circle tool */
 	private Tool filledCircleTool;
+	/** drawing canvas */
 	private JDrawingCanvas jDrawingCanvas;
+	/** file to save */
 	private File fileToSave = null;
 	
 	/**
@@ -77,6 +87,10 @@ public class JVDraw extends JFrame {
 		initGUI();
 	}
 
+	/**
+	 * This method is executed when program is run
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(()->{new JVDraw().setVisible(true);});
 	}
@@ -370,8 +384,10 @@ public class JVDraw extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					save(fileToSave);
+					mdm.clearModifiedFlag();
 				} catch (Exception e2) {
 					saveAs();
+					mdm.clearModifiedFlag();
 				}
 			}
 		});
@@ -382,6 +398,7 @@ public class JVDraw extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				saveAs();
+				mdm.clearModifiedFlag();
 			}
 		});
         
@@ -553,6 +570,10 @@ public class JVDraw extends JFrame {
 		return false;
 	}
 	
+	/**
+	 * Method that saves file 
+	 * @param fileToSave file to save
+	 */
 	private void save(File fileToSave) {
 		FileOutputStream out;
 		try {
@@ -564,10 +585,20 @@ public class JVDraw extends JFrame {
 		}
 	}
 	
+	/**
+	 * checks that extension is jvd
+	 * @param absolutePath
+	 * @return
+	 */
 	private boolean isExtensionJVD(String absolutePath) {
 	    return "jvd".equals(getExtension(absolutePath));
 	}
 
+	/**
+	 * gets extension
+	 * @param name file name
+	 * @return extension name
+	 */
 	private String getExtension(String name) {
 		System.out.println("name:"+name);
 		String extension = "";
@@ -589,6 +620,10 @@ public class JVDraw extends JFrame {
 		return new Dimension(500, 500);
 	}
 	
+	/**
+	 * Method for editing
+	 * @param goe Geometrical object editor
+	 */
 	private void editing(GeometricalObjectEditor goe) {
 
 		int result = JOptionPane.showConfirmDialog(JVDraw.this, goe,
@@ -613,6 +648,12 @@ public class JVDraw extends JFrame {
 		}
 	}
 	
+	/**
+	 * This method makes info text
+	 * @param fgColorArea foreground color area
+	 * @param bgColorArea background color area
+	 * @return info text
+	 */
 	private String makeInfoText(JColorArea fgColorArea, JColorArea bgColorArea) {
 		return "Foreground color: (" +
 				fgColorArea.getCurrentColor().getRed() + ", " +

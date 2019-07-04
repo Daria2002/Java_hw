@@ -8,13 +8,26 @@ import java.awt.Rectangle;
 import java.util.function.Supplier;
 import javax.swing.JComponent;
 
+/**
+ * This class represents drawing canvas
+ * @author Daria Matković
+ *
+ */
 public class JDrawingCanvas extends JComponent implements DrawingModelListener {
-
+	/** tool */
 	private Tool tool;
+	/** drawing model */
 	private DrawingModel dm;
+	/** text file */
 	private String textFile;
+	/** bounding box */
 	private Rectangle boundingBox;
 	
+	/**
+	 * Constructor for drawing canvas
+	 * @param supplierTool supplier tool
+	 * @param dm drawing model
+	 */
 	public JDrawingCanvas(Supplier<Tool> supplierTool, DrawingModel dm) {
 		super();
 		this.tool = supplierTool.get();
@@ -47,10 +60,18 @@ public class JDrawingCanvas extends JComponent implements DrawingModelListener {
 		}
 	}
 	
+	/**
+	 * gets bounding box
+	 * @return rectangle
+	 */
 	public Rectangle getBoundingBox() {
 		return boundingBox;
 	}
 	
+	/**
+	 * gets file text
+	 * @return file text
+	 */
 	public String getTextFile() {
 		return textFile;
 	}
@@ -69,5 +90,4 @@ public class JDrawingCanvas extends JComponent implements DrawingModelListener {
 	public void objectsChanged(DrawingModel source, int index0, int index1) {
 		repaint();
 	}
-	
 }

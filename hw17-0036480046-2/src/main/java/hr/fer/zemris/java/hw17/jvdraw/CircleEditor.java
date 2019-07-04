@@ -11,20 +11,35 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-
+/**
+ * This class represents editor for circle
+ * @author Daria Matković
+ *
+ */
 public class CircleEditor extends GeometricalObjectEditor {
-
+	/** radius */
 	private JTextField radius = new JTextField();
+	/** x center */
 	private JTextField xCenter = new JTextField();
+	/** y center */
 	private JTextField yCenter = new JTextField();
+	/** circle */
 	private Circle circle;
+	/** color chooser */
 	private JColorChooser colorChooser = new JColorChooser();
-	
+	/** new radius */
 	private int newRadius;
+	/** new x center */
 	private int newXCenter;
+	/** new y center */
 	private int newYCenter;
+	/** new color */
 	private Color newColor;
 	
+	/**
+	 * Constructor for circle editor
+	 * @param circle circle
+	 */
 	public CircleEditor(Circle circle) {
 		ScrollPane sp = new ScrollPane();
 		sp.setSize(800, 800);

@@ -3,10 +3,19 @@ package hr.fer.zemris.java.hw17.jvdraw;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class represents visitor for saving .jvd files
+ * @author Daria Matković
+ *
+ */
 public class SaveVisitor implements GeometricalObjectVisitor {
-
+	/** file text */
 	List<String> fileText = new ArrayList<String>();
 	
+	/**
+	 * gets text from file
+	 * @return text from file
+	 */
 	public String getFileText() {
 		return String.join("\n", fileText);
 	}

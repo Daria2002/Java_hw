@@ -10,21 +10,39 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+/**
+ * This class represents filled circle editor
+ * @author Daria Matković
+ *
+ */
 public class FilledCircleEditor extends GeometricalObjectEditor {
-
+	/** filled circle to edit */
 	FilledCircle fc;
+	/** fill color */
 	JColorChooser fillColor = new JColorChooser();
+	/** outline color */
 	JColorChooser outlineColor = new JColorChooser();
+	/** radius */
 	JTextField radius = new JTextField();
+	/** text field for x */
 	JTextField x = new JTextField();
+	/** text field for y */
 	JTextField y = new JTextField();
-	
+	/** new radius */
 	int newRadius;
+	/** new x */
 	int newX;
+	/** new y */
 	int newY;
+	/** new fill color */
 	Color newFillColor;
+	/** new outline color */
 	Color newOutlineColor;
 	
+	/**
+	 * Constructor for filled circle editor
+	 * @param filledCircle
+	 */
 	public FilledCircleEditor(FilledCircle filledCircle) {
 		ScrollPane sp = new ScrollPane();
 		sp.setSize(800, 800);

@@ -3,14 +3,19 @@ package hr.fer.zemris.java.hw17.jvdraw;
 import java.awt.Graphics2D;
 
 /**
- * Visitor
+ * Visitor that represents painter
  * @author Daria Matković
  *
  */
 public class GeometricalObjectPainter implements GeometricalObjectVisitor {
 
+	/** graphiics */
 	Graphics2D g2d;
 	
+	/**
+	 * constructor that initialize g2d
+	 * @param g2d g2d
+	 */
 	public GeometricalObjectPainter(Graphics2D g2d) {
 		this.g2d = g2d;
 	}

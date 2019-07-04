@@ -15,8 +15,11 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -308,7 +311,10 @@ public class JVDraw extends JFrame {
 						      JOptionPane.QUESTION_MESSAGE);
 					
 					if(result == JOptionPane.YES_OPTION) {
-						save();
+						if(save()) {
+							System.exit(0);
+						}
+						return;
 					} else if(result == JOptionPane.CANCEL_OPTION) {
 						return;
 					}
@@ -331,10 +337,60 @@ public class JVDraw extends JFrame {
 		cp.add(bottomColorInfo, BorderLayout.PAGE_END);
 	}
 	
-	private void save() {
+	private boolean save() {
 		System.out.println(jDrawingCanvas.getTextFile());
+		
+		JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setDialogTitle("Specify a file to save");   
+		 
+		int userSelection = fileChooser.showSaveDialog(JVDraw.this);
+		 
+		if(userSelection == JFileChooser.CANCEL_OPTION) {
+			return false;
+		}
+		
+		if (userSelection == JFileChooser.APPROVE_OPTION) {
+		    File fileToSave = fileChooser.getSelectedFile();
+		    
+		    String filePath = fileToSave.getAbsolutePath();
+		    if(!isExtensionJVD(filePath)) {
+		    	int result = JOptionPane.showConfirmDialog(JVDraw.this,
+		    			"Selected file doesn't have .jvd extension. Press Cancel"
+		    			+ " if you want to cancel saving, and Ok to continue saving.",
+		    			"info", JOptionPane.OK_CANCEL_OPTION,
+		    			JOptionPane.INFORMATION_MESSAGE);
+		    	if(result == JOptionPane.CANCEL_OPTION) {
+		    		return false;
+		    	}
+		    	if(!save()) {
+		    		return false;
+		    	}
+		    }
+		    
+		    try {
+			    FileOutputStream out = new FileOutputStream(fileToSave.getAbsolutePath());
+				out.write(jDrawingCanvas.getTextFile().getBytes(Charset.forName("UTF-8")));
+			    out.close();
+			    return true;
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return false;
 	}
 	
+	private boolean isExtensionJVD(String absolutePath) {
+		String extension = "";
+
+	    int i = absolutePath.lastIndexOf('.');
+	    if (i > 0) {
+	        extension = absolutePath.substring(i+1);
+	    }
+	    
+	    return "jvd".equals(extension);
+	}
+
 	@Override
 	public Dimension getPreferredSize() {
 		return new Dimension(500, 500);

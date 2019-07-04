@@ -283,8 +283,8 @@ public class JVDraw extends JFrame {
 	private String makeInfoText(JColorArea fgColorArea, JColorArea bgColorArea) {
 		return "Foreground color: (" +
 				fgColorArea.getCurrentColor().getRed() + ", " +
-				fgColorArea.getCurrentColor().getBlue() + ", " +
-				fgColorArea.getCurrentColor().getGreen() + "), background color: (" +
+				fgColorArea.getCurrentColor().getGreen() + ", " +
+				fgColorArea.getCurrentColor().getBlue() + "), background color: (" +
 				bgColorArea.getCurrentColor().getRed() + ", " +
 				bgColorArea.getCurrentColor().getGreen() + ", " +
 				bgColorArea.getCurrentColor().getBlue() + ").";

@@ -4,7 +4,7 @@ import java.awt.Color;
 
 import javax.swing.JLabel;
 
-public class ColorInfoLabel extends JLabel implements ColorChangeListener {
+public class ColorInfoLabel extends JLabel {
 	
 	private String info;
 	int fgColorAreaRed;
@@ -19,27 +19,14 @@ public class ColorInfoLabel extends JLabel implements ColorChangeListener {
 		fgColorAreaGreen = fgColorArea.getCurrentColor().getGreen();
 		fgColorAreaBlue = fgColorArea.getCurrentColor().getBlue();
 		
-		bgColorAreaRed = fgColorArea.getCurrentColor().getRed();
-		bgColorAreaGreen = fgColorArea.getCurrentColor().getGreen();
-		bgColorAreaBlue = fgColorArea.getCurrentColor().getBlue();
+		bgColorAreaRed = bgColorArea.getCurrentColor().getRed();
+		bgColorAreaGreen = bgColorArea.getCurrentColor().getGreen();
+		bgColorAreaBlue = bgColorArea.getCurrentColor().getBlue();
 		
-		info = "Foreground color: (" + fgColorAreaRed + ", " +
-		fgColorAreaBlue + ", " + fgColorAreaGreen + "), background color: (" +
+		info = "Foreground color: (" + fgColorAreaRed + ", " + fgColorAreaGreen
+		 + ", " + fgColorAreaBlue + "), background color: (" +
 				bgColorAreaRed + ", " + bgColorAreaGreen + ", " + bgColorAreaBlue
 				+ ").";
 		setText(info);
-	}
-	
-	@Override
-	public void newColorSelected(IColorProvider source, Color oldColor, Color newColor) {
-		int red = newColor.getRed();
-		int green = newColor.getGreen();
-		int blue = newColor.getBlue();
-		
-		info = "Foreground color: (" + fgColorAreaRed + ", " +
-				blue + ", " + green + "), background color: (" +
-						bgColorAreaRed + ", " + bgColorAreaGreen + ", " + bgColorAreaBlue
-						+ ").";
-				setText(info);
 	}
 }

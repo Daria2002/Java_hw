@@ -3,6 +3,7 @@ package hr.fer.zemris.java.hw17.jvdraw;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -256,6 +257,10 @@ public class JVDraw extends JFrame {
 		cp.add(bottomColorInfo, BorderLayout.PAGE_END);
 	}
 	
+	@Override
+	public Dimension getPreferredSize() {
+		return new Dimension(500, 500);
+	}
 	
 	private void editing(GeometricalObjectEditor goe) {
 
@@ -265,6 +270,7 @@ public class JVDraw extends JFrame {
 		if(result == JOptionPane.OK_OPTION) {
 			try {
 				goe.checkEditing();
+				
 				try {
 					goe.acceptEditing();
 				} catch (Exception e2) {

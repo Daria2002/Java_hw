@@ -1,6 +1,9 @@
 package hr.fer.zemris.java.hw17.jvdraw;
 
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.ScrollPane;
 
 import javax.swing.JColorChooser;
 import javax.swing.JLabel;
@@ -23,22 +26,32 @@ public class FilledCircleEditor extends GeometricalObjectEditor {
 	Color newOutlineColor;
 	
 	public FilledCircleEditor(FilledCircle filledCircle) {
+		ScrollPane sp = new ScrollPane();
+		sp.setSize(800, 800);
 		fc = filledCircle;
+		JPanel editingPanel = new JPanel(new GridLayout(3, 1));
 		
-		JPanel editingPanel = new JPanel();
+		JPanel help1 = new JPanel(new GridLayout(1, 6));
+		JPanel help2 = new JPanel(new GridLayout(1, 2));
+		JPanel help3 = new JPanel(new GridLayout(1, 2));
 		
-		editingPanel.add(new JLabel("Radius"));
-		editingPanel.add(radius);
-		editingPanel.add(new JLabel("x center"));
-		editingPanel.add(x);
-		editingPanel.add(new JLabel("y center"));
-		editingPanel.add(y);
-		editingPanel.add(new JLabel("fill color"));
-		editingPanel.add(fillColor);
-		editingPanel.add(new JLabel("outline color"));
-		editingPanel.add(outlineColor);
+		help1.add(new JLabel("Radius:"));
+		help1.add(radius);
+		help1.add(new JLabel("x center:"));
+		help1.add(x);
+		help1.add(new JLabel("y center:"));
+		help1.add(y);
+		help2.add(new JLabel("fill color:"));
+		help2.add(fillColor);
+		help3.add(new JLabel("outline color:"));
+		help3.add(outlineColor);
 		
-		add(editingPanel);
+		editingPanel.add(help1);
+		editingPanel.add(help2);
+		editingPanel.add(help3);
+		
+		sp.add(editingPanel);
+		add(sp);
 	}
 
 	@Override

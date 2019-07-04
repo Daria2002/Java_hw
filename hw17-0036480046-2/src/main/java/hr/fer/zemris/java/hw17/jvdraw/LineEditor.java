@@ -1,6 +1,9 @@
 package hr.fer.zemris.java.hw17.jvdraw;
 
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.ScrollPane;
 
 import javax.swing.JColorChooser;
 import javax.swing.JLabel;
@@ -23,6 +26,9 @@ public class LineEditor extends GeometricalObjectEditor {
 	private Color newColor;
 	
 	public LineEditor(Line line) {
+		ScrollPane sp = new ScrollPane();
+		sp.setSize(800, 800);
+		
 		this.line = line;
 		x0.setText(String.valueOf(line.getX0()));
 		y0.setText(String.valueOf(line.getY0()));
@@ -30,20 +36,26 @@ public class LineEditor extends GeometricalObjectEditor {
 		y1.setText(String.valueOf(line.getY1()));
 		colorChooser.setColor(line.getColor());
 		
-		JPanel editing = new JPanel();
+		JPanel editing = new JPanel(new GridLayout(2, 1));
 		
-		editing.add(new JLabel("x0"));
-		editing.add(x0);
-		editing.add(new JLabel("y0"));
-		editing.add(y0);
-		editing.add(new JLabel("x1"));
-		editing.add(x1);
-		editing.add(new JLabel("y1"));
-		editing.add(y1);
-		editing.add(new JLabel("color"));
-		editing.add(colorChooser);
+		JPanel help1 = new JPanel(new GridLayout(1, 8));
+
+		JPanel help2 = new JPanel(new GridLayout(1, 2));
 		
-		add(editing);
+		help1.add(new JLabel("x0:"));
+		help1.add(x0);
+		help1.add(new JLabel("y0:"));
+		help1.add(y0);
+		help1.add(new JLabel("x1:"));
+		help1.add(x1);
+		help1.add(new JLabel("y1:"));
+		help1.add(y1);
+		help2.add(new JLabel("color:"));
+		help2.add(colorChooser);
+		editing.add(help1);
+		editing.add(help2);
+		sp.add(editing);
+		add(sp);
 	}
 
 	@Override

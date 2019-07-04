@@ -24,8 +24,10 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
@@ -298,6 +300,66 @@ public class JVDraw extends JFrame {
 		JMenu fileMenu = new JMenu("File");
         menubar.add(fileMenu);
         JMenuItem openMI = fileMenu.add(new JMenuItem("Open"));
+        openMI.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				mdm.clear();
+				
+				JFileChooser fileChooser = new JFileChooser();
+				fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+				int result = fileChooser.showOpenDialog(JVDraw.this);
+				if (result == JFileChooser.APPROVE_OPTION) {
+				    File selectedFile = fileChooser.getSelectedFile();
+				    try {
+						List<String> list = Files.readAllLines(
+								selectedFile.toPath(), Charset.defaultCharset());
+
+						makeFileObjects(list);
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+
+				}
+			}
+
+			private void makeFileObjects(List<String> list) {
+				for(String line:list) {
+					String[] params = line.split(" ");
+					if("LINE".equals(params[0])) {
+						mdm.add(new Line(Integer.valueOf(params[1]),
+								Integer.valueOf(params[2]),
+								Integer.valueOf(params[3]),
+								Integer.valueOf(params[4]),
+								new Color(Integer.valueOf(params[5]), 
+										Integer.valueOf(params[6]),
+										Integer.valueOf(params[7]))));
+						
+					} else if("CIRCLE".equals(params[0])) {
+						mdm.add(new Circle(Integer.valueOf(params[1]),
+								Integer.valueOf(params[2]),
+								Integer.valueOf(params[3]),
+								new Color(Integer.valueOf(params[4]), 
+										Integer.valueOf(params[5]),
+										Integer.valueOf(params[6]))));
+						
+						
+					} else if("FCIRCLE".equals(params[0])) {
+						mdm.add(new FilledCircle(Integer.valueOf(params[1]),
+								Integer.valueOf(params[2]),
+								Integer.valueOf(params[3]),
+								new Color(Integer.valueOf(params[4]), 
+										Integer.valueOf(params[5]),
+										Integer.valueOf(params[6])),
+								new Color(Integer.valueOf(params[7]), 
+										Integer.valueOf(params[8]),
+										Integer.valueOf(params[9]))));
+						
+					}
+				}
+			}
+		});
         
         fileMenu.addSeparator();
         

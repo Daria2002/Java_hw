@@ -10,7 +10,6 @@ public class FilledCircle extends GeometricalObject {
 	int radius;
 	Color outlineColor;
 	Color fillColor;
-	private static int objectsCounter = 0;
 	
 	public FilledCircle(int centerX, int centerY, int radius, Color outlineColor, Color fillColor) {
 		super();
@@ -19,7 +18,6 @@ public class FilledCircle extends GeometricalObject {
 		this.radius = radius;
 		this.outlineColor = outlineColor;
 		this.fillColor = fillColor;
-		objectsCounter++;
 	}
 
 	public static String getName() {
@@ -78,6 +76,29 @@ public class FilledCircle extends GeometricalObject {
 	
 	@Override
 	public String toString() {
-		return "Filled circle " + objectsCounter;
+		return "Filled circle (" + centerX + "," + centerY + "), " + radius +
+				" #" + decToHex(fillColor.getRed()) + 
+				decToHex(fillColor.getGreen()) + 
+				decToHex(fillColor.getBlue());
 	}
+	
+	public static String decToHex(int dec) {
+		int sizeOfIntInHalfBytes = 2;
+		int numberOfBitsInAHalfByte = 4;
+		int halfByte = 0x0F;
+		char[] hexDigits = { 
+		    '0', '1', '2', '3', '4', '5', '6', '7', 
+		    '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
+		  };
+		
+	    StringBuilder hexBuilder = new StringBuilder(sizeOfIntInHalfBytes);
+	    hexBuilder.setLength(sizeOfIntInHalfBytes);
+	    for (int i = sizeOfIntInHalfBytes - 1; i >= 0; --i)
+	    {
+	      int j = dec & halfByte;
+	      hexBuilder.setCharAt(i, hexDigits[j]);
+	      dec >>= numberOfBitsInAHalfByte;
+	    }
+	    return hexBuilder.toString(); 
+	  }
 }

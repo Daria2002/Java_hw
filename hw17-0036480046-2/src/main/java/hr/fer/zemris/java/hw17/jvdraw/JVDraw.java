@@ -421,7 +421,7 @@ public class JVDraw extends JFrame {
 				
 				g.dispose();
 				if(export(image)) {
-					JOptionPane.showMessageDialog(JVDraw.this, "Image saved.");
+					JOptionPane.showMessageDialog(JVDraw.this, "Image exported.");
 				}
 			}
 		});

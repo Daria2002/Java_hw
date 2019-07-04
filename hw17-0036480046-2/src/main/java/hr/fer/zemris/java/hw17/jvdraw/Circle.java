@@ -9,7 +9,6 @@ public class Circle extends GeometricalObject {
 	private int centerY;
 	private int radius;
 	private Color color;
-	private static int objectCounter = 0;
 	
 	public Circle(int centerX, int centerY, int radius, Color color) {
 		super();
@@ -17,7 +16,6 @@ public class Circle extends GeometricalObject {
 		this.centerY = centerY;
 		this.radius = radius;
 		this.color = color;
-		objectCounter++;
 	}
 	
 	
@@ -78,6 +76,6 @@ public class Circle extends GeometricalObject {
 	
 	@Override
 	public String toString() {
-		return "Circle " + objectCounter;
+		return "Circle (" + centerX + "," + centerY + "), " + radius;
 	}
 }

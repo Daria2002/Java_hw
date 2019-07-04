@@ -331,12 +331,19 @@ public class JVDraw extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Rectangle box = jDrawingCanvas.getBoundingBox();
-				BufferedImage image = new BufferedImage(
-						box.width, box.height, BufferedImage.TYPE_3BYTE_BGR
-				);
+				BufferedImage image = null;
+				
+				try {
+					image = new BufferedImage(box.width,
+							box.height, BufferedImage.TYPE_3BYTE_BGR);
+				} catch (Exception x) {
+					image = new BufferedImage(Math.abs(box.width),
+							Math.abs(box.height),
+							BufferedImage.TYPE_3BYTE_BGR);
+				}
 				
 				Graphics2D g = image.createGraphics();
-				g.translate(box.y, box.y);
+				g.translate(-box.x, -box.y);
 				
 				GeometricalObjectPainter gop = new GeometricalObjectPainter(g);
 				
@@ -351,9 +358,9 @@ public class JVDraw extends JFrame {
 				}
 				
 				g.dispose();
-				File file = ...;
-				ImageIO.write(image, “png”, file);
-				Tell-user-that-images-is-exported.
+				if(export(image)) {
+					JOptionPane.showMessageDialog(JVDraw.this, "Image saved.");
+				}
 			}
 		});
         
@@ -397,6 +404,58 @@ public class JVDraw extends JFrame {
 		
 		cp.add(bottomColorInfo, BorderLayout.PAGE_END);
 	}
+	
+	private boolean export(BufferedImage image) {
+		JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setDialogTitle("Specify a file to save");   
+		 
+		
+		FileNameExtensionFilter filterPng = new FileNameExtensionFilter(
+				".png", "png");
+		fileChooser.addChoosableFileFilter(filterPng);
+		
+		FileNameExtensionFilter filterJpg = new FileNameExtensionFilter(
+				".jpg", "jpg");
+		fileChooser.addChoosableFileFilter(filterJpg);
+		
+		FileNameExtensionFilter filterGif = new FileNameExtensionFilter(
+				".gif", "gif");
+		fileChooser.addChoosableFileFilter(filterGif);
+		
+		fileChooser.setAcceptAllFileFilterUsed(false);
+
+		int userSelection = fileChooser.showSaveDialog(JVDraw.this);
+		
+		if(userSelection == JFileChooser.CANCEL_OPTION) {
+			return false;
+		}
+		
+		if (userSelection == JFileChooser.APPROVE_OPTION) {
+		    File file = fileChooser.getSelectedFile();
+		    System.out.println("type:"+fileChooser.getTypeDescription(file));
+		    String filePath = file.getAbsolutePath();
+		    
+			try {
+				System.out.println("ekst:"+getExtension(filePath));
+				
+				String extension = getExtension(filePath);
+				if(extension == null) {
+					JOptionPane.showMessageDialog(JVDraw.this,
+							"Please enter extension in file name, e.g. fileName.extension");
+					export(image);
+					return true;
+				}
+				
+				ImageIO.write(image, getExtension(filePath), file);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		    return true;
+		}
+		return false;
+	}
+	
 	
 	private boolean saveAs() {
 		JFileChooser fileChooser = new JFileChooser();
@@ -444,16 +503,25 @@ public class JVDraw extends JFrame {
 	}
 	
 	private boolean isExtensionJVD(String absolutePath) {
-		String extension = "";
-
-	    int i = absolutePath.lastIndexOf('.');
-	    if (i > 0) {
-	        extension = absolutePath.substring(i+1);
-	    }
-	    
-	    return "jvd".equals(extension);
+	    return "jvd".equals(getExtension(absolutePath));
 	}
 
+	private String getExtension(String name) {
+		System.out.println("name:"+name);
+		String extension = "";
+
+	    int i = name.lastIndexOf('.');
+	    if (i > 0) {
+	        extension = name.substring(i+1);
+	    }
+	    
+	    if(extension.isEmpty() || extension.isBlank()) {
+	    	return null;
+	    }
+	    
+	    return extension;
+	}
+	
 	@Override
 	public Dimension getPreferredSize() {
 		return new Dimension(500, 500);

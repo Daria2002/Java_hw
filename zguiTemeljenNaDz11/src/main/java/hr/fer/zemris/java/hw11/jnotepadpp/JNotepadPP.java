@@ -275,6 +275,7 @@ public class JNotepadPP extends JFrame {
 			}
 			
 			if(Files.exists(openedFilePath) && openedFilePath != multiDocModel.getCurrentDocument().getFilePath()) {
+				
 				int result = JOptionPane.showConfirmDialog(JNotepadPP.this,
 						"The file exists, overwrite?","Existing file",JOptionPane.YES_NO_CANCEL_OPTION);
 	            switch(result){
@@ -289,7 +290,23 @@ public class JNotepadPP extends JFrame {
 	            }
 			}
 			
+			int count = 0; 
+			for(int i = 0; i < multiDocModel.getNumberOfDocuments(); i++) {
+				try {
+					if(multiDocModel.getDocument(i).getFilePath().equals(openedFilePath)) {
+						count++;
+						if(count >= 2) {
+							multiDocModel.removeTab(i);
+							break;
+						}
+					}
+				} catch (Exception e1) {
+					break;
+				}
+			}
+			
 			multiDocModel.saveDocument(multiDocModel.getCurrentDocument(), openedFilePath);
+			
 			return;
 		}
 	};
@@ -328,8 +345,24 @@ public class JNotepadPP extends JFrame {
 	                    return;
 	            }
 			}
+			int count = 0;
+			for(int i = 0; i < multiDocModel.getNumberOfDocuments(); i++) {
+				try {
+					if(multiDocModel.getDocument(i).getFilePath().equals(openedFilePath)) {
+						count++;
+						if(count >= 1) {
+							multiDocModel.removeTab(i);
+							break;
+						}
+					}
+				} catch (Exception e1) {
+					break;
+				}
+			}
 			
 			multiDocModel.saveDocument(multiDocModel.getCurrentDocument(), openedFilePath);
+			
+			
 			return;
 		}
 	};

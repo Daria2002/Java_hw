@@ -224,7 +224,6 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 		panel.add(currentSingleDocumentModel.getTextComponent(), BorderLayout.CENTER);
 		
 		addTab("(unnamed)", imageIconGreen, panel, "(unnamed)");
-		
 		setSelectedIndex(col.size()-1);
 		return newSingleDoc;
 	}
@@ -343,5 +342,11 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 	@Override
 	public SingleDocumentModel getDocument(int index) {
 		return col.get(index);
+	}
+
+	@Override
+	public void removeTab(int i) {
+		removeTabAt(i);
+		col.remove(i);
 	}
 }

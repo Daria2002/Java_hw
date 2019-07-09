@@ -64,4 +64,6 @@ public interface MultipleDocumentModel extends Iterable<SingleDocumentModel>{
 	 * @return document at given index
 	 */
 	SingleDocumentModel getDocument(int index);
+
+	void removeTab(int i);
 }

@@ -1,4 +1,4 @@
-package hr.fer.zemris.java.p12.dao;
+package hr.fer.zemris.java.p12.jpdao;
 
 //import hr.fer.zemris.java.p12.model.Unos;
 
@@ -12,7 +12,7 @@ import hr.fer.zemris.java.tecaj_13.model.BlogUser;
  * @author marcupic
  *
  */
-public interface DAO {
+public interface JPDAO {
 	
 	/**
 	 * Check that user exists

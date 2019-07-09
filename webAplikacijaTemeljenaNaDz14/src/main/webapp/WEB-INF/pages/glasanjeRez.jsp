@@ -1,3 +1,5 @@
+<%@page import="hr.fer.zemris.java.p12.model.User"%>
+<%@page import="java.util.Set"%>
 <%@page import="hr.fer.zemris.java.p12.dao.sql.SQLDAO"%>
 <%@page import="hr.fer.zemris.java.p12.model.Unos"%>
 <%@page import="java.util.Stack"%>
@@ -58,6 +60,7 @@ table.rez td {text-align: center;}
 	<body bgcolor="<%=myColor%>">
 		<h1>Rezultati glasanja</h1>
 		<p>Ovo su rezultati glasanja.</p>
+		
 		<table border="1" cellspacing="0" class="rez">
 			<thead><tr><th>Bend</th><th>Broj glasova</th></tr></thead>
 			<tbody>
@@ -92,6 +95,23 @@ table.rez td {text-align: center;}
 				%>
 			</tbody>
 		</table>
+		
+		
+		<table border="1" cellspacing="0" class="rez">
+			<thead><tr><th>First Name</th><th>Second Name</th></tr></thead>
+			<tbody>
+			<%
+				Set<User> users = (Set<User>) request.getSession().getAttribute("users");
+				
+				for(User user:users) {
+					%><tr><td><%=user.getFn()%></td><td><%=user.getLn()%></td></tr><%
+				}
+			
+				%>
+			</tbody>
+		</table>
+		
+		
 		<h2>Grafički prikaz rezultata</h2>
 		<img alt="Pie-chart" src="<%=request.getContextPath()%>/servleti/glasanje-grafika?pollID=<%=request.getSession().getAttribute("pollId")%>" width="400" height="400" />
 		<h2>Rezultati u XLS formatu</h2>

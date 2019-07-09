@@ -6,7 +6,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 
-import hr.fer.zemris.java.p12.dao.DAO;
+import hr.fer.zemris.java.p12.jpdao.JPDAO;
 import hr.fer.zemris.java.tecaj_13.model.BlogComment;
 import hr.fer.zemris.java.tecaj_13.model.BlogEntry;
 import hr.fer.zemris.java.tecaj_13.model.BlogUser;
@@ -16,7 +16,7 @@ import hr.fer.zemris.java.tecaj_13.model.BlogUser;
  * @author Daria Matković
  *
  */
-public class JPADAOImpl implements DAO {
+public class JPADAOImpl implements JPDAO {
 
 	@Override
 	public boolean userExists(String username) {

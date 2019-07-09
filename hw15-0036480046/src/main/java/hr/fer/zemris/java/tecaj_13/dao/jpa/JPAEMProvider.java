@@ -2,7 +2,7 @@ package hr.fer.zemris.java.tecaj_13.dao.jpa;
 
 import javax.persistence.EntityManager;
 
-import hr.fer.zemris.java.p12.dao.DAOException;
+import hr.fer.zemris.java.p12.jpdao.JPDAOException;
 
 /**
  * THis class represents JPAEM provider
@@ -32,22 +32,22 @@ public class JPAEMProvider {
 	 * close method 
 	 * @throws DAOException exception
 	 */
-	public static void close() throws DAOException {
+	public static void close() throws JPDAOException {
 		EntityManager em = locals.get();
 		if(em==null) {
 			return;
 		}
-		DAOException dex = null;
+		JPDAOException dex = null;
 		try {
 			em.getTransaction().commit();
 		} catch(Exception ex) {
-			dex = new DAOException("Unable to commit transaction.", ex);
+			dex = new JPDAOException("Unable to commit transaction.", ex);
 		}
 		try {
 			em.close();
 		} catch(Exception ex) {
 			if(dex!=null) {
-				dex = new DAOException("Unable to close entity manager.", ex);
+				dex = new JPDAOException("Unable to close entity manager.", ex);
 			}
 		}
 		locals.remove();

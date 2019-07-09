@@ -4,6 +4,7 @@ import hr.fer.zemris.java.p12.dao.DAO;
 import hr.fer.zemris.java.p12.dao.DAOException;
 import hr.fer.zemris.java.p12.model.Poll;
 import hr.fer.zemris.java.p12.model.Unos;
+import hr.fer.zemris.java.p12.model.User;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,8 +13,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Ovo je implementacija podsustava DAO uporabom tehnologije SQL. Ova
@@ -224,5 +228,45 @@ public class SQLDAO implements DAO {
 		}
 		
 		return -1;
+	}
+	
+	public void addUserInTable(String firstName, String lastName) {
+		
+		try {
+			Connection con = SQLConnectionProvider.getConnection();
+			
+			String insertNewUser = "INSERT INTO Users (firstName, lastName) VALUES (?, ?)";
+			
+			PreparedStatement preparedStatement = con.prepareStatement(insertNewUser,
+					Statement.RETURN_GENERATED_KEYS);
+			
+			preparedStatement.setString(1, firstName);
+			preparedStatement.setString(2, lastName);
+			preparedStatement.executeUpdate();
+		} catch (SQLException e) {
+			System.out.println("User is not added");
+			e.printStackTrace();
+		}
+	}
+	
+	public Set<User> getUsers() {
+		Connection con = SQLConnectionProvider.getConnection(); 
+		PreparedStatement pst = null;
+		Set<User> users = new HashSet<User>();
+		
+		try {
+			pst = con.prepareStatement("select * from users");
+			ResultSet rs = pst.executeQuery();
+			
+			while (rs != null && rs.next()) {
+				users.add(new User(rs.getString(2), rs.getString(3)));
+			}
+			
+			rs.close();
+			
+		} catch (Exception e) {
+			System.out.println("error while getting users");
+		}
+		return users;
 	}
 }

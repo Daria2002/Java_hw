@@ -25,14 +25,30 @@ public class GlasanjeServlet extends HttpServlet {
 	 * default serial version id
 	 */
 	private static final long serialVersionUID = 1L;
+	private SQLDAO sqlDao = new SQLDAO();
+	
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		//super.doPost(req, resp);
 
+		String firstName = req.getParameter("firstName");
+		String lastName = req.getParameter("lastName");
+		
+		sqlDao.addUserInTable(firstName, lastName);
+		
+		req.getRequestDispatcher("/choosePoll.jsp").forward(req, resp);
+	}
+	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		
-		Long pollId = Long.valueOf(req.getParameter("pollID"));
-		
-		SQLDAO sqlDao = new SQLDAO();
+		Long pollId = null;
+		try {
+			pollId = Long.valueOf(req.getParameter("pollID"));
+		} catch (Exception e) {
+			doPost(req, resp);
+		}
 		List<Unos> entries = sqlDao.getOptions(pollId);
 		
 		Map<String, String> entriesIdAndName = new HashMap<String, String>();

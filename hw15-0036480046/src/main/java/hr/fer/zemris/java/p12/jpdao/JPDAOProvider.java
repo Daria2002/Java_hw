@@ -1,4 +1,4 @@
-package hr.fer.zemris.java.p12.dao;
+package hr.fer.zemris.java.p12.jpdao;
 
 import hr.fer.zemris.java.tecaj_13.dao.jpa.JPADAOImpl;
 
@@ -14,16 +14,16 @@ import hr.fer.zemris.java.tecaj_13.dao.jpa.JPADAOImpl;
  * @author marcupic
  *
  */
-public class DAOProvider {
+public class JPDAOProvider {
 
-	private static DAO dao = new JPADAOImpl();
+	private static JPDAO dao = new JPADAOImpl();
 	
 	/**
 	 * Dohvat primjerka.
 	 * 
 	 * @return objekt koji enkapsulira pristup sloju za perzistenciju podataka.
 	 */
-	public static DAO getDao() {
+	public static JPDAO getDao() {
 		return dao;
 	}
 	

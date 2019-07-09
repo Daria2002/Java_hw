@@ -29,7 +29,9 @@
 	<p></p>
 	<a href="powers?a=1&b=100&n=3">Power(a=1 , b=100 , n=3)</a>
 	<p></p>
-	<a href="servleti/index.html">Glasanje</a>
+	<!-- <a href="servleti/index.html">Glasanje</a>
+	<p></p> -->
+	<a href="loginBeforeChoosingPoll.jsp">Glasanje</a>
 	<p></p>
 	<a href="appinfo.jsp">Application running time</a>
 	<p></p>

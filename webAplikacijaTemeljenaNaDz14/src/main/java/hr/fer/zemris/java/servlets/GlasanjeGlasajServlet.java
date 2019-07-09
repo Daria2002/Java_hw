@@ -4,12 +4,15 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import hr.fer.zemris.java.p12.dao.sql.SQLDAO;
 import hr.fer.zemris.java.p12.model.Unos;
+import hr.fer.zemris.java.p12.model.User;
 
 /**
  * This class represents servlet that is called after voting. It refreshes data in
@@ -57,6 +60,9 @@ public class GlasanjeGlasajServlet extends HttpServlet {
 		
 		req.getSession().setAttribute("mapIdAndNames", mapIdAndNames);
 		req.getSession().setAttribute("mapIdAndLinks", mapIdAndLinks);
+		
+		Set<User> users = sqlDao.getUsers();
+		req.getSession().setAttribute("users", users);
 		
 		// Kad je gotovo, pošalji redirect pregledniku I dalje NE generiraj odgovor
 		resp.sendRedirect(req.getContextPath() + "/servleti/glasanje-rezultati");

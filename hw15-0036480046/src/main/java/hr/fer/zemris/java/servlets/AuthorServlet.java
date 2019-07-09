@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import hr.fer.zemris.java.p12.dao.DAOProvider;
+import hr.fer.zemris.java.p12.jpdao.JPDAOProvider;
 import hr.fer.zemris.java.tecaj_13.dao.jpa.JPADAOImpl;
 import hr.fer.zemris.java.tecaj_13.model.BlogEntry;
 import hr.fer.zemris.java.tecaj_13.model.BlogUser;
@@ -39,19 +39,19 @@ public class AuthorServlet extends HttpServlet {
 			
 			newEntry.setComments(null);
 			newEntry.setCreatedAt(new Date());
-			newEntry.setCreator(DAOProvider.getDao().getBlogUser(req.getRequestURI().split("/")[4]));
+			newEntry.setCreator(JPDAOProvider.getDao().getBlogUser(req.getRequestURI().split("/")[4]));
 			newEntry.setLastModifiedAt(new Date());
 			newEntry.setText(req.getParameter("text"));
 			newEntry.setTitle(req.getParameter("title"));
 			
-			DAOProvider.getDao().addNewEntry(newEntry);
+			JPDAOProvider.getDao().addNewEntry(newEntry);
 			
 			resp.sendRedirect(req.getContextPath()+"/servleti/author/" + req.getRequestURI().split("/")[4]);
 		
 		} else if(req.getParameter("newText") != null) {
 			String newEntryText = req.getParameter("newText");
 			String newEntryTitle = req.getParameter("newTitle");
-			BlogEntry blogEntry = DAOProvider.getDao().getEntry(Long.valueOf(req.getRequestURI().split("/")[5]));
+			BlogEntry blogEntry = JPDAOProvider.getDao().getEntry(Long.valueOf(req.getRequestURI().split("/")[5]));
 			
 			blogEntry.setText(newEntryText);
 			blogEntry.setTitle(newEntryTitle);
@@ -63,9 +63,9 @@ public class AuthorServlet extends HttpServlet {
 			
 		
 	    } else if(numberOfArgs == 7 && "edit".equals(req.getRequestURI().split("/")[6])) {
-	    	req.setAttribute("exText", DAOProvider.getDao()
+	    	req.setAttribute("exText", JPDAOProvider.getDao()
 	    			.getEntry(Long.valueOf(req.getRequestURI().split("/")[5])).getText());
-	    	req.setAttribute("exTitle", DAOProvider.getDao()
+	    	req.setAttribute("exTitle", JPDAOProvider.getDao()
 	    			.getEntry(Long.valueOf(req.getRequestURI().split("/")[5])).getTitle());
 			req.getRequestDispatcher("/edit.jsp").forward(req, resp);;
 			
@@ -77,17 +77,17 @@ public class AuthorServlet extends HttpServlet {
 			
 			String email;
 			if(req.getSession().getAttribute("current.user.nick") != null) {
-				BlogUser bu = DAOProvider.getDao().getBlogUser((String)req.getSession().getAttribute("current.user.nick"));
+				BlogUser bu = JPDAOProvider.getDao().getBlogUser((String)req.getSession().getAttribute("current.user.nick"));
 				email = bu.getEmail();
 			} else {
 				email = req.getParameter("email");
 			}
 			
 			Long id = Long.valueOf(req.getRequestURI().split("/")[5]);
-			DAOProvider.getDao().addCommentToBlogUser(id, message, email);
+			JPDAOProvider.getDao().addCommentToBlogUser(id, message, email);
 			
 			req.setAttribute("nickEntries", 
-					DAOProvider.getDao().getEntries(req.getRequestURI().split("/")[4]));
+					JPDAOProvider.getDao().getEntries(req.getRequestURI().split("/")[4]));
 			req.setAttribute("nickName", req.getRequestURI().split("/")[4]);
 			
 			resp.sendRedirect(req.getServletContext().getContextPath()
@@ -98,7 +98,7 @@ public class AuthorServlet extends HttpServlet {
 		
 		// http://localhost:8080/blog/servleti/author/NICK/id
 		else if(numberOfArgs == 6 && isNumeric(req.getRequestURI().split("/")[5])) {
-			BlogEntry entry = DAOProvider.getDao().getEntry(Long.valueOf(req.getRequestURI().split("/")[5]));
+			BlogEntry entry = JPDAOProvider.getDao().getEntry(Long.valueOf(req.getRequestURI().split("/")[5]));
 			
 			req.setAttribute("title", entry.getTitle());
 			req.setAttribute("text", entry.getText());
@@ -115,11 +115,11 @@ public class AuthorServlet extends HttpServlet {
 			return;
 			
 		} else {
-			BlogUser blogUser = DAOProvider.getDao().getBlogUser(
+			BlogUser blogUser = JPDAOProvider.getDao().getBlogUser(
 					req.getRequestURI().split("/")[4]);
 			
 			req.setAttribute("nickEntries", 
-					DAOProvider.getDao().getEntries(blogUser.getNick()));
+					JPDAOProvider.getDao().getEntries(blogUser.getNick()));
 			req.setAttribute("nickName", blogUser.getNick());
 			
 			req.getRequestDispatcher("/blogEntriesListPage.jsp").forward(req, resp);

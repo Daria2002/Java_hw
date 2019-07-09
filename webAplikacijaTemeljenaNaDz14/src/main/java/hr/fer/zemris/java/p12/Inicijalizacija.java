@@ -24,46 +24,61 @@ import javax.servlet.annotation.WebListener;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import com.mchange.v2.c3p0.DataSources;
 
+/**
+ * 
+ * ./ij-console.sh
+ * connect 'jdbc:derby://localhost:1527/votingDBase;user=sa;password=sapwd22;create=true';
+ * show tables;
+ * connect 'jdbc:derby://localhost:1527/votingDBase;user=ivica;password=ivo';
+ * select * from users;
+ * @author Daria Matković
+ *
+ */
+
+
 @WebListener
 public class Inicijalizacija implements ServletContextListener {
-	
+	// U IJ CONSOLE UPISI CONNECT 'JDBC:DERBY://...
 	@Override
 	public void contextInitialized(ServletContextEvent sce) {
 		
 		ServletContext context = sce.getServletContext();
 		String fullPath = context.getRealPath("/WEB-INF/dbsettings.properties");
 
-		String connectionURL;
+		String connectionURL1;
 		try {
-			connectionURL = getConnectionURL(fullPath);
+			connectionURL1 = getConnectionURL(fullPath);
 		} catch (Exception e2) {
 			return;
 		}
 		
-		if(connectionURL == null) {
+		if(connectionURL1 == null) {
 			System.out.println("Path is not ok.");
 			return;
 		}
+		String dbName="votingDBase";
+		String connectionURL = "jdbc:derby://localhost:1527/" 
+		+ dbName + ";user=ivica;password=ivo";
+	
+		System.out.println("cu:"+connectionURL);
 		
-//		
-//		String dbName="votingDB";
-//		String connectionURL = "jdbc:derby://localhost:1527/" + dbName;// + ";user=perica;password=pero";
-//		
 		ComboPooledDataSource cpds = new ComboPooledDataSource();
 		try {
 			cpds.setDriverClass("org.apache.derby.jdbc.ClientDriver");
 		} catch (PropertyVetoException e1) {
 			throw new RuntimeException("Pogreška prilikom inicijalizacije poola.", e1);
 		}
-		cpds.setJdbcUrl(connectionURL);/*
-		cpds.setUser("ivica");
-		cpds.setPassword("ivo");*/
+		
+		cpds.setJdbcUrl(connectionURL);
+//		cpds.setUser("ivica");
+//		cpds.setPassword("ivo");
 		
 		try {
 			Connection con = cpds.getConnection();
 			
 			// create if doesn't exists
 			try {
+				createDBTable(con);
 				createPolls(con);
 				createPollOptions(con);
 				addBendData(con);
@@ -79,6 +94,7 @@ public class Inicijalizacija implements ServletContextListener {
 		sce.getServletContext().setAttribute("hr.fer.zemris.dbpool", cpds);
 	}
 	
+	// add data in table
 	private void addLaptopData(Connection con) throws SQLException {
 		long pollId = addPoll(con, "Voting for favourite laptop:", "What is your favourite laptop?");
 		
@@ -184,6 +200,17 @@ public class Inicijalizacija implements ServletContextListener {
 		ps.close();
 	}
 
+	private void createDBTable(Connection con) throws SQLException {
+		String userTable = "CREATE TABLE Users " + 
+		"(id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,"
+		+ "firstName VARCHAR(50) NOT NULL," +
+		"lastName VARCHAR(50) NOT NULL)";
+		
+		PreparedStatement ps = con.prepareStatement(userTable);
+		ps.executeUpdate();
+		ps.close();
+	}
+	
 	/**
 	 * Gets connection url
 	 * @param fullPath path to properties file

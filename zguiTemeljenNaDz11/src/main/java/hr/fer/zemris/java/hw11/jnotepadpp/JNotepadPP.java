@@ -7,9 +7,17 @@ import java.awt.Container;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
+import java.beans.PropertyChangeListener;
+import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.Collator;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -26,6 +34,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
@@ -127,7 +136,38 @@ public class JNotepadPP extends JFrame {
 		helpLayout.add(def, BorderLayout.CENTER);
 		helpLayout.add(status, BorderLayout.PAGE_END);
 		
-		cp.add(helpLayout, BorderLayout.CENTER);
+		// help layout je ljevi dio
+		JPanel jpanel = new JPanel(new GridLayout(1, 2));
+		jpanel.add(helpLayout);
+		
+		// help layout je desni dio
+		JPanel rightSide = new JPanel(new GridLayout(4, 1));
+		
+		JTextField firstNameLabel = new JTextField("first name");
+		JTextField lastNameLabel = new JTextField("last name");
+		JTextField filePathLabel = new JTextField("file path");
+		JButton buttonSave = new JButton("save data");
+		
+		buttonSave.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String dataToSave = firstNameLabel.getText() + " " + lastNameLabel.getText();
+				Path filePath = Paths.get(filePathLabel.getText());
+				//writeDataToFile(dataToSave, filePath);
+				appendDataToFile(dataToSave, filePath);
+			}
+		});
+		
+		rightSide.add(firstNameLabel);
+		rightSide.add(lastNameLabel);
+		rightSide.add(filePathLabel);
+		rightSide.add(buttonSave);
+		jpanel.add(rightSide);
+		
+		cp.add(jpanel, BorderLayout.CENTER);
+		
+		//cp.add(helpLayout, BorderLayout.CENTER);
 		
 		
 		multiDocModel = def; 
@@ -135,6 +175,25 @@ public class JNotepadPP extends JFrame {
 		createMenus();
 		cp.add(createToolbar(), BorderLayout.PAGE_START);
 	}	
+	
+	private void writeDataToFile(String dataToSave, Path path) {
+		try (PrintWriter out = new PrintWriter(path.toString())) {
+		    out.println(dataToSave);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void appendDataToFile(String dataToAppend, Path path) {
+		try(FileWriter fw = new FileWriter(path.toString(), true);
+			    BufferedWriter bw = new BufferedWriter(fw);
+			    PrintWriter out = new PrintWriter(bw))
+			{
+			    out.println(dataToAppend);
+			} catch (Exception e) {
+				System.out.println("error while appending text to file");
+			}
+	}
 	
 	/**
 	 * This class represents action for adding new document in tab

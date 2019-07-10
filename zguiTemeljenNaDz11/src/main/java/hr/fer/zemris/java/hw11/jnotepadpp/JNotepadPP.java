@@ -1,6 +1,7 @@
 package hr.fer.zemris.java.hw11.jnotepadpp;
 
 import java.awt.BorderLayout;
+import java.awt.Button;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.GridLayout;
@@ -127,6 +128,7 @@ public class JNotepadPP extends JFrame {
 		helpLayout.add(status, BorderLayout.PAGE_END);
 		
 		cp.add(helpLayout, BorderLayout.CENTER);
+		
 		
 		multiDocModel = def; 
 		createActions();

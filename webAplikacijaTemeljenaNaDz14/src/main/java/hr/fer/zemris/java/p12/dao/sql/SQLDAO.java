@@ -269,4 +269,29 @@ public class SQLDAO implements DAO {
 		}
 		return users;
 	}
+	
+	public User getUserWithId(Integer id) {
+		Connection con = SQLConnectionProvider.getConnection();
+		PreparedStatement pst = null;
+		
+		try {
+			pst = con.prepareStatement("select * from Users where id=?");
+			pst.setLong(1, id);
+			try {
+				ResultSet rs = pst.executeQuery();
+				try {
+					if(rs!=null && rs.next()) {
+						return new User(rs.getString(2), rs.getString(3));
+					}
+				} finally {
+					try { rs.close(); } catch(Exception ignorable) {}
+				}
+			} finally {
+				try { pst.close(); } catch(Exception ignorable) {}
+			}
+		} catch(Exception ex) {
+			throw new DAOException("Pogreška prilikom dohvata liste korisnika.", ex);
+		}
+		return null;
+	}
 }

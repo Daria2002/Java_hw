@@ -128,5 +128,9 @@ table.rez td {text-align: center;}
 				}
 			%>
 		</ul>
+		<form action="users" method="GET">
+			<br><input type="number" name="id" min="0" max="360" step="1" value="0"><br>
+			<input type="submit" value="Prikazi korisnike"><input type="reset" value="Reset">
+		</form>
 	</body>
 </html>

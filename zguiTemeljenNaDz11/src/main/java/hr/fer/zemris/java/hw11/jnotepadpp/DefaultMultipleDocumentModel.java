@@ -16,6 +16,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
@@ -64,6 +65,8 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 	private int currentTabIndex = 0;
 	/** previous tab index **/
 	private int previousTabIndex = 0;
+	
+	private static int numberOfTables = 0;
 	
 	/**
 	 * Constructor for DefaultMultipleDocumentModel gets icons and initialize flp
@@ -303,6 +306,15 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 		return;
 	}
 
+	public void addTabWithTable(JTable jtable) {
+		JPanel panel = new JPanel(new BorderLayout());
+		panel.add(jtable,
+				BorderLayout.CENTER);
+
+		addTab("table" + numberOfTables++,
+				imageIconGreen, panel, "table");
+	}
+	
 	@Override
 	public void closeDocument(SingleDocumentModel model) {
 		

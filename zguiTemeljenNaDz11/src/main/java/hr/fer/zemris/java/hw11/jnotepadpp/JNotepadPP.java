@@ -7,6 +7,10 @@ import java.awt.Container;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
@@ -14,18 +18,24 @@ import java.beans.PropertyChangeListener;
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.Collator;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+
+import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -33,6 +43,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
@@ -45,6 +56,7 @@ import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
+import javax.swing.text.StyledEditorKit.BoldAction;
 
 import hr.fer.zemris.java.hw11.jnotepadpp.local.FormLocalizationProvider;
 import hr.fer.zemris.java.hw11.jnotepadpp.local.LJLabel;
@@ -75,6 +87,8 @@ public class JNotepadPP extends JFrame {
     private FormLocalizationProvider flp = new FormLocalizationProvider
     		(LocalizationProvider.getInstance(), this);
 	
+    private Path filePath = null;
+    
     /**
      * Constructor that is used for initializing window size, location and title
      */
@@ -146,6 +160,15 @@ public class JNotepadPP extends JFrame {
 		JTextField firstNameLabel = new JTextField("first name");
 		JTextField lastNameLabel = new JTextField("last name");
 		JTextField filePathLabel = new JTextField("file path");
+		
+		filePathLabel.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				filePath = Paths.get(filePathLabel.getText());
+			}
+		});
+		
 		JButton buttonSave = new JButton("save data");
 		
 		buttonSave.addActionListener(new ActionListener() {
@@ -153,7 +176,7 @@ public class JNotepadPP extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String dataToSave = firstNameLabel.getText() + " " + lastNameLabel.getText();
-				Path filePath = Paths.get(filePathLabel.getText());
+				filePath = Paths.get(filePathLabel.getText());
 				//writeDataToFile(dataToSave, filePath);
 				appendDataToFile(dataToSave, filePath);
 			}
@@ -163,6 +186,7 @@ public class JNotepadPP extends JFrame {
 		rightSide.add(lastNameLabel);
 		rightSide.add(filePathLabel);
 		rightSide.add(buttonSave);
+		
 		jpanel.add(rightSide);
 		
 		cp.add(jpanel, BorderLayout.CENTER);
@@ -1062,6 +1086,61 @@ public class JNotepadPP extends JFrame {
 		tb.add(new JButton(pasteSelectedPart));
 		tb.add(new JButton(copySelectedPart));
 		tb.add(new JButton(statisticalInfo));
+		JButton importData = new JButton(importDataFromFile);
+		importData.setText("importData");
+		tb.add(importData);
 		return tb;
 	}
+	
+	private boolean stringContainsSubstring(String string, String subString) {
+		return string.toLowerCase().contains(subString.toLowerCase());
+	}
+	
+	private final Action importDataFromFile = new AbstractAction() {
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			try {
+				List<String> fileContent = Files.readAllLines(filePath);
+				Object rowData[][] = null;
+				Object columnNames[] = {"firstname", "secondname"};
+
+				List<String[]> lis = new ArrayList<String[]>();
+				for(String line:fileContent) {
+					
+					if(stringContainsSubstring(line, "--")) {
+						rowData = new Object[lis.size()][2];
+						int i = 0;
+						for(String[] arr1:lis) {
+							rowData[i][0] = arr1[0];
+							rowData[i++][1] = arr1[1];
+						}
+						JTable table = new JTable(rowData, columnNames);
+						multiDocModel.addTabWithTable(table);
+						lis = new ArrayList<String[]>();
+						continue;
+					}
+					
+					String[] arr = new String[2];
+					String[] spl = line.split(" ");
+					arr[0] = spl[0];
+					arr[1] = spl[1];
+					lis.add(arr);
+				}
+				
+				rowData = new Object[lis.size()][2];
+				int i = 0;
+				for(String[] arr1:lis) {
+					rowData[i][0] = arr1[0];
+					rowData[i++][1] = arr1[1];
+				}
+				JTable table = new JTable(rowData, columnNames);
+				multiDocModel.addTabWithTable(table);
+				
+			} catch (Exception e1) {
+				JOptionPane.showMessageDialog(JNotepadPP.this, "can't open file");
+			}
+		}
+	};
+	
 }

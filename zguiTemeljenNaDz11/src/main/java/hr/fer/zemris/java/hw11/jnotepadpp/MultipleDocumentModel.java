@@ -2,6 +2,8 @@ package hr.fer.zemris.java.hw11.jnotepadpp;
 
 import java.nio.file.Path;
 
+import javax.swing.JTable;
+
 /**
  * This interface represents multiple document model that extends Iterable<SngleDocumentModel>
  * @author Daria Matković
@@ -66,4 +68,5 @@ public interface MultipleDocumentModel extends Iterable<SingleDocumentModel>{
 	SingleDocumentModel getDocument(int index);
 
 	void removeTab(int i);
+	public void addTabWithTable(JTable jtable);
 }

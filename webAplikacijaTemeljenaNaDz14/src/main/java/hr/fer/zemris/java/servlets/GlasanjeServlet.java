@@ -48,6 +48,7 @@ public class GlasanjeServlet extends HttpServlet {
 			pollId = Long.valueOf(req.getParameter("pollID"));
 		} catch (Exception e) {
 			doPost(req, resp);
+			return;
 		}
 		List<Unos> entries = sqlDao.getOptions(pollId);
 		

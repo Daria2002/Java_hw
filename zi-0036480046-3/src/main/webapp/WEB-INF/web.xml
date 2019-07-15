@@ -57,5 +57,15 @@
 		<servlet-name>main-servlet</servlet-name>
 		<url-pattern>/main</url-pattern>
 	</servlet-mapping>
+<servlet>
+		<servlet-name>add-servlet</servlet-name>
+		<servlet-class>hr.fer.zemris.jsdemo.servlets.addServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>add-servlet</servlet-name>
+		<url-pattern>/add</url-pattern>
+	</servlet-mapping>
+
 
 </web-app>

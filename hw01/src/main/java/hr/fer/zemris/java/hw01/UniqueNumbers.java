@@ -42,9 +42,11 @@ public class UniqueNumbers {
 			}
 			
 		}
-		
+		System.out.print("Ispis od najmanjeg: ");
 		printMinToMax(glava);
-		
+		System.out.println();
+		System.out.print("Ispis od najvećeg: ");
+		printMaxToMin(glava);
 	}
 	
 

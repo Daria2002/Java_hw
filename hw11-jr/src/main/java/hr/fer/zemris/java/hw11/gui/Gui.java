@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -16,18 +17,24 @@ import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+
+import org.w3c.dom.NameList;
 
 public class Gui extends JFrame {
 	
 	List<Person> people = new ArrayList<Person>();
+	JTabbedPane tabbedPane = new JTabbedPane();
 	
 	public Gui() {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -148,7 +155,7 @@ public class Gui extends JFrame {
 			panel.add(userText);
 			
 			JLabel ageLabel = new JLabel("Age");
-			userLabel.setBounds(10, 20, 80, 50);
+			ageLabel.setBounds(10, 20, 80, 50);
 			panel.add(ageLabel);
 			
 			JTextField ageText = new JTextField(3);
@@ -202,7 +209,6 @@ public class Gui extends JFrame {
 			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			
 			JPanel panel = new JPanel();
-			frame.add(panel);
 			
 			JLabel nameLabel = new JLabel("Name");
 			nameLabel.setBounds(10, 10, 80, 25);
@@ -246,6 +252,8 @@ public class Gui extends JFrame {
 			
 			panel.add(cancel);
 			
+			frame.add(panel);
+			
 			frame.setVisible(true);
 			
 		}
@@ -255,7 +263,187 @@ public class Gui extends JFrame {
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			JFrame listNamesFrame = new JFrame("List names");
+			listNamesFrame.setSize(300, 150);
+			listNamesFrame.setVisible(true);
+			listNamesFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			
+			String names = "";
+			
+			for(int i = 0; i < people.size(); i++) {
+				names += people.get(i).getName()+ " ";
+			}
+			
+			JPanel panel = new JPanel();
+			
+			JLabel nameLabel = new JLabel();
+			nameLabel.setText(names);
+			nameLabel.setBounds(10, 10, 80, 25);
+			panel.add(nameLabel);
+		
+			JButton ok = new JButton("OK");
+			ok.setBounds(180, 80, 80, 25);
+			
+			ok.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					listNamesFrame.dispose();
+				}
+			});
+			
+			panel.add(ok);
+			
+			listNamesFrame.add(panel);
+		}
+	};
+	
+	// struktura
+	private static class peop {
+		int a;
+		int b;
+		
+		public peop(int a, int b) {
+			this.a = a;
+			this.b = b;
+		}
+	}
+	
+	private final Action openUser = new AbstractAction() {
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			JFrame getNameToOpen = new JFrame("Enter name");
+			getNameToOpen.setSize(300, 150);
+			getNameToOpen.setVisible(true);
+			getNameToOpen.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			
+			JPanel panel = new JPanel();
+			getNameToOpen.add(panel);
+			
+			JLabel nameLabel = new JLabel("Name");
+			nameLabel.setBounds(10, 10, 80, 25);
+			panel.add(nameLabel);
+			
+			// Bitno je napisat 20 pa da ostane mjesta u kucici za 20 slova
+			JTextField nameText = new JTextField(20);
+			nameText.setBounds(100, 10, 160, 25);
+			panel.add(nameText);
+		
+			JButton ok = new JButton("OK");
+			ok.setBounds(10, 80, 80, 25);
+			panel.add(ok);
+			
+			// open tab with table filled with users
+			ok.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					String givenName = nameText.getText();
+					
+					JPanel tabPanel = new JPanel();
+					
+					List<Person> tablePeople = new ArrayList<Person>();
+					
+					for(int i = 0; i < people.size(); i++) {
+						if(people.get(i).getName().equals(givenName)) {
+							tablePeople.add(people.get(i));
+						}
+					}
+					
+					String[] columnNames = {"Names", "Ages"};
+					
+					Object[][] data = new Object[tablePeople.size()][2];
+					
+					for(int i = 0; i < tablePeople.size(); i++) {
+						data[i][0] = tablePeople.get(i).getName();
+						data[i][1] = tablePeople.get(i).getAge();
+					}
+					
+					JTable table = new JTable(data, columnNames);
+					
+					tabPanel.add(table);
+					tabbedPane.addTab(givenName, tabPanel);
+					
+					getNameToOpen.dispose();
+				}
+			});
+			
+			JButton cancel = new JButton("cancel");
+			cancel.setBounds(180, 80, 80, 25);
+			cancel.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					getNameToOpen.dispose();
+				}
+			});
+			panel.add(cancel);
+			
+		}
+	};
+	
+	private final Action openAllUsers = new AbstractAction() {
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			
+			Boolean tabSet = false; 
+			
+			List<Person> tempList = new ArrayList<Person>();
+			for(int i = 0; i < people.size(); i++) {
+				tempList.add(people.get(i));
+			}
+			
+			for(int i = 0; i < tempList.size(); i++) {
+				JPanel tabPanel = new JPanel();
+				
+				// provjeri je li ime već postoji među tabovim
+				for(int j = 0; j < tabbedPane.getTabCount(); j++) {
+					if(tabbedPane.getTitleAt(j).equals(tempList.get(i).getName())) {
+						tabSet = true;
+						break;
+					}
+				}
+				
+				if(tabSet) {
+					tabSet = false;
+					continue;
+				}
+
+				tabbedPane.add(tempList.get(i).getName(), tabPanel);
+				
+				String[] columnNames = {"Names", "Ages"};
+				
+				List<Person> tablePeople = new ArrayList<Person>();
+				
+				tablePeople.add(tempList.get(i));
+				
+				for(int k = i+1; k < tempList.size(); k++) {
+					if(tempList.get(k).getName().equals(tempList.get(i).getName())) {
+						tablePeople.add(tempList.get(k));
+					}
+				}
+				
+				for(int k = tempList.size()-1; k > i; k--) {
+					if(tempList.get(k).getName().equals(tempList.get(i).getName())) {
+						tempList.remove(k);
+					}
+				}
+				
+				Object[][] data = new Object[tablePeople.size()][2];
+				
+				for(int k = 0; k < tablePeople.size(); k++) {
+					data[k][0] = tablePeople.get(k).getName();
+					data[k][1] = tablePeople.get(k).getAge();
+				}
+				
+				JTable table = new JTable(data, columnNames);
+				
+				tabPanel.add(table);
+				tempList.remove(i);
+				i--;
+			}
 		}
 	};
 	
@@ -275,16 +463,24 @@ public class Gui extends JFrame {
 		removeUserItem.setText("Remove user");
 		menuUser.add(removeUserItem);
 		
-//		menuUser.add(openUser);
-//		menuUser.add(openAllUsers);
+		JMenuItem openUsersItem = new JMenuItem(openUser);
+		openUsersItem.setText("Open user");
+		menuUser.add(openUsersItem);
+		
+		JMenuItem openAllUsersItem = new JMenuItem(openAllUsers);
+		openAllUsersItem.setText("Open all users");
+		menuUser.add(openAllUsersItem);
+		
 		menuBar.add(menuUser);
 		
 		JMenu menuInfo = new JMenu("Info");
 		JMenuItem listNamesItem = new JMenuItem(listNames);
 		listNamesItem.setText("List names");
-		menuUser.add(listNamesItem);
+		menuInfo.add(listNamesItem);
 		
 		menuBar.add(menuInfo);
+		
+		cp.add(tabbedPane);
 		
 		setJMenuBar(menuBar);
 	}

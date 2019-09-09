@@ -62,12 +62,28 @@ public class Inicijalizacija implements ServletContextListener {
 		try {
 			Connection con = cpds.getConnection();
 			
-			// create if doesn't exists
 			try {
 				createPolls(con);
+			} catch (Exception e) {
+			}
+			
+			try {
 				createPollOptions(con);
+			} catch (Exception e) {
+			}
+			
+			try {
 				createUsers(con);
+			} catch (Exception e) {
+			}
+			
+			try {
 				addBendData(con);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+			try {
 				addLaptopData(con);
 			} catch (Exception e) {
 			}
@@ -126,7 +142,7 @@ public class Inicijalizacija implements ServletContextListener {
 				+ " koji Vam je bend najdraži? Kliknite na link kako " + 
 				"biste glasali!");
 		
-		 String insertPollOptions = "INSERT INTO PollOptions (optionTitle,"
+		String insertPollOptions = "INSERT INTO PollOptions (optionTitle,"
 				+ " optionLink, pollID, votesCount) VALUES (?, ?, ?, ?)";
 		
 		PreparedStatement ps = con.prepareStatement(insertPollOptions);
@@ -186,9 +202,33 @@ public class Inicijalizacija implements ServletContextListener {
 	}
 
 	private void createUsers(Connection con) throws SQLException {
-		String usersTable = "CREATE TABLE UsersTable " + 
-				"(name VARCHAR(150) NOT NULL," + 
-				"age BIGINT)";
+		try {
+			String usersTable = "CREATE TABLE UsersTable " + 
+					"(name VARCHAR(150) NOT NULL," + 
+					"age INT)";
+			PreparedStatement ps = con.prepareStatement(usersTable);
+			ps.executeUpdate();
+			ps.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+//		
+//		String insertData = "INSERT INTO UsersTable (name,"
+//				+ " age) VALUES (?, ?)";
+//		
+//		PreparedStatement ps2 = con.prepareStatement(insertData);
+//		
+//		addRowInUsersTable(ps2, "ana", 1);
+//		addRowInUsersTable(ps2, "mar", 2);
+	}
+	
+	private void addRowInUsersTable(PreparedStatement ps, String name, int age)
+					throws SQLException {
+		//ps.setInt(1, id);
+		ps.setString(1, name);
+		ps.setInt(2, age);
+		ps.executeUpdate();
 	}
 	
 	/**

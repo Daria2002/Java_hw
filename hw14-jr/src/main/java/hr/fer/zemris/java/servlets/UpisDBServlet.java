@@ -23,8 +23,15 @@ public class UpisDBServlet extends HttpServlet {
 		}
 	
 		SQLDAO sqldao = new SQLDAO();
-		sqldao.addUserDB(name, age);
+		boolean dodan = sqldao.addUserDB(name, age);
 		
+		System.out.println("dodan = " + dodan);
+		
+		
+	    req.getRequestDispatcher("/afterLogin.jsp").forward(req, resp);
+
+		
+	    //req.getRequestDispatcher("/servleti/glasanje").forward(req, resp);
 
 		//resp.sendRedirect("/vjezba.jsp");
 		

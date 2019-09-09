@@ -227,23 +227,40 @@ public class SQLDAO implements DAO {
 	}
 	
 	// rest of the code is used for jr preparation
-	public void addUserDB(String name, int age) {
+	public boolean addUserDB(String name, int age) {
 		Connection con = SQLConnectionProvider.getConnection();
 		PreparedStatement pst = null;
 		
 		try {
 			// save user in votingDB u tablicu koja je napravljena u Inicijalizacija.java
 			pst = con.prepareStatement(
-					"BEGIN IF NOT EXISTS(SELECT * FROM UsersTable"
-					+ "WHERE name = " + name + " AND age = " + age 
-					+ ") BEGIN INSERT INTO UsersTable (name, age) " + 
-					"values(?, ?) END END");
+					"INSERT INTO UsersTable(name,age) VALUES(?,?)");
 			pst.setString(1, name);
-			pst.setInt(2, age);
+			pst.setLong(2, age);
+			pst.executeUpdate();
 		} catch (Exception e) {
-			// TODO: handle exception
+			return false;
 		}
+
+		//String sql = "Select * from UsersTable where name = ? and age = ?";
+		String sql = "Select * from UsersTable where name = ? and age = ?";
+
+		PreparedStatement ps = null;
+		ResultSet rs = null;
 		
+		try {
+			ps = con.prepareStatement(sql);
+			ps.setString(1, name);
+			ps.setLong(2, age);
+			rs = ps.executeQuery();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		try {
+			return rs.next();
+		} catch (SQLException e) {
+		}
+		return false;
 	}
 	
 }

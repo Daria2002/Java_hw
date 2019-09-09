@@ -1,4 +1,4 @@
-<%@page import="hr.fer.zemris.java.p12.dao.DAOProvider"%>
+<%@page import="hr.fer.zemris.java.p12.jpdao.JPDAOProvider"%>
 <%@page import="hr.fer.zemris.java.tecaj_13.model.BlogUser"%>
 <%@page import="java.util.List"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
@@ -63,8 +63,7 @@
 			    <input type="submit" value="logout">
 			</form>
 		<% }
-	
-		List<BlogUser> registredUsers = DAOProvider.getDao().getRegistredUsers();
+		List<BlogUser> registredUsers = JPDAOProvider.getDao().getRegistredUsers();
 	
 		%>
 			

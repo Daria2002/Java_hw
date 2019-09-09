@@ -8,7 +8,7 @@
 </head>
 <body>
 
-	<form action="servleti/upisDB" method="GET">
+	<form action="servleti/upisDB" method="POST">
 	ime:<br><input type="text" name="imeDB"><br>
 	godine:<br><input type="number" name="godDB"><br>
 	<input type="submit" value="Dodaj"><input type="reset" value="Reset">

@@ -12,7 +12,7 @@ import hr.fer.zemris.java.p12.dao.sql.SQLDAO;
 public class UpisDBServlet extends HttpServlet {
 
 	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String name = "";
 		Integer age = 0;
 		try {
@@ -25,10 +25,13 @@ public class UpisDBServlet extends HttpServlet {
 		SQLDAO sqldao = new SQLDAO();
 		sqldao.addUserDB(name, age);
 		
+
+		//resp.sendRedirect("/vjezba.jsp");
+		
 		//req.setAttribute("message", o);
 	    //req.getRequestDispatcher("/WEB-INF/pages/trigonometric.jsp").forward(req, resp);
-
-		//req.getRequestDispatcher("vjezba.jsp").forward(req, resp);
+//
+//		req.getRequestDispatcher("/vjezba.jsp").forward(req, resp);
 	}
 	
 }

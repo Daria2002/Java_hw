@@ -11,7 +11,6 @@
   <description>
      Prva aplikacija
   </description>
-
 	<servlet>
 		<servlet-name>db-servlet</servlet-name>
 		<servlet-class>hr.fer.zemris.java.servlets.DbServlet</servlet-class>

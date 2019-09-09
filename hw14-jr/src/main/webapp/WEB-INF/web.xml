@@ -137,4 +137,24 @@
 		<url-pattern>/servleti/upisDB</url-pattern>
 	</servlet-mapping>
 	
+	<servlet>
+		<servlet-name>prikazDB</servlet-name>
+		<servlet-class>hr.fer.zemris.java.servlets.PrikazDB</servlet-class>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>prikazDB</servlet-name>
+		<url-pattern>/servleti/prikazDB</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>statistikaDB</servlet-name>
+		<servlet-class>hr.fer.zemris.java.servlets.StatistikaDB</servlet-class>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>statistikaDB</servlet-name>
+		<url-pattern>/servleti/statistikaDB</url-pattern>
+	</servlet-mapping>
+	
 </web-app>

@@ -210,7 +210,6 @@ public class Inicijalizacija implements ServletContextListener {
 			ps.executeUpdate();
 			ps.close();
 		} catch (Exception e) {
-			e.printStackTrace();
 		}
 		
 //		

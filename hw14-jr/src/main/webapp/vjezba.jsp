@@ -14,10 +14,19 @@
 	<input type="submit" value="Dodaj"><input type="reset" value="Reset">
 	</form>
 
+	<form action="servleti/prikazDB" method="GET">
+	ime:<br><input type="text" name="imeDBShow"><br>
+	<input type="submit" value="Prikazi"><input type="reset" value="Reset">
+	</form>
+
+	<p></p>
+	<a href="svi.jsp">Prikaz svih korisnika</a>
+	<p></p>
 	
-	<p>ovdje je prostor za upis ime i godine i spremanje u db </p>
-	<p>ovdje se nalazi:neki prostor za upis imena i na prikaz podataka o korisniku tog imena</p>
-	<p>ovdje se nalazi:link na tablicu sa svim korisnicima</p>
+	<p></p>
+	<a href="servleti/statistikaDB">Statistika</a>
+	<p></p>
+	
 	<p>ovdje se nalazi:link na neki okrugli graf i stupčasti dijagram</p>
 	
 	<p>ista stvar koja se gore radi za db, napravi za file</p>

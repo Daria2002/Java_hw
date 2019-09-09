@@ -15,7 +15,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import javax.sql.DataSource;
 
-@WebFilter(filterName="f1",urlPatterns={"/servleti/*"})
+@WebFilter(filterName="f1",urlPatterns={"/servleti/*", "/svi.jsp"})
 public class ConnectionSetterFilter implements Filter {
 	
 	@Override

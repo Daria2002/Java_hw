@@ -13,7 +13,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Ovo je implementacija podsustava DAO uporabom tehnologije SQL. Ova
@@ -229,8 +231,29 @@ public class SQLDAO implements DAO {
 	// rest of the code is used for jr preparation
 	public boolean addUserDB(String name, int age) {
 		Connection con = SQLConnectionProvider.getConnection();
-		PreparedStatement pst = null;
 		
+		// provjeri je li postoji, ako postoji onda ga nemoj dodat, inače dodaj
+		String sql = "Select * from UsersTable where name = ? and age = ?";
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		
+		try {
+			ps = con.prepareStatement(sql);
+			ps.setString(1, name);
+			ps.setInt(2, age);
+			rs = ps.executeQuery();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		try {
+			if(rs.next()) {
+				return true;
+			}
+		} catch (SQLException e1) {
+		}
+		
+		PreparedStatement pst = null;
 		try {
 			// save user in votingDB u tablicu koja je napravljena u Inicijalizacija.java
 			pst = con.prepareStatement(
@@ -239,28 +262,61 @@ public class SQLDAO implements DAO {
 			pst.setLong(2, age);
 			pst.executeUpdate();
 		} catch (Exception e) {
-			return false;
 		}
 
-		//String sql = "Select * from UsersTable where name = ? and age = ?";
-		String sql = "Select * from UsersTable where name = ? and age = ?";
-
-		PreparedStatement ps = null;
-		ResultSet rs = null;
+		return false;
+	}
+	
+	public List<Integer> getAgesOfUsers(String name) {
+		List<Integer> users = new ArrayList<Integer>();
+		Connection con = SQLConnectionProvider.getConnection();
+		PreparedStatement pst = null;
 		
 		try {
-			ps = con.prepareStatement(sql);
-			ps.setString(1, name);
-			ps.setLong(2, age);
-			rs = ps.executeQuery();
-		} catch (SQLException e) {
-			e.printStackTrace();
+			pst = con.prepareStatement("select * from UsersTable where name=?");
+			pst.setString(1, name);
+			try {
+				ResultSet rs = pst.executeQuery();
+				try {
+					while(rs!=null && rs.next()) {
+						users.add(rs.getInt(2));
+					}
+				} finally {
+					try { rs.close(); } catch(Exception ignorable) {}
+				}
+			} finally {
+				try { pst.close(); } catch(Exception ignorable) {}
+			}
+		} catch(Exception ex) {
+			throw new DAOException("Pogreška prilikom dohvata liste korisnika.", ex);
 		}
+		
+		return users;
+	}
+	
+	public Map<String, Integer> getAllUsers() {
+		Map<String, Integer> map = new HashMap<String, Integer>();
+		
+		Connection con = SQLConnectionProvider.getConnection();
+		PreparedStatement pst = null;
+		
 		try {
-			return rs.next();
-		} catch (SQLException e) {
+			pst = con.prepareStatement("select * from UsersTable");
+			
+			try {
+				ResultSet rs = pst.executeQuery();
+				
+				while (rs!=null && rs.next()) {
+					map.put(rs.getString(1), rs.getInt(2));
+				}
+				
+			} catch (Exception e) {
+			}
+			
+		} catch (Exception e) {
 		}
-		return false;
+		
+		return map;
 	}
 	
 }

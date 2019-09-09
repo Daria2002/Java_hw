@@ -23,22 +23,15 @@ public class UpisDBServlet extends HttpServlet {
 		}
 	
 		SQLDAO sqldao = new SQLDAO();
-		boolean dodan = sqldao.addUserDB(name, age);
+		boolean postojao = sqldao.addUserDB(name, age);
 		
-		System.out.println("dodan = " + dodan);
+		System.out.println("postojao = " + postojao);
 		
+		req.getSession().setAttribute("mess", 
+				"user " + (postojao ? "je":"nije") +" vec postojao");
 		
 	    req.getRequestDispatcher("/afterLogin.jsp").forward(req, resp);
 
-		
-	    //req.getRequestDispatcher("/servleti/glasanje").forward(req, resp);
-
-		//resp.sendRedirect("/vjezba.jsp");
-		
-		//req.setAttribute("message", o);
-	    //req.getRequestDispatcher("/WEB-INF/pages/trigonometric.jsp").forward(req, resp);
-//
-//		req.getRequestDispatcher("/vjezba.jsp").forward(req, resp);
 	}
 	
 }

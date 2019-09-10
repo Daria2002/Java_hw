@@ -43,85 +43,65 @@ public class ServletGrafDB extends HttpServlet {
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		resp.setContentType("image/png");
-
-		// graphics2d to image
-		// image to bytearrayoutputstream
 		
-//		JFrame frame = makeFrameWithDiagram();
-		
-		JPanel content = new JPanel();
-        content.setLayout(new BorderLayout());
-        content.add(new JLabel("Ovo je graf korisnika", SwingConstants.CENTER), BorderLayout.NORTH);
-        
-        String xDescription = "naziv korisnika";
-        String yDescription = "godine korisnika";
-        
-        Integer yMin = 0;
-        
-        SQLDAO sd = new SQLDAO();
-        Map<String, Integer> map = sd.getAllUsers(); 
-        
-        Integer yMax = 0;
-        for(String name:map.keySet()) {
-        	if(map.get(name) > yMax) {
-        		yMax = map.get(name);
-        	}
-        }
-        
-        Integer space = map.size();
-        
-        List<XYValue> result = new ArrayList<ServletGrafDB.XYValue>();
-        
-        List<String> names = new ArrayList<String>();
-        
-        int k = 0;
-        for(String name:map.keySet()) {
-        	names.add(name);
-        	k++;
-        	result.add(new XYValue(k, map.get(name)));
-        }
-        
-        content.add(new BarChartComponent(new BarChart(result, names,
-        		xDescription, yDescription, yMin, yMax, space)), BorderLayout.CENTER);
-        
-        BarChartDemo bcd = new BarChartDemo();
-		bcd.setLayout(new BoxLayout(bcd.getContentPane(), BoxLayout.Y_AXIS));
-        bcd.setContentPane(content);
-        
-//		SwingUtilities.invokeLater(() -> {bcd.setVisible(true);});
-        
         int width = 600;
 		int height = 500;
-		List<Integer> data = new ArrayList<>();
-		data.add(1);
-		data.add(4);
-		data.add(6);
-		int sum = 3;
 		
-        System.out.println(data);
-		int barWidth = width / data.size();
 		
 		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		Graphics2D g2d = image.createGraphics();
 		
-		g2d.setColor(Color.WHITE);
+		g2d.setColor(Color.GRAY);
 		g2d.fillRect(0, 0, width, height);
 		
-		for (int i = 0; i < data.size(); i++) {
-			int R = (int)(Math.random()*256);
-			int G = (int)(Math.random()*256);
-			int B= (int)(Math.random()*256);
-			Color color = new Color(R, G, B);
-			
-			double barHeight = (double)data.get(i) / sum * height;
-			int x = i * barWidth;
-			int y = (int) (height - barHeight);
-			
-			g2d.setColor(color);
-			g2d.fillRect(x, y, barWidth, height);
-			System.out.println(String.format("%s %s %s %s", x, y, barWidth, barHeight));
+		// kod ovog treba paziti jer je (0, 0) u gornjem lijevom kutu
+		
+		// nacrtaj x os :)
+		g2d.setColor(Color.RED);
+		g2d.drawLine(10, 490, 590, 490);
+		
+		// nacrtaj y os :)
+		g2d.setColor(Color.RED);
+		g2d.drawLine(10, 10, 10, 490);
+		
+		
+		SQLDAO sqldao = new SQLDAO();
+		Map<String, Integer> map = sqldao.getAllUsers();
+		
+		Integer barW = (int)Math.floor((width-11-map.size()*2)/map.size());
+		
+		g2d.setColor(Color.GREEN);
+		
+		// za svakog korisnika nacrtaj jedan rect
+		int first = 11;
+		for(String name : map.keySet()) {
+			g2d.fillRect(first, 490-map.get(name), barW, map.get(name));
+			first += barW + 2;
 		}
+		
+//		List<Integer> data = new ArrayList<>();
+//		data.add(1);
+//		data.add(4);
+//		data.add(6);
+//		int sum = 3;
+//		
+//        System.out.println(data);
+//		int barWidth = width / data.size();
+		
+//		for (int i = 0; i < data.size(); i++) {
+//			int R = (int)(Math.random()*256);
+//			int G = (int)(Math.random()*256);
+//			int B= (int)(Math.random()*256);
+//			Color color = new Color(R, G, B);
+//			
+//			double barHeight = (double)data.get(i) / sum * height;
+//			int x = i * barWidth;
+//			int y = (int) (height - barHeight);
+//			
+//			g2d.setColor(color);
+//			g2d.fillRect(x, y, barWidth, height);
+//			System.out.println(String.format("%s %s %s %s", x, y, barWidth, barHeight));
+//		}
 		
 		g2d.dispose();
 		

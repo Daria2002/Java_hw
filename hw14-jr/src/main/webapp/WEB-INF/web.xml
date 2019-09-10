@@ -157,4 +157,17 @@
 		<url-pattern>/servleti/statistikaDB</url-pattern>
 	</servlet-mapping>
 	
+	
+	<servlet>
+		<servlet-name>ServletGrafDB</servlet-name>
+		<servlet-class>hr.fer.zemris.java.servlets.ServletGrafDB</servlet-class>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>ServletGrafDB</servlet-name>
+		<url-pattern>/servleti/ServletGrafDB</url-pattern>
+	</servlet-mapping>
+	
+	
+	
 </web-app>

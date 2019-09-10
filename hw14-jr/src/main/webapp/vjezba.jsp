@@ -24,10 +24,8 @@
 	<p></p>
 	
 	<p></p>
-	<a href="servleti/statistikaDB">Statistika</a>
+	<a href="statDB.jsp">Statistika grafovi</a>
 	<p></p>
-	
-	<p>ovdje se nalazi:link na neki okrugli graf i stupčasti dijagram</p>
 	
 	<p>ista stvar koja se gore radi za db, napravi za file</p>
 

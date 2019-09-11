@@ -313,7 +313,9 @@ public class JVDraw extends JFrame {
         setJMenuBar(menubar);
 		JMenu fileMenu = new JMenu("File");
         menubar.add(fileMenu);
-        JMenuItem openMI = fileMenu.add(new JMenuItem("Open"));
+        //JMenuItem openMI = fileMenu.add(new JMenuItem("Open"));
+        JMenuItem openMI = new JMenuItem("Open");
+        fileMenu.add(openMI);
         openMI.addActionListener(new ActionListener() {
 			
 			@Override

@@ -9,7 +9,7 @@ import java.awt.Graphics2D;
  */
 public class GeometricalObjectPainter implements GeometricalObjectVisitor {
 
-	/** graphiics */
+	/** graphics */
 	Graphics2D g2d;
 	
 	/**

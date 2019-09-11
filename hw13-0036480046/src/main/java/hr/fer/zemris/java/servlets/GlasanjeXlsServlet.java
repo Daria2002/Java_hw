@@ -45,7 +45,8 @@ public class GlasanjeXlsServlet extends HttpServlet {
 	 * @throws ServletException exception
 	 * @throws IOException exception
 	 */
-	private void createXlsFile(HttpServletRequest request, HttpServletResponse response,
+	private void createXlsFile(HttpServletRequest request,
+			HttpServletResponse response,
 			String[] data) throws ServletException, IOException {
 		try{
 			HSSFWorkbook hwb = new HSSFWorkbook();

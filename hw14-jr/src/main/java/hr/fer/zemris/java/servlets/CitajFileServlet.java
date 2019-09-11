@@ -23,12 +23,13 @@ public class CitajFileServlet extends HttpServlet {
 		FileInputStream fis = new FileInputStream(file);
 		BufferedReader br = new BufferedReader(new InputStreamReader(fis));
 		String line = "";
-		String fileContent = "";
+		StringBuilder fileContent =  new StringBuilder();
 		while((line = br.readLine()) != null) {
-			fileContent += line + "\n";
+			fileContent.append(line);
+			fileContent.append("\n");
 		}
 		
-		req.getSession().setAttribute("fileContent", fileContent);
+		req.getSession().setAttribute("fileContent", fileContent.toString());
 		req.getRequestDispatcher("/citajFile.jsp").forward(req, resp);
 	}
 	

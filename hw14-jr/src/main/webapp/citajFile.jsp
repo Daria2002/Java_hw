@@ -21,6 +21,7 @@
 			<p><%=f%></p>
 			<p>file se cita prek servleta</p>
 			<%
+			request.getSession().setAttribute("fileContent", null);
 		} else {
 	
 			ClassLoader classLoader = getClass().getClassLoader();

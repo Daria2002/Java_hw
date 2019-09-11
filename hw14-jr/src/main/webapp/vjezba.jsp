@@ -37,9 +37,8 @@
 	<a href="servleti/citajFileServlet">Sadrzaj filea prek servleta</a>
 	<p></p>
 	
-	<p>ovdje se nalazi link na kojem se prikazuju slike iz nekog foldera</p>
 	<p></p>
-	<a href="servleti/slike">Sike</a>
+	<a href="slike.jsp">Slike</a>
 	<p></p>
 
 </body>

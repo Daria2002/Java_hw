@@ -28,6 +28,7 @@ public class Inicijalizacija implements ServletContextListener {
 			
 			String imageName;
 			String imageDiscription;
+			// three lines per object
 			String[] imageTags = new String[lines.size()/3];
 						
 			for(int i = 0; i < lines.size(); i = i+3) {

@@ -27,7 +27,20 @@
 	<a href="statDB.jsp">Statistika grafovi</a>
 	<p></p>
 	
-	<p>ista stvar koja se gore radi za db, napravi za file</p>
+	<p>ista stvar koja se gore radi za db, napravi za file, "remote" file</p>
+
+	<p></p>
+	<a href="citajFile.jsp">Sadrzaj filea prek jsp</a>
+	<p></p>
+	
+	<p></p>
+	<a href="servleti/citajFileServlet">Sadrzaj filea prek servleta</a>
+	<p></p>
+	
+	<p>ovdje se nalazi link na kojem se prikazuju slike iz nekog foldera</p>
+	<p></p>
+	<a href="servleti/slike">Sike</a>
+	<p></p>
 
 </body>
 </html>

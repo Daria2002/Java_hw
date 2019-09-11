@@ -168,6 +168,24 @@
 		<url-pattern>/servleti/ServletGrafDB</url-pattern>
 	</servlet-mapping>
 	
+	<servlet>
+		<servlet-name>CitajFileServlet</servlet-name>
+		<servlet-class>hr.fer.zemris.java.servlets.CitajFileServlet</servlet-class>
+	</servlet>
 	
+	<servlet-mapping>
+		<servlet-name>CitajFileServlet</servlet-name>
+		<url-pattern>/servleti/citajFileServlet</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>slike</servlet-name>
+		<servlet-class>hr.fer.zemris.java.servlets.SlikeServlet</servlet-class>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>slike</servlet-name>
+		<url-pattern>/servleti/slike</url-pattern>
+	</servlet-mapping>
 	
 </web-app>

@@ -1,3 +1,5 @@
+<%@page import="java.nio.file.Files"%>
+<%@page import="java.io.File"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="java.util.List"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
@@ -10,13 +12,27 @@
 </head>
 <body>
 	<p>show</p>
-	
+	<p></p>
+	<a href="add">Slike</a>
+	<p></p>
 	<%
 	
-	List<String>
-		for(int i = 0; i < ().size(); i++) {
-			
-		}
+	File imagesFolder = null;
+	try {
+		String imagesPath = getServletContext().getRealPath("WEB-INF/images");
+		imagesFolder = new File(imagesPath);
+
+	} catch (Exception e) {
+	}
+	
+	
+	File[] filesInImages = imagesFolder.listFiles();
+	
+	for(int i = 0; i < filesInImages.length; i++) {
+		%>
+			<li value="<%=i%>"><a href="slikaa?name=<%=filesInImages[i].getName()%>"><%=filesInImages[i].getName()%></a></li>
+		<%
+	}
 	%>
 	
 </body>

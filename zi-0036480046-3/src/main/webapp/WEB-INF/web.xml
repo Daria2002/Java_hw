@@ -57,7 +57,7 @@
 		<servlet-name>main-servlet</servlet-name>
 		<url-pattern>/main</url-pattern>
 	</servlet-mapping>
-<servlet>
+	<servlet>
 		<servlet-name>add-servlet</servlet-name>
 		<servlet-class>hr.fer.zemris.jsdemo.servlets.addServlet</servlet-class>
 	</servlet>
@@ -67,5 +67,14 @@
 		<url-pattern>/add</url-pattern>
 	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>slikaa</servlet-name>
+		<servlet-class>hr.fer.zemris.jsdemo.servlets.SlikaServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>slikaa</servlet-name>
+		<url-pattern>/slikaa</url-pattern>
+	</servlet-mapping>
 
 </web-app>

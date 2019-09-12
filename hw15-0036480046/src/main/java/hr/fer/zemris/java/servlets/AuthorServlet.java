@@ -55,13 +55,10 @@ public class AuthorServlet extends HttpServlet {
 			
 			blogEntry.setText(newEntryText);
 			blogEntry.setTitle(newEntryTitle);
-			
-			Long id = Long.valueOf(req.getRequestURI().split("/")[5]);
-			
+
 			resp.sendRedirect(req.getServletContext().getContextPath()
 					+"/servleti/author/" + req.getRequestURI().split("/")[4]);
 			
-		
 	    } else if(numberOfArgs == 7 && "edit".equals(req.getRequestURI().split("/")[6])) {
 	    	req.setAttribute("exText", JPDAOProvider.getDao()
 	    			.getEntry(Long.valueOf(req.getRequestURI().split("/")[5])).getText());

@@ -70,7 +70,10 @@ public class GlasanjeGrafikaServlet extends HttpServlet {
 		}
 		
 		for(String id:points.keySet()) {
-			dataset.setValue(names.get(id), Integer.valueOf(points.get(id)));
+			try {
+				dataset.setValue(names.get(id), Integer.valueOf(points.get(id)));
+			} catch (Exception e) {
+			}
 		}
 
 		boolean legend = true;

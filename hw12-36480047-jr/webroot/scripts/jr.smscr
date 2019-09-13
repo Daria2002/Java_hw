@@ -2,7 +2,7 @@
 <html>
 <body>
 {$FOR i 3 10 1$}
-{$NOW "yyyy-MM-dd" $}
+{$NOW "HH:mm:ss" $}
 This is message.
 {$END$}
 </body>

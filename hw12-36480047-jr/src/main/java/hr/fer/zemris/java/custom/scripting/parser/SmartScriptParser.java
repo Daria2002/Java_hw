@@ -140,36 +140,12 @@ public class SmartScriptParser {
 			}
 			
 			token = lexer.nextToken();
-			
+			System.out.println("token = " + token.getValue().toString());
 		}
 		
 	}
 
 	private void now() {
-//		List<Element> elementList = new ArrayList<Element>();
-//		
-//		while(lexer.getToken().getType() != TokenSmartType.EOF && lexer.nextToken().getType() != TokenSmartType.TAG_CLOSE) {
-//			
-//			String tokenValue = removeQuotes(lexer.getToken().getValue().toString());
-//			String tokenValueWithQuotes = lexer.getToken().getValue().toString();
-//			
-//			if(tokenValue.charAt(0) == '@') {
-//				elementList.add(new ElementFunction(tokenValue.substring(1)));
-//			
-//			} else if(isOperator(tokenValue)) {
-//				elementList.add(new ElementOperator(tokenValue));
-//				
-//			} else {
-//				elementList.add(getValue(tokenValueWithQuotes));
-//			}
-//		}
-//
-//		Element[] elArray = new Element[elementList.size()];
-//		for(int i = 0; i < elementList.size(); i++) {
-//			elArray[i] = elementList.get(i);
-//		}
-//		
-
 		String format = "";
 		lexer.nextToken();
 		// postoji parametar za format

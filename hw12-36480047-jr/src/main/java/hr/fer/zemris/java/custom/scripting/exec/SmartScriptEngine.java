@@ -165,6 +165,13 @@ public class SmartScriptEngine {
 						stack.push(decfmt(f, (Double)valueWrapper1.getValue()));
 						break;
 					
+					case "now":
+						String format = stack.pop().toString();
+						valueWrapper1 = new ValueWrapper(stack.pop());
+						
+						stack.push(now(format));
+						break;
+						
 					case "dup":
 						dup(stack);
 						break;
@@ -232,7 +239,7 @@ public class SmartScriptEngine {
 						+ "request context.");
 			}
 		}
-	
+
 		/**
 		 * removes association for name from requestContext temporaryParameters map
 		 * @param stack stack
@@ -346,6 +353,13 @@ public class SmartScriptEngine {
 			return formatter.format(x);
 		}
 
+		private Object now(String format) {
+			System.out.println("sad je u funkciji now i format je = " + format);
+			DateTimeFormatter dtf = DateTimeFormatter.ofPattern(format);
+			String formatDateTime = LocalDateTime.now().format(dtf);
+			
+			return formatDateTime;
+		}
 		/**
 		 * calculates sin of given value
 		 * @param value value

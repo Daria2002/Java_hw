@@ -33,6 +33,10 @@
 			<li value="<%=i%>"><a href="slikaa?name=<%=filesInImages[i].getName()%>"><%=filesInImages[i].getName()%></a></li>
 		<%
 	}
+	
+	File f = new File(".");
+	String helper = f.getAbsolutePath();
+	//System.out.println("bok"+helper);
 	%>
 	
 </body>

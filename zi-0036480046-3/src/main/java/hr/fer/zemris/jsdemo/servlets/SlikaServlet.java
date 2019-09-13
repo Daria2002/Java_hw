@@ -26,8 +26,6 @@ public class SlikaServlet extends HttpServlet {
 		
 		String txtFile = readAllBytesJava7(path);
 		
-		
-		
 		req.setAttribute("numL", countOcc(txtFile, "LINE"));
 		req.setAttribute("numK", countOcc(txtFile, "CIRCLE"));
 		req.setAttribute("numKRUG", countOcc(txtFile, "FCIRCLE"));

@@ -169,7 +169,15 @@ public class SmartScriptParser {
 //			elArray[i] = elementList.get(i);
 //		}
 //		
+
 		String format = "";
+		lexer.nextToken();
+		// postoji parametar za format
+		if(lexer.getToken().getType() == TokenSmartType.TAG_ELEMENT) {
+			System.out.println("token value = " + lexer.getToken().getValue().toString());
+			format = lexer.getToken().getValue().toString();
+		}
+		
 		ElementString el = new ElementString(format);
 		NowNode nowNode = new NowNode(el);
 		Node parentNode = (Node)stack.peek();

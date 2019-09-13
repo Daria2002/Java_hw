@@ -3,9 +3,15 @@ package hr.fer.zemris.java.custom.scripting.exec;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+
+import javax.xml.crypto.Data;
+
 import hr.fer.zemris.java.custom.scripting.elems.Element;
 import hr.fer.zemris.java.custom.scripting.elems.ElementConstantDouble;
 import hr.fer.zemris.java.custom.scripting.elems.ElementConstantInteger;
@@ -18,6 +24,7 @@ import hr.fer.zemris.java.custom.scripting.nodes.EchoNode;
 import hr.fer.zemris.java.custom.scripting.nodes.ForLoopNode;
 import hr.fer.zemris.java.custom.scripting.nodes.INodeVisitor;
 import hr.fer.zemris.java.custom.scripting.nodes.Node;
+import hr.fer.zemris.java.custom.scripting.nodes.NowNode;
 import hr.fer.zemris.java.custom.scripting.nodes.TextNode;
 import hr.fer.zemris.java.webserver.RequestContext;
 
@@ -380,6 +387,17 @@ public class SmartScriptEngine {
 		private void acceptChildren(Node node) {
 			for(int i = 0; i < node.numberOfChildren(); i++) {
 				node.getChild(i).accept(this);
+			}
+		}
+
+		@Override
+		public void visitNowNode(NowNode node) {
+			LocalDateTime now = LocalDateTime.now();
+			DateTimeFormatter dtf = DateTimeFormatter.ofPattern(node.getFormat().toString());
+			try {
+				requestContext.write(now.format(dtf));
+			} catch (IOException e) {
+				System.out.println("greska kod pisanja vremena");
 			}
 		}
 	};

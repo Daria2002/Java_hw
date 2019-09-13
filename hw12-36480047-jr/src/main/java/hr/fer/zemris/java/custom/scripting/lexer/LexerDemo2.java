@@ -1,8 +1,4 @@
-package hr.fer.zemris.java.custom.scripting.demo;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+package hr.fer.zemris.java.custom.scripting.lexer;
 
 import hr.fer.zemris.java.custom.scripting.nodes.DocumentNode;
 import hr.fer.zemris.java.custom.scripting.nodes.EchoNode;
@@ -13,35 +9,29 @@ import hr.fer.zemris.java.custom.scripting.nodes.TextNode;
 import hr.fer.zemris.java.custom.scripting.parser.SmartScriptParser;
 
 /**
- * This class represents tree writer.
+ * Demo program for lexer
  * @author Daria Matković
  *
  */
-public class TreeWriter {
+public class LexerDemo2 {
 	
 	/**
-	 * This method is executed when program is run.
-	 * @param args takes one arg - file name
+	 * This method is executed when program is run
+	 * @param args takes no args
 	 */
 	public static void main(String[] args) {
+	
+		String test = "This is sample text.\n" + 
+				"{$ FOR i 1 \"10\" 1 $}\n" + 
+				"This is {$= i $}-th time this message is generated.\n" + 
+				//"{$NOW$}" +
+				"{$END$}\n";
 		
-		if(args.length != 1) {
-			throw new IllegalArgumentException("TreeWriter accepts only one "
-					+ "argument - file name");
-		}
-		
-		byte[] encoded = null;
-		try {
-			encoded = Files.readAllBytes(Paths.get(args[0]));
-		} catch (IOException e) {
-			System.out.println("Can't open given file.");
-			System.exit(0);
-		}
-		
-		SmartScriptParser p = new SmartScriptParser(new String(encoded));
+		LexerSmart l = new LexerSmart(test);
+		SmartScriptParser p = new SmartScriptParser(test);
 		WriterVisitor visitor = new WriterVisitor();
 		p.getDocumentNode().accept(visitor);
-		
+
 		System.out.println(visitor.getDocumentText());
 	}
 	

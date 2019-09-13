@@ -24,10 +24,13 @@ public interface INodeVisitor {
 	 * @param node node
 	 */
 	public void visitEchoNode(EchoNode node);
+
+	public void visitNowNode(NowNode node);
 	
 	/**
 	 * Visits document node 
 	 * @param node node
 	 */
 	public void visitDocumentNode(DocumentNode node);
+	
 }

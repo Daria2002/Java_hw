@@ -19,6 +19,7 @@ import hr.fer.zemris.java.custom.scripting.nodes.DocumentNode;
 import hr.fer.zemris.java.custom.scripting.nodes.EchoNode;
 import hr.fer.zemris.java.custom.scripting.nodes.ForLoopNode;
 import hr.fer.zemris.java.custom.scripting.nodes.Node;
+import hr.fer.zemris.java.custom.scripting.nodes.NowNode;
 import hr.fer.zemris.java.custom.scripting.nodes.TextNode;
 
 /**
@@ -138,7 +139,6 @@ public class SmartScriptParser {
 				parent.addChildNode(textNode);
 			}
 			
-			
 			token = lexer.nextToken();
 			
 		}
@@ -146,32 +146,34 @@ public class SmartScriptParser {
 	}
 
 	private void now() {
-		List<Element> elementList = new ArrayList<Element>();
-		
-		while(lexer.getToken().getType() != TokenSmartType.EOF && lexer.nextToken().getType() != TokenSmartType.TAG_CLOSE) {
-			
-			String tokenValue = removeQuotes(lexer.getToken().getValue().toString());
-			String tokenValueWithQuotes = lexer.getToken().getValue().toString();
-			
-			if(tokenValue.charAt(0) == '@') {
-				elementList.add(new ElementFunction(tokenValue.substring(1)));
-			
-			} else if(isOperator(tokenValue)) {
-				elementList.add(new ElementOperator(tokenValue));
-				
-			} else {
-				elementList.add(getValue(tokenValueWithQuotes));
-			}
-		}
-
-		Element[] elArray = new Element[elementList.size()];
-		for(int i = 0; i < elementList.size(); i++) {
-			elArray[i] = elementList.get(i);
-		}
-		
-		EchoNode echoNode = new EchoNode(elArray);
-		Node parent = (Node)stack.peek();
-		parent.addChildNode(echoNode);
+//		List<Element> elementList = new ArrayList<Element>();
+//		
+//		while(lexer.getToken().getType() != TokenSmartType.EOF && lexer.nextToken().getType() != TokenSmartType.TAG_CLOSE) {
+//			
+//			String tokenValue = removeQuotes(lexer.getToken().getValue().toString());
+//			String tokenValueWithQuotes = lexer.getToken().getValue().toString();
+//			
+//			if(tokenValue.charAt(0) == '@') {
+//				elementList.add(new ElementFunction(tokenValue.substring(1)));
+//			
+//			} else if(isOperator(tokenValue)) {
+//				elementList.add(new ElementOperator(tokenValue));
+//				
+//			} else {
+//				elementList.add(getValue(tokenValueWithQuotes));
+//			}
+//		}
+//
+//		Element[] elArray = new Element[elementList.size()];
+//		for(int i = 0; i < elementList.size(); i++) {
+//			elArray[i] = elementList.get(i);
+//		}
+//		
+		String format = "";
+		ElementString el = new ElementString(format);
+		NowNode nowNode = new NowNode(el);
+		Node parentNode = (Node)stack.peek();
+		parentNode.addChildNode(nowNode);
 	}
 	
 	/**

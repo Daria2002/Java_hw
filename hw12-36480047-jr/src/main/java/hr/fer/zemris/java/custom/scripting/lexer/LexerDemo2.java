@@ -31,7 +31,7 @@ public class LexerDemo2 {
 		SmartScriptParser p = new SmartScriptParser(test);
 		WriterVisitor visitor = new WriterVisitor();
 		p.getDocumentNode().accept(visitor);
-
+		
 		System.out.println(visitor.getDocumentText());
 	}
 	

@@ -390,13 +390,16 @@ public class SmartScriptEngine {
 			}
 		}
 
+
 		@Override
 		public void visitNowNode(NowNode node) {
+			String format = node.getFormat();
+			
 			LocalDateTime now = LocalDateTime.now();
-			DateTimeFormatter dtf = DateTimeFormatter.ofPattern(node.getFormat().toString());
+			DateTimeFormatter dtf = DateTimeFormatter.ofPattern(format);
 			try {
 				requestContext.write(now.format(dtf));
-			} catch (IOException e) {
+			} catch (Exception e) {
 				System.out.println("greska kod pisanja vremena");
 			}
 		}

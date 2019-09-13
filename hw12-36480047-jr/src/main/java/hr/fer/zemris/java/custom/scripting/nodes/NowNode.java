@@ -1,20 +1,31 @@
 package hr.fer.zemris.java.custom.scripting.nodes;
 
 import hr.fer.zemris.java.custom.scripting.elems.Element;
+import hr.fer.zemris.java.custom.scripting.elems.ElementString;
 
 public class NowNode extends Node {
 
-	private Element format;
+	private String format;
 	
 	public NowNode(Element format) {
-		this.format = format;
+		if("yyyy-MM-dd".equals(format.asText()) || "HH:mm:ss".equals(format.asText())) {
+			this.format = format.asText();
+		} else {
+			this.format = "yyyy-MM-dd HH:mm:ss";
+		}
 	}
 
-	public Element getFormat() {
+	public String getFormat() {
 		return format;
 	}
-
-	public void setFormat(Element format) {
-		this.format = format;
+	
+	@Override
+	public String toString() {
+		return "bok iz now node";
+	}
+	
+	@Override
+	public void accept(INodeVisitor visitor) {
+		visitor.visitNowNode(this);
 	}
 }

@@ -1,0 +1,9 @@
+{$= "text/html" @setMimeType $}
+<html>
+<body>
+{$FOR i 3 10 1$}
+{$NOW$}
+This is message.
+{$END$}
+</body>
+</html>

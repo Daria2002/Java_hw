@@ -140,7 +140,13 @@ public class SmartScriptParser {
 			}
 			
 			token = lexer.nextToken();
-			System.out.println("token = " + token.getValue().toString());
+			
+			try {
+				System.out.println("token = " + token.getValue().toString());
+			} catch (Exception e) {
+				System.out.println("Nije uspjelo prinje token");
+			}
+			
 		}
 		
 	}
@@ -167,8 +173,8 @@ public class SmartScriptParser {
 		List<Element> elementList = new ArrayList<Element>();
 		
 		while(lexer.getToken().getType() != TokenSmartType.EOF && lexer.nextToken().getType() != TokenSmartType.TAG_CLOSE) {
-			
-			String tokenValue = removeQuotes(lexer.getToken().getValue().toString());
+			TokenSmart tok = lexer.getToken();
+			String tokenValue = removeQuotes(tok.getValue().toString());
 			String tokenValueWithQuotes = lexer.getToken().getValue().toString();
 			
 			if(tokenValue.charAt(0) == '@') {

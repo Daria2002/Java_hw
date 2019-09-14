@@ -167,7 +167,6 @@ public class SmartScriptEngine {
 					
 					case "now":
 						String format = stack.pop().toString();
-						valueWrapper1 = new ValueWrapper(stack.pop());
 						
 						stack.push(now(format));
 						break;

@@ -10,18 +10,66 @@ import java.util.List;
 public class BarChart {
 
 	/** list of values to show on bar chart **/
-	List<XYValue> values;
+	private final List<XYValue> values;
 	/** x description **/
-	String xDescription;
+	private final String xDescription;
 	/** y description **/
-	String yDescription;
+	private final String yDescription;
 	/** y min **/
-	int yMin;
+	private final int yMin;
 	/** y max **/
-	int yMax;
+	private final int yMax;
 	/** space between two y values **/
-	int space;
+	private final int space;
 	
+	/**
+	 * Gets values
+	 * @return returns list of XYValue objects
+	 */
+	public List<XYValue> getValues() {
+		return values;
+	}
+
+	/**
+	 * Gets description for x axis
+	 * @return returns description for x axis
+	 */
+	public String getxDescription() {
+		return xDescription;
+	}
+
+	/**
+	 * Gets description for y axis
+	 * @return returns description for y axis
+	 */
+	public String getyDescription() {
+		return yDescription;
+	}
+
+	/**
+	 * Gets minimum value on y axis
+	 * @return returns minimum value on y axis
+	 */
+	public int getyMin() {
+		return yMin;
+	}
+
+	/**
+	 * Gets maximum value on y axis
+	 * @return returns maximum value on y axis
+	 */
+	public int getyMax() {
+		return yMax;
+	}
+
+	/**
+	 * Gets space
+	 * @return returns space
+	 */
+	public int getSpace() {
+		return space;
+	}
+
 	/** 
 	 * This method represents constructor for bar chart that initialize variables.
 	 * @param values list of values to show on bar chart

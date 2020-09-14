@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+.btn {
+  background-color: white;
+  color: black;
+  border: 2px solid #F0E68C; /* Green */
+}
+
+h1 {
+  color: blue;
+  font-family: verdana;
+  font-size: 300%;
+}
+
+body {
+	background-color: grey;
+}
+
+.img {
+  border: 10px solid transparent;
+  padding: 15px;
+  border-color: green;
+}
+
+.img {
+  border: 10px solid transparent;
+  padding: 15px;
+  border-color: pink;
+}
+
+.img2 {
+  border-radius: 50%;
+}
+
+p.b {
+  font: 15px arial, sans-serif;
+  text-shadow: 3px 2px red;
+  color: yellow;
+  font-size: 100%;
+}
+
+p.a {
+  font: italic bold 5px/15px Georgia, serif;
+  text-shadow: 3px 2px blue;
+  color: yellow;
+  font-size: 150%;
+}
+
+</style>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="js/htmlescaping.js"></script>
+<script type="text/javascript"><!--
+
+		$.ajax(
+		  {
+			  url: "rest/imagej/tags",
+			  data: {
+				  dummy: Math.random()
+			  },
+			  dataType: "json",
+			  success: function(data) {
+					var tags = data; // već je JSON zbog dataType gore...
+					var html = "";
+					if(tags.length==0) {
+						html = "Nema rezultata..."
+					} else {
+						for(var i=0; i<tags.length; i++) {
+							html += "<input type='button' class=\"btn\" onclick='getThumbnailImages(\"" + htmlEscape(tags[i]) + "\")' value='" + htmlEscape(tags[i]) + "'>";
+						}
+					}
+					$("#tags").html(html);
+			  }
+		  }
+		);
+
+		function getThumbnailImages(tag) {$.ajax(
+				  {
+					  url: "rest/imagej/thumbnails/" + tag,
+					  data: {
+						  dummy: Math.random()
+					  },
+					  dataType: "json",
+					  success: function(data) {
+							var thumbnails = data; // već je JSON zbog dataType gore...
+							var html = "";
+							if(thumbnails.length==0) {
+								html = "Nema rezultata..."
+							} else {
+								for(var i=0; i<thumbnails.length; i++) {
+									html += "<img class=\"img\" src='servlets/thumbnails?imageName=" + 
+											htmlEscape(thumbnails[i]) + "' onclick='getImage(\"" +
+													htmlEscape(thumbnails[i]) + "\")'>";
+								}
+							}
+							$("#thumbnails").html(html);
+							$("#images").html("");
+					  }
+				  }
+				);
+		}
+		
+		function getImage(imageName) {$.ajax(
+				  {
+					  url: "rest/imagej/image/" + imageName,
+					  data: {
+						  dummy: Math.random()
+					  },
+					  dataType: "json",
+					  success: function(data) {
+							var image = data; // već je JSON zbog dataType gore...
+							var html = "";
+							if(images.length==0) {
+								html = "Nema rezultata..."
+							} else {
+								html += "<img class=\"img2\" src='servlets/images?imageName=" + 
+											htmlEscape(image.name) + "'>";
+								html += "<p class=\"b\">" + htmlEscape(image.description) + "</p>";
+								
+								for(var i=0; i<image.tags.length; i++) {
+									html += "<p class=\"a\">" + htmlEscape(image.tags[i]) + "</p>";
+								}
+							}
+							$("#images").html(html);
+					  }
+				  }
+				);
+		}
+	
+
+//--></script>
+
+
+</head>
+
+<body>
+	<h1>Cities in Croatia</h1>
+	
+	<div id="tags">&nbsp;</div>
+	<div id="thumbnails">&nbsp;</div>
+	<div id="images">&nbsp;</div>
+
+</body>
+</html>

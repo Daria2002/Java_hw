@@ -1,20 +1,15 @@
 package hr.fer.zemris.java.gui.calc;
 
-import java.awt.Color;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Stack;
 import java.util.function.DoubleBinaryOperator;
-
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
-import javax.swing.event.ListDataListener;
-
 import hr.fer.zemris.java.gui.layouts.CalcLayout;
 import hr.fer.zemris.java.gui.layouts.RCPosition;
 
@@ -24,7 +19,10 @@ import hr.fer.zemris.java.gui.layouts.RCPosition;
  *
  */
 public class Calculator extends JFrame {
-
+	/**
+	 * default serial version
+	 */
+	private static final long serialVersionUID = 1L;
 	/** calculator model **/
 	private static CalcModeImpl cmi = new CalcModeImpl();
 	/** container **/
@@ -232,8 +230,9 @@ public class Calculator extends JFrame {
 	private static ActionListener popListener = (e) -> {
 		if(stack.isEmpty()) {
 			System.out.println("Stack is empty");
-			System.exit(1);
+			return;
 		}
+		
 		Double val = stack.pop();
 		cmi.setEnteredNumberDecimal(val);
 		cmi.setEnteredNumberString(String.valueOf(val));

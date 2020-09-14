@@ -5,10 +5,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Stack;
-
-import hr.fer.zemris.java.custom.collections.ObjectStack;
 import hr.fer.zemris.java.custom.scripting.elems.Element;
 import hr.fer.zemris.java.custom.scripting.elems.ElementConstantDouble;
 import hr.fer.zemris.java.custom.scripting.elems.ElementConstantInteger;
@@ -16,7 +13,6 @@ import hr.fer.zemris.java.custom.scripting.elems.ElementFunction;
 import hr.fer.zemris.java.custom.scripting.elems.ElementOperator;
 import hr.fer.zemris.java.custom.scripting.elems.ElementString;
 import hr.fer.zemris.java.custom.scripting.elems.ElementVariable;
-import hr.fer.zemris.java.custom.scripting.lexer.TokenSmartType;
 import hr.fer.zemris.java.custom.scripting.nodes.DocumentNode;
 import hr.fer.zemris.java.custom.scripting.nodes.EchoNode;
 import hr.fer.zemris.java.custom.scripting.nodes.ForLoopNode;

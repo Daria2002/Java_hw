@@ -8,6 +8,8 @@ import java.awt.LayoutManager2;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -26,10 +28,6 @@ public class CalcLayout implements LayoutManager2 {
 	private static final int NUMBER_OF_ROWS = 5;
 	/** number of columns **/
 	private static final int NUMBER_OF_COLUMNS = 7;
-	/** array where each element represents width of column **/
-	private int[] columnsWidth;
-	/** array where each element represents height of row **/
-	private int[] rowsHeight;
 	
 	/**
 	 * Calc layout constructor that initialize space between components to 0
@@ -46,8 +44,6 @@ public class CalcLayout implements LayoutManager2 {
 	public CalcLayout(int space) {
 		spaceBetweenRowsAndColumns = space;
 		components = new HashMap<Component, RCPosition>();
-		columnsWidth = new int[7];
-		rowsHeight = new int[5];
 	}
 	
 	@Override
@@ -62,15 +58,34 @@ public class CalcLayout implements LayoutManager2 {
 		components.remove(comp);
 	}
 
-	@Override
-	public Dimension preferredLayoutSize(Container parent) {
-		Dimension preferredDimension = new Dimension(0, 0);
+	/**
+	 * Gets preferred, maximum or minimum dimension
+	 * @param components set of components
+	 * @param f1 isPreferredSizeSet, isMaximumSizeSet, isMinimumSizeSet
+	 * @param f2 getPreferredSize, getMaximumSize, getMinimumSize
+	 * @return dimension
+	 */
+	private Dimension getWantedDimension(Set<Component> components, Function<Component, Dimension> f1, 
+			Function<Component, Boolean> f2) {
+		Dimension dim = new Dimension(0, 0);
 		
-		for(Component comp : components.keySet()) {
-			if(comp.isPreferredSizeSet()) {
-				preferredDimension = getDimension(comp, preferredDimension, comp.getPreferredSize());
+		for(Component comp : components) {
+			if(f2.apply(comp)) {
+				dim = getDimension(comp, dim, f1.apply(comp));
 			}
 		}
+		
+		return dim;
+	}
+	
+	@Override
+	public Dimension preferredLayoutSize(Container parent) {
+		Dimension preferredDimension = getWantedDimension(components.keySet(),
+				(t) -> {return t.getPreferredSize(); },
+				(t) -> {return t.isPreferredSizeSet();});
+		
+		int[] columnsWidth = new int[7];
+		int[] rowsHeight = new int[5];
 		
 		if(preferredDimension.height == 0 && preferredDimension.width == 0) {
 			if(parent.getWidth() != 0 && parent.getHeight() != 0) {
@@ -187,7 +202,7 @@ public class CalcLayout implements LayoutManager2 {
 	 * @param divisor value to divide by
 	 * @return round up result of dividing num by divisor
 	 */
-	public static int roundUp(int num, int divisor) {
+	private static int roundUp(int num, int divisor) {
 	    int sign = (num > 0 ? 1 : -1) * (divisor > 0 ? 1 : -1);
 	    return sign * (Math.abs(num) + Math.abs(divisor) - 1) / Math.abs(divisor);
 	}
@@ -271,44 +286,35 @@ public class CalcLayout implements LayoutManager2 {
 		return new Dimension(maxWidth, maxHeight);
 	}
 
-	@Override
-	public Dimension minimumLayoutSize(Container parent) {
-		Dimension minimumDimension = new Dimension(0, 0);
+	
+	/**
+	 * This function gets maximumLayoutSize or minimumLayoutSize
+	 * @param f1 gets minimum or maximum size
+	 * @param f2 call isMaximumSize or isMinimumSize
+	 * @return returns minimumLayoutSize or maximumLayoutSize
+	 */
+	private Dimension getLayoutSize(Function<Component, Dimension> f1, 
+			Function<Component, Boolean> f2) {
+		Dimension dim = getWantedDimension(components.keySet(), f1, f2);
 		
-		for(Component comp : components.keySet()) {
-			if(comp.isMinimumSizeSet()) {
-				minimumDimension = getDimension(comp, minimumDimension, comp.getMinimumSize());
-			}
-		}
-
-		if(minimumDimension.height == 0 && minimumDimension.width == 0) {
+		if(dim.height == 0 && dim.width == 0) {
 			return new Dimension(0, 0);
 		}
 		
-		return new Dimension(minimumDimension.width * NUMBER_OF_COLUMNS +
+		return new Dimension(dim.width * NUMBER_OF_COLUMNS +
 				(NUMBER_OF_COLUMNS - 1) * spaceBetweenRowsAndColumns, 
-				minimumDimension.height * NUMBER_OF_ROWS +
+				dim.height * NUMBER_OF_ROWS +
 				(NUMBER_OF_ROWS - 1) * spaceBetweenRowsAndColumns);
 	}
-
+	
+	@Override
+	public Dimension minimumLayoutSize(Container parent) {
+		return getLayoutSize((t) -> {return t.getMinimumSize();}, (t) -> {return t.isMinimumSizeSet();});
+	}
+	
 	@Override
 	public Dimension maximumLayoutSize(Container target) {
-		Dimension maximumDimension = new Dimension(0, 0);
-		
-		for(Component comp : components.keySet()) {
-			if(comp.isMaximumSizeSet()) {
-				maximumDimension = getDimension(comp, maximumDimension, comp.getMaximumSize());
-			}
-		}
-
-		if(maximumDimension.height == 0 && maximumDimension.width == 0) {
-			return new Dimension(0, 0);
-		}
-		
-		return new Dimension(maximumDimension.width * NUMBER_OF_COLUMNS +
-				(NUMBER_OF_COLUMNS - 1) * spaceBetweenRowsAndColumns, 
-				maximumDimension.height * NUMBER_OF_ROWS +
-				(NUMBER_OF_ROWS - 1) * spaceBetweenRowsAndColumns);
+		return getLayoutSize((t) -> {return t.getMaximumSize();}, (t) -> {return t.isMaximumSizeSet();});
 	}
 
 	@Override
@@ -322,7 +328,9 @@ public class CalcLayout implements LayoutManager2 {
 		int w = 0;
 		int h = 0;
 		
-
+		int[] columnsWidth = new int[7];
+		int[] rowsHeight = new int[5];
+		
 		columnsWidth = calculateComponentSize(parent.getWidth(), NUMBER_OF_COLUMNS);
 		rowsHeight = calculateComponentSize(parent.getHeight(), NUMBER_OF_ROWS);
 		

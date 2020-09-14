@@ -18,6 +18,11 @@ import javax.swing.WindowConstants;
 public class DemoFrame1 extends JFrame {
 	
 	/**
+	 * default serial version
+	 */
+	private static final long serialVersionUID = 1L;
+
+	/**
 	 * Constructor that doesn't set size of window
 	 */
 	public DemoFrame1() {

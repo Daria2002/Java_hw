@@ -1,0 +1,2 @@
+Ova zadaća je ocjenjena ocjenom 5 jer su minimalni uvjeti zadovoljeni i sve ostalo što je trebalo napraviti radi, osim jedne sitnice: kada se npr. pritisne tag "glavni", pa nakon toga
+mala slika na kojoj je prikazan Zagreb, otvori se velika slika na kojoj je prikazan Zagreb, što je ok, ali ako se sada pritisne npr tag "zima" velika slika Zagreba još uvijek ostaje otvorena, a trebale bi se pritiskom na drugi tag, maknuti se sve velike slike. Javadoc je napisan i kod je uredan.

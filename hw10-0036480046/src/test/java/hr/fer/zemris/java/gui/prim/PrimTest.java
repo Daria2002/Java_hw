@@ -2,12 +2,6 @@ package hr.fer.zemris.java.gui.prim;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
-
 import org.junit.jupiter.api.Test;
 
 class PrimTest {
@@ -28,6 +22,7 @@ class PrimTest {
 		assertEquals(7, plm.prim.get(4));
 	}
 	
+	@Test
 	void GetSizeTest() {
 		PrimListModel plm = new PrimListModel();
 		
@@ -40,6 +35,7 @@ class PrimTest {
 		assertEquals(5, plm.getSize());
 	}
 
+	@Test
 	void GetElementAtIndex() {
 		PrimListModel plm = new PrimListModel();
 		

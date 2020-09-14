@@ -16,6 +16,10 @@ import javax.swing.JComponent;
  *
  */
 public class BarChartComponent extends JComponent {
+	/**
+	 * default serial version
+	 */
+	private static final long serialVersionUID = 1L;
 	/** bar chart **/
 	BarChart barChart;
 	/** arrow size **/
@@ -37,8 +41,7 @@ public class BarChartComponent extends JComponent {
 		int height = getHeight();
 		
 		int yPadding = 40 + g.getFontMetrics().stringWidth(String.valueOf(
-				barChart.yMax));
-		int xPadding = 40;
+				barChart.getyMax()));
 		
 		Graphics2D g2D = (Graphics2D)g;
 		
@@ -50,37 +53,38 @@ public class BarChartComponent extends JComponent {
 		
 		g2D.setPaint(Color.BLACK);
 		// x description
-		g2D.drawString(barChart.xDescription, 
-				(width - g.getFontMetrics().stringWidth(String.valueOf(barChart.xDescription)))/2, height-10);
+		g2D.drawString(barChart.getxDescription(), 
+				(width - g.getFontMetrics().stringWidth(String.valueOf(barChart.getxDescription())))/2, height-10);
 		
 		// y description
 		AffineTransform at = new AffineTransform();
 		at.rotate(-Math.PI / 2);
 		g2D.setTransform(at);
-		g2D.drawString(barChart.yDescription, 
-				-(height + g.getFontMetrics().stringWidth(String.valueOf(barChart.yDescription)))/2, 20);
+		g2D.drawString(barChart.getyDescription(), 
+				-(height + g.getFontMetrics().stringWidth(String.valueOf(barChart.getyDescription())))/2, 20);
 		at.rotate(Math.PI / 2);
 		g2D.setTransform(at);
 		
 		g2D.setPaint(Color.ORANGE);
-		int columnWidth = (width - yPadding - yPadding-5) / barChart.values.size();
+		int columnWidth = (width - yPadding - yPadding-5) / barChart.getValues().size();
 		// draw lines for columns
-		for(int i = 0; i < barChart.values.size(); i++) {
+		for(int i = 0; i < barChart.getValues().size(); i++) {
 			g2D.drawLine(yPadding + 5 + (i+1)*columnWidth, height - 50,
 					yPadding + 5 + (i+1)*columnWidth, 50);
 		}
 		
-		int rowsHeight = (height - 50 - 50) / (barChart.yMax - barChart.yMin);
+		int rowsHeight = (height - 50 - 50) / (barChart.getyMax() - barChart.getyMin());
 		// draw lines for rows
-		for(int i = barChart.yMin; i <= barChart.yMax; i = i + barChart.space) {
-			g2D.drawLine(width - yPadding, height - 50-5 - i * rowsHeight, yPadding, height - 50-5 - i * rowsHeight);
+		for(int i = barChart.getyMin(); i <= barChart.getyMax(); i = i + barChart.getSpace()) {
+			g2D.drawLine(width - yPadding, height - 50-5 - i * rowsHeight,
+					yPadding, height - 50-5 - i * rowsHeight);
 		}
 		
 		g2D.setPaint(Color.BLACK);
 		
 		// write numbers for x axis
-		for(int i = 0; i < barChart.values.size(); i++) {
-			g2D.drawString(String.valueOf(barChart.values.get(i).getX()),
+		for(int i = 0; i < barChart.getValues().size(); i++) {
+			g2D.drawString(String.valueOf(barChart.getValues().get(i).getX()),
 					yPadding + 5 + i*columnWidth + columnWidth/2,
 					height-30);
 		}
@@ -92,16 +96,17 @@ public class BarChartComponent extends JComponent {
 		float letterHeight = lineMetrics.getHeight();
 		
 
-		int spaceLength = String.valueOf(barChart.yMax).length();
+		int spaceLength = String.valueOf(barChart.getyMax()).length();
 		// write numbers for y axis
-		for(int i = barChart.yMin; i <= barChart.yMax; i = i + barChart.space) {
+		for(int i = barChart.getyMin(); i <= barChart.getyMax(); i = i + barChart.getSpace()) {
 			String help = String.format("%" + spaceLength + "d", i);
-			g2D.drawString(help, yPadding-g2D.getFontMetrics().stringWidth(help), height - 50 + 5 - i * rowsHeight-letterHeight/2);
+			g2D.drawString(help, yPadding-g2D.getFontMetrics().stringWidth(help),
+					height - 50 + 5 - (i-barChart.getyMin()) * rowsHeight-letterHeight/2);
 		}
 		
 		g2D.setColor(Color.ORANGE);
 		
-		for(XYValue xy : barChart.values) {
+		for(XYValue xy : barChart.getValues()) {
 			int x = yPadding + 5 + (xy.getX()-1)*columnWidth;
 			int y = height - 50-5 - xy.getY() * rowsHeight;
 			
@@ -122,7 +127,7 @@ public class BarChartComponent extends JComponent {
 	 * @param x2 stop x value
 	 * @param y2 stop y value
 	 */
-	void drawArrow(Graphics g1, int x1, int y1, int x2, int y2) {
+	private void drawArrow(Graphics g1, int x1, int y1, int x2, int y2) {
         Graphics2D g = (Graphics2D) g1.create();
 
         double dx = x2 - x1, dy = y2 - y1;
